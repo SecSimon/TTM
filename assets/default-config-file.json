@@ -233,20 +233,11 @@
       "Name": "Authentication Data",
       "Description": "",
       "assetGroupIDs": [],
-      "associatedDataIDs": [
-        "fc7ba5bf-ccba-4556-86cb-62f37ec737a2"
-      ],
+      "associatedDataIDs": [],
       "IsActive": true
     }
   ],
-  "myData": [
-    {
-      "ID": "fc7ba5bf-ccba-4556-86cb-62f37ec737a2",
-      "Name": "Device Certificate",
-      "Description": "",
-      "Sensitivity": 3
-    }
-  ],
+  "myData": [],
   "stencilTypes": [
     {
       "Name": "Process",
@@ -395,13 +386,6 @@
           "ID": "43deca38-18ab-4c2b-98f0-52f0b1bfefac",
           "Tooltip": "",
           "HasGetter": false,
-          "Editable": true,
-          "Type": "Check Box",
-          "DefaultValue": false
-        },
-        {
-          "DisplayName": "Is Internal",
-          "ID": "IsInternal",
           "Editable": true,
           "Type": "Check Box",
           "DefaultValue": false
@@ -1145,6 +1129,24 @@
       "ElementTypeID": 21
     },
     {
+      "ID": "0e15730c-980a-4a58-a2e2-b10b9de30d6d",
+      "Name": "Button",
+      "Description": "",
+      "IsDefault": false,
+      "Properties": [],
+      "ElementTypeID": 51,
+      "PropertyOverwrites": [
+        {
+          "Key": "NewProperty1",
+          "Value": false
+        },
+        {
+          "Key": "NewProperty3",
+          "Value": true
+        }
+      ]
+    },
+    {
       "ID": "6b505c9a-c505-4305-8c07-a3cde1c1ddfc",
       "Name": "Display",
       "Description": "",
@@ -1166,20 +1168,6 @@
           "Key": "NewProperty1",
           "Value": false
         },
-        {
-          "Key": "NewProperty3",
-          "Value": true
-        }
-      ]
-    },
-    {
-      "ID": "5f755466-4417-4060-83de-64bddeabd1ba",
-      "Name": "Car Battery",
-      "Description": "",
-      "IsDefault": false,
-      "Properties": [],
-      "ElementTypeID": 51,
-      "PropertyOverwrites": [
         {
           "Key": "NewProperty3",
           "Value": true
@@ -1211,6 +1199,20 @@
         }
       ],
       "ElementTypeID": 51
+    },
+    {
+      "ID": "5f755466-4417-4060-83de-64bddeabd1ba",
+      "Name": "Car Battery",
+      "Description": "",
+      "IsDefault": false,
+      "Properties": [],
+      "ElementTypeID": 51,
+      "PropertyOverwrites": [
+        {
+          "Key": "NewProperty3",
+          "Value": true
+        }
+      ]
     },
     {
       "ID": "6970555e-8c1f-466b-add7-35babed4a7fa",
@@ -1274,6 +1276,24 @@
           "Value": true
         }
       ]
+    },
+    {
+      "ID": "2d7223ec-7361-4f2a-bfea-d6c437e9a4f4",
+      "Name": "Key File",
+      "Description": "",
+      "IsDefault": false,
+      "Properties": [
+        {
+          "DisplayName": "Is Encrypted",
+          "ID": "5fccd43c-b3f0-405a-bfcc-8d2bb73bdd9e",
+          "Tooltip": "",
+          "HasGetter": false,
+          "Editable": true,
+          "Type": "Check Box",
+          "DefaultValue": false
+        }
+      ],
+      "ElementTypeID": 21
     }
   ],
   "stencilTypeTemplates": [
@@ -1418,12 +1438,12 @@
     {
       "ID": "1e834e57-12f5-4679-8027-434d1e5812a2",
       "Name": "LINDDUN",
-      "Description": "",
+      "Description": "https://www.linddun.org/linddun",
       "Letters": [
         {
           "Name": "Linkability",
           "Letter": "L",
-          "Description": "",
+          "Description": "An adversary is able to link two items of interest without knowing the identity of the data subject(s) involved.",
           "AffectedElementTypes": [
             11,
             21,
@@ -1439,7 +1459,7 @@
         {
           "Name": "Identifiability",
           "Letter": "I",
-          "Description": "",
+          "Description": "An adversary is able to identify a data subject from a set of data subjects through an item of interest.  ​",
           "AffectedElementTypes": [
             11,
             21,
@@ -1455,7 +1475,7 @@
         {
           "Name": "Non-Repudiation",
           "Letter": "N",
-          "Description": "",
+          "Description": "The data subject is unable to deny a claim (e.g., having performed an action, or sent a request).",
           "AffectedElementTypes": [
             11,
             21,
@@ -1469,7 +1489,7 @@
         {
           "Name": "Detectability",
           "Letter": "D",
-          "Description": "",
+          "Description": "An adversary is able to distinguish whether an item of interest about a data subject exists or not, regardless of being able to read the contents itself.",
           "AffectedElementTypes": [
             11,
             21,
@@ -1483,7 +1503,7 @@
         {
           "Name": "Disclosure of Information",
           "Letter": "D",
-          "Description": "",
+          "Description": "An adversary is able to learn the content of an item of interest about a data subject.",
           "AffectedElementTypes": [
             11,
             21,
@@ -1497,7 +1517,7 @@
         {
           "Name": "Unawareness",
           "Letter": "U",
-          "Description": "",
+          "Description": "The data subject is unaware of the collection, processing, storage, or sharing activities (and corresponding purposes) of the data subject’s personal data.",
           "AffectedElementTypes": [
             31,
             32
@@ -1506,7 +1526,7 @@
         {
           "Name": "Non-Compliance",
           "Letter": "N",
-          "Description": "",
+          "Description": "The processing, storage, or handling of personal data is not compliant with legislation, regulation, and/or policy.",
           "AffectedElementTypes": [
             11,
             21,
@@ -2840,7 +2860,9 @@
       "Description": "",
       "ImpactCats": [
         10,
-        13
+        13,
+        8,
+        1
       ]
     },
     {
@@ -2877,7 +2899,8 @@
       "Description": "Reading data/logs to monitor other users; Using insider knowledge for personal gain (e.g., stock trading)",
       "ImpactCats": [
         1,
-        10
+        10,
+        4
       ]
     },
     {
@@ -3009,7 +3032,8 @@
       "Name": "Identity and data spoofing",
       "Description": "",
       "ImpactCats": [
-        5
+        5,
+        2
       ]
     },
     {
@@ -7242,7 +7266,8 @@
         "6a9008d4-fa27-46b1-8a11-6dbcecb8b211",
         "e5f4b790-5898-495d-9b51-5a16d452edff",
         "e2529607-c1fd-472d-ad14-c7f2cc719282",
-        "a3c2f053-c8d6-4626-ae54-79f87ae171c3"
+        "a3c2f053-c8d6-4626-ae54-79f87ae171c3",
+        "221071ed-1d87-43cc-8052-b615e6ebef04"
       ]
     },
     {
@@ -12287,6 +12312,37 @@
         "DetailRestrictions": []
       },
       "Severity": 1
+    },
+    {
+      "ID": "221071ed-1d87-43cc-8052-b615e6ebef04",
+      "Name": "Key disclosure",
+      "Description": "",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatOriginID": "ef144ae1-4c70-400e-8222-b8a7dd3bf3e9",
+        "ThreatCategoryIDs": [
+          "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 1,
+      "StencilRestriction": {
+        "stencilTypeID": "2d7223ec-7361-4f2a-bfea-d6c437e9a4f4",
+        "DetailRestrictions": [
+          {
+            "IsOR": true,
+            "Layer": 0,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "5fccd43c-b3f0-405a-bfcc-8d2bb73bdd9e",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          }
+        ]
+      },
+      "Severity": 3
     }
   ],
   "mitigations": [
