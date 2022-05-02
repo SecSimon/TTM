@@ -1,0 +1,46 @@
+<div class="status-bar background-color-primary">
+  <button mat-icon-button tourAnchor="message-history" class="msgBtn" style="margin-left: 10px;" (click)="messagesService.ShowHistory()" matTooltip="{{'status-bar.messages' | translate}}" matTooltipShowDelay="1000">
+    <mat-icon class="iconBtn">error_outline</mat-icon>{{messagesService.ErrorMsgs.length}} 
+    <mat-icon class="iconBtn">warning_amber</mat-icon>{{messagesService.WarningMsgs.length}}
+    <ng-container *ngIf="messagesService.ShowSuccesses"><mat-icon class="iconBtn material-icons-outlined">check_circle</mat-icon>{{messagesService.SuccessMsgs.length}}</ng-container>
+    <ng-container *ngIf="messagesService.ShowInfos"><mat-icon class="iconBtn material-icons-outlined">info</mat-icon>{{messagesService.InfoMsgs.length}}</ng-container>
+  </button>
+  
+  <ng-container *ngIf="!!dataService.Project">
+    <button mat-icon-button class="msgBtn" style="margin-left: 20px;"  (click)="dialogService.OpenModelInfoDialog()">
+      <mat-icon class="iconBtn">source</mat-icon>  <span [style.color]="dataService.Project?.FileChanged ? 'yellow' : 'white'">{{dataService.Project?.Name}}</span>
+    </button>
+    <button mat-icon-button tourAnchor="save-file" class="msgBtn" style="margin-left: 5px;" [disabled]="!dataService.CanSaveProject" matTooltip="{{'general.Save' | translate}}" matTooltipShowDelay="1000" (click)="dataService.OpenSaveProjectDialog('')">
+      <mat-icon class="iconBtn">save</mat-icon> 
+    </button>
+    <button mat-icon-button class="msgBtn" [disabled]="!dataService.CanSaveProject" matTooltip="{{'general.SaveAs' | translate}}" matTooltipShowDelay="1000" (click)="dataService.OpenSaveProjectDialog('', true)">
+      <mat-icon class="iconBtn">save_as</mat-icon> 
+    </button>
+  </ng-container>
+  <ng-container *ngIf="!dataService.Project && dataService.Config">
+    <button mat-icon-button class="msgBtn" style="margin-left: 20px;">
+      <mat-icon class="iconBtn">source</mat-icon>  <span [style.color]="dataService.Config?.FileChanged ? 'yellow' : 'white'">{{dataService.SelectedGHConfig ? dataService.SelectedGHConfig.name : dataService.Config?.Name}}</span>
+    </button>
+    <button mat-icon-button tourAnchor="save-file" class="msgBtn" style="margin-left: 5px;" [disabled]="!dataService.CanSaveConfig" matTooltip="{{'general.Save' | translate}}" matTooltipShowDelay="1000" (click)="dataService.OpenSaveConfigDialog('')">
+      <mat-icon class="iconBtn">save</mat-icon> 
+    </button>
+    <button mat-icon-button class="msgBtn" [disabled]="!dataService.CanSaveConfig" matTooltip="{{'general.SaveAs' | translate}}" matTooltipShowDelay="1000" (click)="dataService.OpenSaveConfigDialog('', true)">
+      <mat-icon class="iconBtn">save_as</mat-icon> 
+    </button>
+  </ng-container>
+  <button mat-icon-button tourAnchor="set-progress" class="msgBtn" style="margin-left: 20px;" (click)="dialogService.OpenProgresstrackerDialog()">
+    <mat-icon class="iconBtn">trending_up</mat-icon>{{'status-bar.progress' | translate}}: <span *ngIf="dataService.Project">{{GetProgress()}}</span><span *ngIf="!dataService.Project">-</span>
+  </button>
+  <span style="float: right; margin-right: 5px;" (click)="showDebug = !showDebug">v{{version}}</span>
+  <ng-container *ngIf="showDebug">
+    <button mat-icon-button class="msgBtn" style="float: right; margin-right: 40px;" (click)="dataService.Debug3()">
+      <mat-icon class="iconBtn">bug_report</mat-icon>
+    </button>
+    <button mat-icon-button class="msgBtn" style="float: right; margin-right: 5px;" (click)="dataService.Debug2()">
+      <mat-icon class="iconBtn">bug_report</mat-icon>
+    </button>
+    <button mat-icon-button class="msgBtn" style="float: right; margin-right: 5px;" (click)="dataService.Debug()">
+      <mat-icon class="iconBtn">bug_report</mat-icon>
+    </button>
+  </ng-container>
+</div>

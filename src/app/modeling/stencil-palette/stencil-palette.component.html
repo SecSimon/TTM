@@ -1,0 +1,498 @@
+<mat-accordion class="example-headers-align" multi displayMode="flat">
+  <ng-container *ngIf="NodeType == 'char-scope'">
+    <mat-expansion-panel expanded="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          {{'general.Info' | translate}}
+        </mat-panel-title>
+        <mat-panel-description>
+          <mat-icon>info</mat-icon>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      
+      {{'pages.modeling.stencilpalettte.cs.info' | translate}}
+    </mat-expansion-panel>
+  </ng-container>
+  <ng-container *ngIf="NodeType == 'obj-impact'">
+    <mat-expansion-panel expanded="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          {{'general.Info' | translate}}
+        </mat-panel-title>
+        <mat-panel-description>
+          <mat-icon>info</mat-icon>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+  
+      {{'pages.modeling.stencilpalettte.oi.info' | translate}}
+    </mat-expansion-panel>
+  </ng-container>
+  <ng-container *ngIf="NodeType == 'use-case'">
+    <mat-expansion-panel expanded="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          {{'general.Info' | translate}}
+        </mat-panel-title>
+        <mat-panel-description>
+          <mat-icon>info</mat-icon>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+  
+      {{'pages.modeling.stencilpalettte.uc.infoNoReferences' | translate}}
+    </mat-expansion-panel>
+  </ng-container>
+  <ng-container *ngIf="NodeType == 'device-threats'">
+    <mat-expansion-panel expanded="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          {{'general.Info' | translate}}
+        </mat-panel-title>
+        <mat-panel-description>
+          <mat-icon>info</mat-icon>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+  
+      {{'pages.modeling.stencilpalettte.dt.info' | translate}}
+    </mat-expansion-panel>
+  </ng-container>
+  <ng-container *ngIf="NodeType == 'asset'">
+    <mat-expansion-panel expanded="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          {{'general.Info' | translate}}
+        </mat-panel-title>
+        <mat-panel-description>
+          <mat-icon>info</mat-icon>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+  
+      {{'pages.modeling.stencilpalettte.a.info' | translate}}
+    </mat-expansion-panel>
+  </ng-container>
+
+  <ng-container *ngIf="NodeType == 'dataflow' || NodeType == 'hardware'">
+    <mat-expansion-panel expanded="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Process
+        </mat-panel-title>
+        <mat-panel-description>
+          <mat-icon>memory</mat-icon>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <div style="display: flex; flex-wrap: wrap;">
+        <div draggable="true" (dragstart)="onDrag($event, stencilRef)" (dragend)="onDragEnd()" class="draggable-element" *ngFor="let stencilRef of ProcessStencils" matTooltip="{{GetStencilRefToolTip(stencilRef)}}" matTooltipShowDelay="1000"><div class="process element-base element-small" [style.border-color]="stencilRef.elementID ? theme.Primary : (stencilRef.templateID ? theme.Accent : StrokeColor)">{{stencilRef.name}}</div></div>
+      </div>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel expanded="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Data Store
+        </mat-panel-title>
+        <mat-panel-description>
+          <mat-icon>sd_card</mat-icon>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <div style="display: flex; flex-wrap: wrap;">
+        <div draggable="true" (dragstart)="onDrag($event, stencilRef)" (dragend)="onDragEnd()" class="draggable-element" *ngFor="let stencilRef of DataStoreStencils" matTooltip="{{GetStencilRefToolTip(stencilRef)}}" matTooltipShowDelay="1000">
+          <svg class="element-small">
+            <path d="M 0 4 L 0 34 A 10 1 0 0 0 70 34 L 70 4 A 10 1 0 0 0 0 4 A 10 1 0 0 0 70 4" [style.stroke]="stencilRef.elementID ? theme.Primary : (stencilRef.templateID ? theme.Accent : StrokeColor)" style="stroke-width: 3px; fill: none;"/>
+            <text text-anchor="middle" inline-size="60">
+              <tspan y="12" x="35" [style.fill]="StrokeColor" >{{WrapSVGText(stencilRef?.name, 0)}}</tspan>
+              <tspan y="22.5" x="35" [style.fill]="StrokeColor" *ngIf="WrapSVGText(stencilRef?.name, 1)">{{WrapSVGText(stencilRef?.name, 1)}}</tspan>
+              <tspan y="33" x="35" [style.fill]="StrokeColor" *ngIf="WrapSVGText(stencilRef?.name, 2)">{{WrapSVGText(stencilRef?.name, 2)}}</tspan>
+            </text>
+          </svg>
+        </div>
+      </div>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel expanded="true" *ngIf="NodeType == 'dataflow'">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          External Entity
+        </mat-panel-title>
+        <mat-panel-description>
+          <mat-icon>cloud</mat-icon>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <div style="display: flex; flex-wrap: wrap;">
+        <div draggable="true" (dragstart)="onDrag($event, stencilRef)" (dragend)="onDragEnd()" class="draggable-element" *ngFor="let stencilRef of ExternalEntityStencils" matTooltip="{{GetStencilRefToolTip(stencilRef)}}" matTooltipShowDelay="1000"><div class="external-entity element-base element-small" [style.border-color]="stencilRef.elementID ? theme.Primary : (stencilRef.templateID ? theme.Accent : StrokeColor)">{{stencilRef.name}}</div></div>
+      </div>
+    </mat-expansion-panel>
+    <!--
+    <mat-expansion-panel expanded="true" *ngIf="NodeType == 'dataflow'">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Data Flow
+        </mat-panel-title>
+        <mat-panel-description>
+          <mat-icon>timeline</mat-icon>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <div style="display: flex; flex-wrap: wrap;">
+        <div draggable="true" (dragstart)="onDrag($event, type)" (dragend)="onDragEnd()" class="draggable-element" *ngFor="let type of TypeDataFlows">
+          <svg class="element-small">
+            <defs>
+              <marker id="arrow" markerWidth="13" markerHeight="13" refy="6" orient="auto">
+                <path d="M0,1 L0,10 L8,6 L0,2" [style.fill]="StrokeColor"/>
+              </marker>
+            </defs>
+
+            <path d="M0,25 L60,25" [style.stroke]="StrokeColor" style="stroke-width: 1.25px; fill: none;"/>
+            <path d="M60,25 L60,20 L68,25 L60,30" [style.fill]="StrokeColor"/>
+            <text x="5" y="20" [style.stroke]="StrokeColor">{{stencilRef.name}}</text>
+          </svg>
+        </div>
+      </div>
+
+    </mat-expansion-panel>
+    -->
+    <mat-expansion-panel expanded="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Trust Area
+        </mat-panel-title>
+        <mat-panel-description>
+          <mat-icon>select_all</mat-icon>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <div style="display: flex; flex-wrap: wrap;">
+        <div draggable="true" (dragstart)="onDrag($event, stencilRef)" (dragend)="onDragEnd()" class="draggable-element" *ngFor="let stencilRef of TrustAreaStencils" matTooltip="{{GetStencilRefToolTip(stencilRef)}}" matTooltipShowDelay="1000"><div class="trust-area element-base element-small" [style.border-color]="stencilRef.elementID ? theme.Primary : (stencilRef.templateID ? theme.Accent : StrokeColor)">{{stencilRef.name}}</div></div>
+      </div>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel expanded="true" *ngIf="NodeType == 'hardware'">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Interface
+        </mat-panel-title>
+        <mat-panel-description>
+          <mat-icon>sync_alt</mat-icon>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <!--
+      <div style="display: flex; flex-wrap: wrap;">
+        <div draggable="true" (dragstart)="onDrag($event, stencilRef)" (dragend)="onDragEnd()" class="draggable-element" *ngFor="let stencilRef of InterfaceStencils"><div class="interface element-base element-small" [style.border-color]="stencilRef.elementID ? theme.Primary : (stencilRef.templateID ? theme.Accent : StrokeColor)">{{stencilRef.name}}</div></div>
+      </div>
+      -->
+      <div style="display: flex; flex-wrap: wrap;">
+        <div draggable="true" (dragstart)="onDrag($event, stencilRef)" (dragend)="onDragEnd()" class="draggable-element" *ngFor="let stencilRef of InterfaceStencils" matTooltip="{{GetStencilRefToolTip(stencilRef)}}" matTooltipShowDelay="1000">
+          <svg class="element-small">
+            <path d="M3,0 L60,0 L67,18.75 L60,37.5 L3,37.5 L10,18.75 L3,0" [style.stroke]="stencilRef.elementID ? theme.Primary : (stencilRef.templateID ? theme.Accent : StrokeColor)" style="stroke-width: 3px; fill: none;"/>
+            <text text-anchor="middle" inline-size="60">
+              <tspan y="12" x="35" [style.fill]="StrokeColor" >{{WrapSVGText(stencilRef?.name, 0)}}</tspan>
+              <tspan y="22.5" x="35" [style.fill]="StrokeColor" *ngIf="WrapSVGText(stencilRef?.name, 1)">{{WrapSVGText(stencilRef?.name, 1)}}</tspan>
+              <tspan y="33" x="35" [style.fill]="StrokeColor" *ngIf="WrapSVGText(stencilRef?.name, 2)">{{WrapSVGText(stencilRef?.name, 2)}}</tspan>
+            </text>
+          </svg>
+        </div>
+      </div>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel expanded="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Physical Link
+        </mat-panel-title>
+        <mat-panel-description>
+          <mat-icon>precision_manufacturing</mat-icon>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <!--
+      <div style="display: flex; flex-wrap: wrap;">
+        <div draggable="true" (dragstart)="onDrag($event, stencilRef)" (dragend)="onDragEnd()" class="draggable-element" *ngFor="let stencilRef of PhysicalLinkStencils">
+          <div class="physical-link element-base element-small" [style.border-color]="stencilRef.elementID ? theme.Primary : (stencilRef.templateID ? theme.Accent : StrokeColor)">
+            {{stencilRef.name}}
+          </div>
+        </div>
+      </div>
+      -->
+      <div style="display: flex; flex-wrap: wrap;">
+        <div draggable="true" (dragstart)="onDrag($event, stencilRef)" (dragend)="onDragEnd()" class="draggable-element" *ngFor="let stencilRef of PhysicalLinkStencils" matTooltip="{{GetStencilRefToolTip(stencilRef)}}" matTooltipShowDelay="1000">
+          <svg class="element-small">
+            <path d="M8,0 L67,0 L62,37.5 L3,37.5 L8,0" [style.stroke]="stencilRef.elementID ? theme.Primary : (stencilRef.templateID ? theme.Accent : StrokeColor)" style="stroke-width: 3px; fill: none;"/>
+            <text text-anchor="middle" inline-size="60">
+              <tspan y="12" x="35" [style.fill]="StrokeColor" >{{WrapSVGText(stencilRef?.name, 0)}}</tspan>
+              <tspan y="22.5" x="35" [style.fill]="StrokeColor" *ngIf="WrapSVGText(stencilRef?.name, 1)">{{WrapSVGText(stencilRef?.name, 1)}}</tspan>
+              <tspan y="33" x="35" [style.fill]="StrokeColor" *ngIf="WrapSVGText(stencilRef?.name, 2)">{{WrapSVGText(stencilRef?.name, 2)}}</tspan>
+            </text>
+          </svg>
+        </div>
+      </div>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel expanded="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Template
+        </mat-panel-title>
+        <mat-panel-description>
+          <mat-icon>view_module</mat-icon>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <div style="display: flex; flex-wrap: wrap;">
+        <div draggable="true" (dragstart)="onDrag($event, stencilRef)" (dragend)="onDragEnd()" class="draggable-element" *ngFor="let stencilRef of StencilTemplates" matTooltip="{{GetStencilRefToolTip(stencilRef)}}" matTooltipShowDelay="1000"><div class="process element-base element-small" [style.border-color]="theme.Accent">{{stencilRef.name}}</div></div>
+      </div>
+    </mat-expansion-panel>
+  </ng-container>
+  <ng-container *ngIf="NodeType == 'software' || NodeType == 'process'">
+    <mat-expansion-panel expanded="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Component
+        </mat-panel-title>
+        <mat-panel-description>
+          <mat-icon>code</mat-icon>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <div style="display: flex; flex-wrap: wrap;">
+        <div draggable="true" (dragstart)="onDragComponent($event)" (dragend)="onDragEnd()" class="draggable-element"><div class="process element-base element-small">New Component</div></div>
+        <div draggable="true" *ngFor="let comp of ComponentTypes" matTooltip="{{comp.Name}}" matTooltipShowDelay="1000" (dragstart)="onDragComponent($event, comp)" (dragend)="onDragEnd()" class="draggable-element"><div class="process element-base element-small">{{comp.Name}}</div></div>
+      </div>
+
+    </mat-expansion-panel>
+  </ng-container>
+
+  <ng-container *ngIf="NodeType == 'context'">
+    <mat-expansion-panel expanded="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Device
+        </mat-panel-title>
+        <mat-panel-description>
+          <mat-icon>check_box_outline_blank</mat-icon>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+  
+      <div style="display: flex; flex-wrap: wrap;">
+        <div draggable="true" (dragstart)="onDragContext($event, {name: 'Device', type: '1'})" (dragend)="onDragEnd()" class="draggable-element">
+          <div class="external-entity element-base element-small" [style.border-color]="StrokeColor">Device</div>
+        </div>
+        <div draggable="true" (dragstart)="onDragContext($event, {name: 'Device', type: '2'})" (dragend)="onDragEnd()" class="draggable-element">
+          <div class="external-entity element-base element-small" [style.border-color]="StrokeColor">
+            <div class="device element-base" [style.border-color]="StrokeColor">Device</div>
+          </div>
+        </div>
+      </div>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel expanded="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          App
+        </mat-panel-title>
+        <mat-panel-description>
+          <mat-icon>check_box_outline_blank</mat-icon>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+  
+      <div style="display: flex; flex-wrap: wrap;">
+        <div draggable="true" (dragstart)="onDragContext($event, {name: 'App', type: '1'})" (dragend)="onDragEnd()" class="draggable-element">
+          <div class="external-entity element-base element-small" [style.border-color]="StrokeColor">App</div>
+        </div>
+        <div draggable="true" (dragstart)="onDragContext($event, {name: 'App', type: '2'})" (dragend)="onDragEnd()" class="draggable-element">
+          <div class="external-entity element-base element-small" [style.border-color]="StrokeColor">
+            <div class="device element-base" [style.border-color]="StrokeColor">App</div>
+          </div>
+        </div>
+      </div>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel expanded="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Actor
+        </mat-panel-title>
+        <mat-panel-description>
+          <mat-icon>people</mat-icon>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+  
+      <div style="display: flex; flex-wrap: wrap;">
+        <div draggable="true" (dragstart)="onDragContext($event, {name: 'Actor'})" (dragend)="onDragEnd()" class="draggable-element">
+          <svg class="element-small">
+            <circle cx="35" cy="6" r="4" [style.stroke]="StrokeColor" style="stroke-width: 3px; fill: none;"/>
+            <path d="M30,25 L35,17 L40,25 M35,17 L35,10 M28,14 L42,14" [style.stroke]="StrokeColor" style="stroke-width: 3px; fill: none;"/>
+            <text text-anchor="middle" inline-size="60">
+              <tspan y="35" x="35" [style.fill]="StrokeColor">Actor</tspan>
+            </text>
+          </svg>
+        </div>
+      </div>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel expanded="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Interface
+        </mat-panel-title>
+        <mat-panel-description>
+          <mat-icon>sync_alt</mat-icon>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+  
+      <div style="display: flex; flex-wrap: wrap;">
+        <div draggable="true" (dragstart)="onDragContext($event, {name: 'Interface1'})" (dragend)="onDragEnd()" class="draggable-element" style="width: 100px; height: 52px;">
+          <div>
+            Interface
+          </div>
+          <div class="external-entity element-base element-tiny" [style.border-color]="StrokeColor" style="margin-left: 15px;">
+          </div>
+        </div>
+        <!--
+        <div draggable="true" (dragstart)="onDragContext($event, {name: 'Interface2'})" (dragend)="onDragEnd()" class="draggable-element" style="width: 100px; height: 52px;">
+          <div class="row" style="margin-top: 15px;">
+            <div class="column">
+              <div class="external-entity element-base element-tiny" [style.border-color]="StrokeColor" style="margin-left: 20px;">
+              </div>
+            </div>
+            <div class="column">
+              Interface
+            </div>
+          </div>
+        </div>
+        <div draggable="true" (dragstart)="onDragContext($event, {name: 'Interface3'})" (dragend)="onDragEnd()" class="draggable-element" style="width: 100px; height: 52px;">
+          <div class="external-entity element-base element-tiny" [style.border-color]="StrokeColor" style="margin-left: 15px;">
+          </div>
+          <div>
+            Interface
+          </div>
+        </div>
+        <div draggable="true" (dragstart)="onDragContext($event, {name: 'Interface4'})" (dragend)="onDragEnd()" class="draggable-element" style="width: 100px; height: 52px;">
+          <div class="row" style="margin-top: 15px;">
+            <div class="column">
+              Interface
+            </div>
+            <div class="column">
+              <div class="external-entity element-base element-tiny" [style.border-color]="StrokeColor" style="margin-left: 15px;">
+              </div>
+            </div>
+          </div>
+        </div>
+        -->
+      </div>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel expanded="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Trust Area
+        </mat-panel-title>
+        <mat-panel-description>
+          <mat-icon>select_all</mat-icon>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <div style="display: flex; flex-wrap: wrap;">
+        <div draggable="true" (dragstart)="onDragContext($event, {name: 'Trust Area'})" (dragend)="onDragEnd()" class="draggable-element"><div class="trust-area element-base element-small" [style.border-color]="StrokeColor">Trust Area</div></div>
+      </div>
+    </mat-expansion-panel>
+  </ng-container>
+
+  <ng-container *ngIf="NodeType == 'use-case'">
+    <mat-expansion-panel expanded="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Device
+        </mat-panel-title>
+        <mat-panel-description>
+          <mat-icon>check_box_outline_blank</mat-icon>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+  
+      <div style="display: flex; flex-wrap: wrap;">
+        <div *ngFor="let dev of DeviceStencils" matTooltip="{{GetContextRefToolTip(dev)}}" matTooltipShowDelay="1000" draggable="true" (dragstart)="onDragContext($event, dev)" (dragend)="onDragEnd()" class="draggable-element">
+          <div class="external-entity element-base element-small" [style.border-color]="theme.Primary">{{dev.name}}</div>
+        </div>
+      </div>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel expanded="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          App
+        </mat-panel-title>
+        <mat-panel-description>
+          <mat-icon>check_box_outline_blank</mat-icon>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+  
+      <div style="display: flex; flex-wrap: wrap;">
+        <div *ngFor="let app of AppStencils" matTooltip="{{GetContextRefToolTip(app)}}" matTooltipShowDelay="1000" draggable="true" (dragstart)="onDragContext($event, app)" (dragend)="onDragEnd()" class="draggable-element">
+          <div class="external-entity element-base element-small" [style.border-color]="theme.Primary">{{app.name}}</div>
+        </div>
+      </div>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel expanded="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Actor
+        </mat-panel-title>
+        <mat-panel-description>
+          <mat-icon>people</mat-icon>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+  
+      <div style="display: flex; flex-wrap: wrap;">
+        <div *ngFor="let act of InteractorStencils" matTooltip="{{GetContextRefToolTip(act)}}" matTooltipShowDelay="1000" draggable="true" (dragstart)="onDragContext($event, act)" (dragend)="onDragEnd()" class="draggable-element">
+          <svg class="element-small">
+            <circle cx="35" cy="6" r="4" [style.stroke]="theme.Primary" style="stroke-width: 3px; fill: none;"/>
+            <path d="M30,25 L35,17 L40,25 M35,17 L35,10 M28,14 L42,14" [style.stroke]="theme.Primary" style="stroke-width: 3px; fill: none;"/>
+            <text text-anchor="middle" inline-size="60">
+              <tspan y="35" x="35" [style.fill]="StrokeColor">{{act.name}}</tspan>
+            </text>
+          </svg>
+        </div>
+      </div>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel expanded="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Use Case
+        </mat-panel-title>
+        <mat-panel-description>
+          <mat-icon>radio_button_unchecked</mat-icon>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+  
+      <div style="display: flex; flex-wrap: wrap;">
+        <div draggable="true" (dragstart)="onDragContext($event, {name: 'Use Case'})" (dragend)="onDragEnd()" class="draggable-element">
+          <svg class="element-small">
+            <ellipse cx="35" cy="18.5" rx="33" ry="17" [style.stroke]="StrokeColor" style="stroke-width: 3px; fill: none;"/>
+            <text text-anchor="middle" inline-size="60">
+              <tspan y="22" x="35" [style.fill]="StrokeColor">Use Case</tspan>
+            </text>
+          </svg>
+        </div>
+      </div>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel expanded="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Trust Area
+        </mat-panel-title>
+        <mat-panel-description>
+          <mat-icon>select_all</mat-icon>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <div style="display: flex; flex-wrap: wrap;">
+        <div draggable="true" (dragstart)="onDragContext($event, {name: 'Trust Area'})" (dragend)="onDragEnd()" class="draggable-element"><div class="trust-area element-base element-small" [style.border-color]="StrokeColor">Trust Area</div></div>
+      </div>
+    </mat-expansion-panel>
+  </ng-container>
+</mat-accordion>

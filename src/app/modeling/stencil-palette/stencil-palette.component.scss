@@ -1,0 +1,94 @@
+
+.example-headers-align .mat-expansion-panel-header-description {
+  justify-content: right;
+}
+
+.example-headers-align .mat-expansion-panel {
+  background-color: transparent;
+}
+
+.process {
+  border-style: solid;
+  border-radius: 10px;
+}
+
+.data-store {
+  border-top-style: solid;
+  border-bottom-style: solid;
+}
+
+.external-entity {
+  border-style: solid;
+}
+
+.data-flow {
+  border-style: solid;
+}
+
+.trust-area {
+  border-style: dashed;
+}
+
+.physical-link {
+  border-style: solid;
+}
+
+.interface {
+  border-style: solid;
+}
+
+.device {
+  border-left-style: solid;
+  border-right-style: solid;
+  border-bottom-style: solid;
+  width: 44px;
+  height: 25px;
+  margin-bottom: 10px;
+  margin-left: 10px;
+  margin-right: 10px;
+  font-size: 12px;
+}
+
+.element-base {
+  display: inline-block;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.element-small {
+  width: 70px;
+  height: 37.5px;
+  font-size: 12px;
+}
+
+.element-tiny {
+  width: 20px;
+  height: 20px;
+  font-size: 12px;
+}
+
+.element-large {
+  width: 140px;
+  height: 75px;
+}
+
+.draggable-element {
+  margin: 3px;
+}
+
+.column {
+  float: left;
+  width: 50%;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+::ng-deep .mat-tooltip  {
+  white-space: pre-line !important;
+}

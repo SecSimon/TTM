@@ -1,0 +1,166 @@
+<div *ngIf="threatOrigin" [class.disable]="!canEdit">
+  <ng-container *ngIf="isShownInDialog">
+    <mat-form-field appearance="fill" class="property-form-field">
+      <mat-label>{{ 'properties.Name' | translate }}</mat-label>
+      <input matInput [(ngModel)]="threatOrigin.Name"  matTooltip="{{threatOrigin.Name}}" matTooltipShowDelay="1000"/>
+      <button *ngIf="threatOrigin.Name" matSuffix mat-icon-button (click)="threatOrigin.Name=''" matTooltip="{{'general.Clear' | translate}}" matTooltipShowDelay="1000">
+        <mat-icon>close</mat-icon>
+      </button>
+    </mat-form-field>
+  </ng-container>
+  <mat-form-field appearance="fill" style="width: 100%;">
+    <mat-label>{{ 'properties.Description' | translate }}</mat-label>
+    <textarea matInput [(ngModel)]="threatOrigin.Description"></textarea>
+  </mat-form-field>
+  <mat-form-field appearance="fill" style="width: 100%;">
+    <mat-label>{{ 'properties.Adversaries' | translate }}</mat-label>
+    <textarea matInput [(ngModel)]="threatOrigin.Adversaries"></textarea>
+  </mat-form-field>
+  <mat-form-field appearance="fill" class="property-form-field" *ngIf="isShownInDialog || !canEdit">
+    <mat-label>{{'general.Group' | translate}}</mat-label>
+    <mat-select [value]="GetThreatOriginGroup()?.ID" (selectionChange)="OnGroupChanged($event)" matTooltip="{{GetThreatOriginGroup()?.Name}}" matTooltipShowDelay="1000">
+      <ng-container *ngFor="let group of GetRootThreatOriginGroups()">
+        <mat-option [value]="group.ID">
+          {{group.Name}}
+        </mat-option>
+        <mat-optgroup *ngIf="group.SubGroups && group.SubGroups.length > 0" [label]="group.Name">
+          <ng-container *ngFor="let sub of group.SubGroups">
+            <mat-option [value]="sub.ID">
+              {{sub.Name}}
+            </mat-option>
+            <mat-optgroup *ngIf="sub.SubGroups && sub.SubGroups.length > 0" [label]="sub.Name">
+              <ng-container *ngFor="let subsub of sub.SubGroups">
+                <mat-option [value]="subsub.ID">
+                  {{subsub.Name}}
+                </mat-option>
+              </ng-container>
+            </mat-optgroup>
+          </ng-container>
+        </mat-optgroup>
+      </ng-container>
+
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="fill" style="width: 100%;">
+    <mat-label>{{'general.ThreatCategories' | translate}}</mat-label>
+    <mat-select [(value)]="threatOrigin.ThreatCategories" multiple>
+      <mat-optgroup *ngFor="let group of GetThreatCategoryGroups()" [label]="group.Name">
+        <mat-option *ngFor="let cat of group.ThreatCategories" [value]="cat" matTooltip="{{cat.Description}}" matTooltipShowDelay="1000">
+          {{cat.Name}}
+        </mat-option>
+      </mat-optgroup>
+    </mat-select>
+  </mat-form-field>
+  <table style="margin-top: 10px;">
+    <tr>
+      <td style="text-align: center;" ><strong>{{'pages.config.threatorigin.introduced' | translate}}</strong></td>
+      <td style="padding: 0 3px 0 3px" *ngFor="let lc of GetLifeCycles()">{{GetLifeCycleName(lc) | translate}}</td>
+    </tr>
+    <tr>
+      <td style="text-align: center;" ><strong>{{'pages.config.threatorigin.during' | translate}}</strong></td>
+      <td style="text-align: center;" *ngFor="let lc of GetLifeCycles()"><mat-checkbox color="primary" [checked]="threatOrigin.ThreatIntroduced.includes(lc)" (change)="LifeCycleChanged(threatOrigin.ThreatIntroduced, lc)"></mat-checkbox></td>
+    </tr>
+    <tr>
+      <td style="text-align: center;" ><strong>{{'pages.config.threatorigin.exploitable' | translate}}</strong></td>
+      <td style="padding: 0 3px 0 3px" *ngFor="let lc of GetLifeCycles()">{{GetLifeCycleName(lc) | translate}}</td>
+    </tr>
+    <tr>
+      <td style="text-align: center;" ><strong>{{'pages.config.threatorigin.during' | translate}}</strong></td>
+      <td style="text-align: center;" *ngFor="let lc of GetLifeCycles()"><mat-checkbox color="primary" [checked]="threatOrigin.ThreatExploited.includes(lc)" (change)="LifeCycleChanged(threatOrigin.ThreatExploited, lc)"></mat-checkbox></td>
+    </tr>
+  </table>
+  <mat-form-field appearance="fill" class="property-form-field" style="margin-top: 10px;">
+    <mat-label>{{'properties.ThreatOriginType' | translate}}</mat-label>
+    <mat-select [(value)]="threatOrigin.OriginTypes" multiple>
+      <mat-option *ngFor="let type of GetThreatOriginTypes()" [value]="type">{{GetThreatOriginTypeName(type) | translate}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <ng-container *ngIf="threatOrigin.OriginTypes.includes(2)">
+    <mat-form-field appearance="fill" style="width: 125px; margin-left: 10px;">
+      <mat-label>{{ 'properties.CAPECID' | translate }}</mat-label>
+      <input matInput type="number" [(ngModel)]="threatOrigin.AttackTechnique['CAPECID']">
+    </mat-form-field>
+  </ng-container>
+  <ng-container *ngIf="threatOrigin.OriginTypes.includes(1)">
+    <mat-form-field appearance="fill" style="width: 125px; margin-left: 10px;">
+      <mat-label>{{ 'properties.CWEID' | translate }}</mat-label>
+      <input matInput type="number" [(ngModel)]="threatOrigin.Weakness['CWEID']">
+    </mat-form-field>
+  </ng-container>
+  <mat-form-field appearance="fill" style="width: 125px; margin-left: 10px;">
+    <mat-label>{{ 'properties.Severity' | translate }}</mat-label>
+    <mat-select [(value)]="threatOrigin.Severity">
+      <mat-option>{{'properties.selectNone' | translate}}</mat-option>
+      <mat-option *ngFor="let type of GetSeverityTypes()" [value]="type">{{GetSeverityTypeName(type) | translate}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <ng-container *ngIf="threatOrigin.OriginTypes.includes(2)">
+    <app-cvss-entry [entry]="threatOrigin.AttackTechnique.CVSS"></app-cvss-entry>
+    <mat-card *ngIf="threatOrigin.AttackTechnique['CAPECID']" style="margin-top: 10px; margin-bottom: 10px;">
+      <mat-card-title>CAPEC-{{threatOrigin.AttackTechnique['CAPECID']}}</mat-card-title>
+      <mat-card-content>
+        <app-capec-entry [capecID]="threatOrigin.AttackTechnique['CAPECID']"></app-capec-entry>
+      </mat-card-content>
+    </mat-card>
+  </ng-container>
+  <ng-container *ngIf="threatOrigin.OriginTypes.includes(1)">
+    <mat-card *ngIf="threatOrigin.Weakness['CWEID']">
+      <mat-card-title>CWE-{{threatOrigin.Weakness['CWEID']}}</mat-card-title>
+      <mat-card-content>
+        <app-cwe-entry [cweID]="threatOrigin.Weakness['CWEID']"></app-cwe-entry>
+      </mat-card-content>
+    </mat-card>
+  </ng-container>
+  <div class="row" style="margin-top: 10px;">
+    <div class="column1">
+      <mat-list cdkDropList (cdkDropListDropped)="dropMitigation($event, GetMitigations())" class="prop-list reorder-list" [class.prop-list-light]="!theme.IsDarkMode" [class.prop-list-dark]="theme.IsDarkMode">
+        <div mat-subheader>{{ 'general.Mitigations' | translate }} 
+          <button mat-icon-button style="margin-left: 15px;" [matMenuTriggerFor]="addMenu" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000"><mat-icon>add</mat-icon></button>
+          <mat-menu #addMenu="matMenu">
+            <button mat-menu-item (click)="AddMitigation()">{{'general.New' | translate}}</button>
+            <button mat-menu-item [matMenuTriggerFor]="existing">{{'general.Existing' | translate}}</button>
+          </mat-menu>
+          <mat-menu #existing="matMenu">
+            <button mat-menu-item *ngFor="let mit of GetPossibleMitigations()" (click)="AddExistingMitigation(mit)">{{mit.Name}}</button>
+          </mat-menu>
+        </div>
+        <mat-list-item *ngFor="let mit of GetMitigations()" (click)="selectedMitigation = mit" cdkDrag
+        [class.highlight-light]="selectedMitigation === mit && !theme.IsDarkMode" [class.highlight-dark]="selectedMitigation === mit && theme.IsDarkMode"
+        matTooltip="{{mit.Name}}" matTooltipShowDelay="1000">
+          <mat-icon mat-list-icon>chevron_right</mat-icon>
+          <div mat-line>{{mit.Name | translate}}</div>
+          <button mat-icon-button style="margin-left: auto; margin-right: 0px;" (click)="RemoveMitigation(mit)" matTooltip="{{'general.Remove' | translate}}" matTooltipShowDelay="1000"><mat-icon>remove</mat-icon></button>
+          <button mat-icon-button style="margin-left: auto;" (click)="DeleteMitigation(mit)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000"><mat-icon>delete</mat-icon></button>
+        </mat-list-item>
+      </mat-list>
+    </div>
+    <div class="column2">
+      <div style="margin: 10px 0 10px 10px;" *ngIf="selectedMitigation">
+        <app-mitigation [mitigation]="selectedMitigation" [canEditName]="true" [canEditGroup]="true"></app-mitigation>
+      </div>
+    </div>
+  </div>
+  <div style="margin-top: 15px;" *ngIf="GetThreatRules().length > 0">
+    <strong>{{'general.ThreatRules' | translate}}</strong>
+    <mat-accordion class="expansion-panel-headers-align">
+      <mat-expansion-panel *ngFor="let rule of GetThreatRules()">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            {{rule.Name}}
+          </mat-panel-title>
+          <mat-panel-description>
+            {{GetThreatRestriction(rule)}}
+            <mat-icon>info</mat-icon>
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <ng-template matExpansionPanelContent>
+          <app-threat-rule [canEdit]="false" [showThreatOrigin]="false" [threatRule]="rule"></app-threat-rule>
+        </ng-template>
+      </mat-expansion-panel>
+    </mat-accordion>
+    <br/>
+  </div>
+  <div style="margin-top: 15px;" *ngIf="GetThreatRules().length == 0"> 
+    <strong>{{'pages.config.threatlibrary.noRuleOrQuestion' | translate}}</strong>
+  </div>
+</div>

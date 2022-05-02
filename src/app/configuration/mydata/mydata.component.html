@@ -1,0 +1,32 @@
+<div>
+  <mat-form-field appearance="fill" class="property-form-field">
+    <mat-label>{{'general.Name' | translate}}</mat-label>
+    <input matInput type="text" [(ngModel)]="myData.Name" matTooltip="{{myData.Name}}" matTooltipShowDelay="1000">
+    <button *ngIf="myData.Name" matSuffix mat-icon-button (click)="myData.Name=''" matTooltip="{{'general.Clear' | translate}}" matTooltipShowDelay="1000">
+      <mat-icon>close</mat-icon>
+    </button>
+  </mat-form-field>
+  <br/>
+  <mat-form-field appearance="fill" style="width: 100%;">
+    <mat-label>{{'properties.Description' | translate}}</mat-label>
+    <textarea matInput type="text" [(ngModel)]="myData.Description"></textarea>
+  </mat-form-field>
+  <br/>
+  <mat-form-field appearance="fill" class="property-form-field">
+    <mat-label>{{'properties.Sensitivity' | translate}}</mat-label>
+    <mat-select [(value)]="myData.Sensitivity" matTooltip="{{GetSensitivity(myData.Sensitivity) | translate}}" matTooltipShowDelay="1000">
+      <mat-option *ngFor="let type of GetSensitivities()" [value]="type">{{GetSensitivity(type) | translate}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <br/>
+  <mat-form-field appearance="fill" class="property-form-field" *ngIf="showAssetGroup">
+    <mat-label>{{'general.Assets' | translate}}</mat-label>
+    <mat-select [value]="GetAssetGroup()">
+      <mat-optgroup *ngFor="let group of GetAssetGroups()" [label]="group.Key">
+        <mat-option *ngFor="let asset of group.Value" [value]="asset" (click)="SetAssetGroup(asset)" matTooltip="{{asset.Name}}" matTooltipShowDelay="1000">
+          {{asset.Name}}
+        </mat-option>
+      </mat-optgroup>
+    </mat-select>
+  </mat-form-field>
+</div>

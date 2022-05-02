@@ -1,0 +1,10 @@
+<mat-progress-bar
+    *ngIf="isLoading | async"
+    mode="indeterminate"
+    style="position: absolute; top: 0; z-index: 100;"
+>
+</mat-progress-bar>
+<router-outlet></router-outlet>
+<tour-step-template></tour-step-template>
+<div #primary class="mat-button mat-primary" color="primary" style="display:none"></div>
+<div #accent class="mat-button mat-accent" color="accent" style="display:none"></div>

@@ -1,0 +1,47 @@
+@import 'stylesTheme.scss';
+
+.mat-row:hover .mat-cell {
+  border-color: currentColor;
+}
+
+.selected-mitigation {
+  font-weight: bold;
+}
+
+.removed-mitigation {
+  opacity: 0.3;
+}
+
+.tools {
+  display: block;
+  float: left;
+  height: 27px;
+  width: calc(100% - 20px);
+  font-size: 12px;
+}
+
+.toolBtn {
+  width: 30px;
+  min-width: 30px;
+  padding: 0px;
+  line-height: 25px;
+  margin-left: 5px;
+}
+
+.toolBtn-Selected {
+  background-color: rgba($color: #fff, $alpha: 0.15);
+}
+
+.filterInput {
+  margin-left: 5px;
+  width: 200px;
+  height: 25px;
+}
+
+th, td {
+  font-size: small;
+}
+
+.disable {
+  pointer-events: none;
+}

@@ -1,0 +1,39 @@
+//@import 'styles.scss';
+
+.sidenav-icon-button {
+  text-transform: uppercase;
+  text-decoration: none;
+  background: transparent;
+  padding: 5px;
+  display: inline-block;
+  border: none;
+}
+
+.btn-light {
+  color: rgba(0,0,0,0.5);
+}
+.btn-dark {
+  color: rgba(255,255,255,0.5);
+}
+
+.btn-selected-light {
+  border-left-color: #000;
+  border-left-style: solid;
+  border-left-width: 2px;
+}
+.btn-selected-dark {
+  border-left-color: #fff;
+  border-left-style: solid;
+  border-left-width: 2px;
+}
+
+.icon-selected-light {
+  color: #000;
+}
+.icon-selected-dark {
+  color: #fff;
+}
+
+.disabled {
+  pointer-events: none;
+}

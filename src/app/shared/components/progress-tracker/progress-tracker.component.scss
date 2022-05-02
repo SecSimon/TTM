@@ -1,0 +1,28 @@
+table {
+  width: 100%;
+}
+
+tr.activity-detail-row {
+  height: 0;
+}
+
+.activity-row td {
+  border-bottom-width: 0;
+}
+
+.activity-detail {
+  overflow: hidden;
+  display: flex;
+}
+
+.activity-description {
+  padding: 16px;
+}
+
+.toolBtn {
+  width: 30px;
+  min-width: 30px;
+  padding: 0px;
+  line-height: 25px;
+  margin-left: 5px;
+}

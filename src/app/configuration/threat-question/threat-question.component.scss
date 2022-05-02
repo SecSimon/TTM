@@ -1,0 +1,16 @@
+@import 'stylesPropList.scss';
+
+.optionColumn1 {
+  float: left;
+  width: 300px;
+}
+
+.optionColumn2 {
+  float: left;
+  width: calc(100% - 310px);
+  padding-left: 10px;
+}
+
+.disable {
+  pointer-events: none;
+}

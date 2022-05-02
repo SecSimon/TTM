@@ -1,0 +1,43 @@
+@import 'styles.scss';
+
+.status-bar {
+    position: fixed; 
+    width: 100%; 
+    bottom: 0; 
+    left: 0; 
+    height: 20px; 
+    font-size: smaller;
+    padding-top: 4px;
+    color: white; 
+    border-top-style: solid; 
+    border-color: white; 
+    border-width: 0px; 
+    z-index:99999;
+}
+
+.iconBtn{
+    height: 17px !important;
+    //width: 17px !important;
+    //font-size: 17px !important;
+    line-height: 15px !important;
+    transform: scale(0.7);
+}
+
+.msgBtn{
+    height: 18px !important;
+    //width: 17px !important;
+    width: auto;
+    font-size: 14px !important;
+    line-height: 16px !important;
+}
+
+.buttonAsText {
+    background:none;
+    border:none;
+    margin:0;
+    margin-bottom: 5px;
+    padding:0;
+    cursor: pointer;
+    font-size: small;
+    color: white;
+}

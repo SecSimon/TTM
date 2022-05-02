@@ -1,0 +1,20 @@
+<div *ngIf="selectedNode" style="margin-left: 10px; margin-right: 10px;">
+  <h2>{{selectedNode.name()}}</h2>
+  <ng-container *ngIf="selectedThreatCatGroup">
+    <mat-form-field appearance="fill" style="width: 100%;">
+      <mat-label>{{ 'properties.Description' | translate }}</mat-label>
+      <textarea matInput [(ngModel)]="selectedThreatCatGroup.Description"></textarea>
+    </mat-form-field>
+    <table style="margin-top: 10px;">
+      <tr>
+        <th>{{'pages.config.ThreatCategory' | translate}}</th>
+        <th style="padding: 0 3px 0 3px" *ngFor="let impact of GetImpactCategories()">{{GetImpactCategoryName(impact) | translate}}</th>
+      </tr>
+      <tr *ngFor="let cat of selectedThreatCatGroup.ThreatCategories">
+        <td>{{cat.Name}}</td>
+        <td style="text-align: center;" *ngFor="let impact of GetImpactCategories()"><mat-checkbox color="primary" [checked]="cat.ImpactCats.includes(impact)" (change)="ImpactCatChanged(cat, impact)"></mat-checkbox></td>
+      </tr>
+    </table>
+  </ng-container>
+  <app-threat-category *ngIf="selectedThreatCat" [threatCat]="selectedThreatCat"></app-threat-category>
+</div>

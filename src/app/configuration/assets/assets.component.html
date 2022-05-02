@@ -1,0 +1,38 @@
+<div *ngIf="selectedNode" style="margin-left: 10px; margin-right: 10px;">
+  <h2>{{selectedNode.name()}}</h2>
+  <ng-container *ngIf="selectedAssetGroup">
+    <mat-form-field appearance="fill" style="width: 100%;">
+      <mat-label>{{ 'properties.Description' | translate }}</mat-label>
+      <textarea matInput [(ngModel)]="selectedAssetGroup.Description"></textarea>
+    </mat-form-field>
+    <mat-checkbox color="primary" [(ngModel)]="selectedAssetGroup.IsActive">{{'properties.IsActive' | translate}}</mat-checkbox>
+  </ng-container>
+  <div class="row">
+    <div class="column1">
+      <mat-list cdkDropList (cdkDropListDropped)="dropWrapper($event, selectedAssetGroup.AssociatedData)" class="prop-list reorder-list" [class.prop-list-light]="!theme.IsDarkMode" [class.prop-list-dark]="theme.IsDarkMode">
+        <div mat-subheader>{{ 'general.Datas' | translate }} <button mat-icon-button (click)="AddMyData()" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000" style="margin-left: 15px;"><mat-icon>add</mat-icon></button></div>
+        <mat-list-item *ngFor="let data of selectedAssetGroup.AssociatedData" (click)="selectedMyData = data" cdkDrag
+        [class.highlight-light]="selectedMyData === data && !theme.IsDarkMode" [class.highlight-dark]="selectedMyData === data && theme.IsDarkMode"
+        matTooltip="{{data?.Name}}" matTooltipShowDelay="1000">
+          <mat-icon mat-list-icon>chevron_right</mat-icon>
+          <div mat-line>{{data.Name}}</div>
+          <div mat-line>{{'properties.Sensitivity' | translate}}: {{GetSensitivity(data.Sensitivity) | translate}}</div>
+          <button mat-icon-button style="margin-left: auto; margin-right: 0px;" [matMenuTriggerFor]="moveMenu" [matMenuTriggerData]="{ groups: GetMoveToGroups(data), item: data }" matTooltip="{{'nav-tree.moveToGroup' | translate}}" matTooltipShowDelay="1000"><mat-icon>low_priority</mat-icon></button>
+          <button mat-icon-button style="margin-left: auto;" (click)="DeleteMyData(data)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000"><mat-icon>delete</mat-icon></button>
+          <mat-menu #moveMenu="matMenu">
+            <ng-template matMenuContent let-groups="groups" let-item="item">
+              <button mat-menu-item *ngFor="let g of groups" (click)="OnMoveToGroup(item, g)">{{g.Name}}</button>
+            </ng-template> 
+          </mat-menu>
+        </mat-list-item>
+      </mat-list>
+    </div>
+    <div class="column2">
+      <ng-container *ngIf="selectedAssetGroup.AssociatedData?.includes(selectedMyData)">
+        <div style="margin-left: 10px;">
+          <app-mydata [myData]="selectedMyData"></app-mydata>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,487 @@
+<div style="margin-left: 10px; margin-top: 10px;" *ngIf="threatRule" [class.disable]="!canEdit">
+  <mat-checkbox color="primary" [(ngModel)]="threatRule.IsActive" style="margin-bottom: 10px;">{{'properties.IsActive' | translate}}</mat-checkbox>
+  <br/>
+  <mat-form-field appearance="fill" class="property-form-field" *ngIf="canEditName">
+    <mat-label>{{ 'properties.Name' | translate }}</mat-label>
+    <input matInput [(ngModel)]="threatRule.Name"/>
+    <button *ngIf="threatRule.Name" matSuffix mat-icon-button (click)="threatRule.Name=''" matTooltip="{{'general.Clear' | translate}}" matTooltipShowDelay="1000">
+      <mat-icon>close</mat-icon>
+    </button>
+  </mat-form-field>
+  <div [class.disable]="!threatRule.IsActive">
+    <mat-form-field appearance="fill" class="property-form-field">
+      <mat-label>{{'general.ThreatOrigin' | translate}}</mat-label>
+      <mat-select [(value)]="threatRule.ThreatOrigin" (selectionChange)="OnThreatOriginChanged($event.value)"  matTooltip="{{threatRule.ThreatOrigin?.Name}}" matTooltipShowDelay="1000">
+        <mat-option>{{'properties.selectNone' | translate}}</mat-option>
+        <mat-optgroup *ngFor="let group of GetThreatOriginGroups()" [label]="group.Name">
+          <mat-option *ngFor="let threat of group.ThreatOrigins" [value]="threat">
+            {{threat.Name}}
+          </mat-option>
+        </mat-optgroup>
+      </mat-select>
+    </mat-form-field>
+    <button mat-icon-button style="vertical-align: super;" [disabled]="!threatRule.ThreatOrigin" (click)="EditThreatOrigin()" matTooltip="{{'general.Edit' | translate}}" matTooltipShowDelay="1000">
+      <mat-icon>edit</mat-icon>
+    </button>
+    <button mat-icon-button style="vertical-align: super;" (click)="AddThreatOrigin()" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000">
+      <mat-icon>add</mat-icon>
+    </button>
+    <mat-form-field appearance="fill" style="width: 150px; margin-left: 10px;">
+      <mat-label>{{ 'properties.Severity' | translate }}</mat-label>
+      <mat-select [(value)]="threatRule.Severity">
+        <mat-option>{{'properties.selectNone' | translate}}</mat-option>
+        <mat-option *ngFor="let type of GetSeverityTypes()" [value]="type">{{GetSeverityTypeName(type) | translate}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-accordion class="expansion-panel-headers-align" *ngIf="showThreatOrigin && threatRule.ThreatOrigin">
+      <mat-expansion-panel style="margin-bottom: 20px;">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            {{'general.ThreatInfo' | translate}}
+          </mat-panel-title>
+          <mat-panel-description>
+            {{threatRule.ThreatOrigin.Name}}
+            <mat-icon>info</mat-icon>
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <ng-template matExpansionPanelContent>
+          <app-threat-origin [canEdit]="false" [threatOrigin]="threatRule.ThreatOrigin"></app-threat-origin>
+        </ng-template>
+      </mat-expansion-panel>
+    </mat-accordion>
+    <mat-form-field appearance="fill" style="width: 100%;">
+      <mat-label>{{'general.ThreatCategories' | translate}}</mat-label>
+        <mat-select [(value)]="threatRule.ThreatCategories" multiple>
+          <mat-optgroup *ngFor="let group of GetThreatCategoryGroups()" [label]="group.Name">
+            <mat-option *ngFor="let cat of group.ThreatCategories" [value]="cat" matTooltip="{{cat.Description}}" matTooltipShowDelay="1000">
+              {{cat.Name}}
+            </mat-option>
+          </mat-optgroup>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="fill" style="width: 100%;">
+      <mat-label>{{ 'properties.Description' | translate }}</mat-label>
+      <textarea matInput [(ngModel)]="threatRule.Description"></textarea>
+    </mat-form-field>
+    <ng-container *ngIf="[1,2].includes(threatRule.RuleType)">
+      <mat-form-field appearance="fill" class="property-form-field">
+        <mat-label>{{'properties.RuleGenerationType' | translate}}</mat-label>
+        <mat-select [(value)]="threatRule.RuleGenerationType">
+          <mat-option *ngFor="let type of GetRuleGenerationTypes()" [value]="type">{{ GetRuleGenerationTypeName(type) | translate}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <br/>
+    </ng-container>
+    <mat-form-field appearance="fill" class="property-form-field">
+      <mat-label>{{'properties.OverridenRules' | translate}}</mat-label>
+      <mat-select [(value)]="threatRule.OverridenRules" multiple>
+        <mat-optgroup *ngFor="let group of GetAvailableThreatRuleGroups()" [label]="group.Name">
+          <mat-option *ngFor="let rule of group.ThreatRules" [value]="rule">
+            {{rule.Name}}
+          </mat-option>
+        </mat-optgroup>
+      </mat-select>
+    </mat-form-field>
+    <br/>
+    <div *ngIf="threatRule.RuleType == 1">
+      <mat-form-field appearance="fill" class="property-form-field disable">
+        <mat-label>{{ 'properties.StencilType' | translate }}</mat-label>
+        <input matInput [value]="selectedStencilType?.Name"  matTooltip="{{selectedStencilType?.Name}}" matTooltipShowDelay="1000"/>
+      </mat-form-field>
+      <br/>
+      {{'properties.Restrictions' | translate}} 
+      <button mat-icon-button (click)="AddStencilRestriction()" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000">
+        <mat-icon>add</mat-icon>
+      </button>
+      <span style="margin-left: 10px;">{{GetRestrictionString()}}</span>
+      <div>
+        <div *ngFor="let rest of threatRule.StencilRestriction.DetailRestrictions; index as i; last as isLast">
+          <mat-form-field appearance="fill" class="property-form-field" [style.padding-left]="GetLayerPadding(rest)">
+            <mat-label>{{'general.Type' | translate}}</mat-label>
+            <input matPrefix matInput min="0" type="number" style="width: 30px;" [(ngModel)]="rest.Layer">
+            <mat-select [(value)]="rest.RestType">
+              <mat-option *ngFor="let type of GetAvailableRestrictionsTypes(rest)" [value]="type" (click)="CreatePropertyRestrictionType(rest, type)">
+                {{GetRestrictionTypeName(type) | translate}}
+              </mat-option>
+            </mat-select>
+            <button matSuffix mat-icon-button (click)="RemoveStencilRestriction(i)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </mat-form-field>
+          <!--Property Restrction-->
+          <ng-container *ngIf="rest.RestType == 1">
+            <mat-form-field appearance="fill" class="property-form-field" style="margin-left: 10px;">
+              <mat-label>{{'general.PropertyName' | translate}}</mat-label>
+              <mat-select [(value)]="rest.PropertyRest.ID">
+                <mat-optgroup *ngFor="let group of GetAvailablePropertyGroups(rest)" [label]="group.GroupName">
+                  <mat-option *ngFor="let prop of group.Properties" [value]="prop.ID" (click)="SetPropertyDefaultValue(rest.PropertyRest, prop)">
+                    <ng-container *ngIf="prop.DisplayName">{{prop.DisplayName | translate}}</ng-container>
+                    <ng-container *ngIf="!prop.DisplayName">{{prop.ID}}</ng-container>
+                  </mat-option>
+                </mat-optgroup>
+              </mat-select>
+            </mat-form-field>
+            <button mat-raised-button style="margin-left: 10px; vertical-align: super;" (click)="OnNextComparisonType(rest, rest.PropertyRest)">
+              {{rest.PropertyRest.ComparisonType}}
+            </button>
+            <ng-container *ngIf="GetPropertyEditType(rest) == 'Check Box'">
+              <mat-checkbox color="primary" style="margin-left: 10px; vertical-align: super;" [(ngModel)]="rest.PropertyRest.Value"></mat-checkbox>
+            </ng-container>
+            <ng-container *ngIf="GetPropertyEditType(rest) == 'Low Medium High Select'">
+              <select style="width: 75px; margin-left: 10px; vertical-align: super;" [ngModel]="rest.PropertyRest.Value" (change)="SetLWH(rest.PropertyRest, $event['target']['value'])">
+                <option *ngFor="let type of GetLMHValues()" [value]="type">{{GetLMHName(type) | translate}}</option>
+              </select>
+            </ng-container>
+          </ng-container>
+          <!--Physical Element Restriction-->
+          <ng-container *ngIf="rest.RestType == 3">
+            <mat-form-field appearance="fill" class="property-form-field" style="margin-left: 10px;">
+              <mat-label>{{'general.PropertyName' | translate}}</mat-label>
+              <mat-select [(value)]="rest.PhyElementRest.Property.ID">
+                <mat-optgroup *ngFor="let group of GetAvailablePhyElementPropertyGroups(rest)" [label]="group.GroupName">
+                  <mat-option *ngFor="let prop of group.Properties" [value]="prop.ID" (click)="SetPropertyDefaultValue(rest.PhyElementRest.Property, prop)">
+                    <ng-container *ngIf="prop.DisplayName">{{prop.DisplayName | translate}}</ng-container>
+                    <ng-container *ngIf="!prop.DisplayName">{{prop.ID}}</ng-container>
+                  </mat-option>
+                </mat-optgroup>
+              </mat-select>
+            </mat-form-field>
+            <ng-container *ngIf="GetPropertyEditType(rest) == 'Check Box'">
+              <mat-checkbox color="primary" style="margin-left: 10px; vertical-align: super;" [(ngModel)]="rest.PhyElementRest.Property.Value"></mat-checkbox>
+            </ng-container>
+            <ng-container *ngIf="GetPropertyEditType(rest) == 'Low Medium High Select'">
+              <select style="width: 75px; margin-left: 10px; vertical-align: super;" [ngModel]="rest.PhyElementRest.Property.Value" (change)="SetLWH(rest.PhyElementRest.Property, $event['target']['value'])">
+                <option *ngFor="let type of GetLMHValues()" [value]="type">{{GetLMHName(type) | translate}}</option>
+              </select>
+            </ng-container>
+          </ng-container>
+          <button mat-raised-button *ngIf="!isLast" style="margin-left: 10px; vertical-align: super;" (click)="rest.IsOR = !rest.IsOR">
+            {{rest.IsOR ? 'OR' : 'AND'}}
+          </button>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="threatRule.RuleType == 2">
+      <div>
+        <mat-form-field appearance="fill" class="property-form-field">
+          <mat-label>{{'general.Target' | translate}}</mat-label>
+          <mat-select [(value)]="threatRule.DFDRestriction.Target">
+            <mat-option *ngFor="let e of GetRuleElements(); index as j" [value]="j-1">
+              {{e}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <br/>
+        <ng-container *ngFor="let node of threatRule.DFDRestriction.NodeTypes; index as i; first as isFirst; last as isLast;">
+          <mat-form-field appearance="fill" class="property-form-field">
+            <mat-label *ngIf="isFirst">{{'properties.Sender' | translate}}</mat-label>
+            <mat-label *ngIf="isLast">{{'properties.Receiver' | translate}}</mat-label>
+            <mat-label *ngIf="!isFirst && !isLast">Node{{i}}</mat-label>
+            <mat-select #typeSelect [(value)]="node.TypeIDs"  multiple>
+              <mat-option [value]="" (click)="node.TypeIDs = []; propertyGroups = {}">{{'pages.config.Any' | translate}}</mat-option>
+              <mat-option *ngFor="let stencilType of GetDataFlowEntityTypes()" [value]="stencilType?.ID" (click)="propertyGroups = {}">
+                {{stencilType?.Name}}
+              </mat-option>
+            </mat-select>
+            <button matSuffix mat-icon-button *ngIf="!isFirst && !isLast" (click)="RemoveDFDNode(i, typeSelect)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </mat-form-field>
+          <button mat-icon-button *ngIf="!isLast" style="vertical-align: super;" (click)="AddDFDNode(i+1)" matTooltip="{{'pages.config.threatrule.addNode' | translate}}" matTooltipShowDelay="1000">
+            <mat-icon class="btn-icon">east</mat-icon>
+          </button>
+        </ng-container>
+        <button mat-icon-button style="vertical-align: super;" (click)="threatRule.DFDRestriction.AppliesReverse = !threatRule.DFDRestriction.AppliesReverse" matTooltip="{{'pages.config.threatrule.applyReverse' | translate}}" matTooltipShowDelay="1000">
+          <mat-icon class="btn-icon" [class.btn-selected-light]="!theme.IsDarkMode && threatRule.DFDRestriction.AppliesReverse" [class.btn-selected-dark]="theme.IsDarkMode && threatRule.DFDRestriction.AppliesReverse">swap_horiz</mat-icon>
+        </button>
+        <br/>
+        {{'properties.Restrictions' | translate}} 
+        <button mat-icon-button (click)="AddDFDNodeRestriction()" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000">
+          <mat-icon>add</mat-icon>
+        </button>
+        <span style="margin-left: 10px;">{{GetRestrictionString()}}</span>
+        <div>
+          <div *ngFor="let rest of threatRule.DFDRestriction.NodeRestrictions; index as i; last as isLast">
+            <mat-form-field appearance="fill" class="property-form-field" [style.padding-left]="GetLayerPadding(rest)">
+              <mat-label>{{'general.Element' | translate}}</mat-label>
+              <input matPrefix matInput min="0" type="number" style="width: 30px;" [(ngModel)]="rest.Layer">
+              <mat-select [(value)]="rest.NodeNumber">
+                <mat-option *ngFor="let e of GetRuleElements(); index as j" [value]="j-1">
+                  {{e}}
+                </mat-option>
+              </mat-select>
+              <button matSuffix mat-icon-button (click)="RemoveDFDNodeRestriction(i)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </mat-form-field>
+            <mat-form-field appearance="fill" class="property-form-field" style="margin-left: 10px;">
+              <mat-label>{{'general.Type' | translate}}</mat-label>
+              <mat-select [(value)]="rest.RestType">
+                <mat-option *ngFor="let type of GetAvailableRestrictionsTypes(rest)" [value]="type" (click)="CreatePropertyRestrictionType(rest, type)">
+                  {{GetRestrictionTypeName(type) | translate}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <!--Property Restrction-->
+            <ng-container *ngIf="rest.RestType == 1">
+              <mat-form-field appearance="fill" class="property-form-field" style="margin-left: 10px;">
+                <mat-label>{{'general.PropertyName' | translate}}</mat-label>
+                <mat-select [(value)]="rest.PropertyRest.ID">
+                  <mat-optgroup *ngFor="let group of GetAvailablePropertyGroups(rest)" [label]="group.GroupName">
+                    <mat-option *ngFor="let prop of group.Properties" [value]="prop.ID" (click)="SetPropertyDefaultValue(rest.PropertyRest, prop)">
+                      <ng-container *ngIf="prop.DisplayName">{{prop.DisplayName | translate}}</ng-container>
+                      <ng-container *ngIf="!prop.DisplayName">{{prop.ID}}</ng-container>
+                    </mat-option>
+                  </mat-optgroup>
+                </mat-select>
+              </mat-form-field>
+              <button mat-raised-button style="margin-left: 10px; vertical-align: super;" (click)="OnNextComparisonType(rest, rest.PropertyRest)">
+                {{rest.PropertyRest.ComparisonType}}
+              </button>
+              <ng-container *ngIf="GetPropertyEditType(rest) == 'Check Box'">
+                <mat-checkbox color="primary" style="margin-left: 10px; vertical-align: super;" [(ngModel)]="rest.PropertyRest.Value"></mat-checkbox>
+              </ng-container>
+              <ng-container *ngIf="GetPropertyEditType(rest) == 'Low Medium High Select'">
+                <select style="width: 75px; margin-left: 10px; vertical-align: super;" [ngModel]="rest.PropertyRest.Value" (change)="SetLWH(rest.PropertyRest, $event['target']['value'])">
+                  <option *ngFor="let type of GetLMHValues()" [value]="type">{{GetLMHName(type) | translate}}</option>
+                </select>
+              </ng-container>
+            </ng-container>
+            <!--Data Flow Crosses Restriction-->
+            <mat-form-field *ngIf="rest.RestType == 2" appearance="fill" class="property-form-field" style="margin-left: 10px;">
+              <mat-label>{{'pages.config.threatrule.crosses' | translate}}</mat-label>
+              <mat-select [(value)]="rest.DataflowRest.TrustAreaIDs" multiple>
+                <mat-option [value]="" (click)="rest.DataflowRest.TrustAreaIDs = []">{{'pages.config.Any' | translate}}</mat-option>
+                <mat-option *ngFor="let ta of GetAvailableTrustAreas()" [value]="ta.ID">
+                  {{ta.Name}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <!--Physical Element Restriction-->
+            <ng-container *ngIf="rest.RestType == 3">
+              <mat-form-field appearance="fill" class="property-form-field" style="margin-left: 10px;">
+                <mat-label>{{'general.PropertyName' | translate}}</mat-label>
+                <mat-select [(value)]="rest.PhyElementRest.Property.ID">
+                  <mat-optgroup *ngFor="let group of GetAvailablePhyElementPropertyGroups(rest)" [label]="group.GroupName">
+                    <mat-option *ngFor="let prop of group.Properties" [value]="prop.ID" (click)="SetPropertyDefaultValue(rest.PhyElementRest.Property, prop)">
+                      <ng-container *ngIf="prop.DisplayName">{{prop.DisplayName | translate}}</ng-container>
+                      <ng-container *ngIf="!prop.DisplayName">{{prop.ID}}</ng-container>
+                    </mat-option>
+                  </mat-optgroup>
+                </mat-select>
+              </mat-form-field>
+              <ng-container *ngIf="GetPropertyEditType(rest) == 'Check Box'">
+                <mat-checkbox color="primary" style="margin-left: 10px; vertical-align: super;" [(ngModel)]="rest.PhyElementRest.Property.Value"></mat-checkbox>
+              </ng-container>
+              <ng-container *ngIf="GetPropertyEditType(rest) == 'Low Medium High Select'">
+                <select style="width: 75px; margin-left: 10px; vertical-align: super;" [ngModel]="rest.PhyElementRest.Property.Value" (change)="SetLWH(rest.PhyElementRest.Property, $event['target']['value'])">
+                  <option *ngFor="let type of GetLMHValues()" [value]="type">{{GetLMHName(type) | translate}}</option>
+                </select>
+              </ng-container>
+            </ng-container>
+            <!--Sender Interface Restriction-->
+            <ng-container *ngIf="rest.RestType == 10">
+              <mat-form-field appearance="fill" class="property-form-field" style="margin-left: 10px;">
+                <mat-label>{{'general.PropertyName' | translate}}</mat-label>
+                <mat-select [(value)]="rest.SenderInterfaceRestriction.Property.ID">
+                  <mat-optgroup *ngFor="let group of GetAvailableInterfacePropertyGroups(rest)" [label]="group.GroupName">
+                    <mat-option *ngFor="let prop of group.Properties" [value]="prop.ID" (click)="SetPropertyDefaultValue(rest.SenderInterfaceRestriction.Property, prop)">
+                      <ng-container *ngIf="prop.DisplayName">{{prop.DisplayName | translate}}</ng-container>
+                      <ng-container *ngIf="!prop.DisplayName">{{prop.ID}}</ng-container>
+                    </mat-option>
+                  </mat-optgroup>
+                </mat-select>
+              </mat-form-field>
+              <ng-container *ngIf="GetPropertyEditType(rest) == 'Check Box'">
+                <mat-checkbox color="primary" style="margin-left: 10px; vertical-align: super;" [(ngModel)]="rest.SenderInterfaceRestriction.Property.Value"></mat-checkbox>
+              </ng-container>
+              <ng-container *ngIf="GetPropertyEditType(rest) == 'Low Medium High Select'">
+                <select style="width: 75px; margin-left: 10px; vertical-align: super;" [ngModel]="rest.SenderInterfaceRestriction.Property.Value" (change)="SetLWH(rest.SenderInterfaceRestriction.Property, $event['target']['value'])">
+                  <option *ngFor="let type of GetLMHValues()" [value]="type">{{GetLMHName(type) | translate}}</option>
+                </select>
+              </ng-container>
+            </ng-container>
+            <!--Receiver Interface Restriction-->
+            <ng-container *ngIf="rest.RestType == 11">
+              <mat-form-field appearance="fill" class="property-form-field" style="margin-left: 10px;">
+                <mat-label>{{'general.PropertyName' | translate}}</mat-label>
+                <mat-select [(value)]="rest.ReceiverInterfaceRestriction.Property.ID">
+                  <mat-optgroup *ngFor="let group of GetAvailableInterfacePropertyGroups(rest)" [label]="group.GroupName">
+                    <mat-option *ngFor="let prop of group.Properties" [value]="prop.ID" (click)="SetPropertyDefaultValue(rest.ReceiverInterfaceRestriction.Property, prop)">
+                      <ng-container *ngIf="prop.DisplayName">{{prop.DisplayName | translate}}</ng-container>
+                      <ng-container *ngIf="!prop.DisplayName">{{prop.ID}}</ng-container>
+                    </mat-option>
+                  </mat-optgroup>
+                </mat-select>
+              </mat-form-field>
+              <ng-container *ngIf="GetPropertyEditType(rest) == 'Check Box'">
+                <mat-checkbox color="primary" style="margin-left: 10px; vertical-align: super;" [(ngModel)]="rest.ReceiverInterfaceRestriction.Property.Value"></mat-checkbox>
+              </ng-container>
+              <ng-container *ngIf="GetPropertyEditType(rest) == 'Low Medium High Select'">
+                <select style="width: 75px; margin-left: 10px; vertical-align: super;" [ngModel]="rest.ReceiverInterfaceRestriction.Property.Value" (change)="SetLWH(rest.ReceiverInterfaceRestriction.Property, $event['target']['value'])">
+                  <option *ngFor="let type of GetLMHValues()" [value]="type">{{GetLMHName(type) | translate}}</option>
+                </select>
+              </ng-container>
+            </ng-container>
+
+            <button mat-raised-button *ngIf="!isLast" style="margin-left: 10px; vertical-align: super;" (click)="rest.IsOR = !rest.IsOR">
+              {{rest.IsOR ? 'OR' : 'AND'}}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="threatRule.RuleType == 3">
+      <mat-form-field appearance="fill" class="property-form-field disable">
+        <mat-label>{{ 'properties.ComponentType' | translate }}</mat-label>
+        <input matInput [value]="selectedComponentType?.Name"  matTooltip="{{selectedComponentType?.Name}}" matTooltipShowDelay="1000"/>
+      </mat-form-field>
+      <br/>
+      {{'properties.Restrictions' | translate}} 
+      <button mat-icon-button (click)="AddComponentRestriction()" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000">
+        <mat-icon>add</mat-icon>
+      </button>
+      <span style="margin-left: 10px;">{{GetRestrictionString()}}</span>
+      <div>
+        <div *ngFor="let rest of threatRule.ComponentRestriction.DetailRestrictions; index as i; last as isLast">
+          <mat-form-field appearance="fill" class="property-form-field" [style.padding-left]="GetLayerPadding(rest)">
+            <mat-label>{{'general.Type' | translate}}</mat-label>
+            <input matPrefix matInput min="0" type="number" style="width: 30px;" [(ngModel)]="rest.Layer">
+            <mat-select [(value)]="rest.RestType">
+              <mat-option *ngFor="let type of GetAvailableRestrictionsTypes(rest)" [value]="type" (click)="CreatePropertyRestrictionType(rest, type)">
+                {{GetRestrictionTypeName(type) | translate}}
+              </mat-option>
+            </mat-select>
+            <button matSuffix mat-icon-button (click)="RemoveComponentRestriction(i)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </mat-form-field>
+          <!--Property Restrction-->
+          <ng-container *ngIf="rest.RestType == 1">
+            <mat-form-field appearance="fill" class="property-form-field" style="margin-left: 10px;">
+              <mat-label>{{'general.PropertyName' | translate}}</mat-label>
+              <mat-select [(value)]="rest.PropertyRest.ID">
+                <mat-optgroup *ngFor="let group of GetAvailablePropertyGroups(rest)" [label]="group.GroupName">
+                  <mat-option *ngFor="let prop of group.Properties" [value]="prop.ID" (click)="SetPropertyDefaultValue(rest.PropertyRest, prop)">
+                    <ng-container *ngIf="prop.DisplayName">{{prop.DisplayName | translate}}</ng-container>
+                    <ng-container *ngIf="!prop.DisplayName">{{prop.ID}}</ng-container>
+                  </mat-option>
+                </mat-optgroup>
+              </mat-select>
+            </mat-form-field>
+            <button mat-raised-button style="margin-left: 10px; vertical-align: super;" (click)="OnNextComparisonType(rest, rest.PropertyRest)">
+              {{rest.PropertyRest.ComparisonType}}
+            </button>
+            <ng-container *ngIf="GetPropertyEditType(rest) == 'Check Box'">
+              <mat-checkbox color="primary" style="margin-left: 10px; vertical-align: super;" [(ngModel)]="rest.PropertyRest.Value"></mat-checkbox>
+            </ng-container>
+            <ng-container *ngIf="GetPropertyEditType(rest) == 'Low Medium High Select'">
+              <select style="width: 75px; margin-left: 10px; vertical-align: super;" [ngModel]="rest.PropertyRest.Value" (change)="SetLWH(rest.PropertyRest, $event['target']['value'])">
+                <option *ngFor="let type of GetLMHValues()" [value]="type">{{GetLMHName(type) | translate}}</option>
+              </select>
+            </ng-container>
+          </ng-container>
+          <button mat-raised-button *ngIf="!isLast" style="margin-left: 10px; vertical-align: super;" (click)="rest.IsOR = !rest.IsOR">
+            {{rest.IsOR ? 'OR' : 'AND'}}
+          </button>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="threatRule.RuleType == 4">
+      <mat-form-field appearance="fill" class="property-form-field disable">
+        <mat-label>{{ 'general.Protocol' | translate }}</mat-label>
+        <input matInput [value]="selectedProtocol?.Name"  matTooltip="{{selectedProtocol?.Name}}" matTooltipShowDelay="1000"/>
+      </mat-form-field>
+      <br/>
+      {{'properties.Restrictions' | translate}} 
+      <button mat-icon-button (click)="AddProtocolRestriction()" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000">
+        <mat-icon>add</mat-icon>
+      </button>
+      <span style="margin-left: 10px;">{{GetRestrictionString()}}</span>
+      <div>
+        <div *ngFor="let rest of threatRule.ProtocolRestriction.DetailRestrictions; index as i; last as isLast">
+          <mat-form-field appearance="fill" class="property-form-field" [style.padding-left]="GetLayerPadding(rest)">
+            <mat-label>{{'general.Type' | translate}}</mat-label>
+            <input matPrefix matInput min="0" type="number" style="width: 30px;" [(ngModel)]="rest.Layer">
+            <mat-select [(value)]="rest.RestType">
+              <mat-option *ngFor="let type of GetAvailableRestrictionsTypes(rest)" [value]="type" (click)="CreatePropertyRestrictionType(rest, type)">
+                {{GetRestrictionTypeName(type) | translate}}
+              </mat-option>
+            </mat-select>
+            <button matSuffix mat-icon-button (click)="RemoveProtocolRestriction(i)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </mat-form-field>
+          <!--Property Restrction-->
+          <ng-container *ngIf="rest.RestType == 1">
+            <mat-form-field appearance="fill" class="property-form-field" style="margin-left: 10px;">
+              <mat-label>{{'general.PropertyName' | translate}}</mat-label>
+              <mat-select [(value)]="rest.PropertyRest.ID">
+                <mat-optgroup *ngFor="let group of GetAvailablePropertyGroups(rest)" [label]="group.GroupName">
+                  <mat-option *ngFor="let prop of group.Properties" [value]="prop.ID" (click)="SetPropertyDefaultValue(rest.PropertyRest, prop)">
+                    <ng-container *ngIf="prop.DisplayName">{{prop.DisplayName | translate}}</ng-container>
+                    <ng-container *ngIf="!prop.DisplayName">{{prop.ID}}</ng-container>
+                  </mat-option>
+                </mat-optgroup>
+              </mat-select>
+            </mat-form-field>
+            <button mat-raised-button style="margin-left: 10px; vertical-align: super;" (click)="OnNextComparisonType(rest, rest.PropertyRest)">
+              {{rest.PropertyRest.ComparisonType}}
+            </button>
+            <ng-container *ngIf="GetPropertyEditType(rest) == 'Check Box'">
+              <mat-checkbox color="primary" style="margin-left: 10px; vertical-align: super;" [(ngModel)]="rest.PropertyRest.Value"></mat-checkbox>
+            </ng-container>
+            <ng-container *ngIf="GetPropertyEditType(rest) == 'Low Medium High Select'">
+              <select style="width: 75px; margin-left: 10px; vertical-align: super;" [ngModel]="rest.PropertyRest.Value" (change)="SetLWH(rest.PropertyRest, $event['target']['value'])">
+                <option *ngFor="let type of GetLMHValues()" [value]="type">{{GetLMHName(type) | translate}}</option>
+              </select>
+            </ng-container>
+          </ng-container>
+          
+          <button mat-raised-button *ngIf="!isLast" style="margin-left: 10px; vertical-align: super;" (click)="rest.IsOR = !rest.IsOR">
+            {{rest.IsOR ? 'OR' : 'AND'}}
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="row" style="margin-top: 10px;">
+      <div class="column1">
+        <mat-list cdkDropList (cdkDropListDropped)="dropMitigation($event, GetMitigations())" class="prop-list reorder-list" [class.prop-list-light]="!theme.IsDarkMode" [class.prop-list-dark]="theme.IsDarkMode">
+          <div mat-subheader>{{ 'general.Mitigations' | translate }} 
+            <button mat-icon-button style="margin-left: 15px;" [matMenuTriggerFor]="addMenu" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000"><mat-icon>add</mat-icon></button>
+            <mat-menu #addMenu="matMenu">
+              <button mat-menu-item (click)="AddMitigation()">{{'general.New' | translate}}</button>
+              <button mat-menu-item [matMenuTriggerFor]="existing">{{'general.Existing' | translate}}</button>
+            </mat-menu>
+            <mat-menu #existing="matMenu">
+              <button mat-menu-item *ngFor="let mit of GetPossibleMitigations()" (click)="AddExistingMitigation(mit)">{{mit.Name}}</button>
+            </mat-menu>
+          </div>
+          <mat-list-item *ngFor="let mit of GetMitigations()" (click)="selectedMitigation = mit" cdkDrag
+            [class.highlight-light]="selectedMitigation === mit && !theme.IsDarkMode" [class.highlight-dark]="selectedMitigation === mit && theme.IsDarkMode"
+            matTooltip="{{mit.Name}}" matTooltipShowDelay="1000">
+            <mat-icon mat-list-icon>chevron_right</mat-icon>
+            <div mat-line>{{mit.Name | translate}}</div>
+            <button mat-icon-button style="margin-left: auto; margin-right: 0px;" (click)="RemoveMitigation(mit)" matTooltip="{{'general.Remove' | translate}}" matTooltipShowDelay="1000"><mat-icon>remove</mat-icon></button>
+            <button mat-icon-button style="margin-left: auto;" (click)="DeleteMitigation(mit)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000"><mat-icon>delete</mat-icon></button>
+          </mat-list-item>
+          <ng-container *ngIf="GetOriginMitigations()?.length > 0">
+            <mat-divider></mat-divider>
+            <div mat-subheader>{{threatRule.ThreatOrigin.Name}} {{ 'general.Mitigations' | translate }}</div>
+            <mat-list-item *ngFor="let mit of GetOriginMitigations()" (click)="selectedMitigation = mit"
+              [class.highlight-light]="selectedMitigation === mit && !theme.IsDarkMode" [class.highlight-dark]="selectedMitigation === mit && theme.IsDarkMode"
+              matTooltip="{{mit.Name}}" matTooltipShowDelay="1000">
+              <mat-icon mat-list-icon>security</mat-icon>
+              <div mat-line>{{mit.Name | translate}}</div>
+            </mat-list-item>
+          </ng-container>
+        </mat-list>
+      </div>
+      <div class="column2">
+        <div style="margin: 10px 0 10px 10px;" *ngIf="selectedMitigation">
+          <app-mitigation [mitigation]="selectedMitigation" [canEdit]="false" [canEditName]="true" [canEditGroup]="true"></app-mitigation>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

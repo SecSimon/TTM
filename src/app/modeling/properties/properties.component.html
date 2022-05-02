@@ -1,0 +1,96 @@
+<div style="width: 100%; height: 100%; font-size: small;">
+  <table style="padding: 10px; width: 100%;" *ngIf="selectedObject">
+    <colgroup>
+      <col span="1" style="width: calc(100% - 200px);">
+      <col span="1" style="width: 200px;">
+    </colgroup>
+    <tr *ngFor="let prop of selectedObject.GetProperties()">
+      <td><span matTooltip="{{prop.Tooltip | translate}}" matTooltipShowDelay="1000">{{prop.DisplayName | translate}}</span></td>
+      <td>
+        <!--Arrow Position-->
+        <select *ngIf="prop.Type == 'Arrow Position'" style="width: 100%;" [class.disable]="!prop.Editable" [ngModel]="GetValue(prop)" (change)="SetValue(prop, $event['target']['value'])">
+          <option *ngFor="let pos of GetArrowPositions()" [value]="pos">{{GetArrowPositionName(pos) | translate}}</option>
+        </select>
+        <!--Check Box-->
+        <mat-checkbox *ngIf="prop.Type == 'Check Box'" color="primary" [checked]="GetValue(prop)" (change)="SetValue(prop, $event['checked'])" [disabled]="!prop.Editable"></mat-checkbox>
+        <!--Device Interface Name-->
+        <select *ngIf="prop.Type == 'Device Interface Name'" style="width: 100%;" [class.disable]="!prop.Editable" [ngModel]="GetValue(prop)" (change)="SetValue(prop, $event['target']['value'])">
+          <option *ngFor="let name of GetDeviceInterfaceNames()" [value]="name">{{name | translate}}</option>
+        </select>
+        <!--Data Flow Diagram Reference-->
+        <button class="buttonAsText primary-color" *ngIf="prop.Type == 'Data Flow Diagram Reference' && !prop.Editable" (click)="OnDiagramReference(prop)">{{GetDiagramReference(prop)}}</button>
+        <select *ngIf="prop.Type == 'Data Flow Diagram Reference' && prop.Editable" style="width: 100%;" [ngModel]="GetValue(prop)" (change)="SetValue(prop, $event['target']['value'])">
+          <option *ngFor="let diagram of GetAvailableDataFlowDiagrams()" [value]="diagram.ID">{{diagram.Name}}</option>
+        </select>
+        <!--Diagram Reference-->
+        <button class="buttonAsText primary-color" *ngIf="prop.Type == 'Diagram Reference' && !prop.Editable" (click)="OnDiagramReference(prop)">{{GetDiagramReference(prop)}}</button>
+        <select *ngIf="prop.Type == 'Diagram Reference' && prop.Editable" style="width: 100%;" [ngModel]="GetValue(prop)" (change)="SetValue(prop, $event['target']['value'])">
+          <option *ngFor="let diagram of GetAvailableDiagrams()" [value]="diagram.ID">{{diagram.Name}}</option>
+        </select>
+        <!--Element Name-->
+        <button class="buttonAsText primary-color" *ngIf="prop.Type == 'Element Name'" (click)="OnElementName(prop)">{{GetElementName(prop)}}</button>
+        <!--Flow Type-->
+        <select *ngIf="prop.Type == 'Flow Type'" style="width: 100%;" [class.disable]="!prop.Editable" [ngModel]="GetValue(prop)" (change)="SetValue(prop, $event['target']['value'])">
+          <option *ngFor="let pos of GetFlowTypes()" [value]="pos">{{GetFlowTypeName(pos) | translate}}</option>
+        </select>
+        <!--Interface Element Select-->
+        <select *ngIf="prop.Type == 'Interface Element Select'" style="width: 100%;" [ngModel]="GetValue(prop)?.ID" (change)="SetInterface(prop, $event['target']['value'])">
+          <!--<option *ngFor="let element of GetAvailableInterfaces(selectedObject)" [value]="element.ID">{{element.Name}}</option>-->
+          <option>{{'properties.selectNone' | translate}}</option>
+          <optgroup *ngFor="let dev of GetAvailableDevices()" [label]="dev.Name">
+            <option *ngFor="let element of GetAvailableInterfaces(dev)" [value]="element.ID">{{element.Name}}</option>
+          </optgroup>
+        </select>
+        <!--Data Select-->
+        <ng-container *ngIf="prop.Type == 'Data Select'">
+          <mat-select class="matSelect" [disabled]="!prop.Editable" style="width: calc(100% - 22px);" multiple [value]="GetValue(prop)" (selectionChange)="SetValue(prop, $event['value'])">
+            <mat-option class="matOption" color="primary" *ngFor="let data of GetMyDatas()" [value]="data">{{data.Name}}</mat-option>
+          </mat-select>
+          <button mat-icon-button (click)="AddMyData(prop)" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000" style="height: 20px; width: 20px; line-height: 20px;">
+            <mat-icon>add</mat-icon>
+          </button>
+        </ng-container>
+        <!--Line Type-->
+        <select *ngIf="prop.Type == 'Line Type'" style="width: 100%;" [class.disable]="!prop.Editable" [ngModel]="GetValue(prop)" (change)="SetValue(prop, $event['target']['value'])">
+          <option *ngFor="let type of GetLineTypes()" [value]="type">{{GetLineTypeName(type) | translate}}</option>
+        </select>
+        <!--Low Medium High Select-->
+        <select *ngIf="prop.Type == 'Low Medium High Select'" style="width: 100%;" [class.disable]="!prop.Editable" [ngModel]="GetValue(prop)" (change)="SetValue(prop, $event['target']['value'])">
+          <option *ngFor="let type of GetLMHValues()" [value]="type">{{GetLMHName(type) | translate}}</option>
+        </select>
+        <!--Physical Element Select-->
+        <select *ngIf="prop.Type == 'Physical Element Select'" style="width: 100%;" [ngModel]="GetValue(prop)?.ID" (change)="selectedObject['Data']['physicalElementID']=$event['target']['value']">
+          <option *ngFor="let element of GetAvailablePhysicalElements(selectedObject)" [value]="element.ID">{{element.Name}}</option>
+        </select>
+        <!--Protocol Select-->
+        <mat-select class="matSelect" *ngIf="prop.Type == 'Protocol Select'" style="width: 100%;" multiple [value]="GetValue(prop)" (selectionChange)="SetValue(prop, $event['value'])">
+          <mat-option class="matOption" color="primary" *ngFor="let protocol of GetProtocols()" [value]="protocol">{{protocol.Name}}</mat-option>
+        </mat-select>
+        <!--Stencil Type-->
+        <select *ngIf="prop.Type == 'Stencil Type'" style="width: 100%;" [ngModel]="GetStencilType()" (change)="SetType(prop, $event['target']['value'])">
+          <option *ngFor="let type of GetAvailableTypes(selectedObject)" [value]="type.ID">{{type.Name}}</option>
+        </select>
+        <!--Text Area-->
+        <textarea *ngIf="prop.Type == 'Text Area'" type="text" style="width: 100%; font-size: inherit;" [value]="GetValue(prop)" (input)="SetValue(prop, $event['target']['value'])" [disabled]="!prop.Editable"></textarea>
+        <!--Text Box-->
+        <input *ngIf="prop.Type == 'Text Box'" type="text" style="width: 100%;" [value]="GetValue(prop)" (input)="SetValue(prop, $event['target']['value'])" [disabled]="!prop.Editable">
+      </td>
+    </tr>
+    <ng-container *ngIf="IsDFDElement()">
+      <tr *ngFor="let mnemonic of GetMnemonics()">
+        <td>{{mnemonic.Name}}</td>
+        <td>
+          <span style="margin-right: 5px;" *ngFor="let letter of mnemonic.Letters">
+            <button class="buttonAsText" [style.color]="theme.IsDarkMode ? 'white' : 'black'" [class.primary-color]="letter.AffectedElementTypes.includes(selectedElement.Type.ElementTypeID)" style="font-size: small;" (click)="AddMnemonicThreat(letter)" matTooltip="{{GetLetterTooltip(letter)}}" matTooltipShowDelay="1000">{{letter.Letter}}</button>
+          </span>
+        </td>
+      </tr>
+    </ng-container>
+    <tr *ngIf="IsComponent()">
+      <td colspan="2"><button mat-raised-button (click)="OpenQuestionnaire()">{{'properties.openQuestionnaire' | translate}}</button></td>
+    </tr>
+    <tr *ngIf="IsUseCase()">
+      <td colspan="2"><button mat-raised-button (click)="CreateUseCaseDiagram()">{{'properties.createDataFlowDiagram' | translate}}</button></td>
+    </tr>
+  </table>
+</div>

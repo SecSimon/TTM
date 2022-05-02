@@ -1,0 +1,9 @@
+{
+    "/api/*":{
+        "target": "https://1tvzjyylrh.execute-api.us-east-2.amazonaws.com/default/GithubAuthHandler",
+        "secure": true,
+        "logLevel": "debug",
+        "pathRewrite": {"^/api" : ""},
+        "changeOrigin": true
+    }
+}

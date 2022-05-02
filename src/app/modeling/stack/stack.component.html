@@ -1,0 +1,46 @@
+<div style="width: 100%; height: 100%;">
+  <div class="tools mat-elevation-z8" [class.bg-color-light2]="!theme.IsDarkMode" [class.bg-color-dark2]="theme.IsDarkMode">
+    <button mat-button class="toolBtn" [disabled]="!selectedComponent" (click)="AddThreat(selectedComponent)" matTooltip="{{'pages.modeling.diagram.addThreat' | translate}}" matTooltipShowDelay="1000">
+      <mat-icon>flash_on</mat-icon>
+    </button>
+    <button mat-button class="toolBtn" [disabled]="!selectedComponent" (click)="AddMitigation(selectedComponent)" matTooltip="{{'pages.modeling.diagram.addMitigation' | translate}}" matTooltipShowDelay="1000">
+      <mat-icon>security</mat-icon>
+    </button>
+  </div>
+  <table (dragover)="AllowDrop($event)" style="border-spacing: 0 20px;">
+    <tbody>
+      <tr *ngFor="let group of GetGroups(); let index = index" (drop)="OnDrop($event, group)">
+        <td><p class="group">{{group.Name}}</p></td>
+        <td>
+          <button *ngFor="let comp of GetComponents(group)" class="component" [class.component-dark]="theme.IsDarkMode" [class.component-third-party]="comp.IsThirdParty"
+            [style.opacity]="comp.IsActive ? 1 : 0.5" [style.border-color]="GetComponentColor(comp)" (click)="OnComponentClick(comp)" (dblclick)="OnComponentDblClick(comp)"
+            (contextmenu)="OpenContextMenu($event, comp)" [matBadge]="CompBadge(comp)" matBadgeColor="primary" [matBadgeHidden]="CompBadge(comp).length == 0" matBadgePosition="below">
+            {{comp.Name}}
+          </button>
+          <button *ngIf="GetComponents(group) == null || GetComponents(group).length == 0" style="visibility: hidden;" class="component">Temp</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div style="visibility: hidden; position: fixed;" [style.left]="menuTopLeftPosition.x" [style.top]="menuTopLeftPosition.y" [matMenuTriggerFor]="rightMenu"></div> 
+  <mat-menu #rightMenu="matMenu"> 
+    <ng-template matMenuContent let-item="item">
+      <ng-container *ngIf="item">
+        <span *ngIf="item" style="margin-left: 20px; margin-right: 20px;">{{item.GetProperty('Name')}}</span> 
+        <button mat-menu-item (click)="OnDeleteElement(item)">
+          <mat-icon>delete</mat-icon>
+          <span>{{'pages.modeling.stack.deleteComponent' | translate}}</span>
+        </button>
+        <button mat-menu-item (click)="AddThreat(item)">
+          <mat-icon>flash_on</mat-icon>
+          <span>{{'pages.modeling.diagram.addThreat' | translate}}</span>
+        </button>
+        <button mat-menu-item (click)="AddMitigation(item)">
+          <mat-icon>security</mat-icon>
+          <span>{{'pages.modeling.diagram.addMitigation' | translate}}</span>
+        </button>
+      </ng-container>
+    </ng-template> 
+  </mat-menu> 
+</div>

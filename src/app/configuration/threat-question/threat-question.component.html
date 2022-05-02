@@ -1,0 +1,53 @@
+<div [class.disable]="!canEdit">
+  <mat-form-field appearance="fill" class="property-form-field">
+    <mat-label>{{'properties.QuestionName' | translate}}</mat-label>
+    <input matInput type="text" [(ngModel)]="threatQuestion.Name" matTooltip="{{threatQuestion.Name}}" matTooltipShowDelay="1000">
+    <button *ngIf="threatQuestion.Name" matSuffix mat-icon-button (click)="threatQuestion.Name=''" matTooltip="{{'general.Clear' | translate}}" matTooltipShowDelay="1000">
+      <mat-icon>close</mat-icon>
+    </button>
+  </mat-form-field>
+  <br/>
+  <mat-form-field appearance="fill" style="width: 100%;">
+    <mat-label>{{ 'properties.Question' | translate }}</mat-label>
+    <input matInput type="text" [(ngModel)]="threatQuestion.Question">
+  </mat-form-field>
+  <br/>
+  <mat-form-field appearance="fill" style="width: 100%;">
+    <mat-label>{{ 'properties.Description' | translate }}</mat-label>
+    <textarea matInput [(ngModel)]="threatQuestion.Description"></textarea>
+  </mat-form-field>
+  <br/>
+  <mat-form-field appearance="fill" class="property-form-field">
+    <mat-label>{{'general.Property' | translate}}</mat-label>
+    <mat-select [(value)]="threatQuestion.Property" matTooltip="{{threatQuestion.Property?.Tooltip | translate}}" matTooltipShowDelay="1000">
+      <mat-option *ngFor="let prop of GetProperties()" [value]="prop">{{prop.DisplayName}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <br/>
+  <mat-form-field appearance="fill" class="property-form-field">
+    <mat-label>{{'properties.OptionType' | translate}}</mat-label>
+    <mat-select [(value)]="threatQuestion.OptionType" matTooltip="{{GetOptionTypeName(threatQuestion.OptionType) | translate}}" matTooltipShowDelay="1000">
+      <mat-option *ngFor="let type of GetOptionTypes()" [value]="type">{{GetOptionTypeName(type) | translate}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <div>
+    <div class="optionColumn1">
+      <mat-list class="prop-list" [class.prop-list-light]="!theme.IsDarkMode" [class.prop-list-dark]="theme.IsDarkMode">
+        <div mat-subheader>{{ 'properties.ChangesPerOption' | translate }}</div>
+        <mat-list-item *ngFor="let opt of GetOptionValues(threatQuestion.OptionType)" (click)="selectedOption = opt"
+        [class.highlight-light]="IsOptionSelected(opt) && !theme.IsDarkMode" [class.highlight-dark]="IsOptionSelected(opt) && theme.IsDarkMode">
+          <mat-icon mat-list-icon [style.visibility]="threatQuestion.ChangesPerOption[opt.Key]?.Active ? 'visible' : 'hidden'">chevron_right</mat-icon>
+          <div mat-line>{{opt['Key'] | translate}}</div>
+          <div mat-line *ngIf="threatQuestion.Property && threatQuestion.ChangesPerOption[opt.Key]?.Active == true">Property set to {{threatQuestion.ChangesPerOption[opt.Key]['Value']}}</div>
+        </mat-list-item>
+      </mat-list>
+    </div>
+    <div class="optionColumn2">
+      <ng-container *ngIf="threatQuestion && selectedOption && threatQuestion.Property">
+        <mat-checkbox color="primary" [(ngModel)]="threatQuestion.ChangesPerOption[selectedOption.Key]['Active']" labelPosition="before">{{'pages.config.threatquestion.setProperty' | translate}}</mat-checkbox>
+        <br/>
+        Set <i>{{threatQuestion.Property.DisplayName}}</i> to <mat-checkbox color="primary" [disabled]="!threatQuestion.ChangesPerOption[selectedOption.Key]?.Active" [(ngModel)]="threatQuestion.ChangesPerOption[selectedOption.Key]['Value']"></mat-checkbox>
+      </ng-container>
+    </div>
+  </div>
+</div>

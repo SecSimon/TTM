@@ -1,0 +1,12 @@
+<div class="website-container" color="primary">
+  <mat-drawer-container class="drawer-container">
+    <mat-drawer mode="side" opened style="border-right-width: 0px;">
+      <app-side-nav style="width: 100%; height: 100%;"></app-side-nav>
+    </mat-drawer>
+
+    <mat-drawer-content [class.splitter-light2]="!theme.IsDarkMode" [class.splitter-dark2]="theme.IsDarkMode">
+      <h1 style="text-align: center;">404 - Page not found</h1>
+    </mat-drawer-content>
+  </mat-drawer-container>
+  <app-status-bar></app-status-bar>
+</div>

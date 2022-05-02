@@ -1,0 +1,44 @@
+.column1 {
+  float: left;
+  width: 350px;
+}
+
+.column2 {
+  float: left;
+  width: calc(100% - 350px);
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.prop-list {
+  .mat-list-item {
+    height: 48px;
+  }
+
+  ::ng-deep .mat-list-item-content {
+    padding: 0 8px !important;
+  }
+  ::ng-deep .mat-list-text {
+    padding-left: 8px !important;
+  }
+}
+
+.prop-list-light {
+  border-right: 1px solid rgba(0,0,0,0.1);
+}
+
+.prop-list-dark {
+  border-right: 1px solid rgba(255,255,255,0.1);
+}
+
+.highlight-light { background-color: rgba(0,0,0,0.1); }
+.highlight-dark { background-color: rgba(255,255,255,0.1); }
+
+.property-form-field {
+  width: 300px;
+}

@@ -1,0 +1,37 @@
+<div>
+  <mat-form-field appearance="fill" class="property-form-field">
+    <mat-label>{{'general.Name' | translate}}</mat-label>
+    <input matInput type="text" [(ngModel)]="deviceThreat.Name" matTooltip="{{deviceThreat.Name}}" matTooltipShowDelay="1000">
+    <button *ngIf="deviceThreat.Name" matSuffix mat-icon-button (click)="deviceThreat.Name=''" matTooltip="{{'general.Clear' | translate}}" matTooltipShowDelay="1000">
+      <mat-icon>close</mat-icon>
+    </button>
+  </mat-form-field>
+  <br/>
+  <mat-form-field appearance="fill" style="width: 100%;">
+    <mat-label>{{'properties.consequencesImpact' | translate}}</mat-label>
+    <textarea matInput type="text" [(ngModel)]="deviceThreat.Description"></textarea>
+  </mat-form-field>
+  <br/>
+  <mat-form-field appearance="fill" class="property-form-field">
+    <mat-label>{{'properties.Impact' | translate}}</mat-label>
+    <mat-select [(value)]="deviceThreat.Impact" matTooltip="{{GetLMHName(deviceThreat.Impact) | translate}}" matTooltipShowDelay="1000">
+      <mat-option *ngFor="let type of GetLMHValues()" [value]="type">{{GetLMHName(type) | translate}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <br/>
+  <mat-form-field appearance="fill" class="property-form-field" *ngIf="showThreatCat">
+    <mat-label>{{'general.ThreatCategory' | translate}}</mat-label>
+    <mat-select [(value)]="deviceThreat.ThreatCategory">
+      <mat-option *ngFor="let cat of GetThreatCategories()" [value]="cat" matTooltip="{{cat.Description}}" matTooltipShowDelay="1000">
+        {{cat.Name}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <br/>
+  <div style="margin-top: 10px; display: flex; flex-wrap: wrap;">
+    <table *ngFor="let impact of GetImpactCategories()" style="min-width: 150px;">
+      <tr><td style="text-align: center;">{{GetImpactCategoryName(impact) | translate}}</td></tr>
+      <tr><td style="text-align: center;"><mat-checkbox color="primary" [checked]="deviceThreat.ImpactCats.includes(impact)" (change)="ImpactCatChanged(deviceThreat.ImpactCats, impact)"></mat-checkbox></td></tr>
+    </table>
+  </div>
+</div>

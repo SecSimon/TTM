@@ -1,0 +1,346 @@
+<div *ngIf="selectedNode" style="margin-left: 10px; margin-right: 10px;">
+  <h2>{{selectedNode.name()}}</h2>
+  <mat-form-field *ngIf="isStencilType" appearance="fill" style="width: 100%;">
+    <mat-label>{{ 'properties.Description' | translate }}</mat-label>
+    <textarea matInput [(ngModel)]="selectedType.Description"></textarea>
+  </mat-form-field>
+  <mat-form-field *ngIf="isStencilTypeTemplate" appearance="fill" style="width: 100%;">
+    <mat-label>{{ 'properties.Description' | translate }}</mat-label>
+    <textarea matInput [(ngModel)]="selectedTypeTemplate.Description"></textarea>
+  </mat-form-field>
+  <mat-form-field *ngIf="isStencilThreatMnemonic" appearance="fill" style="width: 100%;">
+    <mat-label>{{ 'properties.Description' | translate }}</mat-label>
+    <textarea matInput [(ngModel)]="selectedThreatMnemonic.Description"></textarea>
+  </mat-form-field>
+  <mat-tab-group *ngIf="isStencilType" [selectedIndex]="GetSelectedTabIndex()" (selectedIndexChange)="SetSelectedTabIndex($event)">
+    <mat-tab label="{{'general.Properties' | translate}} ({{selectedType?.Properties?.length}})">
+        <ng-template matTabContent>
+          <div class="row">
+            <div class="column1">
+              <mat-list cdkDropList (cdkDropListDropped)="drop($event, selectedType.Properties)" class="prop-list reorder-list" [class.prop-list-light]="!theme.IsDarkMode" [class.prop-list-dark]="theme.IsDarkMode">
+                <div mat-subheader>{{selectedType.Name}} {{ 'general.Properties' | translate }} <button mat-icon-button (click)="AddProperty()" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000" style="margin-left: 15px;"><mat-icon>add</mat-icon></button></div>
+                <mat-list-item *ngFor="let prop of selectedType.Properties" (click)="selectedProperty = prop" cdkDrag (contextmenu)="OpenContextMenu($event, prop)"
+                [class.highlight-light]="selectedProperty === prop && !theme.IsDarkMode" [class.highlight-dark]="selectedProperty === prop && theme.IsDarkMode"
+                matTooltip="{{prop.DisplayName | translate}}" matTooltipShowDelay="1000">
+                  <mat-icon mat-list-icon>chevron_right</mat-icon>
+                  <div mat-line>{{prop.DisplayName | translate}}</div>
+                  <div mat-line>{{prop.Type}}: {{GetElementPropertyValue(prop) | translate}}</div>
+                  <button mat-icon-button style="margin-left: auto;" (click)="DeleteProperty(prop)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000"><mat-icon>delete</mat-icon></button>
+                </mat-list-item>
+                <ng-container *ngIf="!selectedType.IsDefault">
+                  <mat-divider></mat-divider>
+                  <div mat-subheader>{{selectedElementType.Name}} {{ 'general.Properties' | translate }}</div>
+                  <mat-list-item *ngFor="let prop of selectedElementType.Properties" (click)="selectedProperty = prop"
+                  [class.highlight-light]="selectedProperty === prop && !theme.IsDarkMode" [class.highlight-dark]="selectedProperty === prop && theme.IsDarkMode"
+                  matTooltip="{{prop.DisplayName | translate}}" matTooltipShowDelay="1000">
+                    <mat-icon mat-list-icon>{{GetIcon(selectedElementType)}}</mat-icon>
+                    <div mat-line>{{prop.DisplayName | translate}} </div>
+                    <div mat-line>{{prop.Type}}: {{GetElementPropertyValue(prop) | translate}}</div>
+                    <mat-icon style="margin-left: auto; margin-right: 5px" *ngIf="IsPropOverwritten(prop)">update</mat-icon>
+                  </mat-list-item>
+                </ng-container>
+              </mat-list>
+            </div>
+            <div class="column2">
+              <ng-container *ngIf="selectedType.Properties?.includes(selectedProperty)">
+                <div style="margin: 10px;">
+                  <mat-form-field appearance="fill" class="property-form-field">
+                    <mat-label>{{'general.PropertyName' | translate}}</mat-label>
+                    <input matInput type="text" [(ngModel)]="selectedProperty.DisplayName" matTooltip="{{selectedProperty.DisplayName}}" matTooltipShowDelay="1000">
+                    <button *ngIf="selectedProperty.DisplayName" matSuffix mat-icon-button (click)="selectedProperty.DisplayName=''" matTooltip="{{'general.Clear' | translate}}" matTooltipShowDelay="1000">
+                      <mat-icon>close</mat-icon>
+                    </button>
+                  </mat-form-field>
+                  <br/>
+                  <mat-form-field appearance="fill" class="property-form-field">
+                    <mat-label>{{'general.Type' | translate}}</mat-label>
+                    <mat-select [(value)]="selectedProperty.Type" matTooltip="{{selectedProperty.Type}}" matTooltipShowDelay="1000">
+                      <mat-option *ngFor="let type of GetPropertyTypes()" [value]="type">{{type}}</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                  <br/>
+                  <mat-form-field appearance="fill" style="width: 100%;">
+                    <mat-label>{{'general.Tooltip' | translate}}</mat-label>
+                    <input matInput type="text" [(ngModel)]="selectedProperty.Tooltip">
+                  </mat-form-field>
+                  <br/>
+                  <ng-container *ngIf="selectedProperty.Type == 'Check Box'">{{'general.DefaultValue' | translate}}: <mat-checkbox color="primary" [(ngModel)]="selectedProperty.DefaultValue"></mat-checkbox></ng-container>
+                  <br/>
+                  {{'general.Editable' | translate}}: <mat-checkbox color="primary" [(ngModel)]="selectedProperty.Editable"></mat-checkbox>
+                </div>
+              </ng-container>
+              <ng-container *ngIf="!selectedType.IsDefault && selectedElementType.Properties?.includes(selectedProperty)">
+                <div style="margin: 10px;">
+                  <ng-container *ngIf="!IsPropOverwritten(selectedProperty)")>
+                    <button mat-raised-button (click)="OverwriteProperty()">{{ 'pages.config.overwriteProp' | translate }}</button>
+                  </ng-container>
+                  <ng-container *ngIf="IsPropOverwritten(selectedProperty)")> 
+                    <button mat-raised-button (click)="UnOverwriteProperty()">{{ 'pages.config.removeOverwriting' | translate }}</button>
+                    <div style="margin-top: 10px;">
+                      <ng-container *ngIf="selectedProperty.Type == 'Check Box'">{{selectedProperty.DisplayName}}: <mat-checkbox color="primary" [(ngModel)]="currentPropertyOverwriting.Value"></mat-checkbox></ng-container>
+                      <mat-form-field appearance="fill" *ngIf="selectedProperty.Type == 'Protocol Select'" class="property-form-field">
+                        <mat-label>{{'general.Protocols' | translate}}</mat-label>
+                        <mat-select [(value)]="currentPropertyOverwriting.Value" multiple matTooltip="{{GetNamesOfIDs(GetProtocols(), currentPropertyOverwriting.Value)}}" matTooltipShowDelay="1000">
+                          <mat-option *ngFor="let protocol of GetProtocols()" [value]="protocol.ID">{{protocol.Name}}</mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                    </div>
+                  </ng-container>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+        </ng-template>
+    </mat-tab>
+    <mat-tab label="{{'general.Threats' | translate}} ({{typeThreats?.length}})">
+        <ng-template matTabContent>
+          <div class="row">
+            <div class="column1">
+              <mat-list cdkDropList (cdkDropListDropped)="dropThreat($event, typeThreats)" class="prop-list reorder-list" [class.prop-list-light]="!theme.IsDarkMode" [class.prop-list-dark]="theme.IsDarkMode">
+                <div mat-subheader>{{selectedType.Name}} {{ 'general.Threats' | translate }} <button mat-icon-button (click)="AddThreat()" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000" style="margin-left: 15px;"><mat-icon>add</mat-icon></button></div>
+                <mat-list-item *ngFor="let threat of typeThreats" (click)="selectedThreatRule = threat" cdkDrag
+                [class.highlight-light]="selectedThreatRule === threat && !theme.IsDarkMode" [class.highlight-dark]="selectedThreatRule === threat && theme.IsDarkMode"
+                matTooltip="{{threat.Name}}" matTooltipShowDelay="1000">
+                  <mat-icon mat-list-icon>chevron_right</mat-icon>
+                  <div mat-line>{{threat.Name}}</div>
+                  <div mat-line *ngIf="GetStencilRestrictionsCount(threat) == 0">{{'properties.Restrictions' | translate}}: {{'pages.config.noRestrictions' | translate}}</div>
+                  <div mat-line *ngIf="GetStencilRestrictionsCount(threat) > 0">{{'properties.Restrictions' | translate}}: {{GetStencilRestrictionsCount(threat)}}</div>
+                  <button mat-icon-button style="margin-left: auto;" (click)="DeleteThreat(threat)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000"><mat-icon>delete</mat-icon></button>
+                </mat-list-item>
+                <ng-container *ngIf="!selectedType.IsDefault">
+                  <mat-divider></mat-divider>
+                  <div mat-subheader>{{selectedElementType.Name}} {{ 'general.Threats' | translate }}</div>
+                  <mat-list-item *ngFor="let threat of elementTypeThreats" (click)="selectedThreatRule = threat"
+                  [class.highlight-light]="selectedThreatRule === threat && !theme.IsDarkMode" [class.highlight-dark]="selectedThreatRule === threat && theme.IsDarkMode"
+                  matTooltip="{{threat.Name}}" matTooltipShowDelay="1000">
+                    <mat-icon mat-list-icon>{{GetIcon(selectedElementType)}}</mat-icon>
+                    <div mat-line>{{threat.Name}}</div>
+                    <div mat-line *ngIf="GetStencilRestrictionsCount(threat) == 0">{{'properties.Restrictions' | translate}}: {{'pages.config.noRestrictions' | translate}}</div>
+                    <div mat-line *ngIf="GetStencilRestrictionsCount(threat) > 0">{{'properties.Restrictions' | translate}}: {{GetStencilRestrictionsCount(threat)}}</div>
+                  </mat-list-item>
+                </ng-container>
+              </mat-list>
+            </div>
+            <div class="column2">
+              <app-threat-rule [node]="selectedNode" [threatRule]="selectedThreatRule" [canEdit]="isTypeThreat" [canEditName]="true"></app-threat-rule>
+            </div>
+          </div>
+        </ng-template>
+    </mat-tab>
+  </mat-tab-group>
+  <div *ngIf="isStencilTypeTemplate">
+    <mat-checkbox color="primary" [(ngModel)]="selectedTypeTemplate.ListInHWDiagram">{{'properties.ListInHWDiagram' | translate}}</mat-checkbox>
+    <br/>
+    <mat-checkbox color="primary" [(ngModel)]="selectedTypeTemplate.ListInUCDiagram">{{'properties.ListInUCDiagram' | translate}}</mat-checkbox>
+    <br/>
+    <mat-form-field appearance="fill" style="margin-top: 15px; width: 100%;">
+      <mat-label>{{'properties.ListInElementTypeIDs' | translate}}</mat-label>
+      <mat-select [(value)]="selectedTypeTemplate.ListInElementTypeIDs" multiple>
+        <mat-option *ngFor="let type of GetElementTypes()" [value]="type">{{GetElementTypeName(type)}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="fill" style="width: 100%;">
+      <mat-label>{{'properties.StencilTypes' | translate}}</mat-label>
+      <mat-select [(value)]="selectedTypeTemplate.StencilTypes" multiple>
+        <mat-option *ngFor="let type of GetStencilTypes()" [value]="type">{{type.GetProperty('Name')}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    {{'properties.Layout' | translate}} <button mat-icon-button (click)="AutoCalcLayout()" matTooltip="{{'pages.config.stencils.calcLayout' | translate}}" matTooltipShowDelay="1000" style="margin-left: 15px;"><mat-icon>auto_fix_high</mat-icon></button>
+    <br/>
+    <div *ngFor="let stencil of selectedTypeTemplate.StencilTypes; index as i">
+      <mat-form-field class="property-form-field disable" appearance="fill">
+        <mat-label>{{'general.Element' | translate}}</mat-label>
+        <input matInput type="text" [ngModel]="stencil.GetProperty('Name')" matTooltip="stencil.GetProperty('Name')" matTooltipShowDelay="1000">
+      </mat-form-field>
+      <mat-form-field class="number-form-field" appearance="fill" style="margin-left: 10px;">
+        <mat-label>X</mat-label>
+        <input matInput type="number" [ngModel]="selectedTypeTemplate.Layout[i]['x']">
+      </mat-form-field>
+      <mat-form-field class="number-form-field" appearance="fill" style="margin-left: 10px;">
+        <mat-label>Y</mat-label>
+        <input matInput type="number" [ngModel]="selectedTypeTemplate.Layout[i]['y']">
+      </mat-form-field>
+      <mat-form-field class="number-form-field" appearance="fill" style="margin-left: 10px;" *ngIf="selectedTypeTemplate.Layout[i]['canEditSize']">
+        <mat-label>Width</mat-label>
+        <input matInput type="number" [ngModel]="selectedTypeTemplate.Layout[i]['width']">
+      </mat-form-field>
+      <mat-form-field class="number-form-field" appearance="fill" style="margin-left: 10px;" *ngIf="selectedTypeTemplate.Layout[i]['canEditSize']">
+        <mat-label>Height</mat-label>
+        <input matInput type="number" [ngModel]="selectedTypeTemplate.Layout[i]['height']">
+      </mat-form-field>
+    </div>
+  </div>
+  <mat-tab-group *ngIf="isProtocol" [selectedIndex]="GetSelectedTabIndex()" (selectedIndexChange)="SetSelectedTabIndex($event)">
+    <mat-tab label="{{'general.Properties' | translate}} ({{selectedProtocol?.Properties?.length}})">
+        <ng-template matTabContent>
+          <div class="row">
+            <div class="column1">
+              <mat-list cdkDropList (cdkDropListDropped)="drop($event, selectedProtocol.Properties)" class="prop-list reorder-list" [class.prop-list-light]="!theme.IsDarkMode" [class.prop-list-dark]="theme.IsDarkMode">
+                <div mat-subheader>{{selectedProtocol.Name}} {{ 'general.Properties' | translate }} <button mat-icon-button (click)="AddProperty()" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000" style="margin-left: 15px;"><mat-icon>add</mat-icon></button></div>
+                <mat-list-item *ngFor="let prop of selectedProtocol.Properties" (click)="selectedProperty = prop" cdkDrag (contextmenu)="OpenContextMenu($event, prop)"
+                [class.highlight-light]="selectedProperty === prop && !theme.IsDarkMode" [class.highlight-dark]="selectedProperty === prop && theme.IsDarkMode"
+                matTooltip="{{prop.DisplayName | translate}}" matTooltipShowDelay="1000">
+                  <mat-icon mat-list-icon>chevron_right</mat-icon>
+                  <div mat-line>{{prop.DisplayName | translate}}</div>
+                  <div mat-line>{{prop.Type}}: {{GetElementPropertyValue(prop) | translate}}</div>
+                  <button mat-icon-button style="margin-left: auto;" (click)="DeleteProperty(prop)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000"><mat-icon>delete</mat-icon></button>
+                </mat-list-item>
+                <ng-container *ngIf="!selectedProtocol.IsDefault">
+                  <mat-divider></mat-divider>
+                  <div mat-subheader>{{defaultProtocol.Name}} {{ 'general.Properties' | translate }}</div>
+                  <mat-list-item *ngFor="let prop of defaultProtocol.Properties" (click)="selectedProperty = prop"
+                  [class.highlight-light]="selectedProperty === prop && !theme.IsDarkMode" [class.highlight-dark]="selectedProperty === prop && theme.IsDarkMode"
+                  matTooltip="{{prop.DisplayName | translate}}" matTooltipShowDelay="1000">
+                    <mat-icon mat-list-icon>{{GetIcon(defaultProtocol)}}</mat-icon>
+                    <div mat-line>{{prop.DisplayName | translate}}</div>
+                    <div mat-line>{{prop.Type}}: {{GetElementPropertyValue(prop) | translate}}</div>
+                    <mat-icon style="margin-left: auto; margin-right: 5px" *ngIf="IsPropOverwritten(prop)">update</mat-icon>
+                  </mat-list-item>
+                </ng-container>
+              </mat-list>
+            </div>
+            <div class="column2">
+              <ng-container *ngIf="selectedProtocol.Properties?.includes(selectedProperty)">
+                <div style="margin: 10px;">
+                  <mat-form-field appearance="fill" class="property-form-field">
+                    <mat-label>{{'general.PropertyName' | translate}}</mat-label>
+                    <input matInput type="text" [(ngModel)]="selectedProperty.DisplayName" matTooltip="selectedProperty.DisplayName" matTooltipShowDelay="1000">
+                    <button *ngIf="selectedProperty.DisplayName" matSuffix mat-icon-button (click)="selectedProperty.DisplayName=''" matTooltip="{{'general.Clear' | translate}}" matTooltipShowDelay="1000">
+                      <mat-icon>close</mat-icon>
+                    </button>
+                  </mat-form-field>
+                  <br/>
+                  <mat-form-field appearance="fill" class="property-form-field">
+                    <mat-label>{{'general.Type' | translate}}</mat-label>
+                    <mat-select [(value)]="selectedProperty.Type"  matTooltip="{{selectedProperty.Type}}" matTooltipShowDelay="1000">
+                      <mat-option *ngFor="let type of GetPropertyTypes()" [value]="type">{{type}}</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                  <br/>
+                  <ng-container *ngIf="selectedProperty.Type == 'Check Box'">{{'general.DefaultValue' | translate}}: <mat-checkbox color="primary" [(ngModel)]="selectedProperty.DefaultValue"></mat-checkbox></ng-container>
+                  <br/>
+                  {{'general.Editable' | translate}}: <mat-checkbox color="primary" [(ngModel)]="selectedProperty.Editable"></mat-checkbox>
+                </div>
+              </ng-container>
+              <ng-container *ngIf="!selectedProtocol.IsDefault && defaultProtocol.Properties?.includes(selectedProperty)">
+                <div style="margin: 10px;">
+                  <ng-container *ngIf="!IsPropOverwritten(selectedProperty)")>
+                    <button mat-raised-button (click)="OverwriteProperty()">{{ 'pages.config.overwriteProp' | translate }}</button>
+                  </ng-container>
+                  <ng-container *ngIf="IsPropOverwritten(selectedProperty)")> 
+                    <button mat-raised-button (click)="UnOverwriteProperty()">{{ 'pages.config.removeOverwriting' | translate }}</button>
+                    <div style="margin-top: 10px;">
+                      <ng-container *ngIf="selectedProperty.Type == 'Check Box'">{{selectedProperty.DisplayName}}: <mat-checkbox color="primary" [(ngModel)]="currentPropertyOverwriting.Value"></mat-checkbox></ng-container>
+                    </div>
+                  </ng-container>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+        </ng-template>
+    </mat-tab>
+    <mat-tab label="{{'general.Threats' | translate}} ({{typeThreats?.length}})">
+        <ng-template matTabContent>
+          <div class="row">
+            <div class="column1">
+              <mat-list cdkDropList (cdkDropListDropped)="dropThreat($event, typeThreats)" class="prop-list reorder-list" [class.prop-list-light]="!theme.IsDarkMode" [class.prop-list-dark]="theme.IsDarkMode">
+                <div mat-subheader>{{selectedProtocol.Name}} {{ 'general.Threats' | translate }} <button mat-icon-button (click)="AddThreat()" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000" style="margin-left: 15px;"><mat-icon>add</mat-icon></button></div>
+                <mat-list-item *ngFor="let threat of typeThreats" (click)="selectedThreatRule = threat" cdkDrag
+                [class.highlight-light]="selectedThreatRule === threat && !theme.IsDarkMode" [class.highlight-dark]="selectedThreatRule === threat && theme.IsDarkMode"
+                matTooltip="{{threat.Name}}" matTooltipShowDelay="1000">
+                  <mat-icon mat-list-icon>chevron_right</mat-icon>
+                  <div mat-line>{{threat.Name}}</div>
+                  <div mat-line *ngIf="GetStencilRestrictionsCount(threat) == 0">{{'properties.Restrictions' | translate}}: {{'pages.config.noRestrictions' | translate}}</div>
+                  <div mat-line *ngIf="GetStencilRestrictionsCount(threat) > 0">{{'properties.Restrictions' | translate}}: {{GetStencilRestrictionsCount(threat)}}</div>
+                  <button mat-icon-button style="margin-left: auto;" (click)="DeleteThreat(threat)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000"><mat-icon>delete</mat-icon></button>
+                </mat-list-item>
+                <ng-container *ngIf="!selectedProtocol.IsDefault">
+                  <mat-divider></mat-divider>
+                  <div mat-subheader>{{defaultProtocol.Name}} {{ 'general.Threats' | translate }}</div>
+                  <mat-list-item *ngFor="let threat of elementTypeThreats" (click)="selectedThreatRule = threat"
+                  [class.highlight-light]="selectedThreatRule === threat && !theme.IsDarkMode" [class.highlight-dark]="selectedThreatRule === threat && theme.IsDarkMode"
+                  matTooltip="{{threat.Name}}" matTooltipShowDelay="1000">
+                    <mat-icon mat-list-icon>{{GetIcon(defaultProtocol)}}</mat-icon>
+                    <div mat-line>{{threat.Name}}</div>
+                    <div mat-line *ngIf="GetStencilRestrictionsCount(threat) == 0">{{'properties.Restrictions' | translate}}: {{'pages.config.noRestrictions' | translate}}</div>
+                    <div mat-line *ngIf="GetStencilRestrictionsCount(threat) > 0">{{'properties.Restrictions' | translate}}: {{GetStencilRestrictionsCount(threat)}}</div>
+                  </mat-list-item>
+                </ng-container>
+              </mat-list>
+            </div>
+            <div class="column2">
+              <app-threat-rule [node]="selectedNode" [threatRule]="selectedThreatRule" [canEdit]="true" [canEditName]="true"></app-threat-rule>
+            </div>
+          </div>
+        </ng-template>
+    </mat-tab>
+  </mat-tab-group>
+  <div *ngIf="isStencilThreatMnemonic">
+    <div class="row">
+      <div class="column1">
+        <mat-list cdkDropList (cdkDropListDropped)="drop($event, selectedThreatMnemonic.Letters)" class="prop-list reorder-list" [class.prop-list-light]="!theme.IsDarkMode" [class.prop-list-dark]="theme.IsDarkMode">
+          <div mat-subheader>{{selectedThreatMnemonic.Name}} {{ 'properties.Letters' | translate }} <button mat-icon-button (click)="AddMnemonicLetter()" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000" style="margin-left: 15px;"><mat-icon>add</mat-icon></button></div>
+          <mat-list-item *ngFor="let letter of selectedThreatMnemonic.Letters" (click)="selectedMnemonicLetter = letter" cdkDrag
+          [class.highlight-light]="selectedMnemonicLetter === letter && !theme.IsDarkMode" [class.highlight-dark]="selectedMnemonicLetter === letter && theme.IsDarkMode"
+          matTooltip="{{letter.Name}}" matTooltipShowDelay="1000">
+            <mat-icon mat-list-icon>chevron_right</mat-icon>
+            <div mat-line *ngIf="letter.Letter">{{letter.Letter}}</div>
+            <div mat-line>{{letter.Name}}</div>
+            <button mat-icon-button style="margin-left: auto;" (click)="DeleteMnemonicLetter(letter)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000"><mat-icon>delete</mat-icon></button>
+          </mat-list-item>
+        </mat-list>
+      </div>
+      <div class="column2">
+        <ng-container *ngIf="selectedMnemonicLetter && selectedThreatMnemonic.Letters.includes(selectedMnemonicLetter)">
+          <div style="margin: 10px 0 10px 10px;">
+            <mat-form-field appearance="fill" class="property-form-field">
+              <mat-label>{{'general.Name' | translate}}</mat-label>
+              <input matInput type="text" [(ngModel)]="selectedMnemonicLetter.Name" matTooltip="{{selectedMnemonicLetter.Name}}" matTooltipShowDelay="1000">
+              <button *ngIf="selectedMnemonicLetter.Name" matSuffix mat-icon-button (click)="selectedMnemonicLetter.Name=''" matTooltip="{{'general.Clear' | translate}}" matTooltipShowDelay="1000">
+                <mat-icon>close</mat-icon>
+              </button>
+            </mat-form-field>
+            <br/>
+            <mat-form-field appearance="fill" class="property-form-field">
+              <mat-label>{{'properties.Letter' | translate}}</mat-label>
+              <input matInput type="text" [(ngModel)]="selectedMnemonicLetter.Letter" matTooltip="{{selectedMnemonicLetter.Letter}}" matTooltipShowDelay="1000">
+            </mat-form-field>
+            <br/>
+            <mat-form-field appearance="fill" style="width: 100%;">
+              <mat-label>{{'properties.Description' | translate}}</mat-label>
+              <input matInput type="text" [(ngModel)]="selectedMnemonicLetter.Description" matTooltip="{{selectedMnemonicLetter.Description}}" matTooltipShowDelay="1000">
+            </mat-form-field>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+    <div *ngIf="selectedThreatMnemonic.Letters?.length > 0" style="padding-left: 60px;">
+      <table>
+        <tr>
+          <th></th>
+          <th *ngFor="let letter of selectedThreatMnemonic.Letters">{{letter.Letter}}</th>
+        </tr>
+        <tr *ngFor="let element of GetMnemonicElementTypes()">
+          <td>{{GetElementTypeName(element)}}</td>
+          <td *ngFor="let letter of selectedThreatMnemonic.Letters"><mat-checkbox color="primary" [checked]="letter.AffectedElementTypes.includes(element)" (change)="OnMnemonicElementThreat($event, letter, element)"></mat-checkbox></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>
+<div #ctxMenu="matMenuTrigger" style="visibility: hidden; position: fixed;" [style.left]="menuTopLeftPosition.x" [style.top]="menuTopLeftPosition.y" [matMenuTriggerFor]="rightMenu"></div> 
+<mat-menu #rightMenu="matMenu"> 
+  <ng-template matMenuContent let-item="item">
+    <ng-container *ngIf="IsProperty(item)">
+      <span *ngIf="item" style="margin-left: 20px; margin-right: 20px;">{{item.DisplayName | translate}}</span> 
+      <button mat-menu-item (click)="OnMoveUpProperty(item)">
+        <mat-icon>arrow_upward</mat-icon>
+        <span>{{'nav-tree.moveUp' | translate}}</span>
+      </button>
+      <button mat-menu-item (click)="OnMoveDownProperty(item)">
+        <mat-icon>arrow_downward</mat-icon>
+        <span>{{'nav-tree.moveDown' | translate}}</span>
+      </button>
+    </ng-container>
+  </ng-template> 
+</mat-menu> 

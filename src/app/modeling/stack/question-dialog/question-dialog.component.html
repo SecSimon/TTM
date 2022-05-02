@@ -1,0 +1,36 @@
+<h2 mat-dialog-title>{{selectedComponent.Name}}</h2>
+<mat-dialog-content>
+  <mat-tab-group [selectedIndex]="selectedTabIndex" (selectedIndexChange)="selectedComponent = components[$event]" style="max-width: 800px;">
+    <mat-tab *ngFor="let comp of components">
+      <ng-template mat-tab-label><span [matBadge]="GetUnsetThreats(comp)" matBadgeColor="warn" [matBadgeHidden]="comp.UserCheckedElement" matBadgePosition="below">{{comp.Name}}</span></ng-template>
+      <ng-template matTabContent>
+        <mat-card *ngIf="comp.Description?.length>0" style="margin: 5px 0px;">
+          {{comp.Description}}
+        </mat-card>
+        <table>
+          <tr *ngFor="let quest of GetThreatQuestions(selectedComponent)">
+            <td>
+              {{quest.Question}} 
+              <mat-icon *ngIf="quest.Description?.length>0" [matTooltip]="quest.Description" style="vertical-align: middle;">info</mat-icon>
+              <button mat-icon-button *ngIf="GetAssociatedThreatOrigins(quest)?.length>0" matTooltip="{{'pages.modeling.stack.questiondialog.moreDetails' | translate}}" (click)="OpenThreatOrigins(quest)">
+                <mat-icon>pageview</mat-icon>
+              </button>
+            </td>
+            <td *ngIf="quest.OptionType == 1">
+              <mat-button-toggle-group #group [value]="selectedComponent.ThreatQuestions[quest.ID]" (change)="OnQuestionAnswered($event, quest)">
+                <mat-button-toggle *ngFor="let opt of GetOptionKeys(quest.OptionType)" [value]="GetOptionValue(quest.OptionType, opt)">{{opt | translate}}</mat-button-toggle>
+              </mat-button-toggle-group>
+            </td>
+          </tr>
+        </table>
+      </ng-template>
+    </mat-tab>
+  </mat-tab-group>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <ng-container *ngIf="true">
+    <button mat-button [mat-dialog-close]="true">{{'general.Close' | translate}}</button>
+    <button mat-button [disabled]="!canPrev" (click)="Prev()">{{'tour.prev' | translate}}</button>
+    <button mat-button [disabled]="!canNext" (click)="Next()">{{'tour.next' | translate}}</button>
+  </ng-container>
+</mat-dialog-actions>

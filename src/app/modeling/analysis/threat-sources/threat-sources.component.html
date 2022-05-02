@@ -1,0 +1,81 @@
+<div style="margin: 10px;">
+  <mat-accordion class="expansion-panel-headers-align">
+    <mat-expansion-panel style="margin: 10px 0;" [expanded]="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          {{'general.HowTo' | translate}}
+        </mat-panel-title>
+        <mat-panel-description>
+          {{'general.ThreatSources' | translate}}
+          <mat-icon>info</mat-icon>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+
+      Identify the threat sources:
+      <ul>
+        <li>List all potential threat sources, e.g., cyber criminals, state-sponsored actors, insiders, competitors, etc.</li>
+        <li>Describe their motive to attack the device</li>
+        <li>Rate the likelihood of an attack</li>
+      </ul>
+    </mat-expansion-panel>
+  </mat-accordion>
+  <div class="row">
+    <div class="column1">
+      <mat-list cdkDropList (cdkDropListDropped)="drop($event, threatSources.Sources)" class="prop-list reorder-list" [class.prop-list-light]="!theme.IsDarkMode" [class.prop-list-dark]="theme.IsDarkMode">
+        <div mat-subheader>{{'general.ThreatSources' | translate}} <button mat-icon-button (click)="AddSource()" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000" style="margin-left: 15px;"><mat-icon>add</mat-icon></button></div>
+        <mat-list-item *ngFor="let src of threatSources.Sources" (click)="selectedSource = src" cdkDrag
+        [class.highlight-light]="selectedSource === src && !theme.IsDarkMode" [class.highlight-dark]="selectedSource === src && theme.IsDarkMode">
+          <mat-icon mat-list-icon>chevron_right</mat-icon>
+          <div mat-line>{{src.Name}}</div>
+          <div mat-line *ngIf="src.Likelihood">{{'general.Likelihood' | translate}}: {{GetLMHName(src.Likelihood) | translate}}</div>
+          <button mat-icon-button style="margin-left: auto;" (click)="DeleteSource(src)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000"><mat-icon>delete</mat-icon></button>
+        </mat-list-item>
+      </mat-list>
+    </div>
+    <div class="column2">
+      <ng-container *ngIf="selectedSource">
+        <div style="margin-left: 10px;">
+          <mat-form-field appearance="fill" class="property-form-field">
+            <mat-label>{{ 'properties.Name' | translate }}</mat-label>
+            <input matInput [(ngModel)]="selectedSource.Name"/>
+            <button *ngIf="selectedSource.Name" matSuffix mat-icon-button (click)="selectedSource.Name=''" matTooltip="{{'general.Clear' | translate}}" matTooltipShowDelay="1000">
+              <mat-icon>close</mat-icon>
+            </button>
+          </mat-form-field>
+          <br/>
+          {{'pages.modeling.threatsources.Motive' | translate}}:
+          <div cdkDropList class="reorder-list" (cdkDropListDropped)="drop($event, selectedSource.Motive)">
+            <div class="reorder-box" [style.color]="theme.IsDarkMode ? 'white' : 'black'" *ngFor="let item of selectedSource.Motive; index as index" cdkDrag>
+              <ng-container *ngIf="!isEdtingArray[index]">
+                <mat-icon>chevron_right</mat-icon> {{item}}
+                <button mat-icon-button style="width: 20px; height: 20px; line-height: 20px;" (click)="isEdtingArray[index] = true" matTooltip="{{'general.Edit' | translate}}" matTooltipShowDelay="1000">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button style="width: 20px; height: 20px; line-height: 20px;" (click)="OnDeleteItem(item, selectedSource.Motive)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </ng-container>
+              <input *ngIf="isEdtingArray[index]" id="renameBox" type="text" style="width: -webkit-fill-available;" [ngModel]="item" (keydown)="OnRenameItem($event, selectedSource.Motive, index)" autofocus (focusout)="OnRenameItem($event, selectedSource.Motive, index)" onfocus="this.select();"/>
+            </div>
+          </div>
+          <div style="padding: 5px 10px;">
+            <mat-icon>chevron_right</mat-icon><input matInput style="width: calc(100% - 24px); vertical-align: super; font-size: 14px;" (keydown)="OnListKeyDown($event, selectedSource.Motive)" placeholder="{{'pages.modeling.charscope.addDescription' | translate}}"/>
+          </div>
+          <mat-form-field appearance="fill" class="property-form-field">
+            <mat-label>{{ 'general.Likelihood' | translate }}</mat-label>
+            <mat-select [(value)]="selectedSource.Likelihood">
+              <mat-option *ngFor="let type of GetLMHValues()" [value]="type">{{GetLMHName(type) | translate}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+  <mat-divider></mat-divider>
+  <div>
+    <mat-form-field appearance="fill" style="width: 100%; margin-top: 10px;">
+      <mat-label>{{ 'general.Notes' | translate }}</mat-label>
+      <textarea matInput [(ngModel)]="threatSources.Description"></textarea>
+    </mat-form-field>
+  </div>
+</div>

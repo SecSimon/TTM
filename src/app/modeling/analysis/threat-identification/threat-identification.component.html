@@ -1,0 +1,83 @@
+<div style="width: 100%; height: 100%;">
+  <mat-tab-group class="tabGroup" style="height: 100%;" [selectedIndex]="GetSelectedTabIndex()" (selectedIndexChange)="SetSelectedTabIndex($event)" (selectedTabChange)="OnTabChange()">
+    <mat-tab>
+      <ng-template mat-tab-label>
+        {{'pages.modeling.threatidentification.categoryview' | translate}}
+      </ng-template>
+      <as-split direction="horizontal" unit="pixel" [gutterSize]="3" [restrictMove]="true" (dragEnd)="OnSplitSizeChange($event, 0)">
+        <as-split-area [size]="GetSplitSize(0, 0, 300)" [order]=1 [class.splitter-light2]="!theme.IsDarkMode" [class.splitter-dark2]="theme.IsDarkMode">
+          <app-nav-tree #catTree [activeNode]="selectedNode" (selectedNodeChanged)="selectedNode = $event"></app-nav-tree>
+        </as-split-area>
+        <as-split-area [size]="GetSplitSize(0, 1, $any('*'))" [order]=2 [class.bg-color-light3]="!theme.IsDarkMode" [class.bg-color-dark3]="theme.IsDarkMode" style="margin: 10px;">
+          <mat-accordion class="expansion-panel-headers-align" *ngIf="selectedThreatCat">
+            <mat-expansion-panel style="margin-bottom: 20px; margin-right: 10px;" [expanded]="true">
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  {{'general.ThreatCategoryInfo' | translate}}
+                </mat-panel-title>
+                <mat-panel-description>
+                  {{selectedThreatCat.Name}}
+                  <mat-icon>info</mat-icon>
+                </mat-panel-description>
+              </mat-expansion-panel-header>
+              <app-threat-category [canEdit]="false" [threatCat]="selectedThreatCat"></app-threat-category>
+            </mat-expansion-panel>
+          </mat-accordion>
+
+          <div class="row" *ngIf="selectedThreatCat">
+            <div class="column1">
+              <mat-list cdkDropList (cdkDropListDropped)="dropWrapper($event, currentDeviceThreats())" class="prop-list reorder-list" [class.prop-list-light]="!theme.IsDarkMode" [class.prop-list-dark]="theme.IsDarkMode">
+                <div mat-subheader>{{ 'general.Threats' | translate }} <button mat-icon-button (click)="AddThreat()" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000" style="margin-left: 15px;"><mat-icon>add</mat-icon></button></div>
+                <mat-list-item *ngFor="let dt of currentDeviceThreats()" (click)="selectedThreat = dt" cdkDrag
+                [class.highlight-light]="selectedThreat === dt && !theme.IsDarkMode" [class.highlight-dark]="selectedThreat === dt && theme.IsDarkMode"
+                matTooltip="{{dt.Name}}" matTooltipShowDelay="1000">
+                  <mat-icon mat-list-icon>chevron_right</mat-icon>
+                  <div mat-line>{{dt.Name}}</div>
+                  <div mat-line>{{'properties.Impact' | translate}}: {{GetLMHName(dt.Impact) | translate}}</div>
+                  <button mat-icon-button style="margin-left: auto;" (click)="DeleteThreat(dt)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000"><mat-icon>delete</mat-icon></button>
+                </mat-list-item>
+              </mat-list>
+            </div>
+            <div class="column2">
+              <ng-container *ngIf="selectedThreat">
+                <div style="margin: 10px;">
+                  <app-device-threat [deviceThreat]="selectedThreat"></app-device-threat>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+        </as-split-area>
+      </as-split>
+    </mat-tab>
+
+    <mat-tab>
+      <ng-template mat-tab-label>
+        {{'pages.modeling.threatidentification.threatview' | translate}}
+      </ng-template>
+      <ng-template matTabContent>
+        <div class="row">
+          <div class="column1">
+            <mat-list cdkDropList (cdkDropListDropped)="drop($event, deviceThreats)" class="prop-list reorder-list" [class.prop-list-light]="!theme.IsDarkMode" [class.prop-list-dark]="theme.IsDarkMode">
+              <div mat-subheader>{{ 'general.Threats' | translate }} <button mat-icon-button (click)="AddThreat()" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000" style="margin-left: 15px;"><mat-icon>add</mat-icon></button></div>
+              <mat-list-item *ngFor="let dt of deviceThreats" (click)="selectedThreat = dt" cdkDrag
+              [class.highlight-light]="selectedThreat === dt && !theme.IsDarkMode" [class.highlight-dark]="selectedThreat === dt && theme.IsDarkMode"
+              matTooltip="{{dt.Name}}" matTooltipShowDelay="1000">
+                <mat-icon mat-list-icon>chevron_right</mat-icon>
+                <div mat-line>{{dt.Name}}</div>
+                <div mat-line>{{'properties.Impact' | translate}}: {{GetLMHName(dt.Impact) | translate}}</div>
+                <button mat-icon-button style="margin-left: auto;" (click)="DeleteThreat(dt)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000"><mat-icon>delete</mat-icon></button>
+              </mat-list-item>
+            </mat-list>
+          </div>
+          <div class="column2">
+            <ng-container *ngIf="selectedThreat">
+              <div style="margin: 10px;">
+                <app-device-threat [deviceThreat]="selectedThreat" [showThreatCat]="true"></app-device-threat>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+      </ng-template>
+    </mat-tab>
+  </mat-tab-group>
+</div>

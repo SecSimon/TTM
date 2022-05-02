@@ -1,0 +1,126 @@
+<div style="height: 100%;" [class.bg-color-light1]="!theme.IsDarkMode" [class.bg-color-dark1]="theme.IsDarkMode">
+  <div>
+    <button name="/home" class="sidenav-icon-button" [class.btn-selected-light]="IsSelected('/home')" [class.btn-selected-dark]="IsSelected('/home', true)" (click)="OnClick('/home')" (mouseenter)="OnMouseEnter('/home')" (mouseleave)="OnMouseLeave()" matTooltip="{{'side-nav.home' | translate}}" matTooltipPosition="right">
+      <button mat-icon-button [class.btn-light]="!theme.IsDarkMode" [class.btn-dark]="theme.IsDarkMode">
+        <mat-icon [class.icon-selected-light]="IsHoveredOrSelected('/home')" [class.icon-selected-dark]="IsHoveredOrSelected('/home', true)">home</mat-icon>
+      </button>
+    </button>
+  </div>
+  <div>
+    <button name="/dashboard" class="sidenav-icon-button" [class.disabled]="!dataService.HasProject" [class.btn-selected-light]="IsSelected('/dashboard')" [class.btn-selected-dark]="IsSelected('/dashboard', true)" (click)="OnClick('/dashboard')"  (mouseenter)="OnMouseEnter('/dashboard')" (mouseleave)="OnMouseLeave()" matTooltip="{{'side-nav.dashboard' | translate}}" matTooltipPosition="right">
+      <button mat-icon-button [class.btn-light]="!theme.IsDarkMode" [class.btn-dark]="theme.IsDarkMode">
+        <mat-icon [class.icon-selected-light]="IsHoveredOrSelected('/dashboard')" [class.icon-selected-dark]="IsHoveredOrSelected('/dashboard', true)">assessment</mat-icon> 
+      </button>
+    </button>
+  </div>
+  <!--
+  <div>
+    <button name="/analysis" class="sidenav-icon-button" [class.disabled]="!dataService.HasProject" [class.btn-selected-light]="IsSelected('/analysis')" [class.btn-selected-dark]="IsSelected('/analysis', true)" (click)="OnClick('/analysis')"  (mouseenter)="OnMouseEnter('/analysis')" (mouseleave)="OnMouseLeave()" matTooltip="{{'side-nav.analysis' | translate}}" matTooltipPosition="right">
+      <button mat-icon-button [class.btn-light]="!theme.IsDarkMode" [class.btn-dark]="theme.IsDarkMode">
+        <mat-icon [class.icon-selected-light]="IsHoveredOrSelected('/analysis')" [class.icon-selected-dark]="IsHoveredOrSelected('/analysis', true)">create</mat-icon> 
+      </button>
+    </button>
+  </div>
+  -->
+  <div>
+    <button name="/modeling" class="sidenav-icon-button" [class.disabled]="!dataService.HasProject" [class.btn-selected-light]="IsSelected('/modeling')" [class.btn-selected-dark]="IsSelected('/modeling', true)" (click)="OnClick('/modeling')"  (mouseenter)="OnMouseEnter('/modeling')" (mouseleave)="OnMouseLeave()" matTooltip="{{'side-nav.modeling' | translate}}" matTooltipPosition="right">
+      <button mat-icon-button [class.btn-light]="!theme.IsDarkMode" [class.btn-dark]="theme.IsDarkMode">
+        <mat-icon [class.icon-selected-light]="IsHoveredOrSelected('/modeling')" [class.icon-selected-dark]="IsHoveredOrSelected('/modeling', true)">architecture</mat-icon> 
+      </button>
+    </button>
+  </div>
+  <div>
+    <button name="/mitigation" class="sidenav-icon-button" [class.disabled]="!dataService.HasProject" [class.btn-selected-light]="IsSelected('/mitigation')" [class.btn-selected-dark]="IsSelected('/mitigation', true)" (click)="OnClick('/mitigation')"  (mouseenter)="OnMouseEnter('/mitigation')" (mouseleave)="OnMouseLeave()" matTooltip="{{'side-nav.mitigation' | translate}}" matTooltipPosition="right">
+      <button mat-icon-button [class.btn-light]="!theme.IsDarkMode" [class.btn-dark]="theme.IsDarkMode">
+        <mat-icon [class.icon-selected-light]="IsHoveredOrSelected('/mitigation')" [class.icon-selected-dark]="IsHoveredOrSelected('/mitigation', true)">security</mat-icon> 
+      </button>
+    </button>
+  </div>
+  <!--
+  <div>
+    <button name="/validation" class="sidenav-icon-button" [class.disabled]="!dataService.HasProject" [class.btn-selected-light]="IsSelected('/validation')" [class.btn-selected-dark]="IsSelected('/validation', true)" (click)="OnClick('/validation')"  (mouseenter)="OnMouseEnter('/validation')" (mouseleave)="OnMouseLeave()" matTooltip="{{'side-nav.validation' | translate}}" matTooltipPosition="right">
+      <button mat-icon-button [class.btn-light]="!theme.IsDarkMode" [class.btn-dark]="theme.IsDarkMode">
+        <mat-icon [class.icon-selected-light]="IsHoveredOrSelected('/validation')" [class.icon-selected-dark]="IsHoveredOrSelected('/validation', true)">fact_check</mat-icon> 
+      </button>
+    </button>
+  </div>
+  -->
+  <div>
+    <button name="/configuration" routerLink="/configuration" class="sidenav-icon-button" [class.disabled]="!dataService.IsLoggedIn && !dataService.IsGuest" [class.btn-selected-light]="IsSelected('/configuration')" [class.btn-selected-dark]="IsSelected('/configuration', true)" (click)="OnClick('/configuration')"  (mouseenter)="OnMouseEnter('/configuration')" (mouseleave)="OnMouseLeave()" matTooltip="{{'side-nav.configuration' | translate}}" matTooltipPosition="right">
+      <button mat-icon-button [class.btn-light]="!theme.IsDarkMode" [class.btn-dark]="theme.IsDarkMode">
+        <mat-icon [class.icon-selected-light]="IsHoveredOrSelected('/configuration')" [class.icon-selected-dark]="IsHoveredOrSelected('/configuration', true)">settings</mat-icon> 
+      </button>
+    </button>
+  </div>
+  <div style="position: absolute; bottom: 0px;">
+    <div class="sidenav-icon-button" [class.btn-selected-light]="IsSelected('/settings')" [class.btn-selected-dark]="IsSelected('/settings', true)" (mouseenter)="OnMouseEnter('/settings')" (mouseleave)="OnMouseLeave()" matTooltip="{{'side-nav.account' | translate}}" matTooltipPosition="right">
+      <button mat-icon-button [class.btn-light]="!theme.IsDarkMode" [class.btn-dark]="theme.IsDarkMode" [matMenuTriggerFor]="menu">
+        <mat-icon tourAnchor="change-settings" [class.icon-selected-light]="IsHoveredOrSelected('/settings')" [class.icon-selected-dark]="IsHoveredOrSelected('/settings', true)">account_circle</mat-icon>
+      </button>
+      <mat-menu color="primary" #menu="matMenu">
+        <button mat-menu-item routerLink="/login">
+          <mat-icon>login</mat-icon>
+          <span>{{'side-nav.login' | translate}}</span>
+        </button>
+        <button mat-menu-item (click)="dataService.LogOut()" [disabled]="!dataService.IsLoggedIn">
+          <mat-icon>logout</mat-icon>
+          <span>{{'side-nav.logout' | translate}}</span>
+        </button>
+        <button mat-menu-item (click)="Clear()">
+          <mat-icon>clear</mat-icon>
+          <span>{{'side-nav.resetDefault' | translate}}</span>
+        </button>
+        <button mat-menu-item (click)="ResetLayout()">
+          <mat-icon>grid_view</mat-icon>
+          <span>{{'side-nav.resetLayout' | translate}}</span>
+        </button>
+        <button mat-menu-item (click)="OpenGitHubUrl()" *ngIf="dataService.IsLoggedIn">
+          <fa-icon style="margin-left: 7px; margin-right: 23px;" [icon]="faCodeBranch"></fa-icon>
+          <span>{{dataService.UserAccount}} (GitHub)</span>
+        </button>
+        <button mat-menu-item *ngIf="theme.IsDarkMode" (click)="theme.SetDarkMode(false)">
+          <mat-icon>brightness_5</mat-icon>
+          <span>{{'side-nav.lightMode' | translate}}</span>
+        </button>
+        <button mat-menu-item *ngIf="!theme.IsDarkMode" (click)="theme.SetDarkMode(true)">
+          <mat-icon>bedtime</mat-icon>
+          <span>{{'side-nav.darkMode' | translate}}</span>
+        </button>
+        <button mat-menu-item [matMenuTriggerFor]="languages">
+          <mat-icon>language</mat-icon>
+          <span>Languages</span>
+        </button>
+        <button mat-menu-item [matMenuTriggerFor]="messages">
+          <mat-icon>speaker_notes_off</mat-icon>
+          <span>{{'side-nav.messages' | translate}}</span>
+        </button>
+      </mat-menu>
+      <mat-menu #languages="matMenu">
+        <button mat-menu-item (click)="ChangeLanguage('en')">English</button>
+        <button mat-menu-item (click)="ChangeLanguage('de')">Deutsch</button>
+      </mat-menu>
+      <mat-menu #messages="matMenu">
+        <button mat-menu-item>
+          <mat-slide-toggle color="primary" [(ngModel)]="messagesService.ShowErrors" (click)="$event.stopPropagation()">
+            {{'general.Error' | translate}}
+          </mat-slide-toggle>
+        </button>
+        <button mat-menu-item>
+          <mat-slide-toggle color="primary" [(ngModel)]="messagesService.ShowWarnings" (click)="$event.stopPropagation()">
+            {{'general.Warning' | translate}}
+          </mat-slide-toggle>
+        </button>
+        <button mat-menu-item>
+          <mat-slide-toggle color="primary" [(ngModel)]="messagesService.ShowSuccesses" (click)="$event.stopPropagation()">
+            {{'general.Success' | translate}}
+          </mat-slide-toggle>
+        </button>
+        <button mat-menu-item>
+          <mat-slide-toggle color="primary" [(ngModel)]="messagesService.ShowInfos" (click)="$event.stopPropagation()">
+            {{'general.Info' | translate}}
+          </mat-slide-toggle>
+        </button>
+      </mat-menu>
+    </div>
+  </div>
+<div>

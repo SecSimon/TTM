@@ -1,0 +1,62 @@
+.column1 {
+  float: left;
+  width: 30px;
+}
+.column2 {
+  float: left;
+  width: calc(100% - 70px);
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.group {
+  transform-origin: center; 
+  transform: rotate(-90deg); 
+  text-align: center; 
+  margin: 0px; 
+  // width: 40px;
+  font-weight: bold;
+  max-width: 70px;
+}
+
+.component {
+  background: none;
+  margin: 5px;
+  cursor: pointer;
+  font-size: large;
+  height: 75px;
+  border-radius: 10px;
+}
+
+.component-dark {
+  border-color: white;
+  color: white;
+}
+
+.component-third-party {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.tools {
+  display: block;
+  float: left;
+  height: 27px;
+  width: 100%;
+}
+
+.toolBtn {
+  width: 30px;
+  min-width: 30px;
+  padding: 0px;
+  line-height: 25px;
+  margin-left: 5px;
+}
+
+.toolBtn-Selected {
+  background-color: rgba($color: #fff, $alpha: 0.15);
+}

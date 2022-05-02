@@ -1,0 +1,25 @@
+@import 'stylesTheme.scss';
+
+.selected-entry {
+  font-weight: bold;
+}
+
+th, td {
+  font-size: small;
+}
+
+.filterInput {
+  float: right;
+  margin-right: 5px;
+  margin-top: 2px;
+  width: 200px;
+  height: 25px;
+}
+
+.chartDark {
+  ::ng-deep .ngx-charts { text { fill: #fff !important; } }
+}
+
+.disable {
+  pointer-events: none;
+}

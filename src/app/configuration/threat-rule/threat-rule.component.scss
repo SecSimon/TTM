@@ -1,0 +1,37 @@
+@import 'stylesPropList.scss';
+@import 'stylesReorderList.scss';
+
+.disable {
+  pointer-events: none;
+}
+
+.property-form-field {
+  width: 300px;
+}
+
+.restrictions-column1 {
+  float: left;
+  width: 300px;
+}
+
+.restrictions-column2 {
+  float: left;
+  width: calc(100% - 310px);
+}
+
+.btn-icon {
+  opacity: 0.5;
+  &:hover {
+    opacity: 1;
+  }
+}
+.btn-selected-light {
+  opacity: 1;
+  background-color: rgba(0, 0, 0, 0.15);
+  border-radius: 5px;
+}
+.btn-selected-dark {
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 0.15);
+  border-radius: 5px;
+}

@@ -1,0 +1,109 @@
+<div class="website-container" color="primary">
+  <mat-drawer-container class="drawer-container">
+    <mat-drawer mode="side" opened style="border-right-width: 0px;">
+      <app-side-nav style="width: 100%; height: 100%;" selectedRoute="/configuration" (sameRoute)="OnSameRoute()"></app-side-nav>
+    </mat-drawer>
+
+    <mat-drawer-content [class.splitter-light2]="!theme.IsDarkMode" [class.splitter-dark2]="theme.IsDarkMode">
+      <as-split direction="horizontal" [gutterSize]="3" [restrictMove]="true" unit="pixel" (dragEnd)="OnSplitSizeChange($event)">
+        <as-split-area [size]="GetSplitSize()" [visible]="showLeftBar" [order]=1 [class.bg-color-light2]="!theme.IsDarkMode" [class.bg-color-dark2]="theme.IsDarkMode">
+          <app-nav-tree #navTree [activeNode]="selectedNode" (selectedNodeChanged)="selectedNode = $event"></app-nav-tree>
+        </as-split-area>
+        <as-split-area [size]="$any('*')" [order]=2 [class.bg-color-light3]="!theme.IsDarkMode" [class.bg-color-dark3]="theme.IsDarkMode">
+          <mat-tab-group [selectedIndex]="GetSelectedTabIndex()" (selectedIndexChange)="SetSelectedTabIndex($event)" style="height: 100%;">
+            <mat-tab>
+              <ng-template mat-tab-label>
+                <mat-icon class="tab-icon">view_module</mat-icon>
+                {{'pages.config.Stencils' | translate}}
+              </ng-template>
+              <ng-template matTabContent>
+                <app-stencils [selectedNode]="selectedNode" (nodeTreeChanged)="SetNavTreeData($event)"></app-stencils>
+              </ng-template>
+            </mat-tab>
+
+            <mat-tab>
+              <ng-template mat-tab-label>
+                <mat-icon class="tab-icon">code</mat-icon>
+                {{'pages.config.SoftwareComponents' | translate}}
+              </ng-template>
+              <ng-template matTabContent>
+                <app-components [selectedNode]="selectedNode" [componentType]="1" (nodeTreeChanged)="SetNavTreeData($event)"></app-components>
+              </ng-template>
+            </mat-tab>
+
+            <mat-tab>
+              <ng-template mat-tab-label>
+                <mat-icon class="tab-icon">policy</mat-icon>
+                {{'pages.config.ProcessComponents' | translate}}
+              </ng-template>
+              <ng-template matTabContent>
+                <app-components [selectedNode]="selectedNode" [componentType]="2" (nodeTreeChanged)="SetNavTreeData($event)"></app-components>
+              </ng-template>
+            </mat-tab>
+
+            <mat-tab>
+              <ng-template mat-tab-label>
+                <mat-icon class="tab-icon">flash_on</mat-icon>
+                {{'pages.config.ThreatCategories' | translate}}
+              </ng-template>
+              <ng-template matTabContent>
+                <app-threat-categories [selectedNode]="selectedNode" (nodeTreeChanged)="SetNavTreeData($event)"></app-threat-categories>
+              </ng-template>
+            </mat-tab>
+
+            <mat-tab>
+              <ng-template mat-tab-label>
+                <mat-icon class="tab-icon">library_books</mat-icon>
+                {{'pages.config.ThreatLibrary' | translate}}
+              </ng-template>
+              <ng-template matTabContent>
+                <app-threat-library [selectedNode]="selectedNode" (nodeTreeChanged)="SetNavTreeData($event)"></app-threat-library>
+              </ng-template>
+            </mat-tab>
+
+            <mat-tab>
+              <ng-template mat-tab-label>
+                <mat-icon class="tab-icon">rule</mat-icon>
+                {{'pages.config.CPDFDRules' | translate}}
+              </ng-template>
+              <ng-template matTabContent>
+                <app-rules [selectedNode]="selectedNode" (nodeTreeChanged)="SetNavTreeData($event)"></app-rules>
+              </ng-template>
+            </mat-tab>
+
+            <mat-tab>
+              <ng-template mat-tab-label>
+                <mat-icon class="tab-icon">security</mat-icon>
+                {{'general.Mitigations' | translate}}
+              </ng-template>
+              <ng-template matTabContent>
+                <app-mitigations [selectedNode]="selectedNode" (nodeTreeChanged)="SetNavTreeData($event)"></app-mitigations>
+              </ng-template>
+            </mat-tab>
+
+            <mat-tab>
+              <ng-template mat-tab-label>
+                <mat-icon class="tab-icon">account_balance</mat-icon>
+                {{'general.Assets' | translate}}
+              </ng-template>
+              <ng-template matTabContent>
+                <app-assets [isProject]="false" [assetGroup]="dataService.Config.AssetGroups" [selectedNode]="selectedNode" (nodeTreeChanged)="SetNavTreeData($event)"></app-assets>
+              </ng-template>
+            </mat-tab>
+
+            <mat-tab>
+              <ng-template mat-tab-label>
+                <mat-icon class="tab-icon">fact_check</mat-icon>
+                {{'general.Checklists' | translate}}
+              </ng-template>
+              <ng-template matTabContent>
+                <app-checklists [selectedNode]="selectedNode" (nodeTreeChanged)="SetNavTreeData($event)"></app-checklists>
+              </ng-template>
+            </mat-tab>
+          </mat-tab-group>
+        </as-split-area>
+      </as-split>
+    </mat-drawer-content>
+  </mat-drawer-container>
+  <app-status-bar></app-status-bar>
+</div>

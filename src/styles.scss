@@ -1,0 +1,134 @@
+//@import '@angular/material/prebuilt-themes/purple-green.css';
+@use '@angular/material' as mat;
+
+@import "@angular/material/theming";
+
+@include mat.core();
+
+
+$primary: mat.define-palette(mat.$blue-palette, 500, 100, 900);
+$accent: mat.define-palette(mat.$purple-palette, 700);
+$warn: mat.define-palette(mat.$red-palette);
+$background-color: map_get($mat-gray, 100);
+
+// Create the theme object (a Sass map containing all of the palettes).
+$theme: mat-light-theme($primary, $accent, $warn);
+
+// Insert custom background color
+$background: map-get($theme, background);
+$background: map_merge($background, (background: $background-color));
+$theme: map_merge($theme, (background: $background));
+
+@include angular-material-theme($theme);
+
+$dark-theme: mat.define-dark-theme(
+  (
+    color: (
+      primary: $primary,
+      accent: $accent,
+      warn: $warn,
+    ),
+  )
+);
+
+.color-primary {
+  color: mat-color($primary);
+}
+
+.background-color-primary {
+  background-color: mat-color($primary);
+}
+
+.background-color-accent {
+  background-color: mat-color($accent);
+}
+
+.darkMode {
+  @include mat.all-component-colors($dark-theme);
+}
+
+// .bg-color-light {
+//   background-color: #fff;
+// }
+
+// .bg-color-dark {
+//   background-color: #424242;
+// }
+
+html, body {
+  margin: 0;
+  padding: 0;
+
+  height: 100%;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.website-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  //align-items: center;
+  //justify-content: center;
+
+  //background: url(./assets/background.jpg) no-repeat center fixed;
+  //-webkit-background-size: cover; /* pour anciens Chrome et Safari */
+  //background-size: cover; /* version standardisée */
+}
+
+.drawer-container {
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0);
+  //color: white;
+  margin-bottom: 20px;
+}
+
+.messages-info {
+  //background-color: mat-color($accent) !important;
+  color: #fff;
+  font-weight: bold;
+}
+.messages-success {
+  background-color: rgba(53, 209, 13, 0.9) !important;
+  color: #fff;
+  font-weight: bold;
+}
+.messages-warning {
+  background-color: rgba(238, 202, 0, 0.9) !important;
+  color: #fff;
+  font-weight: bold;
+}
+.messages-error {
+  background-color: rgba(202, 28, 28, 0.9) !important;
+  color: #fff;
+  font-weight: bold;
+}
+
+.buttonAsText {
+  background:none;
+  border:none;
+  margin:0;
+  margin-bottom: 5px;
+  padding:0;
+  cursor: pointer;
+  font-size: large;
+}
+
+.mat-tab-body-wrapper {
+  height: 100%;
+}
+
+.mat-tooltip {
+  font-size: small !important;
+  background-color: gray !important;
+}
+
+.expansion-panel-headers-align .mat-expansion-panel-header-title,
+.expansion-panel-headers-align .mat-expansion-panel-header-description {
+  flex-basis: 0;
+}
+
+.expansion-panel-headers-align .mat-expansion-panel-header-description {
+  justify-content: space-between;
+  align-items: center;
+}

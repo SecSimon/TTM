@@ -1,0 +1,7 @@
+{
+  "pages.home.dia.welcome.view": "Sind Sie ein Geräte",
+  "pages.login.create_acc": "Erstelle einen Account",
+  "pages.login.pretexthtml": "<p>Diese App nutzt GitHub als Datenspeicher.</p><p>Ihre Projekte können in <strong>privaten Repositories</strong> gespeichert und zustätzlich für erhöhten Datenschutz mit einem <strong>Passwortschutz</strong> versehen werden.</p><p>Sie müssen einen <strong>GitHub Account erstellen</strong> oder sich in Ihren Account einloggen.</p>",
+  "side-nav.home": "Home",
+  "side-nav.account": "Account DE"
+}

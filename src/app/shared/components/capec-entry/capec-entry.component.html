@@ -1,0 +1,21 @@
+<div *ngIf="capecID" style="pointer-events: none;">
+  <mat-form-field appearance="fill" style="width: calc(100% - 455px); margin-right: 5px;">
+    <mat-label>{{ 'properties.CAPECTitle' | translate }}</mat-label>
+    <input matInput type="text" [value]="GetCAPECTitle()">
+  </mat-form-field>
+  <mat-form-field appearance="fill" style="width: 200px; margin-right: 5px;">
+    <mat-label>{{ 'properties.likelihoodOfAttack' | translate }}</mat-label>
+    <input matInput type="text" [value]="GetCAPECProperty('Likelihood_Of_Attack')">
+  </mat-form-field>
+  <mat-form-field appearance="fill" style="width: 200px; margin-right: 5px;">
+    <mat-label>{{ 'properties.typicalSeverity' | translate }}</mat-label>
+    <input matInput type="text" [value]="GetCAPECProperty('Typical_Severity')">
+  </mat-form-field>
+  <button mat-icon-button style="vertical-align: super; pointer-events: all;" (click)="OpenCAPEC()" matTooltip="{{'general.openInNew' | translate}}" matTooltipShowDelay="1000">
+    <mat-icon>open_in_new</mat-icon>
+  </button>
+  <mat-form-field appearance="fill" style="width: 100%;">
+    <mat-label>{{ 'properties.Description' | translate }}</mat-label>
+    <textarea matInput [value]="GetCAPECProperty('Description')" cdkTextareaAutosize></textarea>
+  </mat-form-field>
+</div>

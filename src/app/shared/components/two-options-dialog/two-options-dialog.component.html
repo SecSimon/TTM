@@ -1,0 +1,17 @@
+<h2 mat-dialog-title>{{data['title']}}</h2>
+<mat-dialog-content>
+  <div *ngIf="data['textContent']" style="white-space: pre-line">
+    {{data['textContent']}}
+  </div>
+  <ng-container *ngIf="data['component']"><ng-container *ngComponentOutlet="data['component']; injector: dataInjector"></ng-container></ng-container>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <ng-container *ngIf="data['initalTrue'] == true">
+    <button mat-button cdkFocusInitial [disabled]="!data['resultTrueEnabled']()" [mat-dialog-close]="true">{{data['resultTrueText']}}</button>
+    <button mat-button *ngIf="data['hasResultFalse']" mat-dialog-close>{{data['resultFalseText']}}</button>
+  </ng-container>
+  <ng-container *ngIf="data['initalTrue'] == false">
+    <button mat-button [disabled]="!data['resultTrueEnabled']()" [mat-dialog-close]="true">{{data['resultTrueText']}}</button>
+    <button mat-button *ngIf="data['hasResultFalse']" mat-dialog-close cdkFocusInitial>{{data['resultFalseText']}}</button>
+  </ng-container>
+</mat-dialog-actions>

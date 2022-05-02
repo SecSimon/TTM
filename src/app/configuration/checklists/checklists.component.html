@@ -1,0 +1,122 @@
+<div *ngIf="selectedNode" style="margin-left: 10px; margin-right: 10px; height: 100%;">
+  <h2>{{selectedNode.name()}}</h2>
+  <ng-container *ngIf="selectedChecklistType">
+    <mat-form-field appearance="fill" style="width: 100%;">
+      <mat-label>{{ 'properties.Description' | translate }}</mat-label>
+      <textarea matInput [(ngModel)]="selectedChecklistType.Description"></textarea>
+    </mat-form-field>
+    
+    <mat-tab-group style="height: 100%;" [selectedIndex]="GetSelectedTabIndex()" (selectedIndexChange)="SetSelectedTabIndex($event)">
+      <mat-tab label="{{'general.Settings' | translate}}">
+          <ng-template matTabContent>
+            <div class="row">
+              <div class="column1">
+                <mat-list cdkDropList (cdkDropListDropped)="drop($event, selectedChecklistType.Levels)" class="prop-list reorder-list" [class.prop-list-light]="!theme.IsDarkMode" [class.prop-list-dark]="theme.IsDarkMode">
+                  <div mat-subheader>{{selectedChecklistType.Name}} {{ 'properties.Levels' | translate }} <button mat-icon-button (click)="AddLevel()" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000" style="margin-left: 15px;"><mat-icon>add</mat-icon></button></div>
+                  <mat-list-item *ngFor="let level of selectedChecklistType.Levels" (click)="selectedLevel = level" cdkDrag
+                  [class.highlight-light]="selectedLevel === level && !theme.IsDarkMode" [class.highlight-dark]="selectedLevel === level && theme.IsDarkMode"
+                  matTooltip="{{level.Name}}" matTooltipShowDelay="1000">
+                    <mat-icon mat-list-icon>chevron_right</mat-icon>
+                    <div mat-line *ngIf="level.Abbr">{{level.Abbr}}</div>
+                    <div mat-line>{{level.Name}}</div>
+                    <button mat-icon-button style="margin-left: auto;" (click)="DeleteLevel(level)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000"><mat-icon>delete</mat-icon></button>
+                  </mat-list-item>
+                </mat-list>
+              </div>
+              <div class="column2">
+                <ng-container *ngIf="selectedLevel && selectedChecklistType.Levels.includes(selectedLevel)">
+                  <div style="margin: 10px 0 10px 10px;">
+                    <mat-form-field appearance="fill" class="property-form-field">
+                      <mat-label>{{'general.Name' | translate}}</mat-label>
+                      <input matInput type="text" [(ngModel)]="selectedLevel.Name" matTooltip="{{selectedLevel.Name}}" matTooltipShowDelay="1000">
+                      <button *ngIf="selectedLevel.Name" matSuffix mat-icon-button (click)="selectedLevel.Name=''" matTooltip="{{'general.Clear' | translate}}" matTooltipShowDelay="1000">
+                        <mat-icon>close</mat-icon>
+                      </button>
+                    </mat-form-field>
+                    <br/>
+                    <mat-form-field appearance="fill" class="property-form-field">
+                      <mat-label>{{'properties.Abbr' | translate}}</mat-label>
+                      <input matInput type="text" [(ngModel)]="selectedLevel.Abbr" matTooltip="{{selectedLevel.Abbr}}" matTooltipShowDelay="1000">
+                    </mat-form-field>
+                    <br/>
+                    <mat-form-field appearance="fill" style="width: 100%;">
+                      <mat-label>{{'properties.Description' | translate}}</mat-label>
+                      <input matInput type="text" [(ngModel)]="selectedLevel.Description" matTooltip="{{selectedLevel.Description}}" matTooltipShowDelay="1000">
+                    </mat-form-field>
+                  </div>
+                </ng-container>
+              </div>
+            </div>
+          </ng-template>
+      </mat-tab>
+      <mat-tab label="{{'general.Requirements' | translate}}">
+        <as-split direction="horizontal" unit="pixel" [gutterSize]="3" [restrictMove]="true" (dragEnd)="OnSplitSizeChange($event, 0)">
+          <as-split-area style="overflow: hidden;" [size]="GetSplitSize(0, 0, 300)" [order]=1 [class.splitter-light2]="!theme.IsDarkMode" [class.splitter-dark2]="theme.IsDarkMode">
+            <app-nav-tree #reqNavTree [activeNode]="selectedRequirementNode" (selectedNodeChanged)="selectedRequirementNode = $event"></app-nav-tree>
+          </as-split-area>
+          <as-split-area [size]="GetSplitSize(0, 1, $any('*'))" [order]=2 [class.bg-color-light3]="!theme.IsDarkMode" [class.bg-color-dark3]="theme.IsDarkMode">
+            <ng-container *ngIf="selectedRequirementType">
+              <div style="margin: 10px 0 10px 10px;">
+                <h2>{{selectedRequirementNode.name()}}</h2>
+                <mat-form-field appearance="fill" style="width: 100%;">
+                  <mat-label>{{ 'properties.Description' | translate }}</mat-label>
+                  <textarea matInput [(ngModel)]="selectedRequirementType.Description"></textarea>
+                </mat-form-field>
+                <table>
+                  <tr>
+                    <td></td>
+                    <td *ngFor="let level of selectedChecklistType.Levels" style="text-align: center;">{{level.Abbr}}</td>
+                  </tr>
+                  <tr>
+                    <td>{{'general.Required' | translate}}</td>
+                    <td *ngFor="let level of selectedChecklistType.Levels; index as index" style="text-align: center;"><mat-checkbox color="primary" [(ngModel)]="selectedRequirementType.RequiredPerLevel[index]" (change)="OnRequiredChanged($event, index)"></mat-checkbox></td>
+                  </tr>
+                </table>
+                <br/>
+                <mat-form-field appearance="fill" class="property-form-field">
+                  <mat-label>{{'properties.ReqFulfillRuleType' | translate}}</mat-label>
+                  <mat-select [(value)]="selectedRequirementType.ReqFulfillRule.RuleType" (selectionChange)="OnReqRuleTypeChanged($event)">
+                    <mat-option>{{'properties.selectNone' | translate}}</mat-option>
+                    <mat-option *ngFor="let type of GetReqFulfillRuleTypes()" [value]="type">
+                      {{GetReqFulfillRuleTypeName(type) | translate}}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+                <ng-container *ngIf="selectedRequirementType.ReqFulfillRule.RuleType == 1">
+                  <mat-form-field appearance="fill" class="property-form-field" style="margin-left: 10px;">
+                    <mat-label>{{'properties.ComponentType' | translate}}</mat-label>
+                    <mat-select [(value)]="selectedRequirementType.ReqFulfillRule.SWRule.ComponentTypeID">
+                      <mat-option *ngFor="let type of GetMyComponentSWTypes()" [value]="type.ID">
+                        {{type.Name}}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                  <ng-container *ngIf="selectedRequirementType.ReqFulfillRule.SWRule?.ComponentTypeID?.length > 0">
+                    <br/>
+                    <mat-form-field appearance="fill" class="property-form-field">
+                      <mat-label>{{'general.PropertyName' | translate}}</mat-label>
+                      <mat-select [(value)]="selectedRequirementType.ReqFulfillRule.SWRule.PropertyRest.ID">
+                        <mat-option *ngFor="let prop of GetAvailableProperties()" [value]="prop.ID">
+                          <ng-container *ngIf="prop.DisplayName">{{prop.DisplayName | translate}}</ng-container>
+                          <ng-container *ngIf="!prop.DisplayName">{{prop.ID}}</ng-container>
+                        </mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                    <ng-container *ngIf="selectedRequirementType.ReqFulfillRule.SWRule.PropertyRest?.ID?.length > 0">
+                      <button mat-raised-button style="margin-left: 10px; vertical-align: super;" (click)="OnNextComparisonType(selectedRequirementType.ReqFulfillRule.SWRule.PropertyRest)">
+                        {{selectedRequirementType.ReqFulfillRule.SWRule.PropertyRest.ComparisonType}}
+                      </button>
+                      <mat-checkbox color="primary" style="margin-left: 10px; vertical-align: super;" [(ngModel)]="selectedRequirementType.ReqFulfillRule.SWRule.PropertyRest.Value"></mat-checkbox>
+                      <br/>
+                      <mat-checkbox color="primary" [(ngModel)]="selectedRequirementType.ReqFulfillRule.NeedsReview">{{'properties.NeedsReview' | translate}}</mat-checkbox>
+                    </ng-container>
+                  </ng-container>
+                </ng-container>
+              </div>
+            </ng-container>
+          </as-split-area>
+        </as-split>
+      </mat-tab>
+    </mat-tab-group>
+  </ng-container>
+</div>

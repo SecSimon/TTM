@@ -1,0 +1,82 @@
+<div *ngIf="mitigationProcess">
+  <mat-form-field appearance="fill" class="property-form-field">
+    <mat-label>{{ 'properties.Name' | translate }}</mat-label>
+    <input matInput [(ngModel)]="mitigationProcess.Name" matTooltip="{{mitigationProcess.Name}}" matTooltipShowDelay="1000"/>
+  </mat-form-field>
+  <mat-form-field appearance="fill" class="property-form-field" style="margin-left: 10px;">
+    <mat-label>{{'properties.Status' | translate}}</mat-label>
+    <mat-select [(value)]="mitigationProcess.MitigationProcessState" (selectionChange)="OnStateChange($event.value)" matTooltip="{{GetMitigationProcessStateName(mitigationProcess.MitigationProcessState) | translate}}" matTooltipShowDelay="1000">
+      <mat-option *ngFor="let state of GetMitigationProcessStates()" [value]="state">{{GetMitigationProcessStateName(state) | translate}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <br/>
+  <mat-form-field appearance="fill" class="property-form-field">
+    <mat-label>{{'properties.MitigationMappings' | translate}}</mat-label>
+    <mat-select [(value)]="mitigationProcess.MitigationMappings" multiple (selectionChange)="mitigationMappingsChange.emit()" matTooltip="{{GetMitigationMappingsName(mitigationProcess.MitigationMappings)}}" matTooltipShowDelay="1000">
+      <mat-option *ngFor="let map of GetMitigationMappings()" [value]="map">{{map.Name}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-icon style="margin-left: 10px;" matTooltip="{{'general.Progress' | translate}}" matTooltipShowDelay="1000">north_east</mat-icon>
+  <mat-slider style="width: 276px;" color="primary" thumbLabel [displayWith]="formatLabel" tickInterval="5" step="5" min="0" max="100" [(ngModel)]="mitigationProcess.Progress" (change)="OnProgressChange($event.value)"></mat-slider>
+  <mat-form-field appearance="fill" style="width: 100%;">
+    <mat-label>{{ 'properties.Description' | translate }}</mat-label>
+    <textarea matInput [(ngModel)]="mitigationProcess.Description"></textarea>
+  </mat-form-field>
+  <div>
+    <h4>{{'general.Tasks' | translate}}</h4>
+    <div cdkDropList class="reorder-list" (cdkDropListDropped)="drop($event, mitigationProcess.Tasks)">
+      <div class="reorder-box" [style.color]="theme.IsDarkMode ? 'white' : 'black'" *ngFor="let item of mitigationProcess.Tasks; index as index" cdkDrag>
+        <ng-container *ngIf="!isEdtingArray[0][index]">
+          <mat-icon>chevron_right</mat-icon> <mat-checkbox color="primary" [(ngModel)]="item.IsDone">{{item.Task}}</mat-checkbox>
+          <button mat-icon-button style="width: 20px; height: 20px; line-height: 20px;" (click)="isEdtingArray[0][index] = true" matTooltip="{{'general.Edit' | translate}}" matTooltipShowDelay="1000">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button style="width: 20px; height: 20px; line-height: 20px;" (click)="OnDeleteItem(item, mitigationProcess.Tasks)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </ng-container>
+        <input *ngIf="isEdtingArray[0][index]" id="renameBox" type="text" style="width: -webkit-fill-available;" [ngModel]="item.Task" (keydown)="OnRenameItem($event, mitigationProcess.Tasks, 0, index, 'Task')" autofocus (focusout)="OnRenameItem($event, mitigationProcess.Tasks, 0, index, 'Task')" onfocus="this.select();"/>
+      </div>
+    </div>
+    <div style="padding: 5px 10px;">
+      <mat-icon>chevron_right</mat-icon><input matInput style="width: calc(100% - 24px); vertical-align: super; font-size: 14px;" (keydown)="OnTaskKeyDown($event)" placeholder="{{'pages.modeling.charscope.addDescription' | translate}}"/>
+    </div>
+  </div>
+  <div>
+    <h4>{{'general.Notes' | translate}}</h4>
+    <div cdkDropList class="reorder-list" (cdkDropListDropped)="drop($event, mitigationProcess.Notes)">
+      <div class="reorder-box" [style.color]="theme.IsDarkMode ? 'white' : 'black'" *ngFor="let item of mitigationProcess.Notes; index as index" cdkDrag>
+        <ng-container *ngIf="!isEdtingArray[1][index]">
+          <mat-icon>chevron_right</mat-icon> {{item.Date | date}} - {{item.Author}}: {{item.Note}}
+          <button mat-icon-button style="width: 20px; height: 20px; line-height: 20px;" (click)="isEdtingArray[1][index] = true" matTooltip="{{'general.Edit' | translate}}" matTooltipShowDelay="1000">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button style="width: 20px; height: 20px; line-height: 20px;" (click)="OnDeleteItem(item, mitigationProcess.Notes)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </ng-container>
+        <input *ngIf="isEdtingArray[1][index]" id="renameBox" type="text" style="width: -webkit-fill-available;" [ngModel]="item.Note" (keydown)="OnRenameItem($event, mitigationProcess.Notes, 1, index, 'Note')" autofocus (focusout)="OnRenameItem($event, mitigationProcess.Notes, 1, index, 'Note')" onfocus="this.select();"/>
+      </div>
+    </div>
+    <div style="padding: 5px 10px;">
+      <mat-icon>chevron_right</mat-icon><input matInput style="width: calc(100% - 24px); vertical-align: super; font-size: 14px;" (keydown)="OnNoteKeyDown($event)" placeholder="{{'pages.modeling.charscope.addDescription' | translate}}"/>
+    </div>
+  </div>
+  <mat-accordion class="expansion-panel-headers-align">
+    <mat-expansion-panel *ngFor="let map of mitigationProcess.MitigationMappings">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          {{'general.MitigationMappingInfo' | translate}}
+        </mat-panel-title>
+        <mat-panel-description>
+          {{map.Name}}
+          <mat-icon>info</mat-icon>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <ng-template matExpansionPanelContent>
+        <app-mitigation-mapping [mitigationMapping]="map"></app-mitigation-mapping>
+      </ng-template>
+    </mat-expansion-panel>
+  </mat-accordion>
+  <br/>
+</div>

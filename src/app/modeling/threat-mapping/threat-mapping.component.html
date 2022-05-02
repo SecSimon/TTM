@@ -1,0 +1,99 @@
+<div *ngIf="threatMapping" [class.disable]="!canEdit">
+  <mat-form-field appearance="fill" class="property-form-field">
+    <mat-label>{{ 'properties.Name' | translate }}</mat-label>
+    <input matInput [(ngModel)]="threatMapping.Name" matTooltip="{{threatMapping.Name}}" matTooltipShowDelay="1000"/>
+  </mat-form-field>
+  <mat-form-field appearance="fill" class="property-form-field" style="margin-left: 10px;">
+    <mat-label>{{'properties.Status' | translate}}</mat-label>
+    <mat-select [(value)]="threatMapping.ThreatState" matTooltip="{{GetThreatStateName(threatMapping.ThreatState) | translate}}" matTooltipShowDelay="1000">
+      <mat-option *ngFor="let state of GetThreatStates()" [value]="state">{{GetThreatStateName(state) | translate}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-icon color="warn" *ngIf="!threatMapping.RuleStillApplies" style="margin-left: 5px;" matTooltip="{{'pages.modeling.threatmapping.ruleNotApplyingAnymore' | translate}}">sync_problem</mat-icon>
+  <mat-form-field appearance="fill" style="width: 125px; margin-left: 10px;">
+    <mat-label>{{ 'properties.Severity' | translate }}</mat-label>
+    <mat-select [(value)]="threatMapping.Severity">
+      <mat-option>{{'properties.selectNone' | translate}}</mat-option>
+      <mat-option *ngFor="let type of GetSeverityTypes()" [value]="type">{{GetSeverityTypeName(type) | translate}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <br/>
+  <mat-form-field appearance="fill" class="property-form-field">
+    <mat-label>{{'general.Threat' | translate}}</mat-label>
+    <mat-select [(value)]="threatMapping.ThreatOrigin" matTooltip="{{threatMapping.ThreatOrigin?.Name}}" matTooltipShowDelay="1000">
+      <mat-option>{{'properties.selectNone' | translate}}</mat-option>
+      <mat-optgroup *ngFor="let group of GetThreatOriginGroups()" [label]="group.Name">
+        <mat-option *ngFor="let threat of group.ThreatOrigins" [value]="threat">
+          {{threat.Name}}
+        </mat-option>
+      </mat-optgroup>
+    </mat-select>
+  </mat-form-field>
+  <button mat-icon-button style="vertical-align: super;" (click)="AddThreatOrigin()">
+    <mat-icon>add</mat-icon>
+  </button>
+  <br/>
+  <mat-form-field appearance="fill" class="property-form-field disable">
+    <mat-label>{{ 'general.Target' | translate }}</mat-label>
+    <input matInput [value]="threatMapping.Target?.Name" matTooltip="{{threatMapping.Target?.GetProperty('Name')}}" matTooltipShowDelay="1000"/>
+  </mat-form-field>
+  <mat-form-field appearance="fill" class="disable" style="margin-left: 10px; width: calc(100% - 300px - 10px)">
+    <mat-label>{{ 'general.Targets' | translate }}</mat-label>
+    <input matInput [value]="GetTargetsNames()"/>
+  </mat-form-field>
+  <mat-form-field appearance="fill" style="width: 100%;">
+    <mat-label>{{'general.ThreatCategories' | translate}}</mat-label>
+      <mat-select [(value)]="threatMapping.ThreatCategories" multiple>
+        <mat-optgroup *ngFor="let group of GetThreatCategoryGroups()" [label]="group.Name">
+          <mat-option *ngFor="let cat of group.ThreatCategories" [value]="cat" matTooltip="{{cat.Description}}" matTooltipShowDelay="1000">
+            {{cat.Name}}
+          </mat-option>
+        </mat-optgroup>
+      </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="fill" style="width: 100%;">
+    <mat-label>{{'general.DeviceThreats' | translate}}</mat-label>
+      <mat-select [(value)]="threatMapping.DeviceThreats" multiple>
+        <mat-optgroup *ngFor="let group of GetDeviceThreatGroups()" label="{{group.name | translate}}">
+          <mat-option *ngFor="let threat of group.DeviceThreats" [value]="threat" matTooltip="{{threat.Description}}" matTooltipShowDelay="1000">
+            {{threat.Name}}
+          </mat-option>
+        </mat-optgroup>
+      </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="fill" style="width: 100%;">
+    <mat-label>{{ 'properties.Description' | translate }}</mat-label>
+    <textarea matInput [(ngModel)]="threatMapping.Description"></textarea>
+  </mat-form-field>
+  <mat-accordion class="expansion-panel-headers-align">
+    <mat-expansion-panel *ngIf="threatMapping.ThreatOrigin">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          {{'general.ThreatInfo' | translate}}
+        </mat-panel-title>
+        <mat-panel-description>
+          {{threatMapping.ThreatOrigin.Name}}
+          <mat-icon>info</mat-icon>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <ng-template matExpansionPanelContent>
+        <app-threat-origin [canEdit]="false" [threatOrigin]="threatMapping.ThreatOrigin"></app-threat-origin>
+      </ng-template>
+    </mat-expansion-panel>
+    <mat-expansion-panel *ngIf="threatMapping.ThreatRule">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          {{'general.Rule' | translate}}
+        </mat-panel-title>
+        <mat-panel-description>
+          {{threatMapping.ThreatRule.Name}}
+          <mat-icon>info</mat-icon>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <ng-template matExpansionPanelContent>
+        <app-threat-rule [canEdit]="false" [threatRule]="threatMapping.ThreatRule"></app-threat-rule>
+      </ng-template>
+    </mat-expansion-panel>
+  </mat-accordion>
+  <br/>
+</div>

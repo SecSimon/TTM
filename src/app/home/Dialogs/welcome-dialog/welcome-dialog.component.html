@@ -1,0 +1,46 @@
+<mat-stepper (selectionChange)="OnStepChanged($event)">
+  <mat-step label="Language" state="language">
+    <div>
+      <button mat-button matStepperNext (click)="ChangeLanguage('en')">Welcome!</button>
+      <button mat-button matStepperNext (click)="ChangeLanguage('de')">Willkommen!</button>
+    </div>
+  </mat-step>
+  <mat-step label="Theme" state="theme">
+    <div>
+      <button mat-button matStepperNext (click)="theme.SetDarkMode(false)">
+        <mat-icon>light_mode</mat-icon>
+        Light Mode
+      </button>
+      <button mat-button matStepperNext (click)="theme.SetDarkMode(true)">
+        <mat-icon>dark_mode</mat-icon>
+        Dark Mode
+      </button>
+    </div>
+  </mat-step>
+  <mat-step label="{{'general.View' | translate}}" state="view">
+    <div>
+      {{'pages.home.dia.welcome.view' | translate}} 
+      <button mat-button matStepperNext>{{'general.Manufacturer' | translate}}</button> {{'general.or' | translate}}
+      <button mat-button matStepperNext>{{'general.Operator' | translate}}</button>?
+    </div>
+  </mat-step>
+  <mat-step label="Done" state="fin">
+    <div>
+      <button mat-button matStepperNext [mat-dialog-close]="true">Done!</button>
+    </div>
+  </mat-step>
+
+  <!-- Icon overrides. -->
+  <ng-template matStepperIcon="language">
+    <mat-icon>language</mat-icon>
+  </ng-template>
+  <ng-template matStepperIcon="theme">
+    <mat-icon>dark_mode</mat-icon>
+  </ng-template>
+  <ng-template matStepperIcon="view">
+    <mat-icon>person</mat-icon>
+  </ng-template>
+  <ng-template matStepperIcon="fin">
+    <mat-icon>done</mat-icon>
+  </ng-template>
+</mat-stepper>

@@ -1,0 +1,90 @@
+<div *ngIf="mitigationMapping">
+  <mat-form-field appearance="fill" class="property-form-field">
+    <mat-label>{{ 'properties.Name' | translate }}</mat-label>
+    <input matInput [(ngModel)]="mitigationMapping.Name" matTooltip="{{mitigationMapping.Name}}" matTooltipShowDelay="1000"/>
+  </mat-form-field>
+  <mat-form-field appearance="fill" class="property-form-field" style="margin-left: 10px;">
+    <mat-label>{{'properties.Status' | translate}}</mat-label>
+    <mat-select [(value)]="mitigationMapping.MitigationState" matTooltip="{{GetMitigationStateName(mitigationMapping.MitigationState) | translate}}" matTooltipShowDelay="1000">
+      <mat-option *ngFor="let state of GetMitigationStates()" [value]="state">{{GetMitigationStateName(state) | translate}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-icon color="warn" *ngIf="!mitigationMapping.RuleStillApplies" style="margin-left: 5px;" matTooltip="{{'pages.modeling.mitigationMapping.ruleNotApplyingAnymore' | translate}}">sync_problem</mat-icon>
+  <mat-form-field appearance="fill" class="property-form-field" style="margin-left: 10px;">
+    <mat-label>{{'properties.MitigationProcess' | translate}}</mat-label>
+    <mat-select [(value)]="mitigationMapping.MitigationProcess" (selectionChange)="mitigationProcessChange.emit()" matTooltip="{{mitigationMapping.MitigationProcess?.Name}}" matTooltipShowDelay="1000">
+      <mat-option>{{'properties.selectNone' | translate}} </mat-option>
+      <mat-option *ngFor="let proc of GetMitigationProcesses()" [value]="proc">{{proc.Name}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <button mat-icon-button style="vertical-align: super;" [disabled]="!mitigationMapping.MitigationProcess" (click)="EditMitigationProcess()">
+    <mat-icon>edit</mat-icon>
+  </button>
+  <button mat-icon-button style="vertical-align: super;" (click)="AddMitigationProcess()">
+    <mat-icon>add</mat-icon>
+  </button>
+  <br/>
+  <mat-form-field appearance="fill" class="property-form-field">
+    <mat-label>{{'general.Mitigation' | translate}}</mat-label>
+    <mat-select [(value)]="mitigationMapping.Mitigation" matTooltip="{{mitigationMapping.Mitigation?.Name}}" matTooltipShowDelay="1000">
+      <mat-option>{{'properties.selectNone' | translate}}</mat-option>
+      <mat-optgroup *ngFor="let group of GetMitigationGroups()" [label]="group.Name">
+        <mat-option *ngFor="let mit of group.Mitigations" [value]="mit">
+          {{mit.Name}}
+        </mat-option>
+      </mat-optgroup>
+    </mat-select>
+  </mat-form-field>
+  <button mat-icon-button style="vertical-align: super;" (click)="AddMitigation()">
+    <mat-icon>add</mat-icon>
+  </button>
+  <br/>
+  <mat-form-field appearance="fill" class="disable" style="width: 100%;" *ngIf="!isManualEntry">
+    <mat-label>{{ 'general.Targets' | translate }}</mat-label>
+    <input matInput [value]="GetTargetsNames()"/>
+  </mat-form-field>
+  <mat-form-field appearance="fill" style="width: 100%;" *ngIf="isManualEntry">
+    <mat-label>{{ 'general.Targets' | translate }}</mat-label>
+    <mat-select [(value)]="mitigationMapping.Targets" matTooltip="{{GetTargetsNames()}}" matTooltipShowDelay="1000" multiple>
+      <mat-option>{{'properties.selectNone' | translate}}</mat-option>
+      <mat-option *ngFor="let ele of elements" [value]="ele">
+        {{ele.GetProperty('Name')}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="fill" style="width: 100%;">
+    <mat-label>{{ 'properties.Description' | translate }}</mat-label>
+    <textarea matInput [(ngModel)]="mitigationMapping.Description"></textarea>
+  </mat-form-field>
+  <mat-accordion class="expansion-panel-headers-align">
+    <mat-expansion-panel *ngIf="mitigationMapping.Mitigation">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          {{'general.MitigationInfo' | translate}}
+        </mat-panel-title>
+        <mat-panel-description>
+          {{mitigationMapping.Mitigation.Name}}
+          <mat-icon>info</mat-icon>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <ng-template matExpansionPanelContent>
+        <app-mitigation [canEdit]="false" [mitigation]="mitigationMapping.Mitigation"></app-mitigation>
+      </ng-template>
+    </mat-expansion-panel>
+    <mat-expansion-panel *ngFor="let map of mitigationMapping.ThreatMappings">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          {{'pages.modeling.mitigationmapping.mitigatedThreats' | translate}}
+        </mat-panel-title>
+        <mat-panel-description>
+          {{map?.GetProperty('Name')}}
+          <mat-icon>info</mat-icon>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <ng-template matExpansionPanelContent>
+        <app-threat-mapping [canEdit]="false" [threatMapping]="map"></app-threat-mapping>
+      </ng-template>
+    </mat-expansion-panel>
+  </mat-accordion>
+  <br/>
+</div>

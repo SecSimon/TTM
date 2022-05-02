@@ -1,0 +1,192 @@
+<div style="width: 100%; height: 100%;">
+  <div class="tools mat-elevation-z8" [class.bg-color-light2]="!theme.IsDarkMode" [class.bg-color-dark2]="theme.IsDarkMode">
+    <button mat-button class="toolBtn" [class.toolBtn-Selected]="Dia.MouseMode == 'mouse'" (click)="Dia.SetMouse()" matTooltip="{{'pages.modeling.diagram.mouse' | translate}}" matTooltipShowDelay="1000">
+      <mat-icon>mouse</mat-icon>
+    </button>
+    <button mat-button class="toolBtn" [class.toolBtn-Selected]="Dia.MouseMode == 'pan'" (click)="Dia.SetPan()" matTooltip="{{'pages.modeling.diagram.pan' | translate}}" matTooltipShowDelay="1000">
+      <mat-icon>pan_tool</mat-icon>
+    </button>
+    <button mat-button class="toolBtn" [class.toolBtn-Selected]="Dia.MouseMode == 'move'" (click)="Dia.SetMove()" matTooltip="{{'pages.modeling.diagram.move' | translate}}" matTooltipShowDelay="1000">
+      <mat-icon>highlight_alt</mat-icon>
+    </button>
+    <button mat-button class="toolBtn" [class.toolBtn-Selected]="[3,4].includes(Dia.FlowArrowPosition)" (click)="Dia.FlowArrowPosition = Dia.FlowArrowPosition == 3 ? 5 : 3" matTooltip="{{'pages.modeling.diagram.arrowPosBoth' | translate}}" matTooltipShowDelay="1000" *ngIf="Dia.Diagram.DiagramType != 'HW'">
+      <fa-icon [icon]="faArrowsAltH"></fa-icon>
+    </button>
+    <button mat-button class="toolBtn" [class.toolBtn-Selected]="Dia.FlowArrowPosition == 2" (click)="Dia.FlowArrowPosition = Dia.FlowArrowPosition == 2 ? 5 : 2" matTooltip="{{'pages.modeling.diagram.arrowPosEnd' | translate}}" matTooltipShowDelay="1000" *ngIf="Dia.Diagram.DiagramType != 'HW'">
+      <fa-icon [icon]="faLongArrowAltRight"></fa-icon>
+    </button>
+    <button mat-button class="toolBtn" [class.toolBtn-Selected]="Dia.BendFlow" (click)="Dia.BendFlow = !Dia.BendFlow" matTooltip="{{'pages.modeling.diagram.arrowBend' | translate}}" matTooltipShowDelay="1000" *ngIf="Dia.Diagram.DiagramType != 'HW'">
+      <mat-icon>redo</mat-icon>
+    </button>
+    <button mat-button class="toolBtn" [class.toolBtn-Selected]="Dia.ShowName" (click)="Dia.ShowName = !Dia.ShowName" matTooltip="{{'pages.modeling.diagram.showName' | translate}}" matTooltipShowDelay="1000" *ngIf="Dia.Diagram.DiagramType != 'HW'">
+      <mat-icon>text_rotation_none</mat-icon>
+    </button>
+    <button mat-button class="toolBtn" [disabled]="!Dia.IsObjectSelected" (click)="Dia.SendToBack()" matTooltip="{{'pages.modeling.diagram.sendBack' | translate}}" matTooltipShowDelay="1000">
+      <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" version="1.1">
+        <!--<rect fill="transparent" stroke="#F00" x="2.5" y="2.5" width="20" height="20" stroke-width="1"/>-->
+        <rect [attr.fill]="Dia.IsObjectSelected ? (theme.IsDarkMode ? '#FFF' : '#000') : (theme.IsDarkMode ? '#676767' : '#B6B6B6')" x="7.5" y="9" width="10" height="7" rx="3" ry="3"  stroke-width="1"/>
+        <rect [attr.fill]="Dia.IsObjectSelected ? (theme.IsDarkMode ? '#FFF' : '#000') : (theme.IsDarkMode ? '#676767' : '#B6B6B6')" [attr.stroke]="theme.Color2" x="2.5" y="2.5" width="11" height="8" rx="3" ry="3"  stroke-width="1.5"/>
+        <rect [attr.fill]="theme.Color2" x="4.5" y="4.5" width="7" height="4" rx="2" ry="2"  stroke-width="1.5"/>
+        <rect [attr.fill]="Dia.IsObjectSelected ? (theme.IsDarkMode ? '#FFF' : '#000') : (theme.IsDarkMode ? '#676767' : '#B6B6B6')" [attr.stroke]="theme.Color2" x="11.5" y="14.5" width="11" height="8" rx="3" ry="3"  stroke-width="1.5"/>
+        <rect [attr.fill]="theme.Color2" x="13.5" y="16.5" width="7" height="4" rx="2" ry="2"  stroke-width="1.5"/>
+      </svg>
+      <!--
+        https://www.freecodeformat.com/svg-editor.php
+      <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" version="1.1">
+        <rect fill="red" stroke="#F00" x="2.5" y="2.5" width="20" height="20" stroke-width="1"/>
+        <rect fill="#FFF" stroke="#FFF" x="7.5" y="9" width="10" height="7" rx="3" ry="3"  stroke-width="1"/>
+        <rect fill="#FFF" stroke="#252525" x="2.5" y="2.5" width="11" height="8" rx="3" ry="3"  stroke-width="1.5"/>
+        <rect fill="blue" x="4.5" y="4.5" width="7" height="4" rx="2" ry="2"  stroke-width="1.5"/>
+        <rect fill="#FFF" stroke="#252525" x="11.5" y="14.5" width="11" height="8" rx="3" ry="3"  stroke-width="1.5"/>
+        <rect fill="blue" x="13.5" y="16.5" width="7" height="4" rx="2" ry="2"  stroke-width="1.5"/>
+      </svg>
+      -->
+    </button>
+    <button mat-button class="toolBtn" [disabled]="!Dia.IsObjectSelected" (click)="Dia.SendBackwards()" matTooltip="{{'pages.modeling.diagram.sendBackwards' | translate}}" matTooltipShowDelay="1000">
+      <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" version="1.1">
+        <!--<rect fill="red" stroke="#F00" x="2.5" y="2.5" width="20" height="20" stroke-width="1"/>-->
+        <rect [attr.fill]="Dia.IsObjectSelected ? (theme.IsDarkMode ? '#FFF' : '#000') : (theme.IsDarkMode ? '#676767' : '#B6B6B6')" x="5" y="5" width="10" height="10" rx="3" ry="3"  stroke-width="1"/>
+        <rect [attr.fill]="Dia.IsObjectSelected ? (theme.IsDarkMode ? '#FFF' : '#000') : (theme.IsDarkMode ? '#676767' : '#B6B6B6')" [attr.stroke]="theme.Color2" x="10" y="10" width="11" height="11" rx="3" ry="3"  stroke-width="1.5"/>
+        <rect [attr.fill]="theme.Color2" x="12" y="12" width="7" height="7" rx="2" ry="2"  stroke-width="1.5"/>
+      </svg>
+      <!--
+      <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" version="1.1">
+        <rect fill="red" stroke="#F00" x="2.5" y="2.5" width="20" height="20" stroke-width="1"/>
+        <rect fill="#FFF" stroke="#FFF" x="5" y="5" width="10" height="10" rx="3" ry="3"  stroke-width="1"/>
+        <rect fill="#FFF" stroke="#252525" x="10" y="10" width="11" height="11" rx="3" ry="3"  stroke-width="1.5"/>
+        <rect fill="blue" stroke="blue" x="12" y="12" width="7" height="7" rx="2" ry="2"  stroke-width="1.5"/>
+      </svg>
+      -->
+    </button>
+    <button mat-button class="toolBtn" [disabled]="!Dia.IsObjectSelected" (click)="Dia.BringForward()" matTooltip="{{'pages.modeling.diagram.bringForward' | translate}}" matTooltipShowDelay="1000">
+      <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" version="1.1">
+        <!--<rect fill="red" stroke="#F00" x="2.5" y="2.5" width="20" height="20" stroke-width="1"/>-->
+        <rect [attr.fill]="Dia.IsObjectSelected ? (theme.IsDarkMode ? '#FFF' : '#000') : (theme.IsDarkMode ? '#676767' : '#B6B6B6')" [attr.stroke]="theme.Color2" x="10" y="10" width="11" height="11" rx="3" ry="3"  stroke-width="1.5"/>
+        <rect [attr.fill]="theme.Color2" x="12" y="12" width="7" height="7" rx="2" ry="2"  stroke-width="1.5"/>
+        <rect [attr.fill]="Dia.IsObjectSelected ? (theme.IsDarkMode ? '#FFF' : '#000') : (theme.IsDarkMode ? '#676767' : '#B6B6B6')" [attr.stroke]="theme.Color2" x="5" y="5" width="10" height="10" rx="3" ry="3"  stroke-width="1"/>
+      </svg>
+    </button>
+    <button mat-button class="toolBtn" [disabled]="!Dia.IsObjectSelected" (click)="Dia.BringToFront()" matTooltip="{{'pages.modeling.diagram.bringFront' | translate}}" matTooltipShowDelay="1000">
+      <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" version="1.1">
+        <!--<rect fill="transparent" stroke="#F00" x="2.5" y="2.5" width="20" height="20" stroke-width="1"/>-->
+        <rect [attr.fill]="Dia.IsObjectSelected ? (theme.IsDarkMode ? '#FFF' : '#000') : (theme.IsDarkMode ? '#676767' : '#B6B6B6')" [attr.stroke]="theme.Color2" x="2.5" y="2.5" width="11" height="8" rx="3" ry="3"  stroke-width="1.5"/>
+        <rect [attr.fill]="theme.Color2" x="4.5" y="4.5" width="7" height="4" rx="2" ry="2"  stroke-width="1.5"/>
+        <rect [attr.fill]="Dia.IsObjectSelected ? (theme.IsDarkMode ? '#FFF' : '#000') : (theme.IsDarkMode ? '#676767' : '#B6B6B6')" [attr.stroke]="theme.Color2" x="11.5" y="14.5" width="11" height="8" rx="3" ry="3"  stroke-width="1.5"/>
+        <rect [attr.fill]="theme.Color2" x="13.5" y="16.5" width="7" height="4" rx="2" ry="2"  stroke-width="1.5"/>
+        <rect [attr.fill]="Dia.IsObjectSelected ? (theme.IsDarkMode ? '#FFF' : '#000') : (theme.IsDarkMode ? '#676767' : '#B6B6B6')" [attr.stroke]="theme.Color2" x="7.5" y="8.5" width="10" height="9" rx="3" ry="3"  stroke-width="1"/>
+      </svg>
+    </button>
+    <button mat-button class="toolBtn" [disabled]="Dia.MouseMode == 'pan'" (click)="Dia.AddAnnotation()" matTooltip="{{'pages.modeling.diagram.annotation' | translate}}" matTooltipShowDelay="1000">
+      <mat-icon>edit</mat-icon>
+    </button>
+    <!--
+    <button mat-button class="toolBtn" [disabled]="true">
+      <mat-icon>text_rotation_none</mat-icon>
+    </button>
+    <button mat-button class="toolBtn" [disabled]="true">
+      <mat-icon>comment</mat-icon>
+    </button>
+    -->
+    <button mat-button class="toolBtn" (click)="Dia.SelectNextUninitObject()" [disabled]="Dia.ObjectCountToInit.length == 0" matTooltip="{{'pages.modeling.diagram.findUninitObject' | translate}}" matTooltipShowDelay="1000">
+      <mat-icon style="z-index: 1;" [matBadge]="Dia.ObjectCountToInit" matBadgeColor="primary" matBadgeSize="small" [matBadgeHidden]="Dia.ObjectCountToInit.length == 0" matBadgePosition="below">update</mat-icon>
+    </button>
+    <button mat-button class="toolBtn" [disabled]="!selectedElement" (click)="Dia.AddThreat()" matTooltip="{{'pages.modeling.diagram.addThreat' | translate}}" matTooltipShowDelay="1000">
+      <mat-icon>flash_on</mat-icon>
+    </button>
+    <button mat-button class="toolBtn" [disabled]="!selectedElement" (click)="Dia.AddMitigation()" matTooltip="{{'pages.modeling.diagram.addMitigation' | translate}}" matTooltipShowDelay="1000">
+      <mat-icon>security</mat-icon>
+    </button>
+    <button mat-button class="toolBtn" color="accent" [disabled]="!Dia.IsCreatingFlow" (click)="Dia.CancelCreateFlow()" matTooltip="{{'pages.modeling.diagram.cancelCreateFlow' | translate}}" matTooltipShowDelay="1000" *ngIf="Dia.Diagram.DiagramType != 'HW'">
+      <mat-icon>draw</mat-icon>
+    </button>
+    <!--
+    <mat-button-toggle-group>
+      <mat-button-toggle class="toolBtn" value="bold"><mat-icon>mouse</mat-icon></mat-button-toggle>
+      <mat-button-toggle class="toolBtn" value="italic"><mat-icon>mouse</mat-icon></mat-button-toggle>
+    </mat-button-toggle-group>
+    <mat-slider [min]="0.33" [max]="3" [step]="0.1" [(ngModel)]="Zoom"></mat-slider>
+    -->
+    <select #zoomSelect style="margin-right: 5px; float: right; margin-top: 3px;" (change)="SetZoom($event)" [value]="Zoom">
+      <option value="0.33">33%</option>
+      <option value="0.5">50%</option>
+      <option value="0.66">66%</option>
+      <option value="0.75">75%</option>
+      <option value="1">100%</option>
+      <option value="1.5">150%</option>
+      <option value="2">200%</option>
+      <option value="2.5">250%</option>
+      <option value="3">300%</option>
+      <option *ngIf="![0.33, 0.5, 0.66, 0.75, 1, 1.5, 2, 2.5, 3].includes(Zoom)" [value]="Zoom">{{ Zoom*100 | number:'1.0-0' }}%</option>
+    </select>
+  </div>
+  <div #cc style="width: 100%; float: left;" class="my-canvas" (resized)="Dia.OnResized($event, cc)" (mousedown)="Dia.OnOuterCanvasMouseDown($event)" (mouseup)="Dia.OnOuterCanvasMouseUp($event)" (contextmenu)="OpenContextMenu($event)">
+    <!--<canvas #c style="margin-top: 1px;"></canvas>-->
+    <!--<input type="button" value="x" id="inline-btn" style="position: absolute; left: 50px; top: 50px; z-index: 1;">-->
+  </div>
+
+  <div style="visibility: hidden; position: fixed;" [style.left]="menuTopLeftPosition.x" [style.top]="menuTopLeftPosition.y" [matMenuTriggerFor]="rightMenu"></div> 
+  <mat-menu #rightMenu="matMenu"> 
+    <ng-template matMenuContent let-item="item">
+      <ng-container *ngIf="selectedElement">
+        <span *ngIf="item" style="margin-left: 20px; margin-right: 20px;">{{item.GetProperty('Name')}}</span> 
+        <button mat-menu-item (click)="Dia.OnDeleteElement(item)">
+          <mat-icon>delete</mat-icon>
+          <span>{{'pages.modeling.diagram.deleteElement' | translate}}</span>
+        </button>
+        <button mat-menu-item (click)="Dia.AddThreat()">
+          <mat-icon>flash_on</mat-icon>
+          <span>{{'pages.modeling.diagram.addThreat' | translate}}</span>
+        </button>
+        <button mat-menu-item (click)="Dia.AddMitigation()">
+          <mat-icon>security</mat-icon>
+          <span>{{'pages.modeling.diagram.addMitigation' | translate}}</span>
+        </button>
+        <button mat-menu-item (click)="Dia.SendToBack()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" version="1.1">
+            <!--<rect fill="transparent" stroke="#F00" x="2.5" y="2.5" width="20" height="20" stroke-width="1"/>-->
+            <rect [attr.fill]="Dia.IsObjectSelected ? (theme.IsDarkMode ? '#FFF' : '#707070') : (theme.IsDarkMode ? '#676767' : '#B6B6B6')" x="7.5" y="9" width="10" height="7" rx="3" ry="3"  stroke-width="1"/>
+            <rect [attr.fill]="Dia.IsObjectSelected ? (theme.IsDarkMode ? '#FFF' : '#707070') : (theme.IsDarkMode ? '#676767' : '#B6B6B6')" [attr.stroke]="theme.IsDarkMode ? '#424242' : '#FFFFFF'" x="2.5" y="2.5" width="11" height="8" rx="3" ry="3"  stroke-width="1.5"/>
+            <rect [attr.fill]="theme.IsDarkMode ? '#424242' : '#FFFFFF'" x="4.5" y="4.5" width="7" height="4" rx="2" ry="2"  stroke-width="1.5"/>
+            <rect [attr.fill]="Dia.IsObjectSelected ? (theme.IsDarkMode ? '#FFF' : '#707070') : (theme.IsDarkMode ? '#676767' : '#B6B6B6')" [attr.stroke]="theme.IsDarkMode ? '#424242' : '#FFFFFF'" x="11.5" y="14.5" width="11" height="8" rx="3" ry="3"  stroke-width="1.5"/>
+            <rect [attr.fill]="theme.IsDarkMode ? '#424242' : '#FFFFFF'" x="13.5" y="16.5" width="7" height="4" rx="2" ry="2"  stroke-width="1.5"/>
+          </svg>
+          <span>{{'pages.modeling.diagram.sendBack' | translate}}</span>
+        </button>
+        <button mat-menu-item (click)="Dia.SendBackwards()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" version="1.1">
+            <!--<rect fill="red" stroke="#F00" x="2.5" y="2.5" width="20" height="20" stroke-width="1"/>-->
+            <rect [attr.fill]="Dia.IsObjectSelected ? (theme.IsDarkMode ? '#FFF' : '#707070') : (theme.IsDarkMode ? '#676767' : '#B6B6B6')" x="5" y="5" width="10" height="10" rx="3" ry="3"  stroke-width="1"/>
+            <rect [attr.fill]="Dia.IsObjectSelected ? (theme.IsDarkMode ? '#FFF' : '#707070') : (theme.IsDarkMode ? '#676767' : '#B6B6B6')" [attr.stroke]="theme.IsDarkMode ? '#424242' : '#FFFFFF'" x="10" y="10" width="11" height="11" rx="3" ry="3"  stroke-width="1.5"/>
+            <rect [attr.fill]="theme.IsDarkMode ? '#424242' : '#FFFFFF'" x="12" y="12" width="7" height="7" rx="2" ry="2"  stroke-width="1.5"/>
+          </svg>
+          <span>{{'pages.modeling.diagram.sendBackwards' | translate}}</span>
+        </button>
+        <button mat-menu-item (click)="Dia.BringForward()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" version="1.1">
+            <!--<rect fill="red" stroke="#F00" x="2.5" y="2.5" width="20" height="20" stroke-width="1"/>-->
+            <rect [attr.fill]="Dia.IsObjectSelected ? (theme.IsDarkMode ? '#FFF' : '#707070') : (theme.IsDarkMode ? '#676767' : '#B6B6B6')" [attr.stroke]="theme.IsDarkMode ? '#424242' : '#FFFFFF'" x="10" y="10" width="11" height="11" rx="3" ry="3"  stroke-width="1.5"/>
+            <rect [attr.fill]="theme.IsDarkMode ? '#424242' : '#FFFFFF'" x="12" y="12" width="7" height="7" rx="2" ry="2"  stroke-width="1.5"/>
+            <rect [attr.fill]="Dia.IsObjectSelected ? (theme.IsDarkMode ? '#FFF' : '#707070') : (theme.IsDarkMode ? '#676767' : '#B6B6B6')" [attr.stroke]="theme.IsDarkMode ? '#424242' : '#FFFFFF'" x="5" y="5" width="10" height="10" rx="3" ry="3"  stroke-width="1"/>
+          </svg>
+          <span>{{'pages.modeling.diagram.bringForward' | translate}}</span>
+        </button>
+        <button mat-menu-item (click)="Dia.BringToFront()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" version="1.1">
+            <!--<rect fill="transparent" stroke="#F00" x="2.5" y="2.5" width="20" height="20" stroke-width="1"/>-->
+            <rect [attr.fill]="Dia.IsObjectSelected ? (theme.IsDarkMode ? '#FFF' : '#707070') : (theme.IsDarkMode ? '#676767' : '#B6B6B6')" [attr.stroke]="theme.IsDarkMode ? '#424242' : '#FFFFFF'" x="2.5" y="2.5" width="11" height="8" rx="3" ry="3"  stroke-width="1.5"/>
+            <rect [attr.fill]="theme.IsDarkMode ? '#424242' : '#FFFFFF'" x="4.5" y="4.5" width="7" height="4" rx="2" ry="2"  stroke-width="1.5"/>
+            <rect [attr.fill]="Dia.IsObjectSelected ? (theme.IsDarkMode ? '#FFF' : '#707070') : (theme.IsDarkMode ? '#676767' : '#B6B6B6')" [attr.stroke]="theme.IsDarkMode ? '#424242' : '#FFFFFF'" x="11.5" y="14.5" width="11" height="8" rx="3" ry="3"  stroke-width="1.5"/>
+            <rect [attr.fill]="theme.IsDarkMode ? '#424242' : '#FFFFFF'" x="13.5" y="16.5" width="7" height="4" rx="2" ry="2"  stroke-width="1.5"/>
+            <rect [attr.fill]="Dia.IsObjectSelected ? (theme.IsDarkMode ? '#FFF' : '#707070') : (theme.IsDarkMode ? '#676767' : '#B6B6B6')" [attr.stroke]="theme.IsDarkMode ? '#424242' : '#FFFFFF'" x="7.5" y="8.5" width="10" height="9" rx="3" ry="3"  stroke-width="1"/>
+          </svg>
+          <span>{{'pages.modeling.diagram.bringFront' | translate}}</span>
+        </button>
+        <mat-divider></mat-divider>
+      </ng-container>
+      <button mat-menu-item (click)="Dia.SaveImage()">
+        <mat-icon>save</mat-icon>
+        <span>{{'pages.modeling.diagram.saveImage' | translate}}</span>
+      </button>
+    </ng-template> 
+  </mat-menu> 
+</div>

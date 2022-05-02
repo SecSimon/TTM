@@ -1,0 +1,55 @@
+@import 'stylesTheme.scss';
+
+.column {
+  float: left;
+  width: 50%;
+  padding-left: 10px;
+  padding-right: 10px;
+  justify-content: center;
+  align-items: center;
+}
+
+.first-column-light {
+  border-right-color: #000;
+  border-right-style: solid;
+  border-right-width: 1px;
+}
+.first-column-dark {
+  border-right-color: #fff;
+  border-right-style: solid;
+  border-right-width: 1px;
+}
+
+.vertical-center {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+
+.vertical-center-right {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 75%;
+  //padding-left: 30px;
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+
+.login {
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.login-hover-light {
+  &:hover {
+    background-color: rgba(0,0,0,0.05);
+  }
+}
+.login-hover-dark {
+  &:hover {
+    background-color: rgba(255,255,255,0.05);
+  }
+}

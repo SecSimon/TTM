@@ -1,0 +1,24 @@
+@import 'stylesTheme.scss';
+
+.tools {
+    display: block;
+    float: left;
+    height: 27px;
+    width: 100%;
+}
+
+.toolBtn {
+    width: 30px;
+    min-width: 30px;
+    padding: 0px;
+    line-height: 25px;
+    margin-left: 5px;
+}
+
+.toolBtn-Selected {
+    background-color: rgba($color: #fff, $alpha: 0.15);
+}
+
+.my-canvas {
+    height: calc(100% - 32px);
+}

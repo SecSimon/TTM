@@ -1,0 +1,129 @@
+<div style="margin: 10px;">
+  <div class="row">
+    <div class="column1">
+      <mat-list class="prop-list" [class.prop-list-light]="!theme.IsDarkMode" [class.prop-list-dark]="theme.IsDarkMode">
+        <mat-list-item *ngFor="let arr of arrays" (click)="selectedArray = arr"
+        [class.highlight-light]="selectedArray === arr && !theme.IsDarkMode" [class.highlight-dark]="selectedArray === arr && theme.IsDarkMode">
+          <mat-icon mat-list-icon>chevron_right</mat-icon>
+          <div mat-line>{{GetArrayName(arr) | translate}}</div>
+          <div mat-line *ngIf="arr?.length == 0">{{'pages.modeling.charscope.notDefined' | translate}}</div>
+          <div mat-line *ngIf="arr?.length > 0">{{'general.Notes' | translate}}: {{arr.length}}</div>
+        </mat-list-item>
+      </mat-list>
+    </div>
+    <div class="column2">
+      <ng-container *ngIf="selectedArray">
+        <div style="margin-left: 10px;">
+          <mat-accordion class="expansion-panel-headers-align">
+            <mat-expansion-panel style="margin-top: 10px;" [expanded]="true">
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  {{'general.HowTo' | translate}}
+                </mat-panel-title>
+                <mat-panel-description>
+                  {{GetArrayName(selectedArray) | translate}}
+                  <mat-icon>info</mat-icon>
+                </mat-panel-description>
+              </mat-expansion-panel-header>
+
+              <ng-container *ngIf="selectedArray === charScope.Sector">
+                Define the sector, e.g.
+                <ul>
+                  <li>industrial devices (manufacturing, transportation, agriculture, water, energy, retail, telecommunication, car),</li>
+                  <li>consumer devices (phone, wearable, TV, appliance, camera, door locks),</li>
+                  <li>medical devices (fitness tracker, health monitor, inhaler),</li>
+                  <li>enterprise devices (printer, air monitor, access control, building automation, advertising, safety)</li>
+                </ul>
+              </ng-container>
+              <ng-container *ngIf="selectedArray === charScope.Function">
+                Define the functions (type, purpose, multiple possible), e.g.
+                <ul>
+                  <li>sensor</li>
+                  <li>actuator</li>
+                  <li>gateway</li>
+                  <li>controller</li>
+                  <li>monitor</li>
+                  <li>collector</li>
+                </ul>
+              </ng-container>
+              <ng-container *ngIf="selectedArray === charScope.Application">Describe the application</ng-container>
+              <ng-container *ngIf="selectedArray === charScope.Requirements">
+                Define the requirements, e.g. for
+                <ul>
+                  <li>lifespan</li>
+                  <li>quality</li>
+                  <li>maintainability</li>
+                  <li>usability</li>
+                  <li>reliability</li>
+                  <li>performance</li>
+                  <li>(energy) efficiency</li>
+                </ul>
+              </ng-container>
+              <ng-container *ngIf="selectedArray === charScope.Criticality">Describe the criticality, e.g. by considering the impact on humans, machine, process, environment, ...</ng-container>
+              <ng-container *ngIf="selectedArray === charScope.LocEnv">
+                Define the location and environment, e.g.
+                <ul>
+                  <li>indoor (sales area/ office/ home/ plant),</li>
+                  <li>outdoor (in water/ air/ ground),</li>
+                  <li>access (no-/ restriction),</li>
+                  <li>mobility (fixed/ mobile),</li>
+                  <li>wearable (body/ clothing/ implanted),</li>
+                  <li>user interaction (permanently/ occasionally/ rarely),</li>
+                  <li>accessibility (mounted externally/ internally/ integrated),</li>
+                  <li>conditions (water/ dust/ humidity/ temperature/ vibrations)</li>
+                </ul>
+              </ng-container>
+              <ng-container *ngIf="selectedArray === charScope.Connectivity">
+                Define the connectivity, e.g. for
+                <ul>
+                  <li>mechanisms (no connectivity/ wired/ wireless/ physical),</li>
+                  <li>timeliness (real-time/ near real-time/ asynchronous),</li>
+                  <li>initiations (by device/ by external entity)</li>
+                </ul>
+              </ng-container>
+              <ng-container *ngIf="selectedArray === charScope.TargetMarket">Define the target market, e.g. continents, countries</ng-container>
+              <ng-container *ngIf="selectedArray === charScope.Standards">
+                Identify requirements in terms of standards, laws, policies, guidelines, and best practices for quality, safety, security, privacy, and compliance.
+
+                <ul>
+                  <li>Identify requirements depending on sector. Examples: critical infrastructures, healthcare, consumer</li>
+                  <li>Identify requirements depending on target market and region. Examples: GDPR, "California's IoT law", regulations for PII</li>
+                  <li> Identify requirements for development. Examples: (secure) coding guidelines, cryptographic standards, password complexity recommendations, data security standard</li>
+                </ul>
+              </ng-container>
+              <ng-container *ngIf="selectedArray === charScope.InvolvedPeople">Examples: engineer (hardware, firmware, software, app, security), architect, product manager, business analyst, admin, (pen) tester, product compliance, quality assurance, user, customer</ng-container>
+              <ng-container *ngIf="selectedArray === charScope.Budget">Determine the budget for this process</ng-container>
+              <ng-container *ngIf="selectedArray === charScope.Timeframe">Define the time frame</ng-container>
+              <ng-container *ngIf="selectedArray === charScope.ExpectedOutput">Define the expected output</ng-container>
+              <ng-container *ngIf="selectedArray === charScope.Assumptions">Identify assumptions and constraints. Examples: intended use, target security level, tolerable risk</ng-container>
+            </mat-expansion-panel>
+          </mat-accordion>
+          <div cdkDropList class="reorder-list" (cdkDropListDropped)="drop($event, selectedArray)">
+            <div class="reorder-box" [style.color]="theme.IsDarkMode ? 'white' : 'black'" *ngFor="let item of selectedArray; index as index" cdkDrag>
+              <ng-container *ngIf="!isEdtingArray[index]">
+                <mat-icon>chevron_right</mat-icon> {{item}}
+                <button mat-icon-button style="width: 20px; height: 20px; line-height: 20px;" (click)="isEdtingArray[index] = true" matTooltip="{{'general.Edit' | translate}}" matTooltipShowDelay="1000">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button style="width: 20px; height: 20px; line-height: 20px;" (click)="OnDeleteItem(item, selectedArray)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </ng-container>
+              <input *ngIf="isEdtingArray[index]" id="renameBox" type="text" style="width: -webkit-fill-available;" [ngModel]="item" (keydown)="OnRenameItem($event, selectedArray, index)" autofocus (focusout)="OnRenameItem($event, selectedArray, index)" onfocus="this.select();"/>
+            </div>
+          </div>
+          <div style="padding: 5px 10px;">
+            <mat-icon>chevron_right</mat-icon><input matInput style="width: calc(100% - 24px); vertical-align: super; font-size: 14px;" (keydown)="OnListKeyDown($event, selectedArray)" placeholder="{{'pages.modeling.charscope.addDescription' | translate}}"/>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+  <mat-divider></mat-divider>
+  <div>
+    <mat-form-field appearance="fill" style="width: 100%; margin-top: 10px;">
+      <mat-label>{{ 'general.Notes' | translate }}</mat-label>
+      <textarea matInput [(ngModel)]="charScope.Description"></textarea>
+    </mat-form-field>
+  </div>
+</div>

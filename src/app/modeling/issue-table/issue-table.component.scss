@@ -1,0 +1,13 @@
+@import 'stylesTheme.scss';
+
+.mat-row:hover .mat-cell {
+  border-color: currentColor;
+}
+
+.selected-issue {
+  font-weight: bold;
+}
+
+th, td {
+  font-size: small;
+}

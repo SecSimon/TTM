@@ -1,0 +1,71 @@
+@import 'stylesTheme.scss';
+
+.tab-icon {
+  margin-right: 8px;
+}
+
+.mat-tree-node {
+  min-height: 28px !important;
+  height: 28px;
+  &:hover {
+    .mat-icon {
+      opacity: 1;
+    }
+  }
+}
+
+.mat-tree-node .mat-icon {
+  opacity: 0.4;
+}
+
+.nav-tree-invisible {
+  display: none;
+}
+
+.nav-tree ul,
+.nav-tree li {
+  margin-top: 0;
+  margin-bottom: 0;
+  list-style-type: none;
+}
+
+/*
+ * This padding sets alignment of the nested nodes.
+ */
+.nav-tree .mat-nested-tree-node div[role=group] {
+  padding-left: 20px;
+}
+
+/*
+ * Padding for leaf nodes.
+ * Leaf nodes need to have padding so as to align with other non-leaf nodes
+ * under the same parent.
+ */
+.nav-tree div[role=group] > .mat-tree-node {
+  padding-left: 20px;
+}
+
+.highlight-light { 
+  background-color: rgba(0,0,0,0.1); 
+  .mat-icon {
+    opacity: 1 !important;
+  }
+}
+.highlight-dark { 
+  background-color: rgba(255,255,255,0.1); 
+  .mat-icon {
+    opacity: 1 !important;
+  }
+}
+
+.mat-icon-button {
+  width: 30px;
+}
+
+.disable-select {
+  user-select: none; /* supported by Chrome and Opera */
+ -webkit-user-select: none; /* Safari */
+ -khtml-user-select: none; /* Konqueror HTML */
+ -moz-user-select: none; /* Firefox */
+ -ms-user-select: none; /* Internet Explorer/Edge */
+}

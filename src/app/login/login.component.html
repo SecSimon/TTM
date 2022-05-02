@@ -1,0 +1,73 @@
+
+
+<div class="website-container" color="primary">
+  <mat-drawer-container class="drawer-container">
+    <mat-drawer mode="side" opened style="border-right-width: 0px;">
+      <app-side-nav style="width: 100%; height: 100%;" selectedRoute="/login"></app-side-nav>
+    </mat-drawer>
+
+    <mat-drawer-content>
+      <div>
+        <div class="column vertical-center" [class.first-column-light]="!theme.IsDarkMode" [class.first-column-dark]="theme.IsDarkMode">
+          <h1>{{'pages.login.create_acc' | translate}}</h1>
+          <p [innerHTML]="'pages.login.pretexthtml' | translate"></p>
+          <mat-stepper orientation="vertical" #stepper>
+            <mat-step>
+              <ng-template matStepLabel>{{'pages.login.step1.title' | translate}}</ng-template>
+              <p [innerHTML]="'pages.login.step1.deschtml' | translate"></p>
+              <div>
+                <button mat-button (click)="onForkDataClick()">
+                  Use this template
+                  <mat-icon>open_in_new</mat-icon>
+                </button>
+              </div>
+              <div>
+                <button mat-button matStepperNext>{{'tour.next' | translate}}</button>
+              </div>
+            </mat-step>
+            <mat-step>
+              <ng-template matStepLabel>{{'pages.login.step2.title' | translate}}</ng-template>
+              <p [innerHTML]="'pages.login.step2.deschtml' | translate"></p>
+              <div>
+                <button mat-button (click)="onInstallAppClick()">
+                  Install
+                  <mat-icon>open_in_new</mat-icon>
+                </button>
+              </div>
+              <div>
+                <button mat-button matStepperPrevious>{{'tour.prev' | translate}}</button>
+                <button mat-button matStepperNext>{{'tour.next' | translate}}</button>
+              </div>
+            </mat-step>
+            <mat-step>
+              <ng-template matStepLabel>{{'pages.login.step3.title' | translate}}</ng-template>
+              <p [innerHTML]="'pages.login.step3.deschtml' | translate"></p>
+              <button mat-button (click)="onGithubLogin()">
+                {{'pages.login.loginViaGithub' | translate}}
+              </button>
+              <button mat-button [routerLink]="'/home'">
+                {{'pages.login.goToProjects' | translate}}
+              </button>
+              <br/>
+            </mat-step>
+          </mat-stepper>
+        </div>
+        <div class="vertical-center-right">
+          <ng-container *ngIf="!dataService.IsLoggedIn">
+            <h1 class="login" style="margin-bottom: 10px;" [class.login-hover-light]="!theme.IsDarkMode" [class.login-hover-dark]="theme.IsDarkMode" (click)="onGithubLogin()">{{'pages.login.loginViaGithub' | translate}} <mat-icon>open_in_new</mat-icon></h1>
+            <mat-checkbox style="margin-left: 10px;" color="primary" [(ngModel)]="dataService.KeepUserSignedIn">{{'pages.login.keep_signed_in' | translate}}</mat-checkbox>
+            <h3 class="login" style="margin-top: 25px;" [class.login-hover-light]="!theme.IsDarkMode" [class.login-hover-dark]="theme.IsDarkMode" (click)="dataService.GuestLogin()">{{'pages.login.loginAsGuest' | translate}}</h3>
+          </ng-container>
+          <ng-container *ngIf="dataService.IsLoggedIn">
+            <h1>{{'pages.login.welcome' | translate}} {{dataService.UserDisplayName}}!</h1>
+
+            <button mat-button (click)="dataService.LogOut()">
+              Logout
+            </button>
+          </ng-container>
+        </div>
+      </div>
+    </mat-drawer-content>
+  </mat-drawer-container>
+  <app-status-bar></app-status-bar>
+</div>

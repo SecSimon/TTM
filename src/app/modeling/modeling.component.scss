@@ -1,0 +1,34 @@
+@import 'stylesTheme.scss';
+
+
+.highlight-light { background-color: rgba(0,0,0,0.1); }
+.highlight-dark { background-color: rgba(255,255,255,0.1); }
+
+.tab-icon {
+  margin-right: 8px;
+}
+
+.bottomTabGroup {
+  ::ng-deep .mat-tab-header .mat-tab-labels .mat-tab-label {
+    height: 25px;
+  }
+
+  ::ng-deep .mat-tab-labels .mat-tab-label {
+    min-width: 120px !important;
+  }
+}
+
+.mat-badge-small.mat-badge-below .mat-badge-content {
+  bottom: 0px;
+}
+
+.mat-badge-small.mat-badge-after .mat-badge-content {
+  right: -20px;
+}
+
+.topTabGroup {
+  ::ng-deep .mat-tab-labels .mat-tab-label {
+    padding: 0 0 0 3px !important;
+    min-width: none !important;
+  }
+}

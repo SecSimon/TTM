@@ -1,0 +1,147 @@
+<div style="overflow: auto;">
+  <div class="tools">
+    <button mat-button class="toolBtn" (click)="RefreshMitigations()" matTooltip="{{'general.Refresh' | translate}}" matTooltipShowDelay="1000">
+      <mat-icon>refresh</mat-icon>
+    </button>
+    <button mat-button class="toolBtn" [class.toolBtn-Selected]="autoRefreshMitigations" (click)="autoRefreshMitigations = !autoRefreshMitigations" matTooltip="{{'pages.modeling.threattable.autoRefresh' | translate}}" matTooltipShowDelay="1000">
+      <mat-icon>autorenew</mat-icon>
+    </button>
+    <input matInput class="filterInput" (keyup)="ApplyFilter($event)" placeholder="{{'pages.modeling.search' | translate}}" [class.bg-color-light2]="!theme.IsDarkMode" [class.bg-color-dark2]="theme.IsDarkMode" [style.color]="theme.IsDarkMode ? 'white' : 'black'"/>
+    <mat-progress-spinner *ngIf="refreshingMitigations" style="display: inline; vertical-align: super; margin-left: 5px;" [diameter]="20" mode="indeterminate"></mat-progress-spinner>
+  </div>
+  <div>
+    <!-- First table for active mitigations -->
+    <table mat-table style="width: 100%;" matSort [dataSource]="dataSourceActive" matSortActive="state" matSortDirection="asc" matSortDisableClear [class.bg-color-light3]="!theme.IsDarkMode" [class.bg-color-dark3]="theme.IsDarkMode">
+      <ng-container matColumnDef="state">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header style="width: 34px;"> </th>
+        <td mat-cell *matCellDef="let entry"> <mat-icon>{{GetStateIcon(entry)}}</mat-icon> </td>
+      </ng-container>
+      <ng-container matColumnDef="number">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'general.Number' | translate}} </th>
+        <td mat-cell *matCellDef="let entry"> {{entry.Number}} </td>
+      </ng-container>
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'general.Name' | translate}} </th>
+        <td mat-cell *matCellDef="let entry"> {{entry.GetProperty('Name')}} </td>
+      </ng-container>
+      <ng-container matColumnDef="type">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> </th>
+        <td mat-cell *matCellDef="let entry"> <mat-icon matTooltip="{{GetCreationTypeIconTooltip(entry) | translate}}">{{GetCreationTypeIcon(entry)}}</mat-icon> </td>
+      </ng-container>
+      <ng-container matColumnDef="mitigation">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'general.Mitigation' | translate}} </th>
+        <td mat-cell *matCellDef="let entry"> {{entry.Mitigation?.GetProperty('Name')}} </td>
+      </ng-container>
+      <ng-container matColumnDef="origins">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'general.Threats' | translate}} </th>
+        <td mat-cell *matCellDef="let entry"> {{GetThreatOrigins(entry)}} </td>
+      </ng-container>
+      <ng-container matColumnDef="progress">
+        <th mat-header-cell *matHeaderCellDef> {{'general.Progress' | translate}} </th>
+        <td mat-cell *matCellDef="let entry"> 
+          <mat-progress-bar *ngIf="entry.MitigationProcess" class="disable" color="primary" style="width: 100px; margin-right: 3px;" [value]="entry.MitigationProcess.Progress"></mat-progress-bar>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'properties.Status' | translate}} </th>
+        <td mat-cell *matCellDef="let entry">
+          <select [(ngModel)]="entry.MitigationState" style="width: 140px;">
+            <option *ngFor="let state of GetMitigationStates()" [value]="state" >{{GetMitigationStateName(state) | translate}}</option>
+          </select>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="targets">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'general.Targets' | translate}} </th>
+        <td mat-cell *matCellDef="let entry"> {{GetTargets(entry)}} </td>
+      </ng-container>
+  
+      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" [class.selected-mitigation]="IsMitigationSelected(row)" [class.removed-mitigation]="IsMitigationRemoved(row) || IsMitigationNotApplying(row)" 
+        (click)="SelectMitigation(row)" (dblclick)="OnMappingDblClick(row, $event)" (contextmenu)="OpenContextMenu($event, row)">
+      </tr>
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" colspan="9" (contextmenu)="OpenContextMenu($event, null)">{{'pages.modeling.mitigationtable.noMitigations' | translate}}</td>
+      </tr>
+    </table>
+    <!-- Second table for not applicable mitigation -->
+    <table mat-table style="width: 100%;" matSort [dataSource]="dataSourceNA" matSortActive="state" matSortDirection="asc" matSortDisableClear [class.bg-color-light3]="!theme.IsDarkMode" [class.bg-color-dark3]="theme.IsDarkMode">
+      <ng-container matColumnDef="state">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header style="width: 34px;"> </th>
+        <td mat-cell *matCellDef="let entry"> <mat-icon>{{GetStateIcon(entry)}}</mat-icon> </td>
+      </ng-container>
+      <ng-container matColumnDef="number">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'general.Number' | translate}} </th>
+        <td mat-cell *matCellDef="let entry"> {{entry.Number}} </td>
+      </ng-container>
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'general.Name' | translate}} </th>
+        <td mat-cell *matCellDef="let entry"> {{entry.GetProperty('Name')}} </td>
+      </ng-container>
+      <ng-container matColumnDef="type">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> </th>
+        <td mat-cell *matCellDef="let entry"> <mat-icon matTooltip="{{GetCreationTypeIconTooltip(entry) | translate}}">{{GetCreationTypeIcon(entry)}}</mat-icon> </td>
+      </ng-container>
+      <ng-container matColumnDef="mitigation">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'general.Mitigation' | translate}} </th>
+        <td mat-cell *matCellDef="let entry"> {{entry.Mitigation?.GetProperty('Name')}} </td>
+      </ng-container>
+      <ng-container matColumnDef="origins">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'general.Threats' | translate}} </th>
+        <td mat-cell *matCellDef="let entry"> {{GetThreatOrigins(entry)}} </td>
+      </ng-container>
+      <ng-container matColumnDef="progress">
+        <th mat-header-cell *matHeaderCellDef> {{'general.Progress' | translate}} </th>
+        <td mat-cell *matCellDef="let entry"> 
+          <mat-progress-bar *ngIf="entry.MitigationProcess" class="disable" color="primary" style="width: 100px; margin-right: 3px;" [value]="entry.MitigationProcess.Progress"></mat-progress-bar>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'properties.Status' | translate}} </th>
+        <td mat-cell *matCellDef="let entry">
+          <select [(ngModel)]="entry.MitigationState" style="width: 140px;">
+            <option *ngFor="let state of GetMitigationStates()" [value]="state" >{{GetMitigationStateName(state) | translate}}</option>
+          </select>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="targets">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'general.Targets' | translate}} </th>
+        <td mat-cell *matCellDef="let entry"> {{GetTargets(entry)}} </td>
+      </ng-container>
+  
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" [class.selected-mitigation]="IsMitigationSelected(row)" [class.removed-mitigation]="IsMitigationRemoved(row) || IsMitigationNotApplying(row)" 
+        (click)="SelectMitigation(row)" (dblclick)="OnMappingDblClick(row, $event)" (contextmenu)="OpenContextMenu($event, row)">
+      </tr>
+    </table>
+  </div>
+  <div style="visibility: hidden; position: fixed;" [style.left]="menuTopLeftPosition.x" [style.top]="menuTopLeftPosition.y" [matMenuTriggerFor]="rightMenu"></div> 
+  <mat-menu #rightMenu="matMenu"> 
+    <ng-template matMenuContent let-item="item">
+      <span *ngIf="item" style="margin-left: 20px; margin-right: 20px;">{{item.GetProperty('Name')}}</span> 
+      <span *ngIf="!item" style="margin-left: 20px; margin-right: 20px;">{{'pages.modeling.threattable.noEntrySelected' | translate}}</span>
+      <button mat-menu-item [disabled]="!item" (click)="OnMappingDblClick(item, null)">
+        <mat-icon>preview</mat-icon>
+        <span>{{'pages.modeling.threattable.viewEntry' | translate}}</span>
+      </button> 
+      <button mat-menu-item [disabled]="!item" [matMenuTriggerFor]="procMenu">
+        <mat-icon>security</mat-icon>
+        <span>{{'properties.MitigationProcess' | translate}}</span>
+      </button>
+      <mat-menu #procMenu="matMenu">
+        <button mat-menu-item [disabled]="item.MitigationProcess == null" (click)="ViewMitigationProcess(item)">{{'pages.modeling.threattable.viewEntry' | translate}}</button>
+        <button mat-menu-item (click)="AddMitigationProcess(item)">{{'general.New' | translate}}</button>
+        <button mat-menu-item [matMenuTriggerFor]="existing">{{'general.Existing' | translate}}</button>
+      </mat-menu>
+      <mat-menu #existing="matMenu">
+        <button mat-menu-item *ngFor="let proc of GetPossibleMitigationProcesses(item)" (click)="AddExistingMitigationProcess(item, proc)">{{proc.Name}}</button>
+      </mat-menu> 
+      <button mat-menu-item [disabled]="!item" (click)="OnDeleteMapping(item)">
+        <mat-icon>delete</mat-icon>
+        <span>{{'pages.modeling.threattable.deleteEntry' | translate}}</span>
+      </button>
+      <button mat-menu-item (click)="ResetNumbers()">
+        <mat-icon>delete</mat-icon>
+        <span>{{'pages.modeling.threattable.resetNumbers' | translate}}</span>
+      </button>
+    </ng-template> 
+  </mat-menu> 
+</div>

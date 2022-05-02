@@ -1,0 +1,51 @@
+<div class="website-container">
+  <mat-drawer-container class="drawer-container">
+    <mat-drawer mode="side" opened style="border-right-width: 0px;">
+      <app-side-nav style="width: 100%; height: 100%;" selectedRoute="/mitigation" (sameRoute)="OnSameRoute()"></app-side-nav>
+    </mat-drawer>
+
+    <mat-drawer-content [class.splitter-light2]="!theme.IsDarkMode" [class.splitter-dark2]="theme.IsDarkMode">
+      <as-split direction="horizontal" unit="pixel" [gutterSize]="3" [restrictMove]="true" (dragEnd)="OnSplitSizeChange($event, 1)">
+        <as-split-area [size]="GetSplitSize(1, 0, 350)" [visible]="showLeftBar" [order]=1 [class.splitter-light1]="!theme.IsDarkMode" [class.splitter-dark1]="theme.IsDarkMode">
+          <app-nav-tree #navTree [activeNode]="selectedNode" (selectedNodeChanged)="selectedNode = $event"></app-nav-tree>
+        </as-split-area>
+        <as-split-area [size]="GetSplitSize(1, 1, $any('*'))" [order]=2 [class.bg-color-light3]="!theme.IsDarkMode" [class.bg-color-dark3]="theme.IsDarkMode">
+          <div style="margin: 10px;">
+            <h2 *ngIf="selectedNode">{{selectedNode.name()}}</h2>
+            <app-mitigation-process style="height: 100%;" [mitigationProcess]="selectedNode.data" *ngIf="IsProcess()" (mitigationMappingsChange)="OnMappingProcessChange()"></app-mitigation-process>
+            <app-mitigation-mapping style="height: 100%;" [mitigationMapping]="selectedNode.data" *ngIf="IsMapping()" (mitigationProcessChange)="OnMappingProcessChange()"></app-mitigation-mapping>
+            <ng-container *ngIf="selectedNode && selectedNode.data == null">
+              <table>
+                <ng-container *ngFor="let procNode of selectedNode.children">
+                  <tr>
+                    <td><mat-icon>chevron_right</mat-icon></td>
+                    <td>{{procNode.name()}}</td>
+                    <td style="padding: 0 10px;">
+                      <select *ngIf="procNode.data" [(ngModel)]="procNode.data.MitigationProcessState" style="width: 130px;">
+                        <option *ngFor="let state of GetMitigationProcessStates()" [value]="state" >{{GetMitigationProcessStateName(state) | translate}}</option>
+                      </select>
+                    </td>
+                    <td><mat-progress-bar *ngIf="procNode.data" class="disable" color="primary" style="width: 100px; margin-right: 3px;" [value]="procNode.data.Progress"></mat-progress-bar></td>
+                    <td style="padding: 0 10px;"><ng-container *ngIf="procNode.data">{{GetCheckedTasks(procNode.data.Tasks)}}<span style="letter-spacing: 2px;">/</span>{{procNode.data.Tasks.length}} {{'general.Tasks' | translate}}</ng-container></td>
+                    <td><ng-container *ngIf="procNode.data">{{procNode.data.Notes.length}} {{'general.Notes' | translate}}</ng-container></td>
+                  </tr>
+                  <tr *ngFor="let mapNode of procNode.children">
+                    <td><mat-icon>remove</mat-icon></td>
+                    <td>{{mapNode.name()}}</td>
+                    <td style="padding: 0 10px;">
+                      <select [(ngModel)]="mapNode.data.MitigationState" style="width: 130px;">
+                        <option *ngFor="let state of GetMitigationStates()" [value]="state" >{{GetMitigationStateName(state) | translate}}</option>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr style="height: 20px;"><td colspan="6"></td></tr>
+                </ng-container>
+              </table>
+            </ng-container>
+          </div>
+        </as-split-area>
+      </as-split>
+    </mat-drawer-content>
+  </mat-drawer-container>
+  <app-status-bar></app-status-bar>
+</div>

@@ -1,0 +1,57 @@
+<mat-accordion class="expansion-panel-headers-align">
+  <mat-expansion-panel *ngFor="let stage of Stages; index as stageIndex; first as isFirst; last as isLast;" [expanded]="processStep === stageIndex" (opened)="SetProcessStep(stageIndex)" hideToggle style="width: 600px;">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        {{stage.name}}
+      </mat-panel-title>
+      <mat-panel-description>
+        Steps: {{GetCheckedCount(stage)}}/{{GetActivityCount(stage)}}
+        <mat-icon>{{stage.icon}}</mat-icon>
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+
+    <div *ngFor="let step of stage.steps; index as index">
+      {{index+1}}. {{step.name}}
+      <button mat-button class="toolBtn" *ngIf="step.link" (click)="NavigateTo(step.link)" matTooltip="{{'general.openInNew' | translate}}" matTooltipShowDelay="1000">
+        <mat-icon>open_in_new</mat-icon>
+      </button>
+      <br/>
+      <table mat-table [dataSource]="step.activities" multiTemplateDataRows>
+        <ng-container matColumnDef="check">
+          <td mat-cell *matCellDef="let entry" style="width: 34px;">
+            <mat-checkbox color="primary" style="vertical-align: super;" [(ngModel)]="Tracker[GetActivityKey(stage, step, entry)]"></mat-checkbox>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="desc">
+          <td mat-cell *matCellDef="let entry" (click)="OnEntryClick(entry)">
+            {{entry.name}}
+            <button mat-button class="toolBtn" *ngIf="entry.link" (click)="NavigateTo(entry.link)" matTooltip="{{'general.openInNew' | translate}}" matTooltipShowDelay="1000">
+              <mat-icon>open_in_new</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="info">
+          <td mat-cell *matCellDef="let entry" style="text-align: right;" (click)="OnEntryClick(entry)"><mat-icon *ngIf="entry.desc?.length > 0">info</mat-icon></td>
+        </ng-container>
+      
+        <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
+        <ng-container matColumnDef="expandedDetail">
+          <td mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplay.length">
+            <div class="activity-detail" [@detailExpand]="element == expandedActivity ? 'expanded' : 'collapsed'">
+              <p style="white-space: pre-wrap;">{{element.desc}}</p>
+            </div>
+          </td>
+        </ng-container>
+      
+        <tr mat-row *matRowDef="let element; columns: columnsToDisplay;" class="activity-row">
+        </tr>
+        <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="activity-detail-row"></tr>
+      </table>
+    </div>
+    <mat-action-row>
+      <button mat-button color="primary" (click)="PrevProcessStep()" *ngIf="!isFirst">{{'tour.prev' | translate}}</button>
+      <button mat-button color="primary" (click)="NextProcessStep()" *ngIf="!isLast">{{'tour.next' | translate}}</button>
+      <button mat-button color="primary" (click)="NextProcessStep()" *ngIf="isLast">{{'tour.end' | translate}}</button>
+    </mat-action-row>
+  </mat-expansion-panel>
+</mat-accordion>

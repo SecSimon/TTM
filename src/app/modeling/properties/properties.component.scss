@@ -1,0 +1,52 @@
+@import 'stylesTheme.scss';
+
+
+.buttonAsText {
+  background: none;
+  border: none;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+  font-size: small;
+}
+
+.matSelect {
+  background-color: white !important;
+  border-radius: 2px;
+  height: 17px;
+  border: gray 1px solid;
+  ::ng-deep .mat-select-arrow {
+    color: black !important;
+  }
+
+  ::ng-deep .mat-select-value {
+    color: black !important;
+    font-size: smaller !important;
+  }
+}
+
+.matOption {
+  background-color: white !important;
+  color: black !important;
+  height: 20px !important;
+  padding: 0 8px !important;
+  ::ng-deep .mat-option.mat-active {
+    color: black !important;
+    background-color: white !important;
+  }
+  ::ng-deep .mat-pseudo-checkbox {
+    color: gray !important;
+  }
+
+  ::ng-deep .mat-pseudo-checkbox-checked {
+      @extend .primary-background;
+    }
+}
+
+.disable {
+  pointer-events: none;
+}
+
+::ng-deep .mat-tooltip  {
+  white-space: pre-line !important;
+}

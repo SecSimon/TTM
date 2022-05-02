@@ -1,0 +1,33 @@
+<div *ngIf="cweID" style="pointer-events: none;">
+  <mat-form-field appearance="fill" style="width: calc(100% - 250px); margin-right: 5px;">
+    <mat-label>{{ 'properties.CWETitle' | translate }}</mat-label>
+    <input matInput type="text" [value]="GetCWETitle()">
+  </mat-form-field>
+  <mat-form-field appearance="fill" style="width: 200px; margin-right: 5px;">
+    <mat-label>{{ 'properties.likelihoodOfExploit' | translate }}</mat-label>
+    <input matInput type="text" [value]="GetCWEProperty('Likelihood_Of_Exploit')">
+  </mat-form-field>
+  <button mat-icon-button style="vertical-align: super; pointer-events: all;" (click)="OpenCWE()" matTooltip="{{'general.openInNew' | translate}}" matTooltipShowDelay="1000">
+    <mat-icon>open_in_new</mat-icon>
+  </button>
+  <mat-form-field appearance="fill" style="width: 100%;">
+    <mat-label>{{ 'properties.Description' | translate }}</mat-label>
+    <textarea matInput [value]="GetCWEProperty('Description')" cdkTextareaAutosize></textarea>
+  </mat-form-field>
+  <mat-form-field appearance="fill" style="width: 100%;" *ngIf="GetCWEProperty('ExtendedDescription')">
+    <mat-label>{{ 'properties.Description' | translate }}</mat-label>
+    <textarea matInput [value]="GetCWEProperty('ExtendedDescription')" cdkTextareaAutosize></textarea>
+  </mat-form-field>
+  <ng-container *ngIf="GetCWEConsequences() && GetCWEConsequences().length > 0">
+    <table>
+      <tr style="text-align: left;"><th>Scope</th><th>Impact</th></tr>
+      <ng-container *ngFor="let con of GetCWEConsequences()">
+        <tr>
+          <td rowSpan="2" style="vertical-align: top;">{{GetValues(con['Scope'], false)}}</td>
+          <td>Technical Impact: <em>{{GetValues(con['Impact'], true)}}</em></td>
+        </tr>
+        <tr><td>{{GetValues(con['Note'], false)}}</td></tr>
+      </ng-container>
+    </table>
+  </ng-container>
+</div>

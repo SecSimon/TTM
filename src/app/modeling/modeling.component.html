@@ -1,0 +1,90 @@
+<div class="website-container">
+  <mat-drawer-container class="drawer-container">
+    <mat-drawer mode="side" opened style="border-right-width: 0px;">
+      <app-side-nav style="width: 100%; height: 100%;" selectedRoute="/modeling" (sameRoute)="OnSameRoute()"></app-side-nav>
+    </mat-drawer>
+
+    <mat-drawer-content [class.splitter-light2]="!theme.IsDarkMode" [class.splitter-dark2]="theme.IsDarkMode">
+      <as-split direction="horizontal" unit="pixel" [gutterSize]="3" [restrictMove]="true" (dragEnd)="OnSplitSizeChange($event, 1)">
+        <as-split-area [size]="GetSplitSize(1, 0, 350)" [visible]="showLeftBar" [order]=1 [class.splitter-light1]="!theme.IsDarkMode" [class.splitter-dark1]="theme.IsDarkMode">
+          <as-split direction="vertical" [gutterSize]="3" [restrictMove]="true" [class.bg-color-light2]="!theme.IsDarkMode" [class.bg-color-dark2]="theme.IsDarkMode" (dragEnd)="OnSplitSizeChange($event, 3)">
+            <as-split-area [size]="GetSplitSize(3, 0, 60)" [order]=1>
+              <app-nav-tree #navTree [activeNode]="selectedNode" (selectedNodeChanged)="selectedNode = $event" (nodeDoubleClicked)="OnNodeDoubleClicked($event)"></app-nav-tree>
+            </as-split-area>
+            <as-split-area [size]="GetSplitSize(3, 1, 40)" [order]=2>
+              <ng-container *ngIf="IsContainer(selectedNode)">
+                <app-container-tree #elementview [elements]="GetContainer(selectedNode)" [selectedElement]="selectedObject" (selectionChanged)="selectedObject = $event"></app-container-tree>
+              </ng-container>
+            </as-split-area>
+          </as-split>
+        </as-split-area>
+        <as-split-area [size]="GetSplitSize(1, 1, $any('*'))" [order]=2 [class.bg-color-light3]="!theme.IsDarkMode" [class.bg-color-dark3]="theme.IsDarkMode">
+          <as-split direction="vertical" [gutterSize]="3" [restrictMove]="true" (dragEnd)="OnSplitSizeChange($event, 2)">
+            <as-split-area [size]="GetSplitSize(2, 0, 70)" [order]=1>
+              <mat-tab-group [selectedIndex]="selectedTabIndex" (selectedIndexChange)="OnTabIndexChange($event)" style="height: 100%;" class="topTabGroup">
+                <mat-tab *ngFor="let tab of tabs; let index = index" style="width: 100%; height: 100%;" class="tab-content">
+                  <ng-template mat-tab-label style="width: 100%;">
+                    <table (mouseenter)="tab.isHovered = true" (mouseleave)="tab.isHovered = false" (dblclick)="tab.keepOpen = true">
+                      <tr>
+                        <td style="width: 24px; vertical-align: middle;" rowspan="2"><mat-icon class="tab-icon">{{tab.nav.icon}}</mat-icon></td>
+                        <td style="vertical-align: middle;" [style.font-style]="tab.keepOpen ? 'normal' : 'italic'">{{tab.label}}</td>
+                        <td style="width: 24px; vertical-align: middle;" rowspan="2"><button mat-icon-button (click)="RemoveTab(tab)"><mat-icon class="tab-icon">{{tab.isHovered ? 'close' : ''}}</mat-icon></button></td>
+                      </tr>
+                      <tr>
+                        <td style="font-size: small;" [style.font-style]="tab.keepOpen ? 'normal' : 'italic'">{{tab.nav.name()}}</td>
+                      </tr>
+                    </table>
+                  </ng-template>
+                  <ng-template matTabContent>
+                    <app-model-info style="height: 100%; margin: 10px;" *ngIf="IsModelInfo(tab.nav)"></app-model-info>
+                    <app-char-scope style="height: 100%;" [charScope]="tab.nav.data" *ngIf="IsCharScope(tab.nav)"></app-char-scope>
+                    <app-obj-impact style="height: 100%;" [objImpact]="tab.nav.data" *ngIf="IsObjImpact(tab.nav)"></app-obj-impact>
+                    <app-threat-sources style="height: 100%;" [threatSources]="tab.nav.data" *ngIf="IsThreatSource(tab.nav)"></app-threat-sources>
+                    <app-threat-identification style="height: 100%;" *ngIf="IsThreatIdentification(tab.nav)"></app-threat-identification>
+                    <app-device-assets style="height: 100%;" [assetGroup]="tab.nav.data" *ngIf="IsAssetGroup(tab.nav)"></app-device-assets>
+                    <app-diagram style="height: 100%;" [selectedNode]="selectedNode" [diagram]="tab.nav.data" [selectedElement]="selectedObject" (selectionChanged)="selectedObject = $event" (navTreeChanged)="createNodes()" *ngIf="IsDiagram(tab.nav)"></app-diagram>
+                    <app-stack #compStack style="height: 100%;" [stack]="tab.nav.data" [selectedComponent]="selectedComponent" (selectionChanged)="selectedObject = $event" *ngIf="IsMyComponentStack(tab.nav)"></app-stack>
+                    <app-checklist style="height: 100%;" [checklist]="tab.nav.data" *ngIf="IsChecklist(tab.nav)"></app-checklist>
+                  </ng-template>
+                </mat-tab>
+              </mat-tab-group>
+            </as-split-area>
+            <as-split-area [size]="GetSplitSize(2, 1, 30)" [order]=2 *ngIf="hasBottomTabGroup">
+              <mat-tab-group class="bottomTabGroup">
+                <mat-tab>
+                  <ng-template mat-tab-label>
+                    <span [matBadge]="currentThreatCount" [matBadgeHidden]="currentThreatCount == 0" matBadgeSize="small" matBadgePosition="below" matBadgeOverlap="false">{{'general.Threats' | translate}}</span>
+                  </ng-template>
+                  <app-threat-table [selectedNode]="selectedNode" [selectedObject]="selectedObject" (selectedObjectChanged)="selectedObject = $event" (threatCountChanged)="currentThreatCount = $event"></app-threat-table>
+                </mat-tab>
+                <mat-tab>
+                  <ng-template mat-tab-label>
+                    <span [matBadge]="currentMitigationCount" [matBadgeHidden]="currentMitigationCount == 0" matBadgeSize="small" matBadgePosition="below" matBadgeOverlap="false">{{'general.Mitigations' | translate}}</span>
+                  </ng-template>
+                  <app-mitigation-table [selectedNode]="selectedNode" [selectedObject]="selectedObject" (selectedObjectChanged)="selectedObject = $event" (mitigationCountChanged)="currentMitigationCount = $event"></app-mitigation-table>
+                </mat-tab>
+                <mat-tab>
+                  <ng-template mat-tab-label>
+                    <span [matBadge]="currentIssueCount" [matBadgeHidden]="currentIssueCount == 0" matBadgeSize="small" matBadgePosition="below" matBadgeOverlap="false">{{'general.Issues' | translate}}</span>
+                  </ng-template>
+                  <app-issue-table [selectedNode]="selectedNode" [selectedObject]="selectedObject" (selectedObjectChanged)="selectedObject = $event" (issueCountChanged)="currentIssueCount = $event"></app-issue-table>
+                </mat-tab>
+              </mat-tab-group>
+            </as-split-area>
+          </as-split>
+        </as-split-area>
+        <as-split-area [size]="GetSplitSize(1, 2, 310)" [order]=3 [class.splitter-light1]="!theme.IsDarkMode" [class.splitter-dark1]="theme.IsDarkMode">
+          <as-split direction="vertical" [gutterSize]="3" [restrictMove]="true" [class.bg-color-light2]="!theme.IsDarkMode" [class.bg-color-dark2]="theme.IsDarkMode" (dragEnd)="OnSplitSizeChange($event, 4)">
+            <as-split-area [size]="GetSplitSize(4, 0, 60)" [order]=1>
+              <app-stencil-palette [selectedNode]="selectedNode"></app-stencil-palette>
+            </as-split-area>
+            <as-split-area [size]="GetSplitSize(4, 1, 40)" [order]=2>
+              <app-properties [selectedObject]="selectedObject" (selectedObjectChanged)="selectedObject = $event" (openQuestionnaire)="compStack.OnComponentDblClick($event)" (openDiagram)="OnOpenDiagram($event)"></app-properties>
+            </as-split-area>
+          </as-split>
+        </as-split-area>
+      </as-split>
+    </mat-drawer-content>
+  </mat-drawer-container>
+  <app-status-bar></app-status-bar>
+</div>

@@ -1,0 +1,71 @@
+<mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="nav-tree" style="background-color: transparent;">
+  <!-- This is the tree node template for leaf nodes -->
+  <!-- There is inline padding applied to this node using styles.
+    This padding value depends on the mat-icon-button width. -->
+  <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle (click)="OnNodeClick(node, $event)" (dblclick)="OnNodeDoubleClick(node)" (contextmenu)="OpenContextMenu($event, node)"
+  [class.highlight-light]="activeNode === node && !theme.IsDarkMode" [class.highlight-dark]="activeNode === node && theme.IsDarkMode"
+  [style.font-weight]="node.isBold ? 'bold' : 'normal'" class="disable-select">
+    <mat-icon *ngIf="node.iconAlignLeft && node.icon" style="margin-right: 5px;">{{node.icon}}</mat-icon>
+    <span *ngIf="!node.isRenaming" style="margin-right: 15px;" [style.opacity]="(node.isInactive &&node.isInactive()) ? 0.5 : 1">{{node.name()}}</span>
+    <ng-container *ngIf="node.isRenaming"><input id="renameBox" type="text" style="width: -webkit-fill-available;" [ngModel]="node.name()" (keydown)="OnRename($event, node)" autofocus (focusout)="OnRename($event, node)" onfocus="this.select();"/></ng-container>
+    <button mat-icon-button *ngIf="node.canRename && !node.isRenaming" (click)="OnEditName(node)" matTooltip="{{'general.Rename' | translate}}" matTooltipShowDelay="1000"><mat-icon>edit</mat-icon></button>
+    <button mat-icon-button *ngIf="node.canDuplicate" (click)="node.onDuplicate()" matTooltip="{{'general.Duplicate' | translate}}" matTooltipShowDelay="1000"><mat-icon>content_copy</mat-icon></button>
+    <button mat-icon-button *ngIf="node.canDelete" (click)="node.onDelete()" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000"><mat-icon>delete</mat-icon></button>
+    <button mat-icon-button *ngIf="node.canAdd && !node.addOptions" (click)="node.onAdd()" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000"><mat-icon>add</mat-icon></button>
+    <button mat-icon-button *ngIf="node.canAdd && node.addOptions" [matMenuTriggerFor]="addMenu" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000"><mat-icon>add</mat-icon></button>
+    <mat-menu #addMenu="matMenu">
+      <button mat-menu-item *ngFor="let op of node.addOptions" (click)="node.onAdd(op)">{{op}}</button>
+    </mat-menu>
+    <mat-icon *ngIf="!node.iconAlignLeft && node.icon" style="margin-left: auto; margin-right: 5px; opacity: 1;">{{node.icon}}</mat-icon>
+  </mat-tree-node>
+  <!-- This is the tree node template for expandable nodes -->
+  <mat-nested-tree-node *matTreeNodeDef="let node; when: HasChild" (click)="OnNodeClick(node, $event)" (dblclick)="OnNodeDoubleClick(node)" class="disable-select" (contextmenu)="OpenContextMenu($event, node)">
+    <div class="mat-tree-node" [class.highlight-light]="activeNode === node && !theme.IsDarkMode" [class.highlight-dark]="activeNode === node && theme.IsDarkMode">
+      <button mat-icon-button matTreeNodeToggle (click)="node.isExpanded = !node.isExpanded">
+        <mat-icon class="mat-icon-rtl-mirror" style="opacity: 1;">
+          {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
+        </mat-icon>
+      </button>
+      <mat-icon *ngIf="node.iconAlignLeft && node.icon" style="margin-right: 5px;">{{node.icon}}</mat-icon>
+      <span *ngIf="!node.isRenaming" style="margin-right: 15px;" [style.opacity]="(node.isInactive &&node.isInactive()) ? 0.5 : 1">{{node.name()}}</span>
+      <ng-container *ngIf="node.isRenaming"><input id="renameBox" type="text" style="width: -webkit-fill-available;" [ngModel]="node.name()" (keydown)="OnRename($event, node)" autofocus (focusout)="OnRename($event, node)" onfocus="this.select();"/></ng-container>
+      <button mat-icon-button *ngIf="node.canRename && !node.isRenaming" (click)="OnEditName(node)" matTooltip="{{'general.Rename' | translate}}" matTooltipShowDelay="1000"><mat-icon>edit</mat-icon></button>
+      <button mat-icon-button *ngIf="node.canDelete" (click)="node.onDelete()" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000"><mat-icon>delete</mat-icon></button>
+      <button mat-icon-button *ngIf="node.canAdd && !node.addOptions" (click)="node.onAdd()" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000"><mat-icon>add</mat-icon></button>
+      <button mat-icon-button *ngIf="node.canAdd && node.addOptions" [matMenuTriggerFor]="addMenu" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000"><mat-icon>add</mat-icon></button>
+      <mat-menu #addMenu="matMenu">
+        <button mat-menu-item *ngFor="let op of node.addOptions" (click)="node.onAdd(op)">{{op}}</button>
+      </mat-menu>
+      <mat-icon *ngIf="!node.iconAlignLeft && node.icon" style="margin-left: auto; margin-right: 5px; opacity: 1;">{{node.icon}}</mat-icon>
+    </div>
+    <!-- There is inline padding applied to this div using styles.
+        This padding value depends on the mat-icon-button width.  -->
+    <div [class.nav-tree-invisible]="!treeControl.isExpanded(node)" role="group">
+      <ng-container matTreeNodeOutlet></ng-container>
+    </div>
+  </mat-nested-tree-node>
+</mat-tree>
+
+<div #ctxMenu="matMenuTrigger" style="visibility: hidden; position: fixed;" [style.left]="menuTopLeftPosition.x" [style.top]="menuTopLeftPosition.y" [matMenuTriggerFor]="rightMenu"></div> 
+<mat-menu #rightMenu="matMenu"> 
+  <ng-template matMenuContent let-item="item">
+    <span *ngIf="item" style="margin-left: 20px; margin-right: 20px;">{{item.name()}}</span> 
+    <button mat-menu-item [disabled]="!item.canMoveUpDown" (click)="OnMoveUp(item)">
+      <mat-icon>arrow_upward</mat-icon>
+      <span>{{'nav-tree.moveUp' | translate}}</span>
+    </button>
+    <button mat-menu-item [disabled]="!item.canMoveUpDown" (click)="OnMoveDown(item)">
+      <mat-icon>arrow_downward</mat-icon>
+      <span>{{'nav-tree.moveDown' | translate}}</span>
+    </button>
+    <button mat-menu-item [disabled]="!item.canMoveToGroup" [matMenuTriggerFor]="groupsMenu" [matMenuTriggerData]="{ groups: (item.onMoveToGroups ? item.onMoveToGroups() : null), item: item }">
+      <mat-icon>low_priority</mat-icon>
+      <span>{{'nav-tree.moveToGroup' | translate}}</span>
+    </button>
+  </ng-template> 
+</mat-menu> 
+<mat-menu #groupsMenu="matMenu">
+  <ng-template matMenuContent let-groups="groups" let-item="item">
+    <button mat-menu-item *ngFor="let g of groups" (click)="OnMoveToGroup(item, g)">{{g.name()}}</button>
+  </ng-template> 
+</mat-menu>

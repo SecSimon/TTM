@@ -1,0 +1,28 @@
+<div style="margin: 10px;">
+  <h2>{{checklist.Name}}</h2>
+  <mat-form-field appearance="fill" style="width: 100%;">
+    <mat-label>{{ 'properties.Description' | translate }}</mat-label>
+    <textarea matInput [(ngModel)]="checklist.Description"></textarea>
+  </mat-form-field>
+  <table style="border-spacing: 2px 2px;">
+    <tr>
+      <th></th>
+      <th *ngFor="let level of checklist.Type.Levels" style="text-align: center; padding: 0 3px;" matTooltip="{{level.Name}}" matTooltipShowDelay="1000">{{level.Abbr}}</th>
+      <th></th>
+    </tr>
+    <tr *ngFor="let req of Requirements">
+      <td><span [style.margin-left]="(req.level * 20).toString() + 'px'">{{req.requirement.Name}}</span></td>
+      <td *ngFor="let level of checklist.Type.Levels; index as index" style="text-align: center; height: 25px; min-width: 30px;" [style.backgroundColor]="GetBackgroundColor(req, index)" (click)="req.value.Values[index] = !req.value.Values[index];">
+        <mat-icon *ngIf="GetCellStatus(req, index) != null">{{GetCellStatus(req, index) ? 'done' : 'close'}}</mat-icon>
+      </td>
+      <td style="height: 20px;">
+        <button mat-icon-button class="doneBtn" *ngIf="req.value.NeedsReview" (click)="req.value.NeedsReview = false" matTooltip="{{'general.OK' | translate}}" matTooltipShowDelay="1000">
+          <mat-icon>thumb_up</mat-icon>
+        </button>
+        <button mat-icon-button class="doneBtn" *ngIf="req.updateAvailable" (click)="UpdateValues(req)" matTooltip="{{'general.Update' | translate}}" matTooltipShowDelay="1000">
+          <mat-icon>update</mat-icon>
+        </button>
+      </td>
+    </tr>
+  </table>
+</div>

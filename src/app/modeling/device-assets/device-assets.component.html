@@ -1,0 +1,50 @@
+<div style="width: 100%; height: 100%;">
+  <mat-tab-group class="tabGroup" style="height: 100%;" [selectedIndex]="GetSelectedTabIndex()" (selectedIndexChange)="SetSelectedTabIndex($event)">
+    <mat-tab>
+      <ng-template mat-tab-label>
+        {{'pages.modeling.deviceassets.assetview' | translate}}
+      </ng-template>
+      <ng-template matTabContent>
+        <as-split direction="horizontal" unit="pixel" [gutterSize]="3" [restrictMove]="true" (dragEnd)="OnSplitSizeChange($event, 0)">
+          <as-split-area [size]="GetSplitSize(0, 0, 300)" [order]=1 [class.splitter-light2]="!theme.IsDarkMode" [class.splitter-dark2]="theme.IsDarkMode">
+            <app-nav-tree #navTree [activeNode]="selectedNode" (selectedNodeChanged)="selectedNode = $event"></app-nav-tree>
+          </as-split-area>
+          <as-split-area [size]="GetSplitSize(0, 1, $any('*'))" [order]=2 [class.bg-color-light3]="!theme.IsDarkMode" [class.bg-color-dark3]="theme.IsDarkMode">
+            <app-assets [isProject]="true" [assetGroup]="assetGroup" [selectedNode]="selectedNode" (nodeTreeChanged)="SetNavTreeData($event)"></app-assets>
+          </as-split-area>
+        </as-split>
+      </ng-template>
+    </mat-tab>
+
+    <mat-tab>
+      <ng-template mat-tab-label>
+        {{'pages.modeling.deviceassets.dataview' | translate}}
+      </ng-template>
+      <ng-template matTabContent>
+        <div class="row">
+          <div class="column1">
+            <mat-list class="prop-list" [class.prop-list-light]="!theme.IsDarkMode" [class.prop-list-dark]="theme.IsDarkMode">
+              <div mat-subheader>{{ 'general.Datas' | translate }} <button mat-icon-button (click)="AddMyData()" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000" style="margin-left: 15px;"><mat-icon>add</mat-icon></button></div>
+              <mat-list-item *ngFor="let data of assetGroup.GetMyDataFlat()" (click)="selectedMyData = data"
+              [class.highlight-light]="selectedMyData === data && !theme.IsDarkMode" [class.highlight-dark]="selectedMyData === data && theme.IsDarkMode"
+              matTooltip="{{data.Name}}" matTooltipShowDelay="1000">
+                <mat-icon mat-list-icon>chevron_right</mat-icon>
+                <div mat-line>{{data.Name}}</div>
+                <div mat-line>{{'properties.Sensitivity' | translate}}: {{GetSensitivity(data.Sensitivity) | translate}}</div>
+                <button mat-icon-button style="margin-left: auto;" (click)="DeleteMyData(data)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000"><mat-icon>delete</mat-icon></button>
+              </mat-list-item>
+            </mat-list>
+          </div>
+          <div class="column2">
+            <ng-container *ngIf="assetGroup.GetMyDataFlat().includes(selectedMyData)">
+              <div style="margin: 10px;">
+                <app-mydata [myData]="selectedMyData" [showAssetGroup]="true"></app-mydata>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+      </ng-template>
+    </mat-tab>
+  </mat-tab-group>
+  
+</div>

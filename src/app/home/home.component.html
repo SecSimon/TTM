@@ -1,0 +1,169 @@
+<div class="website-container" color="primary">
+  <mat-drawer-container class="drawer-container">
+    <mat-drawer mode="side" opened style="border-right-width: 0px;">
+      <app-side-nav style="width: 100%; height: 100%;" selectedRoute="/home"></app-side-nav>
+    </mat-drawer>
+
+    <mat-drawer-content>
+      <div class="title">
+        <h1><img src='https://github.com/SecSimon/TTM/blob/main/src/assets/icons/favicon.192x192.png?raw=true' style="width: 50px;" alt='logo'> {{'pages.home.title' | translate}}</h1>
+        <h3>{{'pages.home.subtitle' | translate}}</h3>
+      </div>
+      <div class="row">
+        <div class="column">
+          <div class="first-column-content">
+            <ng-container *ngIf="dataService.IsLoggedIn || dataService.IsGuest">
+              <h2>
+                {{'pages.home.projects' | translate}}
+                <button mat-icon-button style="vertical-align: middle;" [matMenuTriggerFor]="projMenu" aria-label="Menu">
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #projMenu="matMenu">
+                  <button mat-menu-item [disabled]="!dataService.SelectedGHProject || !dataService.GetRepoOfFile(dataService.SelectedGHProject).isWritable" (click)="dataService.OpenSaveProjectDialog('')">
+                    <mat-icon>save</mat-icon>
+                    <span>{{'pages.home.menu.saveProject' | translate}}</span>
+                  </button>
+                  <button mat-menu-item [disabled]="!dataService.SelectedGHProject" (click)="dataService.OpenSaveConfigDialog('')">
+                    <mat-icon>exit_to_app</mat-icon>
+                    <span>{{'pages.home.menu.exportConfig' | translate}}</span>
+                  </button>
+                  <button mat-menu-item [disabled]="!dataService.Project" (click)="dataService.ExportFile(true)">
+                    <mat-icon matBadge="P" matBadgeOverlap="true" matBadgeColor="primary" matBadgeSize="small" matBadgePosition="below">file_download</mat-icon>
+                    <span>{{'pages.home.menu.downloadProject' | translate}}</span>
+                  </button>
+                  <button mat-menu-item [disabled]="!dataService.Project" class="exportBtn" (click)="dataService.ExportFile(false)">
+                    <mat-icon matBadge="C" matBadgeOverlap="true" matBadgeColor="primary" matBadgeSize="small" matBadgePosition="below">file_download</mat-icon>
+                    <span>{{'pages.home.menu.downloadConfig' | translate}}</span>
+                  </button>
+                  <button mat-menu-item [disabled]="!dataService.Project" class="exportBtn" [matMenuTriggerFor]="exchangeMenu">
+                    <mat-icon matBadge="C" matBadgeOverlap="true" matBadgeColor="primary" matBadgeSize="small" matBadgePosition="below">wifi_protected_setup</mat-icon>
+                    <span>{{'pages.home.menu.exchangeConfig' | translate}}</span>
+                  </button>
+                  <mat-menu #exchangeMenu="matMenu">
+                    <button mat-menu-item [disabled]="true">
+                      <mat-icon matBadge="C" matBadgeOverlap="true" matBadgeColor="primary" matBadgeSize="small" matBadgePosition="below">file_upload</mat-icon>
+                      {{'pages.home.menu.importConfig' | translate}}
+                    </button>
+                    <button mat-menu-item *ngFor="let conf of dataService.AvailableGHConfigs" (click)="dataService.ExchangeConfig(conf)">{{conf.name}}</button>
+                  </mat-menu>
+                  <button mat-menu-item [disabled]="!dataService.Project" (click)="dataService.OnCloseProject()">
+                    <mat-icon>close</mat-icon>
+                    <span>{{'pages.home.menu.closeProject' | translate}}</span>
+                  </button>
+                  <mat-divider></mat-divider>
+                  <input hidden type="file" accept=".ttmp" #projectUploader (change)="dataService.ImportFile(true, $event)"/>
+                  <button mat-menu-item (click)="projectUploader.click()">
+                    <mat-icon matBadge="P" matBadgeOverlap="true" matBadgeColor="primary" matBadgeSize="small" matBadgePosition="below">file_upload</mat-icon>
+                    <span>{{'pages.home.menu.importProject' | translate}}</span>
+                  </button>
+                </mat-menu>
+              </h2>
+
+              <div *ngIf="dataService.SelectedGHProject" style="margin-bottom: 10px;">
+                Current Project: {{dataService.SelectedGHProject.name}}
+                <br/>
+              </div>
+
+              <button mat-button style="padding-left: 0px; margin-bottom: 20px;" (click)="dataService.NewProject()">
+                <mat-icon color="primary">add_circle</mat-icon>
+                {{'pages.home.createProject' | translate}}
+              </button>
+              <br/>
+              <ng-container *ngFor="let proj of dataService.AvailableGHProjects">
+                <div id="project">
+                  <button class="color-primary astext" (click)="dataService.LoadProject(proj)">{{proj.name}}</button>
+                  in {{GetRepoName(proj)}}
+                  <button mat-icon-button class="show-on-hover" style="width: 20px; height: 20px; line-height: 20px; margin-right: 5px;" (click)="dataService.OpenRepo(proj)" matTooltip="{{'general.openInNew' | translate}}" matTooltipShowDelay="1000">
+                    <mat-icon>open_in_new</mat-icon>
+                  </button>
+                  <button *ngIf="dataService.GetRepoOfFile(proj).isWritable" mat-icon-button class="show-on-hover" style="width: 20px; height: 20px; line-height: 20px;" (click)="dataService.DeleteGHFile(proj)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+              </ng-container>
+
+              <h2 style="margin-top: 50px;">
+                {{'pages.home.configs' | translate}}
+                <button mat-icon-button style="vertical-align: middle;" [matMenuTriggerFor]="confMenu" aria-label="Menu">
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #confMenu="matMenu">
+                  <input hidden type="file" accept=".ttmc" #configUploader (change)="dataService.ImportFile(false, $event)"/>
+                  <button mat-menu-item (click)="configUploader.click()">
+                    <mat-icon matBadge="C" matBadgeOverlap="true" matBadgeColor="primary" matBadgeSize="small" matBadgePosition="below">file_upload</mat-icon>
+                    <span>{{'pages.home.menu.importConfig' | translate}}</span>
+                  </button>
+                </mat-menu>
+              </h2>
+
+              <ng-container *ngFor="let conf of dataService.AvailableGHConfigs">
+                <div id="config">
+                  <button class="color-primary astext" (click)="dataService.LoadConfig(conf)">{{conf.name}}</button>
+                  in {{GetRepoName(conf)}}
+                  <button mat-icon-button class="show-on-hover" style="width: 20px; height: 20px; line-height: 20px; margin-right: 5px;" (click)="dataService.OpenRepo(conf)" matTooltip="{{'general.openInNew' | translate}}" matTooltipShowDelay="1000">
+                    <mat-icon>open_in_new</mat-icon>
+                  </button>
+                  <button *ngIf="dataService.GetRepoOfFile(conf).isWritable" mat-icon-button class="show-on-hover" style="width: 20px; height: 20px; line-height: 20px;" (click)="dataService.DeleteGHFile(conf)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+              </ng-container>
+              <button style="margin-top: 70px;" class="color-primary astext" (click)="tourService.start()">{{'pages.home.welcomeTour' | translate}}</button>
+            </ng-container>
+
+            <ng-container *ngIf="!dataService.IsLoggedIn && !dataService.IsGuest">
+              <h2>{{'pages.home.welcome' | translate}}!</h2>
+              <p>{{'pages.home.need_login' | translate}}:</p>
+              <button mat-button routerLink="/login">{{'pages.home.go_to_login' | translate}}</button>
+            </ng-container>
+          </div>
+        </div>
+        <div class="column">
+          <div class="second-column-content">
+            <h2>{{'pages.home.process' | translate}}</h2>
+
+            <mat-accordion class="expansion-panel-headers-align">
+              <mat-expansion-panel [expanded]="processStep === 0" (opened)="SetProcessStep(0)" hideToggle>
+                <mat-expansion-panel-header>
+                  <mat-panel-title>
+                    {{'pages.home.process' | translate}}
+                  </mat-panel-title>
+                  <mat-panel-description>
+                    {{'pages.home.methodology' | translate}}
+                    <mat-icon>star</mat-icon>
+                  </mat-panel-description>
+                </mat-expansion-panel-header>
+
+                <p>{{'pages.home.methodologyInfo' | translate}}</p>
+                <mat-action-row>
+                  <button mat-button color="primary" (click)="NextProcessStep()">{{'tour.next' | translate}}</button>
+                </mat-action-row>
+              </mat-expansion-panel>
+              <mat-expansion-panel *ngFor="let stage of Stages; index as indexStage; last as isLast;" [expanded]="processStep === indexStage+1" (opened)="SetProcessStep(indexStage+1)" hideToggle>
+                <mat-expansion-panel-header>
+                  <mat-panel-title>
+                    {{stage.name}}
+                  </mat-panel-title>
+                  <mat-panel-description>
+                    {{stage.desc}}
+                    <mat-icon>{{stage.icon}}</mat-icon>
+                  </mat-panel-description>
+                </mat-expansion-panel-header>
+
+                <ol>
+                  <li *ngFor="let step of stage.steps">{{step.name}}</li>
+                </ol>
+                <mat-action-row>
+                  <button mat-button color="primary" (click)="PrevProcessStep()">{{'tour.prev' | translate}}</button>
+                  <button mat-button color="primary" (click)="NextProcessStep()" *ngIf="!isLast">{{'tour.next' | translate}}</button>
+                  <button mat-button color="primary" (click)="NextProcessStep()" *ngIf="isLast">{{'tour.end' | translate}}</button>
+                </mat-action-row>
+              </mat-expansion-panel>
+            </mat-accordion>
+          </div>
+        </div>
+      </div>
+    </mat-drawer-content>
+  </mat-drawer-container>
+  <app-status-bar></app-status-bar>
+</div>

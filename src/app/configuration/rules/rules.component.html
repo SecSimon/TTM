@@ -1,0 +1,21 @@
+<div *ngIf="selectedNode" style="margin-left: 10px; margin-right: 10px;">
+  <h2>{{selectedNode.name()}}</h2>
+  <ng-container *ngIf="selectedThreatRuleGroup">
+    <mat-form-field appearance="fill" style="width: 100%;">
+      <mat-label>{{ 'properties.Description' | translate }}</mat-label>
+      <textarea matInput [(ngModel)]="selectedThreatRuleGroup.Description"></textarea>
+    </mat-form-field>
+  </ng-container>
+  <!--
+  <ng-container *ngIf="selectedThreatRule">
+    <mat-form-field appearance="fill" style="width: 100%;">
+      <mat-label>{{ 'properties.Description' | translate }}</mat-label>
+      <textarea matInput [(ngModel)]="selectedThreatRule.Description"></textarea>
+    </mat-form-field>
+  </ng-container>
+  -->
+  <ng-container *ngIf="selectedThreatRuleGroup">
+    <mat-checkbox color="primary" [checked]="allGroupRulesActive" [indeterminate]="someGroupRulesActive" (change)="OnRulesActiveChange($event.checked)">{{'properties.IsActive' | translate}}</mat-checkbox>
+  </ng-container>
+  <app-threat-rule *ngIf="selectedThreatRule" [node]="selectedNode" [threatRule]="selectedThreatRule"></app-threat-rule>
+</div>

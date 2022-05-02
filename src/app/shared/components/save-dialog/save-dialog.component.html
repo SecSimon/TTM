@@ -1,0 +1,66 @@
+<h1 mat-dialog-title>{{'general.Save' | translate}}</h1>
+<div mat-dialog-content style="display: grid;">
+  <ng-container *ngIf="data['newProject']">
+    <mat-form-field class="field-width">
+      <mat-label>Repository</mat-label>
+      <mat-select [(value)]="data['newProject']['repoId']">
+        <mat-option *ngFor="let repo of Repos" [value]="repo.id">{{repo.name}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Name</mat-label>
+      <input matInput [formControl]="nameFormControl" [errorStateMatcher]="matcher">
+      <span matSuffix>.ttmp</span>
+      <mat-error *ngIf="nameFormControl.hasError('required')">
+        Name is <strong>required</strong>
+      </mat-error>
+      <mat-error *ngIf="nameFormControl.hasError('forbiddenName')">
+        A project <strong>already exists</strong> with this name
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field class="field-width">
+      <mat-label>Configuration</mat-label>
+      <mat-select [(value)]="data['newProject']['configFile']">
+        <mat-option *ngFor="let cf of Configs" [value]="cf.Key">{{cf.Value}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </ng-container>
+
+  <ng-container *ngIf="data['newConfig']">
+    <mat-form-field class="field-width">
+      <mat-label>Repository</mat-label>
+      <mat-select [(value)]="data['newConfig']['repoId']">
+        <mat-option *ngFor="let repo of Repos" [value]="repo.id">{{repo.name}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Name</mat-label>
+      <input matInput [formControl]="nameFormControl" [errorStateMatcher]="matcher">
+      <span matSuffix>.ttmc</span>
+      <mat-error *ngIf="nameFormControl.hasError('required')">
+        Name is <strong>required</strong>
+      </mat-error>
+      <mat-error *ngIf="nameFormControl.hasError('forbiddenName')">
+        A configuration <strong>already exists</strong> with this name
+      </mat-error>
+    </mat-form-field>
+  </ng-container>
+
+  <mat-form-field class="field-width">
+    <mat-label>{{'dialog.save.CommitMsg' | translate}}</mat-label>
+    <input matInput class="field-width" type="text" placeholder="Update" [(ngModel)]="data['msg']" (keydown.enter)="dialogRef.close(true)">
+  </mat-form-field>
+  <br/>
+  <mat-checkbox *ngIf="data['removePW'] != null" [(ngModel)]="data['removePW']" color="primary" style="padding-bottom: 10px;">{{'dialog.save.removePW' | translate}}</mat-checkbox>
+  <mat-form-field *ngIf="data['removePW'] == null && data['newConfig'] == null" class="field-width">
+    <mat-label>{{'dialog.save.addPW' | translate}}</mat-label>
+    <input matInput class="field-width" [type]="show ? 'text' : 'password'" [(ngModel)]="data['pw']" (keydown.enter)="dialogRef.close(true)">
+    <mat-icon matSuffix (click)="show = !show">{{show ? 'visibility_off' : 'visibility'}}</mat-icon>
+    <mat-icon matSuffix matTooltip="{{'dialog.save.security' | translate}}">privacy_tip</mat-icon>
+  </mat-form-field>
+</div>
+<div mat-dialog-actions style="float: right;">
+  <button mat-button mat-dialog-close>{{'general.Cancel' | translate}}</button>
+  <button mat-button *ngIf="data['newProject'] || data['newConfig']" [disabled]="!canSave" [mat-dialog-close]="true" (click)="onSave()">{{'general.Save' | translate}}</button>
+  <button mat-button *ngIf="!data['newProject'] && !data['newConfig']" cdkFocusInitial [disabled]="!canSave" [mat-dialog-close]="true" (click)="onSave()">{{'general.Save' | translate}}</button>
+</div>

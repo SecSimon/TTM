@@ -1,0 +1,13 @@
+@import 'stylesTheme.scss';
+
+::ng-deep .mat-tab-labels {
+  display: block !important;
+}
+
+::ng-deep .mat-tab-labels .mat-tab-label {
+  padding: 0 10px !important;
+}
+
+::ng-deep .mat-tab-label {
+  min-width: 100px !important;
+}

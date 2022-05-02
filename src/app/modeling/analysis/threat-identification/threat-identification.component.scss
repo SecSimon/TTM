@@ -1,0 +1,17 @@
+@import 'stylesTheme.scss';
+@import 'stylesPropList.scss';
+@import 'stylesReorderList.scss';
+
+.tabGroup {
+  ::ng-deep .mat-tab-header .mat-tab-labels .mat-tab-label {
+    height: 25px;
+  }
+
+  ::ng-deep .mat-tab-labels .mat-tab-label {
+    min-width: 120px;
+  }
+}
+
+.disable {
+  pointer-events: none;
+}
