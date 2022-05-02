@@ -59,7 +59,10 @@ export class LocalStorageService {
   public ResetLayout() {
     this.Remove(LocStorageKeys.PAGE_CONFIG_SPLIT_SIZE_1);
     for (let i = 0; i < 5; i++) {
-      this.Remove(LocStorageKeys.PAGE_MODELING_SPLIT_SIZE_X + i.toString());
+      this.Remove(LocStorageKeys.PAGE_CONFIG_CHECKLISTS_SPLIT_SIZE_X + i.toString());
+      this.Remove(LocStorageKeys.PAGE_DASHBOARD_SPLIT_SIZE_X + i.toString());
+      this.Remove(LocStorageKeys.PAGE_DASHBOARD_SPLIT_SIZE_X + i.toString());
+      this.Remove(LocStorageKeys.PAGE_MITIGATION_SPLIT_SIZE_X + i.toString());
       this.Remove(LocStorageKeys.PAGE_MODELING_ASSETS_SPLIT_SIZE_X + i.toString());
     }
   }

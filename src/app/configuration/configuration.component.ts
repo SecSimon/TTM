@@ -40,7 +40,7 @@ export class ConfigurationComponent extends SideNavBase implements OnInit {
   public GetSplitSize(): number {
     let size = this.locStorageService.Get(LocStorageKeys.PAGE_CONFIG_SPLIT_SIZE_1);
     if (size != null) return Number(size);
-    return 300;
+    return 350;
   }
 
   public OnSplitSizeChange(event) {

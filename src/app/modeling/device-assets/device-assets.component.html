@@ -6,7 +6,7 @@
       </ng-template>
       <ng-template matTabContent>
         <as-split direction="horizontal" unit="pixel" [gutterSize]="3" [restrictMove]="true" (dragEnd)="OnSplitSizeChange($event, 0)">
-          <as-split-area [size]="GetSplitSize(0, 0, 300)" [order]=1 [class.splitter-light2]="!theme.IsDarkMode" [class.splitter-dark2]="theme.IsDarkMode">
+          <as-split-area [size]="GetSplitSize(0, 0, 350)" [order]=1 [class.splitter-light2]="!theme.IsDarkMode" [class.splitter-dark2]="theme.IsDarkMode">
             <app-nav-tree #navTree [activeNode]="selectedNode" (selectedNodeChanged)="selectedNode = $event"></app-nav-tree>
           </as-split-area>
           <as-split-area [size]="GetSplitSize(0, 1, $any('*'))" [order]=2 [class.bg-color-light3]="!theme.IsDarkMode" [class.bg-color-dark3]="theme.IsDarkMode">
