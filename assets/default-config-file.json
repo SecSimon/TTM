@@ -2671,6 +2671,67 @@
       "ComponentTypeID": 2
     }
   ],
+  "threatActors": [
+    {
+      "ID": "09ec9afa-906e-4383-be80-47de5c87bd4d",
+      "Name": "Cyber criminals",
+      "Description": "",
+      "Likelihood": 2,
+      "Motive": [
+        "Blackmail the victim to get money"
+      ]
+    },
+    {
+      "ID": "90cc276e-cfc5-4e37-afa0-b14f96f2d231",
+      "Name": "State-sponsored actors",
+      "Description": "",
+      "Likelihood": 2,
+      "Motive": [
+        "Citizen espionage",
+        "Disruption of critical infrastructures"
+      ]
+    },
+    {
+      "ID": "b5ee94b3-703f-4cdd-92bd-64bd73975cb8",
+      "Name": "Competitors",
+      "Description": "",
+      "Likelihood": 2,
+      "Motive": [
+        "Know-how theft"
+      ]
+    },
+    {
+      "ID": "127b2c1d-e8c5-4225-a03f-7169cceab3a9",
+      "Name": "Insiders / employees",
+      "Description": "",
+      "Likelihood": 2,
+      "Motive": [
+        "Financial gain",
+        "Anger"
+      ]
+    },
+    {
+      "ID": "445bb063-8765-4224-8c44-86b8c38d16e0",
+      "Name": "Hacktivists",
+      "Description": "",
+      "Likelihood": 2,
+      "Motive": []
+    },
+    {
+      "ID": "d8135bb6-9891-4038-9fe8-707c9426b42b",
+      "Name": "Terrorists",
+      "Description": "",
+      "Likelihood": 2,
+      "Motive": []
+    },
+    {
+      "ID": "b334caef-05f2-417f-a664-6a56ea83657d",
+      "Name": "Script kiddies",
+      "Description": "",
+      "Likelihood": 2,
+      "Motive": []
+    }
+  ],
   "threatCategoryGroups": [
     {
       "ID": "9d6172db-e842-48e9-bb18-6137a6ae60ee",
