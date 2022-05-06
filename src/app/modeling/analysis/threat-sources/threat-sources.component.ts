@@ -1,9 +1,8 @@
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, Input, OnInit } from '@angular/core';
-import { LowMediumHighNumber, LowMediumHighNumberUtil } from '../../../model/assets';
-import { IKeyValue } from '../../../model/database';
-import { IThreatSource, ThreatSources } from '../../../model/threat-source';
-import { StringExtension } from '../../../util/string-extension';
+import { LowMediumHighNumberUtil, LowMediumHighNumber } from '../../../model/assets';
+import { ThreatActor, ThreatSources } from '../../../model/threat-source';
+import { DataService } from '../../../util/data.service';
 import { ThemeService } from '../../../util/theme.service';
 
 @Component({
@@ -15,46 +14,35 @@ export class ThreatSourcesComponent implements OnInit {
 
   @Input() public threatSources: ThreatSources;
 
-  public selectedSource: IThreatSource;
+  public selectedSource: ThreatActor;
 
   public isEdtingArray: boolean[] = [];
 
-  constructor(public theme: ThemeService) { }
+  constructor(public theme: ThemeService, private dataService: DataService) { }
 
   ngOnInit(): void {
   }
 
   public AddSource() {
-    let name = StringExtension.FindUniqueName('Threat Source', this.threatSources.Sources.map(x => x.Name));
-    this.threatSources.Sources.push({ Name: name, Motive: [], Likelihood: LowMediumHighNumber.Medium });
-    this.selectedSource = this.threatSources.Sources[this.threatSources.Sources.length-1];
+    let actor = this.dataService.Project.CreateThreatActor();
+    this.threatSources.AddThreatActor(actor);
+    this.selectedSource = actor;
+    return actor;
   }
 
-  public DeleteSource(src: IThreatSource) {
-    const index = this.threatSources.Sources.indexOf(src);
-    if (index >= 0) {
-      this.threatSources.Sources.splice(index, 1);
-      if (this.selectedSource == src) this.selectedSource = null;
-    }
+  public AddExistingSource(src: ThreatActor) {
+    const actor = this.AddSource();
+    actor.CopyFrom(src.Data);
+    actor.Data['origID'] = src.ID;
   }
 
-  public OnDeleteItem(item: string, selectedArray: string[]) {
-    const index = selectedArray.indexOf(item);
-    if (index >= 0) selectedArray.splice(index, 1);
+  public GetPossibleThreatSources() {
+    return this.dataService.Config.GetThreatActors().filter(x => !this.threatSources.Sources.map(x => x.Data['origID']).includes(x.ID));
   }
 
-  public OnListKeyDown(event: KeyboardEvent, arr: string[]) {
-    if (event.key == 'Enter') {
-      arr.push(event.target['value']);
-      event.target['value'] = '';
-    }
-  }
-
-  public OnRenameItem(event, items: string[], index: number) {
-    if (event.key === 'Enter' || event.type === 'focusout') {
-      items[index] = event.target['value'];
-      this.isEdtingArray[index] = false;
-    }
+  public DeleteSource(ta: ThreatActor) {
+    if (this.selectedSource == ta) this.selectedSource = null;
+    this.dataService.Project.DeleteThreatActor(ta);
   }
 
   public drop(event: CdkDragDrop<string[]>, selectedArray) {

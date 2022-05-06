@@ -19,15 +19,18 @@ import { ThreatCategoryComponent } from './threat-category/threat-category.compo
 import { MitigationsComponent } from './mitigations/mitigations.component';
 import { MitigationComponent } from './mitigation/mitigation.component';
 import { ChecklistsComponent } from './checklists/checklists.component';
+import { ThreatSourcesComponent } from './threat-sources/threat-sources.component';
+import { ThreatActorComponent } from './threat-actor/threat-actor.component';
 
 @NgModule({
-  declarations: [ConfigurationComponent, StencilsComponent, ThreatCategoriesComponent, ComponentsComponent, ThreatLibraryComponent, RulesComponent, ThreatRuleComponent, ThreatOriginComponent, ThreatQuestionComponent, AssetsComponent, MyDataComponent, ThreatCategoryComponent, MitigationsComponent, MitigationComponent, ChecklistsComponent],
+  declarations: [ConfigurationComponent, StencilsComponent, ThreatCategoriesComponent, ComponentsComponent, ThreatLibraryComponent, RulesComponent, ThreatRuleComponent, ThreatOriginComponent, ThreatQuestionComponent, AssetsComponent, MyDataComponent, ThreatCategoryComponent, MitigationsComponent, MitigationComponent, ChecklistsComponent, ThreatSourcesComponent, ThreatActorComponent],
   imports: [
     CommonModule,
     SharedModule,
     ConfigurationRoutingModule
   ],
   exports: [
+    ThreatActorComponent,
     ThreatOriginComponent,
     ThreatRuleComponent,
     AssetsComponent,

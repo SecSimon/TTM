@@ -1,0 +1,4 @@
+<div *ngIf="selectedNode" style="margin-left: 10px; margin-right: 10px;">
+  <h2>{{selectedNode.name()}}</h2>
+  <app-threat-actor [threatActor]="selectedThreatActor"></app-threat-actor>
+</div>

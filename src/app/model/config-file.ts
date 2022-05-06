@@ -5,11 +5,12 @@ import { ElementTypeIDs, ElementTypeUtil, Protocol, StencilThreatMnemonic, Stenc
 import { ThreatCategory, ThreatCategoryGroup, ThreatQuestion, ThreatOrigin, ThreatOriginGroup, ThreatRule, ThreatRuleGroup, RuleTypes as ThreatRuleTypes } from "./threat-model";
 
 import defaultConfig from "../../assets/default-config-file.json";
-import { AssetGroup, MyData } from "./assets";
+import { AssetGroup, LowMediumHighNumber, MyData } from "./assets";
 import { ProjectFile } from "./project-file";
 import { Mitigation, MitigationGroup } from "./mitigations";
 import { ChecklistType, RequirementType } from "./checklist";
 import { FileUpdateService } from "../util/file-update.service";
+import { ThreatActor } from "./threat-source";
 
 export interface IConfigFile extends IDatabaseBase {
   assetGroups: {}[];
@@ -23,6 +24,7 @@ export interface IConfigFile extends IDatabaseBase {
   myComponentSWTypeGroups: {}[];
   myComponentPTypes: {}[];
   myComponentPTypeGroups: {}[];
+  threatActors: {}[];
   threatCategoryGroups: {}[];
   threatCategories: {}[];
   threatOriginGroups: {}[];
@@ -51,6 +53,7 @@ export class ConfigFile extends DatabaseBase {
   private myComponentSWTypeGroups: MyComponentTypeGroup[] = [];
   private myComponentPTypeMap = new Map<string, MyComponentType>();
   private myComponentPTypeGroups: MyComponentTypeGroup[] = [];
+  private threatActors: ThreatActor[] = [];
   private threatCategoryGroups: ThreatCategoryGroup[] = [];
   private threatCategoryMap = new Map<string, ThreatCategory>();
   private threatOriginGroups: ThreatOriginGroup[] = [];
@@ -94,6 +97,7 @@ export class ConfigFile extends DatabaseBase {
   }
   public GetMyComponentPTypes(): MyComponentType[] { return Array.from(this.myComponentPTypeMap, ([k, v]) => v); }
   public GetMyComponentPTypeGroups(): MyComponentTypeGroup[] { return this.myComponentPTypeGroups; }
+  public GetThreatActors(): ThreatActor[] { return this.threatActors; }
   public GetThreatCategoryGroups(): ThreatCategoryGroup[] { return this.threatCategoryGroups; }
   public GetThreatCategories(): ThreatCategory[] { return Array.from(this.threatCategoryMap, ([k, v]) => v); }
   public GetThreatOriginGroups(): ThreatOriginGroup[] { return this.threatOriginGroups; }
@@ -362,6 +366,27 @@ export class ConfigFile extends DatabaseBase {
   // public MoveItemInMyComponentPTypes(prevIndex: number, currIndex: number) {
   //   this.moveItemInMap<MyComponentType>('myComponentPTypeMap', prevIndex, currIndex);
   // }
+
+  public GetThreatActor(ID: string) {
+    return this.threatActors.find(x => x.ID == ID);
+  }
+
+  public CreateThreatActor() {
+    let res = new ThreatActor({}, this);
+    res.Name = StringExtension.FindUniqueName('Threat Actor', this.threatActors.map(x => x.Name));
+    res.Likelihood = LowMediumHighNumber.Medium;
+    res.Motive = [];
+    this.threatActors.push(res);
+    return res;
+  }
+
+  public DeleteThreatActor(ta: ThreatActor) {
+    const index = this.threatActors.indexOf(ta);
+    if (index >= 0) {
+      this.threatActors.splice(index, 1);
+    }
+    return index >= 0;
+  }
 
   public GetThreatCategory(ID: string) {
     return this.threatCategoryMap.get(ID);
@@ -656,6 +681,7 @@ export class ConfigFile extends DatabaseBase {
       myComponentPTypes: [],
       myComponentPTypeGroups: [],
 
+      threatActors: [],
       threatCategoryGroups: [],
       threatCategories: [],
       threatOriginGroups: [],
@@ -681,6 +707,7 @@ export class ConfigFile extends DatabaseBase {
     this.myComponentSWTypeGroups.forEach(x => res.myComponentSWTypeGroups.push(x.ToJSON()));
     this.myComponentPTypeMap.forEach(x => res.myComponentPTypes.push(x.ToJSON()));
     this.myComponentPTypeGroups.forEach(x => res.myComponentPTypeGroups.push(x.ToJSON()));
+    this.threatActors.forEach(x => res.threatActors.push(x.ToJSON()));
     this.threatCategoryGroups.forEach(x => res.threatCategoryGroups.push(x.ToJSON()));
     this.threatCategoryMap.forEach(x => res.threatCategories.push(x.ToJSON()));
     this.threatOriginGroups.forEach(x => res.threatOriginGroups.push(x.ToJSON()));
@@ -709,6 +736,7 @@ export class ConfigFile extends DatabaseBase {
     val.myComponentSWTypeGroups.forEach(x => res.myComponentSWTypeGroups.push(MyComponentTypeGroup.FromJSON(x, res)));
     val.myComponentPTypes.forEach(x => res.myComponentPTypeMap.set(x['ID'], MyComponentType.FromJSON(x, res)));
     val.myComponentPTypeGroups.forEach(x => res.myComponentPTypeGroups.push(MyComponentTypeGroup.FromJSON(x, res)));
+    val.threatActors?.forEach(x => res.threatActors.push(ThreatActor.FromJSON(x, res)));
     val.threatCategories.forEach(x => res.threatCategoryMap.set(x['ID'], ThreatCategory.FromJSON(x, res)));
     val.threatCategoryGroups.forEach(x => res.threatCategoryGroups.push(ThreatCategoryGroup.FromJSON(x, res)));
     val.threatOriginGroups.forEach(x => res.threatOriginGroups.push(ThreatOriginGroup.FromJSON(x, res)));

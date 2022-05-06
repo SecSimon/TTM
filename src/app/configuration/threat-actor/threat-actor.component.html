@@ -1,0 +1,26 @@
+<div style="margin-left: 10px; margin-top: 10px;" *ngIf="threatActor">
+  {{'pages.modeling.threatsources.Motive' | translate}}:
+  <div cdkDropList class="reorder-list" (cdkDropListDropped)="drop($event, threatActor.Motive)">
+    <div class="reorder-box" [style.color]="theme.IsDarkMode ? 'white' : 'black'" *ngFor="let item of threatActor.Motive; index as index" cdkDrag>
+      <ng-container *ngIf="!isEdtingArray[index]">
+        <mat-icon>chevron_right</mat-icon> {{item}}
+        <button mat-icon-button style="width: 20px; height: 20px; line-height: 20px;" (click)="isEdtingArray[index] = true" matTooltip="{{'general.Edit' | translate}}" matTooltipShowDelay="1000">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button style="width: 20px; height: 20px; line-height: 20px;" (click)="OnDeleteItem(item, threatActor.Motive)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </ng-container>
+      <input *ngIf="isEdtingArray[index]" id="renameBox" type="text" style="width: -webkit-fill-available;" [ngModel]="item" (keydown)="OnRenameItem($event, threatActor.Motive, index)" autofocus (focusout)="OnRenameItem($event, threatActor.Motive, index)" onfocus="this.select();"/>
+    </div>
+  </div>
+  <div style="padding: 5px 10px;">
+    <mat-icon>chevron_right</mat-icon><input matInput style="width: calc(100% - 24px); vertical-align: super; font-size: 14px;" (keydown)="OnListKeyDown($event, threatActor.Motive)" placeholder="{{'pages.modeling.charscope.addDescription' | translate}}"/>
+  </div>
+  <mat-form-field appearance="fill" class="property-form-field">
+    <mat-label>{{ 'general.Likelihood' | translate }}</mat-label>
+    <mat-select [(value)]="threatActor.Likelihood">
+      <mat-option *ngFor="let type of GetLMHValues()" [value]="type">{{GetLMHName(type) | translate}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>

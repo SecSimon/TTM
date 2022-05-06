@@ -1,6 +1,6 @@
 import { EventEmitter } from "@angular/core";
 import { StringExtension } from "../util/string-extension";
-import { AssetGroup, MyData } from "./assets";
+import { AssetGroup, LowMediumHighNumber, MyData } from "./assets";
 import { CharScope } from "./char-scope";
 import { MyComponentType, MyComponent, MyComponentStack, MyComponentTypeIDs } from "./component";
 import { ConfigFile } from "./config-file";
@@ -10,7 +10,7 @@ import { CtxDiagram, Diagram, DiagramTypes, HWDFDiagram } from "./diagram";
 import { ObjImpact } from "./obj-impact";
 import { DeviceThreat } from "./device-threat";
 import { ThreatCategory, ThreatMapping } from "./threat-model";
-import { ThreatSources } from "./threat-source";
+import { ThreatActor, ThreatSources } from "./threat-source";
 import { ContextElement, ContextElementRef, ContextElementTypes, Device, MobileApp, SystemContext, SystemContextContainerRef } from "./system-context";
 import { Checklist, ChecklistType } from "./checklist";
 import { INote, ITask, MitigationMapping, MitigationProcess } from "./mitigations";
@@ -23,6 +23,7 @@ export interface IProjectFile extends IDatabaseBase {
 
   assetGroups: {}[];
   myData: {}[];
+  threatActors: {}[];
   threatSources: {};
   deviceThreats: {}[];
 
@@ -56,6 +57,7 @@ export class ProjectFile extends DatabaseBase {
   
   private assetGroups: AssetGroup[] = [];
   private myData: MyData[] = [];
+  private threatActors: ThreatActor[] = [];
   private threatSources: ThreatSources;
   private deviceThreats: DeviceThreat[] = [];
 
@@ -98,6 +100,7 @@ export class ProjectFile extends DatabaseBase {
 
   public GetAssetGroups(): AssetGroup[] { return this.assetGroups; }
   public GetMyDatas(): MyData[] { return this.myData; }
+  public GetThreatActors(): ThreatActor[] { return this.threatActors; }
   public GetThreatSources(): ThreatSources { return this.threatSources; }
   public GetDeviceThreats(): DeviceThreat[] { return this.deviceThreats; }
   
@@ -227,6 +230,27 @@ export class ProjectFile extends DatabaseBase {
     if (index >= 0) {
       data.OnDelete(this, this.config);
       this.myData.splice(index, 1);
+    }
+    return index >= 0;
+  }
+
+  public GetThreatActor(ID: string) {
+    return this.threatActors.find(x => x.ID == ID);
+  }
+
+  public CreateThreatActor() {
+    let res = new ThreatActor({}, this.Config);
+    res.Name = StringExtension.FindUniqueName('Threat Actor', this.threatActors.map(x => x.Name));
+    res.Likelihood = LowMediumHighNumber.Medium;
+    res.Motive = [];
+    this.threatActors.push(res);
+    return res;
+  }
+
+  public DeleteThreatActor(ta: ThreatActor) {
+    const index = this.threatActors.indexOf(ta);
+    if (index >= 0) {
+      this.threatActors.splice(index, 1);
     }
     return index >= 0;
   }
@@ -488,6 +512,7 @@ export class ProjectFile extends DatabaseBase {
       sysContext: this.sysContext.ToJSON(),
       assetGroups: [],
       myData: [],
+      threatActors: [],
       threatSources: this.threatSources.ToJSON(),
       deviceThreats: [],
       contextElements: [],
@@ -504,6 +529,7 @@ export class ProjectFile extends DatabaseBase {
 
     this.assetGroups.forEach(x => res.assetGroups.push(x.ToJSON()));
     this.myData.forEach(x => res.myData.push(x.ToJSON()));
+    this.threatActors.forEach(x => res.threatActors.push(x.ToJSON()));
     this.deviceThreats.forEach(x => res.deviceThreats.push(x.ToJSON()));
 
     this.contextElementMap.forEach(x => res.contextElements.push(x.ToJSON()));
@@ -534,6 +560,7 @@ export class ProjectFile extends DatabaseBase {
     val.dfdElements.forEach(x => res.dfdElementMap.set(x['ID'], DFDElement.FromJSON(x, res, cf)));
     val.diagrams.forEach(x => res.diagrams.push(Diagram.FromJSON(x, res, cf)));
 
+    val.threatActors?.forEach(x => res.threatActors.push(ThreatActor.FromJSON(x, cf)));
     if (val.threatSources) res.threatSources = ThreatSources.FromJSON(val.threatSources, res, cf);
     val.deviceThreats?.forEach(x => res.deviceThreats.push(DeviceThreat.FromJSON(x, res, cf)));
 

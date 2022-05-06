@@ -43,6 +43,16 @@
 
             <mat-tab>
               <ng-template mat-tab-label>
+                <mat-icon class="tab-icon">portrait</mat-icon>
+                {{'pages.config.ThreatSources' | translate}}
+              </ng-template>
+              <ng-template matTabContent>
+                <app-threat-sources [selectedNode]="selectedNode" (nodeTreeChanged)="SetNavTreeData($event)"></app-threat-sources>
+              </ng-template>
+            </mat-tab>
+
+            <mat-tab>
+              <ng-template mat-tab-label>
                 <mat-icon class="tab-icon">flash_on</mat-icon>
                 {{'pages.config.ThreatCategories' | translate}}
               </ng-template>

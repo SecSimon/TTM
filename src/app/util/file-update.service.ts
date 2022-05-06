@@ -6,13 +6,14 @@ import { IProjectFile } from './../model/project-file';
 
 import { MessagesService } from './messages.service';
 import { StringExtension } from './string-extension';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FileUpdateService {
 
-  public static ProjectVersion = 2;
+  public static ProjectVersion = 3;
   public static ConfigVersion = 2;
 
   private configUpdates = [
@@ -20,7 +21,8 @@ export class FileUpdateService {
   ];
 
   private projectUpdates = [
-    this.projectV2
+    this.projectV2,
+    this.projectV3
   ];
 
   constructor(private messageService: MessagesService, private translate: TranslateService) { }
@@ -77,6 +79,18 @@ export class FileUpdateService {
       }
       cat['ImpactCats'] = res;
     });
+  }
+
+  private projectV3(file: IProjectFile) {
+    let ids = [];
+    file.threatActors = [];
+    file.threatSources['Sources'].forEach(x => {
+      const id = uuidv4();
+      file.threatActors.push({ ID: id, Name: x['Name'], Description: '', Likelihood: x['Likelihood'], Motive: x['Motive'] });
+      ids.push(id);
+    });
+    delete file.threatSources['Sources'];
+    file.threatSources['sourceIDs'] = ids;
   }
 
   private configV2(file: IConfigFile) {

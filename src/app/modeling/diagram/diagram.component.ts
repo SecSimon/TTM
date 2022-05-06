@@ -135,12 +135,15 @@ enum CTypes {
   ElementName = 'ElementName',
   ElementType = 'ElementType',
   FlowAnchor = 'FA',
-  TextPosPoint = 'TXT-POS-P'
+  TextPosPoint = 'TXT-POS-P',
+
+  GridLine = 'GL'
 }
 
 abstract class CanvasBase {
   public static BackgroundColorDark = '#1E1E1E';
   public static BackgroundColorLight = '#FFFFFF';
+  public static GridSize = 20;
 
   private mouseMode: MouseModes = MouseModes.Mouse;
   protected isInitalized = false;
@@ -557,6 +560,16 @@ abstract class CanvasBase {
 
     if (this.Diagram.Canvas) { this.FromJSONString(this.Diagram.Canvas); }
 
+    const cSize = 3000;
+
+    for (let i = -cSize; i < cSize; i += CanvasBase.GridSize) {
+      this.Canvas.add(new fabric.Line([i, -cSize, i, cSize], { stroke: this.StrokeColor, selectable: false, evented: false, myType: CTypes.GridLine, opacity: 0.07 }));
+      this.Canvas.add(new fabric.Line([-cSize, i, cSize, i], { stroke: this.StrokeColor, selectable: false, evented: false, myType: CTypes.GridLine, opacity: 0.07 }));
+    }
+
+
+    this.Canvas.getObjects().filter(x => x[CProps.myType] == CTypes.GridLine).forEach(x => this.Canvas.sendToBack(x));
+
     return true;
   }
 
@@ -567,6 +580,55 @@ abstract class CanvasBase {
 
     let dfs = [];
     let arrows = [];
+
+    const createAnchor = (left, top, fa) => {
+      const r = 6.5;
+      let c = new fabric.Circle({ 
+        left: left, top: top, radius: r,
+        fill: this.StrokeColor, opacity: 0.15
+      });
+      const xCenter = left + r;
+      const yCenter = top + r;
+      const offset = 4.33; // Math.acos(Math.PI/4)*r;
+      let l1 = new fabric.Line([xCenter-offset, yCenter-offset, xCenter+offset, yCenter+offset], { stroke: this.theme.Primary, selectable: false });
+      let l2 = new fabric.Line([xCenter-offset, yCenter+offset, xCenter+offset, yCenter-offset], { stroke: this.theme.Primary, selectable: false });
+
+      return new fabric.Group([c, l1, l2], {
+        left: left, top: top,
+        hasControls: false,
+        hasBorders: false,
+        lockRotation: true,
+        opacity: 0,
+        fa: fa, myType: CTypes.FlowAnchor, canvasID: uuidv4()
+      });
+    };
+    // update flow anchor tpye
+    this.Canvas.getObjects().forEach(x => {
+      if (x['_objects']) {
+        let fas = x['_objects'].filter(x => x[CProps.fa] != null);
+        fas.forEach(fa => {
+          if (!fa['_objects']) {
+            const newFa = createAnchor(x.left + x.width/2 + fa.left, x.top + x.height/2 + fa.top, fa[CProps.fa]);
+            this.Canvas.add(newFa);
+            const index = x['_objects'].indexOf(fa);
+            x['_objects'].splice(index, 1);
+            x.addWithUpdate(newFa);
+            this.Canvas.remove(fa);
+          }
+        });
+      }
+    });
+
+    // set background fill
+    // this.Canvas.getObjects().forEach(x => {
+    //   if (x['_objects']) {
+    //     const bg = x['_objects'].find(x => x[CProps.myType] == CTypes.ElementBorder);
+    //     if (bg) {
+    //       bg.set('fill', this.BackgroundColor);
+    //     }
+    //   }
+    // });
+
     this.Canvas.getObjects().forEach(x => {
       // check if element still exists
       let element: ViewElementBase = null;
@@ -731,12 +793,24 @@ abstract class CanvasBase {
   protected onCanvasMouseOver(opt) {
     if (opt.target) {
       if (opt.target._objects) {
+        let target = opt.target;
         let objs = opt.target._objects.filter(x => CProps.fa in x);
-        objs.forEach(x => {
-          x.set(CProps.opacity, 1);
-          this.Canvas.bringToFront(x);
-        });
-        this.Canvas.requestRenderAll();
+        if (opt.target[CProps.myType] == CTypes.FlowAnchor) {
+          objs = opt.target.group._objects.filter(x => CProps.fa in x);
+          target = opt.target.group;
+        }
+        if (objs.length > 0) {
+          const timer = this.overTimeoutBuffer[target[CProps.canvasID]];
+          if (timer) {
+            clearTimeout(timer);
+            delete this.overTimeoutBuffer[target[CProps.canvasID]];
+          }
+          objs.forEach(x => {
+            x.set(CProps.opacity, 1);
+            this.Canvas.bringToFront(x);
+          });
+          this.Canvas.requestRenderAll();
+        }
       }
 
       if (opt.target[CProps.t0ID] != null) {
@@ -748,16 +822,22 @@ abstract class CanvasBase {
     }
   }
 
+  private overTimeoutBuffer = {};
   protected onCanvasMouseOut(opt) {
     if (opt.target) {
       if (opt.target._objects) {
-        let objs = opt.target._objects.filter(x => CProps.fa in x);
-        setTimeout(() => {
-          objs.forEach(x => {
-            x.set(CProps.opacity, 0);
-          });
-          this.Canvas.requestRenderAll();
-        }, 500);
+        const objs = opt.target._objects.filter(x => CProps.fa in x);
+        if (objs.length > 0) {
+          if (this.overTimeoutBuffer[opt.target[CProps.canvasID]] == null) {
+            this.overTimeoutBuffer[opt.target[CProps.canvasID]] = setTimeout(() => {
+              objs.forEach(x => {
+                x.set(CProps.opacity, 0);
+              });
+              delete this.overTimeoutBuffer[opt.target[CProps.canvasID]];
+              this.Canvas.requestRenderAll();
+            }, 500);
+          }
+        }
       }
 
       if (opt.target[CProps.t0ID] != null) {
@@ -783,8 +863,9 @@ abstract class CanvasBase {
 
   private arrowVisibilityRestore() {
     Object.keys(this.arrowVisibilityBuffer).forEach(key => {
-      let arrow = this.getCanvasElementByCanvasID(key);
-      arrow.set(CProps.visible, this.arrowVisibilityBuffer[key]);
+      const arrow = this.getCanvasElementByCanvasID(key);
+      const val = this.arrowVisibilityBuffer[key];
+      arrow.set(CProps.visible, val == null ? true : val);
     });
     this.Canvas.getObjects().forEach(x => this.onMovingObject(x));
     this.Canvas.requestRenderAll();
@@ -809,6 +890,16 @@ abstract class CanvasBase {
     if (['p0', 'p1', 'p2'].includes(movingObj[CProps.name])) this.dfOnPointMoving(movingObj);
     else if (movingObj[CProps.myType] == CTypes.TextPosPoint) this.textOnMovingPoint(movingObj);
     else if (movingObj[CProps.t0ID]) this.textOnMovingText(movingObj);
+    if (movingObj[CProps.ID]) {
+      let snap = (x) => {
+        return Math.round(x / CanvasBase.GridSize * 4) % 4 == 0;
+      }
+      //for (let i = -50; i < 50; i++) console.log(i, snap(i));
+
+      if (snap(movingObj.left)) movingObj.set('left', Math.round(movingObj.left / CanvasBase.GridSize) * CanvasBase.GridSize);
+      if (snap(movingObj.top)) movingObj.set('top', Math.round(movingObj.top / CanvasBase.GridSize) * CanvasBase.GridSize);
+      movingObj.setCoords();
+    }
     if (movingObj[CProps.dfs]) {
       movingObj[CProps.dfs].forEach(dfID => {
         const dfObj = this.getCanvasElementByCanvasID(dfID);
@@ -1380,97 +1471,52 @@ abstract class CanvasBase {
     let d = 2 * r;
     let o = 3; // offset
     let res = [];
-    if (horizontal) {
-      res.push(new fabric.Circle({ // flow anchor east
-        left: wid - d - o, top: hei / 2 - r, radius: r,
-        fill: this.theme.Primary, opacity: 0,
-        fa: 'e', myType: CTypes.FlowAnchor, canvasID: uuidv4()
-      }));
+    const createAnchor = (left, top, fa) => {
+      let c = new fabric.Circle({ 
+        left: left, top: top, radius: r,
+        fill: this.StrokeColor, opacity: 0.15
+      });
+      const xCenter = left + r;
+      const yCenter = top + r;
+      const offset = 4.33; // Math.acos(Math.PI/4)*r;
+      let l1 = new fabric.Line([xCenter-offset, yCenter-offset, xCenter+offset, yCenter+offset], { stroke: this.theme.Primary, selectable: false });
+      let l2 = new fabric.Line([xCenter-offset, yCenter+offset, xCenter+offset, yCenter-offset], { stroke: this.theme.Primary, selectable: false });
 
-      res.push(new fabric.Circle({ // flow anchor west
-        left: r, top: hei / 2 - r, radius: r,
-        fill: this.theme.Primary, opacity: 0,
-        fa: 'w', myType: CTypes.FlowAnchor, canvasID: uuidv4()
-      }));
+      return new fabric.Group([c, l1, l2], {
+        left: left, top: top,
+        hasControls: false,
+        hasBorders: false,
+        lockRotation: true,
+        opacity: 0,
+        fa: fa, myType: CTypes.FlowAnchor, canvasID: uuidv4()
+      });
+    };
+    if (horizontal) {
+      res.push(createAnchor(wid - d - o, hei / 2 - r, 'e')); // flow anchor east
+      res.push(createAnchor(r, hei / 2 - r, 'w')); // flow anchor west
     }
 
     if (vertical) {
-      res.push(new fabric.Circle({ // flow anchor north
-        left: wid / 2 - r, top: r, radius: r,
-        fill: this.theme.Primary, opacity: 0,
-        fa: 'n', myType: CTypes.FlowAnchor, canvasID: uuidv4()
-      }));
-      res.push(new fabric.Circle({ // flow anchor south
-        left: wid / 2 - r, top: hei - d - o, radius: r,
-        fill: this.theme.Primary, opacity: 0,
-        fa: 's', myType: CTypes.FlowAnchor, canvasID: uuidv4()
-      }));
+      res.push(createAnchor( wid / 2 - r, r, 'n')); // flow anchor north
+      res.push(createAnchor(wid / 2 - r, hei - d - o, 's')); // flow anchor south
     }
 
     if (halves) {
-      res.push(new fabric.Circle({ // flow anchor east north
-        left: wid - d - o, top: hei / 4 - r, radius: r,
-        fill: this.theme.Primary, opacity: 0,
-        fa: 'en', myType: CTypes.FlowAnchor, canvasID: uuidv4()
-      }));
-      res.push(new fabric.Circle({ // flow anchor east south
-        left: wid - d - o, top: hei * 3 / 4 - r, radius: r,
-        fill: this.theme.Primary, opacity: 0,
-        fa: 'es', myType: CTypes.FlowAnchor, canvasID: uuidv4()
-      }));
-      res.push(new fabric.Circle({ // flow anchor west north
-        left: r, top: hei / 4 - r, radius: r,
-        fill: this.theme.Primary, opacity: 0,
-        fa: 'wn', myType: CTypes.FlowAnchor, canvasID: uuidv4()
-      }));
-      res.push(new fabric.Circle({ // flow anchor west south
-        left: r, top: hei * 3 / 4 - r, radius: r,
-        fill: this.theme.Primary, opacity: 0,
-        fa: 'ws', myType: CTypes.FlowAnchor, canvasID: uuidv4()
-      }));
-      res.push(new fabric.Circle({ // flow anchor north east
-        left: wid * 3 / 4 - r, top: r, radius: r,
-        fill: this.theme.Primary, opacity: 0,
-        fa: 'ne', myType: CTypes.FlowAnchor, canvasID: uuidv4()
-      }));
-      res.push(new fabric.Circle({ // flow anchor north west
-        left: wid / 4 - r, top: r, radius: r,
-        fill: this.theme.Primary, opacity: 0,
-        fa: 'nw', myType: CTypes.FlowAnchor, canvasID: uuidv4()
-      }));
-      res.push(new fabric.Circle({ // flow anchor south east
-        left: wid * 3 / 4 - r, top: hei - d - o, radius: r,
-        fill: this.theme.Primary, opacity: 0,
-        fa: 'se', myType: CTypes.FlowAnchor, canvasID: uuidv4()
-      }));
-      res.push(new fabric.Circle({ // flow anchor south west
-        left: wid / 4 - r, top: hei - d - o, radius: r,
-        fill: this.theme.Primary, opacity: 0,
-        fa: 'sw', myType: CTypes.FlowAnchor, canvasID: uuidv4()
-      }));
+      res.push(createAnchor(wid - d - o, hei / 4 - r, 'en')); // flow anchor east north
+      res.push(createAnchor(wid - d - o, hei * 3 / 4 - r, 'es')); // flow anchor east south
+      res.push(createAnchor(r,  hei / 4 - r, 'wn')); // flow anchor west north
+      res.push(createAnchor(r, hei * 3 / 4 - r, 'ws')); // flow anchor west south
+      res.push(createAnchor(wid * 3 / 4 - r, r, 'ne')); // flow anchor north east
+      res.push(createAnchor(wid / 4 - r, r, 'nw')); // flow anchor north west
+      res.push(createAnchor(wid * 3 / 4 - r, hei - d - o, 'se')); // flow anchor south east
+      res.push(createAnchor(wid / 4 - r, hei - d - o, 'sw')); // flow anchor south west
     }
 
     if (corners) {
-      res.push(new fabric.Circle({ // flow anchor north-east 
-        left: wid - d - o, top: r, radius: r,
-        fill: this.theme.Primary, opacity: 0,
-        fa: 'n-e', myType: CTypes.FlowAnchor, canvasID: uuidv4()
-      }));
-      res.push(new fabric.Circle({ // flow anchor north-west 
-        left: r, top: r, radius: r,
-        fill: this.theme.Primary, opacity: 0,
-        fa: 'n-w', myType: CTypes.FlowAnchor, canvasID: uuidv4()
-      }));
-      res.push(new fabric.Circle({ // flow anchor south-east 
-        left: wid - d - o, top: hei - d - o, radius: r,
-        fill: this.theme.Primary, opacity: 0,
-        fa: 's-e', myType: CTypes.FlowAnchor, canvasID: uuidv4()
-      }));
-      res.push(new fabric.Circle({ // flow anchor south-west 
-        left: r, top: hei - d - o, radius: r,
-        fill: this.theme.Primary, opacity: 0,
-        fa: 's-w', myType: CTypes.FlowAnchor, canvasID: uuidv4()
-      }));
+      res.push(createAnchor(wid - d - o, r, 'n-e')); // flow anchor north-east 
+      res.push(createAnchor(r, r, 'n-w')); // flow anchor north-west 
+      res.push(createAnchor(wid - d - o, hei - d - o, 's-e')); // flow anchor south-east 
+      res.push(createAnchor(r, hei - d - o, 's-w')); // flow anchor south-west 
     }
 
     res.forEach(x => {
