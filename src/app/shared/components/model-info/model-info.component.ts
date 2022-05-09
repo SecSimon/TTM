@@ -1,7 +1,7 @@
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, OnInit } from '@angular/core';
 import { IUserInfo, ProjectFile } from '../../../model/project-file';
-import { DataService, IGHFile } from '../../../util/data.service';
+import { DataService, IGHCommitInfo, IGHFile } from '../../../util/data.service';
 import { StringExtension } from '../../../util/string-extension';
 import { ThemeService } from '../../../util/theme.service';
 
@@ -19,11 +19,15 @@ export class ModelInfoComponent implements OnInit {
 
   public selectedUser: IUserInfo;
 
-  constructor(private dataService: DataService, public theme: ThemeService) { }
+  public commits: IGHCommitInfo[];
+
+  constructor(public dataService: DataService, public theme: ThemeService) { }
 
   ngOnInit(): void {
     this.GHProject = this.dataService.SelectedGHProject;
     this.Project = this.dataService.Project;
+
+    this.dataService.GetProjectHistory().then(x => this.commits = x);
   }
 
   public AddUser() {

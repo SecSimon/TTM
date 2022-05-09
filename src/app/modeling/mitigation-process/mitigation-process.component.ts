@@ -15,6 +15,8 @@ export class MitigationProcessComponent implements OnInit {
 
   public isEdtingArray: boolean[][] = [[], []];
 
+  @Input() canEdit: boolean = true;
+
   public get mitigationProcess(): MitigationProcess { return this._mitigationProcess; }
   @Input() public set mitigationProcess(val: MitigationProcess) { 
     this._mitigationProcess = val;

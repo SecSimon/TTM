@@ -67,7 +67,7 @@
     <div cdkDropList class="reorder-list" (cdkDropListDropped)="drop($event, Project.Notes)">
       <div class="reorder-box" [style.color]="theme.IsDarkMode ? 'white' : 'black'" *ngFor="let item of Project.Notes; index as index" cdkDrag>
         <ng-container *ngIf="!isEdtingArray[1][index]">
-          <mat-icon>chevron_right</mat-icon> {{item.Date | date}} - {{item.Author}}: {{item.Note}}
+          <mat-icon>chevron_right</mat-icon> {{item.Date | date:'medium'}} - {{item.Author}}: {{item.Note}}
           <button mat-icon-button style="width: 20px; height: 20px; line-height: 20px;" (click)="isEdtingArray[1][index] = true" matTooltip="{{'general.Edit' | translate}}" matTooltipShowDelay="1000">
             <mat-icon>edit</mat-icon>
           </button>
@@ -81,5 +81,37 @@
     <div style="padding: 5px 10px;">
       <mat-icon>chevron_right</mat-icon><input matInput style="width: calc(100% - 24px); vertical-align: super; font-size: 14px;" (keydown)="OnNoteKeyDown($event)" placeholder="{{'pages.modeling.charscope.addDescription' | translate}}"/>
     </div>
+  </div>
+  <div>
+    <mat-accordion class="expansion-panel-headers-align">
+      <mat-expansion-panel *ngIf="GHProject">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            {{'dialog.modelinfo.History' | translate}}
+          </mat-panel-title>
+          <mat-panel-description>
+            {{GHProject.name}}
+            <mat-icon>history</mat-icon>
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <ng-template matExpansionPanelContent>
+          <table>
+            <tr *ngFor="let commit of commits; index as index; count as count">
+              <td style="text-align: right;">{{count-index}})</td>
+              <td>{{commit.date | date:'medium'}}</td>
+              <td>-</td>
+              <td>{{commit.commiter}}</td>
+              <td>:</td>
+              <td>
+                {{commit.message}}
+                <button mat-icon-button style="width: 20px; height: 20px; line-height: 20px;" (click)="dataService.RestoreCommit(commit)" matTooltip="{{'dialog.modelinfo.Restore' | translate}}" matTooltipShowDelay="1000">
+                  <mat-icon>restore</mat-icon>
+                </button>
+              </td>
+            </tr>
+          </table>
+        </ng-template>
+      </mat-expansion-panel>
+    </mat-accordion>
   </div>
 </div>

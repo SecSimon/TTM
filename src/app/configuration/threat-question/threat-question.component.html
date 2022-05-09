@@ -37,8 +37,8 @@
         <mat-list-item *ngFor="let opt of GetOptionValues(threatQuestion.OptionType)" (click)="selectedOption = opt"
         [class.highlight-light]="IsOptionSelected(opt) && !theme.IsDarkMode" [class.highlight-dark]="IsOptionSelected(opt) && theme.IsDarkMode">
           <mat-icon mat-list-icon [style.visibility]="threatQuestion.ChangesPerOption[opt.Key]?.Active ? 'visible' : 'hidden'">chevron_right</mat-icon>
-          <div mat-line>{{opt['Key'] | translate}}</div>
-          <div mat-line *ngIf="threatQuestion.Property && threatQuestion.ChangesPerOption[opt.Key]?.Active == true">Property set to {{threatQuestion.ChangesPerOption[opt.Key]['Value']}}</div>
+          <div mat-line style="pointer-events: initial;">{{opt['Key'] | translate}}</div>
+          <div mat-line style="pointer-events: initial;" *ngIf="threatQuestion.Property && threatQuestion.ChangesPerOption[opt.Key]?.Active == true">Property set to {{threatQuestion.ChangesPerOption[opt.Key]['Value']}}</div>
         </mat-list-item>
       </mat-list>
     </div>

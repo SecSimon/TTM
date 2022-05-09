@@ -1,4 +1,4 @@
-<div *ngIf="mitigationMapping">
+<div *ngIf="mitigationMapping" [class.disable]="!canEdit">
   <mat-form-field appearance="fill" class="property-form-field">
     <mat-label>{{ 'properties.Name' | translate }}</mat-label>
     <input matInput [(ngModel)]="mitigationMapping.Name" matTooltip="{{mitigationMapping.Name}}" matTooltipShowDelay="1000"/>
@@ -56,7 +56,7 @@
     <mat-label>{{ 'properties.Description' | translate }}</mat-label>
     <textarea matInput [(ngModel)]="mitigationMapping.Description"></textarea>
   </mat-form-field>
-  <mat-accordion class="expansion-panel-headers-align">
+  <mat-accordion class="expansion-panel-headers-align" style="pointer-events: initial;">
     <mat-expansion-panel *ngIf="mitigationMapping.Mitigation">
       <mat-expansion-panel-header>
         <mat-panel-title>
@@ -69,6 +69,20 @@
       </mat-expansion-panel-header>
       <ng-template matExpansionPanelContent>
         <app-mitigation [canEdit]="false" [mitigation]="mitigationMapping.Mitigation"></app-mitigation>
+      </ng-template>
+    </mat-expansion-panel>
+    <mat-expansion-panel *ngIf="mitigationMapping.MitigationProcess">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          {{'general.MitigationProcessInfo' | translate}}
+        </mat-panel-title>
+        <mat-panel-description>
+          {{mitigationMapping.MitigationProcess.Name}}
+          <mat-icon>info</mat-icon>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <ng-template matExpansionPanelContent>
+        <app-mitigation-process [canEdit]="false" [mitigationProcess]="mitigationMapping.MitigationProcess"></app-mitigation-process>
       </ng-template>
     </mat-expansion-panel>
     <mat-expansion-panel *ngFor="let map of mitigationMapping.ThreatMappings">

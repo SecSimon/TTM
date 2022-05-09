@@ -24,7 +24,6 @@ import { StringExtension } from './string-extension';
 
 
 import { APP_CONFIG } from '../../environments/environment';
-import { DialogService } from './dialog.service';
 import { MatDialog } from '@angular/material/dialog';
 
 export interface IGHRepository {
@@ -48,6 +47,13 @@ export interface IGHFile {
 export interface IGHFileContent {
   content: string;
   encrypted?: string;
+}
+
+export interface IGHCommitInfo {
+  commiter: string;
+  message: string;
+  date: string;
+  sha: string;
 }
 
 export enum UserModes {
@@ -122,18 +128,20 @@ export class DataService {
     return this.project;
   }
   public set Project(val: ProjectFile) {
-    this.project = val;
-    if (val) {
-      this.Config = val.Config;
-      this.Config.ProjectFile = val;
-      this.project.DataChanged.subscribe(() => {
-        this.startUnsavedChangesTimer();
-      });
+    if (this.project != val) {
+      this.project = val;
+      if (val) {
+        this.Config = val.Config;
+        this.Config.ProjectFile = val;
+        this.project.DataChanged.subscribe(() => {
+          this.startUnsavedChangesTimer();
+        });
+      }
+      else {
+        this.stopUnsavedChangesTimer();
+      }
+      this.ProjectChanged.emit(val);
     }
-    else {
-      this.stopUnsavedChangesTimer();
-    }
-    this.ProjectChanged.emit(val);
   }
 
   public get Config(): ConfigFile { return this.config; }
@@ -370,6 +378,19 @@ export class DataService {
       }).finally(() => {
         this.isLoading.remove();
       });
+    });
+  }
+
+  public RestoreCommit(commit: IGHCommitInfo) {
+    const octokit = this.UserMode == UserModes.LoggedIn ? new Octokit({ auth: this.accessToken }) : new Octokit();
+    const proj = this.SelectedGHProject;
+    
+    octokit.repos.getCommit({ owner: this.GetRepoOfFile(proj).owner, repo: this.GetRepoOfFile(proj).name, ref: commit.sha }).then(({ data }) => {
+      if (data.files?.length == 1 && data.files[0].filename == this.SelectedGHProject.path) {
+        const oldFile = JSON.parse(JSON.stringify(this.SelectedGHProject)) as IGHFile;
+        oldFile.sha = data.files[0].sha;
+        this.LoadProject(oldFile);
+      }
     });
   }
 
@@ -674,6 +695,23 @@ export class DataService {
     });
   }
 
+  public GetProjectHistory() {
+    return new Promise<IGHCommitInfo[]>((resolve, reject) => {
+      let res: IGHCommitInfo[] = [];
+      if (this.SelectedGHProject) {
+        const octokit = this.UserMode == UserModes.LoggedIn ? new Octokit({ auth: this.accessToken }) : new Octokit();
+        const proj = this.SelectedGHProject;
+        octokit.repos.listCommits({owner: this.GetRepoOfFile(proj).owner, repo: this.GetRepoOfFile(proj).name, path: proj.path }).then(({ data }) => {
+          data.forEach(x => {
+            res.push({ commiter: x.commit.committer.name, message: x.commit.message, date: x.commit.committer.date, sha: x.sha });
+          });
+          resolve(res);
+        }).catch(() => reject());
+      }
+      else resolve(res);
+    });
+  }
+
   public OnCloseProject() {
     return new Promise<void>((resolve, reject) => {
       if (this.Project?.FileChanged && this.UserMode == UserModes.LoggedIn) {
@@ -745,7 +783,9 @@ export class DataService {
 
   public Debug2() {
     if (!this.Project) return;
-    let res = JSON.stringify(this.Project.ToJSON(), null, 2);
+    let proj = this.Project.ToJSON();
+    delete proj.config;
+    let res = JSON.stringify(proj, null, 2);
     const pending = this.clipboard.beginCopy(res);
     let remainingAttempts = 3;
     const attempt = () => {

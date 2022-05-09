@@ -13,6 +13,7 @@ import { LocalStorageService, LocStorageKeys } from '../util/local-storage.servi
 import { ThemeService } from '../util/theme.service';
 
 import { LegendPosition } from '@swimlane/ngx-charts';
+import { LowMediumHighNumberUtil, LowMediumHighNumber } from '../model/assets';
 
 enum DiaColors {
   Black = '#000000',
@@ -69,7 +70,7 @@ export class DashboardComponent implements AfterViewInit {
   public diagrams: IDiagramData[] = [];
   public legendPosition: LegendPosition = LegendPosition.Below;
 
-  public displayedThreatColumns = ['number', 'name', 'elements', 'view', 'severity', 'status'];
+  public displayedThreatColumns = ['number', 'name', 'elements', 'view', 'severity', 'risk', 'status'];
   public dataSourceThreats: MatTableDataSource<ThreatMapping>;
   public displayedMitigationColumns = ['number', 'name', 'targets', 'view', 'progress', 'status'];
   public dataSourceMitigations: MatTableDataSource<MitigationMapping>;
@@ -83,6 +84,7 @@ export class DashboardComponent implements AfterViewInit {
       if (sortHeaderId == 'elements') return this.GetTargets(data);
       if (sortHeaderId == 'view') return this.GetViewName(data);
       if (sortHeaderId == 'severity') return data.Severity;
+      if (sortHeaderId == 'risk') return data.Risk;
       if (sortHeaderId == 'status') return data.ThreatState; 
       console.error('Missing sorting header', sortHeaderId); 
     };
@@ -502,6 +504,14 @@ export class DashboardComponent implements AfterViewInit {
 
   public GetMitigationStateName(ts: MitigationStates) {
     return MitigationStateUtil.ToString(ts);
+  }
+
+  public GetLMHValues() {
+    return LowMediumHighNumberUtil.GetKeys();
+  }
+
+  public GetLMHName(type: LowMediumHighNumber) {
+    return LowMediumHighNumberUtil.ToString(type);
   }
 
   public OpenContextMenu(event, entry) {

@@ -33,7 +33,7 @@
         <mat-option *ngFor="let type of GetSeverityTypes()" [value]="type">{{GetSeverityTypeName(type) | translate}}</mat-option>
       </mat-select>
     </mat-form-field>
-    <mat-accordion class="expansion-panel-headers-align" *ngIf="showThreatOrigin && threatRule.ThreatOrigin">
+    <mat-accordion class="expansion-panel-headers-align" *ngIf="showThreatOrigin && threatRule.ThreatOrigin" style="pointer-events: initial;">
       <mat-expansion-panel style="margin-bottom: 20px;">
         <mat-expansion-panel-header>
           <mat-panel-title>
@@ -461,7 +461,7 @@
             [class.highlight-light]="selectedMitigation === mit && !theme.IsDarkMode" [class.highlight-dark]="selectedMitigation === mit && theme.IsDarkMode"
             matTooltip="{{mit.Name}}" matTooltipShowDelay="1000">
             <mat-icon mat-list-icon>chevron_right</mat-icon>
-            <div mat-line>{{mit.Name | translate}}</div>
+            <div mat-line style="pointer-events: initial;">{{mit.Name | translate}}</div>
             <button mat-icon-button style="margin-left: auto; margin-right: 0px;" (click)="RemoveMitigation(mit)" matTooltip="{{'general.Remove' | translate}}" matTooltipShowDelay="1000"><mat-icon>remove</mat-icon></button>
             <button mat-icon-button style="margin-left: auto;" (click)="DeleteMitigation(mit)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000"><mat-icon>delete</mat-icon></button>
           </mat-list-item>
@@ -472,7 +472,7 @@
               [class.highlight-light]="selectedMitigation === mit && !theme.IsDarkMode" [class.highlight-dark]="selectedMitigation === mit && theme.IsDarkMode"
               matTooltip="{{mit.Name}}" matTooltipShowDelay="1000">
               <mat-icon mat-list-icon>security</mat-icon>
-              <div mat-line>{{mit.Name | translate}}</div>
+              <div mat-line style="pointer-events: initial;">{{mit.Name | translate}}</div>
             </mat-list-item>
           </ng-container>
         </mat-list>

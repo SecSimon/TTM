@@ -5,7 +5,9 @@
 }
 
 .selected-mitigation {
-  font-weight: bold;
+  td {
+    @extend .primary-color;
+  }
 }
 
 .removed-mitigation {

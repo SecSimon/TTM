@@ -1,4 +1,4 @@
-<div *ngIf="mitigationProcess">
+<div *ngIf="mitigationProcess" [class.disable]="!canEdit">
   <mat-form-field appearance="fill" class="property-form-field">
     <mat-label>{{ 'properties.Name' | translate }}</mat-label>
     <input matInput [(ngModel)]="mitigationProcess.Name" matTooltip="{{mitigationProcess.Name}}" matTooltipShowDelay="1000"/>
@@ -47,7 +47,7 @@
     <div cdkDropList class="reorder-list" (cdkDropListDropped)="drop($event, mitigationProcess.Notes)">
       <div class="reorder-box" [style.color]="theme.IsDarkMode ? 'white' : 'black'" *ngFor="let item of mitigationProcess.Notes; index as index" cdkDrag>
         <ng-container *ngIf="!isEdtingArray[1][index]">
-          <mat-icon>chevron_right</mat-icon> {{item.Date | date}} - {{item.Author}}: {{item.Note}}
+          <mat-icon>chevron_right</mat-icon> {{item.Date | date:'medium'}} - {{item.Author}}: {{item.Note}}
           <button mat-icon-button style="width: 20px; height: 20px; line-height: 20px;" (click)="isEdtingArray[1][index] = true" matTooltip="{{'general.Edit' | translate}}" matTooltipShowDelay="1000">
             <mat-icon>edit</mat-icon>
           </button>
@@ -62,7 +62,7 @@
       <mat-icon>chevron_right</mat-icon><input matInput style="width: calc(100% - 24px); vertical-align: super; font-size: 14px;" (keydown)="OnNoteKeyDown($event)" placeholder="{{'pages.modeling.charscope.addDescription' | translate}}"/>
     </div>
   </div>
-  <mat-accordion class="expansion-panel-headers-align">
+  <mat-accordion class="expansion-panel-headers-align" style="pointer-events: initial;">
     <mat-expansion-panel *ngFor="let map of mitigationProcess.MitigationMappings">
       <mat-expansion-panel-header>
         <mat-panel-title>

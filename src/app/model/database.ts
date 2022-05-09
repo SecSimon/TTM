@@ -161,11 +161,13 @@ export abstract class DatabaseBase implements IDatabaseBase {
 
   public get ID(): string { return this.Data['ID']; }
   //public get Created(): string { return this.Data['Created']; }
-  public get Name(): string { return this.Data['Name']; }
+  public get Name(): string { return this.Data['Name'].replace(/\n/g, ' '); }
   public set Name(val: string) { 
     this.Data['Name'] = val;
     this.NameChanged.emit(val); 
   }
+  public get NameRaw(): string { return this.Data['Name']; }
+  public set NameRaw(val: string) { this.Name = val; }
   public get Description(): string { return this.Data['Description']; }
   public set Description(val: string) { this.Data['Description'] = val; }
 

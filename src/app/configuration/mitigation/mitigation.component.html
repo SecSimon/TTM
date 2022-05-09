@@ -46,8 +46,8 @@
         [class.highlight-light]="selectedMitigationTip === tip && !theme.IsDarkMode" [class.highlight-dark]="selectedMitigationTip === tip && theme.IsDarkMode"
         matTooltip="{{tip.Name}}" matTooltipShowDelay="1000">
           <mat-icon mat-list-icon>chevron_right</mat-icon>
-          <div mat-line>{{tip.Name | translate}}</div>
-          <div mat-line>{{'properties.LifeCycles' | translate}}: {{GetLifeCycleNames(tip)}}</div>
+          <div mat-line style="pointer-events: initial;">{{tip.Name | translate}}</div>
+          <div mat-line style="pointer-events: initial;">{{'properties.LifeCycles' | translate}}: {{GetLifeCycleNames(tip)}}</div>
           <button mat-icon-button style="margin-left: auto;" (click)="DeleteTip(tip)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000"><mat-icon>delete</mat-icon></button>
         </mat-list-item>
       </mat-list>
@@ -79,7 +79,7 @@
     </div>
   </div>
   <br/>
-  <mat-accordion class="expansion-panel-headers-align">
+  <mat-accordion class="expansion-panel-headers-align" style="pointer-events: initial;">
     <mat-expansion-panel *ngFor="let threat of mitigation.MitigatedThreatOrigins">
       <mat-expansion-panel-header>
         <mat-panel-title>

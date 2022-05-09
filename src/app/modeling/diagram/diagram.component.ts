@@ -1664,7 +1664,8 @@ abstract class CanvasBase {
     }
 
     if (txt && ele) {
-      txt.text = ele.GetProperty('Name');
+      if (ele['Ref'] != null) txt.text = ele['Ref']['NameRaw'];
+      else txt.text = ele.NameRaw;
       if (ele instanceof ContextFlow || ele instanceof DataFlow) {
         if (ele.FlowType == FlowTypes.Extend) txt.text = '«extend»';
         else if (ele.FlowType == FlowTypes.Include) txt.text = '«include»';

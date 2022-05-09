@@ -38,6 +38,10 @@ export class PropertiesComponent implements OnInit {
   }
 
   public GetValue(prop: IProperty) {
+    if (prop.ID == 'Name') {
+      if (this.selectedObject['Ref'] != null) return this.selectedObject['Ref']['NameRaw'];
+      return this.selectedObject.NameRaw;
+    }
     return this.selectedObject.GetProperty(prop.ID);
   }
 
@@ -212,7 +216,7 @@ export class PropertiesComponent implements OnInit {
 
   public CreateUseCaseDiagram() {
     let dia = this.dataService.Project.CreateDiagram(DiagramTypes.DataFlow);
-    dia.Name = (this.selectedObject as SystemUseCase).Name.replace('\n', ' ');
+    dia.Name = (this.selectedObject as SystemUseCase).Name;
     (this.selectedObject as SystemUseCase).DataFlowDiagramID = dia.ID;
     setTimeout(() => {
       this.openDiagram.emit(this.dataService.Project.GetDiagram(dia.ID));

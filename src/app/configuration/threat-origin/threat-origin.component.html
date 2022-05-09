@@ -128,7 +128,7 @@
         [class.highlight-light]="selectedMitigation === mit && !theme.IsDarkMode" [class.highlight-dark]="selectedMitigation === mit && theme.IsDarkMode"
         matTooltip="{{mit.Name}}" matTooltipShowDelay="1000">
           <mat-icon mat-list-icon>chevron_right</mat-icon>
-          <div mat-line>{{mit.Name | translate}}</div>
+          <div mat-line style="pointer-events: initial;">{{mit.Name | translate}}</div>
           <button mat-icon-button style="margin-left: auto; margin-right: 0px;" (click)="RemoveMitigation(mit)" matTooltip="{{'general.Remove' | translate}}" matTooltipShowDelay="1000"><mat-icon>remove</mat-icon></button>
           <button mat-icon-button style="margin-left: auto;" (click)="DeleteMitigation(mit)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000"><mat-icon>delete</mat-icon></button>
         </mat-list-item>
@@ -142,7 +142,7 @@
   </div>
   <div style="margin-top: 15px;" *ngIf="GetThreatRules().length > 0">
     <strong>{{'general.ThreatRules' | translate}}</strong>
-    <mat-accordion class="expansion-panel-headers-align">
+    <mat-accordion class="expansion-panel-headers-align" style="pointer-events: initial;">
       <mat-expansion-panel *ngFor="let rule of GetThreatRules()">
         <mat-expansion-panel-header>
           <mat-panel-title>

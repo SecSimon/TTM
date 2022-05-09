@@ -350,14 +350,14 @@ export class StencilPaletteComponent implements OnInit {
   }
 
   public GetStencilRefToolTip(stencilRef: IStencilRef) {
-    let res = stencilRef.name.replace('\n', ' ');
+    let res = stencilRef.name.replace(/\n/g, ' ');
     if (stencilRef.elementID) res += '\n\n' + this.translate.instant('pages.modeling.stencilpalette.blueColor');
     else if (stencilRef.templateID) res += '\n\n' + this.translate.instant('pages.modeling.stencilpalette.purpleColor');
     return res;
   }
 
   public GetContextRefToolTip(contextRef: IContextRef) {
-    let res = contextRef.name.replace('\n', ' ');
+    let res = contextRef.name.replace(/\n/g, ' ');
     if (contextRef.elementID) res += '\n\n' + this.translate.instant('pages.modeling.stencilpalette.blueColor');
     return res;
   }
@@ -367,7 +367,7 @@ export class StencilPaletteComponent implements OnInit {
     if (text == null) return [];
     if (this.wrapBuffer[text]) return this.wrapBuffer[text][index];
 
-    let words = text.replace('\n', ' ').split(' ');
+    let words = text.replace(/\n/g, ' ').split(' ');
     // extend hyphen
     for (let i = 0; i < words.length; i++) {
       const index = words[i].indexOf('-');

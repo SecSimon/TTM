@@ -122,6 +122,15 @@ export class ModelingComponent extends SideNavBase implements OnInit {
         });
       }
     });
+
+    this.dataService.ProjectChanged.subscribe(p => {
+      if (p) {
+        setTimeout(() => {
+          this.tabs.forEach(x => this.RemoveTab(x));
+          this.createNodes();
+        }, 10);
+      }
+    });
   }
 
   ngOnInit(): void {
@@ -663,6 +672,6 @@ export class ModelingComponent extends SideNavBase implements OnInit {
     this.nodes.push(apps);
     this.nodes.push(useCases);
     NavTreeBase.TransferExpandedState(prevNodes, this.nodes);
-    this.navTree.SetNavTreeData(this.nodes);
+    if (this.navTree) this.navTree.SetNavTreeData(this.nodes);
   }
 }

@@ -1,7 +1,9 @@
 @import 'stylesTheme.scss';
 
 .selected-entry {
-  font-weight: bold;
+  td {
+    @extend .primary-color;
+  }
 }
 
 th, td {

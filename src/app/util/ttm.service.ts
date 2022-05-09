@@ -206,14 +206,15 @@ export class TTMService {
       steps: [
         {
           name: 'Risk Assessment',
+          link: 'dashboard',
           activities: [
             {
-              name: 'Assess all found attack vectors and weaknesses by a score',
+              name: 'Assess all found attack vectors and weaknesses by a severity score',
               desc: ''
             },
             {
-              name: 'Calculate the risk using your preferred methodology	',
-              desc: ''
+              name: 'Determine the risk',
+              desc: 'This tool calculates the risk using severity and likelihood '
             }
           ]
         },
@@ -222,10 +223,12 @@ export class TTMService {
           activities: [
             {
               name: 'Identify threats that exceed a tolerable risk score',
+              link: 'dashboard',
               desc: ''
             },
             {
               name: 'Define countermeasures to for the risk (mitigate, avoid, transfer)',
+              link: 'mitigation',
               desc: ''
             },
             {

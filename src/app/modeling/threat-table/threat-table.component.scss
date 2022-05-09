@@ -5,7 +5,9 @@
 }
 
 .selected-threat {
-  font-weight: bold;
+  td {
+    @extend .primary-color;
+  }
 }
 
 .removed-threat {

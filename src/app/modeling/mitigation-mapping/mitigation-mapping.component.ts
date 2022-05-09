@@ -18,6 +18,7 @@ export class MitigationMappingComponent implements OnInit {
     this._mitigationMapping = val;
   }
 
+  @Input() canEdit: boolean = true;
   @Input() public isManualEntry: boolean = false;
   @Input() public elements: ViewElementBase[] = [];
 

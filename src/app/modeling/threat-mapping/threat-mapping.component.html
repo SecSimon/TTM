@@ -10,13 +10,6 @@
     </mat-select>
   </mat-form-field>
   <mat-icon color="warn" *ngIf="!threatMapping.RuleStillApplies" style="margin-left: 5px;" matTooltip="{{'pages.modeling.threatmapping.ruleNotApplyingAnymore' | translate}}">sync_problem</mat-icon>
-  <mat-form-field appearance="fill" style="width: 125px; margin-left: 10px;">
-    <mat-label>{{ 'properties.Severity' | translate }}</mat-label>
-    <mat-select [(value)]="threatMapping.Severity">
-      <mat-option>{{'properties.selectNone' | translate}}</mat-option>
-      <mat-option *ngFor="let type of GetSeverityTypes()" [value]="type">{{GetSeverityTypeName(type) | translate}}</mat-option>
-    </mat-select>
-  </mat-form-field>
   <br/>
   <mat-form-field appearance="fill" class="property-form-field">
     <mat-label>{{'general.Threat' | translate}}</mat-label>
@@ -61,11 +54,43 @@
         </mat-optgroup>
       </mat-select>
   </mat-form-field>
+  <mat-form-field appearance="fill" style="width: 150px;">
+    <mat-label>{{ 'properties.Severity' | translate }}</mat-label>
+    <mat-select [(value)]="threatMapping.Severity" (selectionChange)="CalculateRisk()">
+      <mat-option>{{'properties.selectNone' | translate}}</mat-option>
+      <mat-option *ngFor="let type of GetSeverityTypes()" [value]="type">{{GetSeverityTypeName(type) | translate}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="fill" style="width: 150px; margin-left: 10px;">
+    <mat-label>{{ 'general.Likelihood' | translate }}</mat-label>
+    <mat-select [(value)]="threatMapping.Likelihood" (selectionChange)="CalculateRisk()">
+      <mat-option>{{'properties.selectNone' | translate}}</mat-option>
+      <mat-option *ngFor="let type of GetLMHValues()" [value]="type">{{GetLMHName(type) | translate}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="fill" style="width: 150px; margin-left: 10px;">
+    <mat-label>{{ 'properties.Risk' | translate }}</mat-label>
+    <mat-select [(value)]="threatMapping.Risk">
+      <mat-option>{{'properties.selectNone' | translate}}</mat-option>
+      <mat-option *ngFor="let type of GetLMHValues()" [value]="type">{{GetLMHName(type) | translate}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="fill" style="width: 150px; margin-left: 10px;">
+    <mat-label>{{ 'properties.RiskStrategy' | translate }}</mat-label>
+    <mat-select [(value)]="threatMapping.RiskStrategy">
+      <mat-option>{{'properties.selectNone' | translate}}</mat-option>
+      <mat-option *ngFor="let type of GetRiskStrategies()" [value]="type">{{GetRiskStrategyName(type) | translate}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="fill" style="width: 100%;">
+    <mat-label>{{ 'properties.RiskStrategyReason' | translate }}</mat-label>
+    <textarea matInput [(ngModel)]="threatMapping.RiskStrategyReason"></textarea>
+  </mat-form-field>
   <mat-form-field appearance="fill" style="width: 100%;">
     <mat-label>{{ 'properties.Description' | translate }}</mat-label>
     <textarea matInput [(ngModel)]="threatMapping.Description"></textarea>
   </mat-form-field>
-  <mat-accordion class="expansion-panel-headers-align">
+  <mat-accordion class="expansion-panel-headers-align" style="pointer-events: initial;">
     <mat-expansion-panel *ngIf="threatMapping.ThreatOrigin">
       <mat-expansion-panel-header>
         <mat-panel-title>
@@ -92,6 +117,20 @@
       </mat-expansion-panel-header>
       <ng-template matExpansionPanelContent>
         <app-threat-rule [canEdit]="false" [threatRule]="threatMapping.ThreatRule"></app-threat-rule>
+      </ng-template>
+    </mat-expansion-panel>
+    <mat-expansion-panel *ngFor="let map of mitigationMappings">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          {{'general.Mitigation' | translate}}
+        </mat-panel-title>
+        <mat-panel-description>
+          {{map.Name}}
+          <mat-icon>info</mat-icon>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <ng-template matExpansionPanelContent>
+        <app-mitigation-mapping [canEdit]="false" [mitigationMapping]="map"></app-mitigation-mapping>
       </ng-template>
     </mat-expansion-panel>
   </mat-accordion>

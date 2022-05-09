@@ -5,7 +5,9 @@
 }
 
 .selected-issue {
-  font-weight: bold;
+  td {
+    @extend .primary-color;
+  }
 }
 
 th, td {

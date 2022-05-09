@@ -1,6 +1,6 @@
 import { TranslateService } from "@ngx-translate/core";
 import { DataService } from "../util/data.service";
-import { LowMediumHighNumberUtil } from "./assets";
+import { LowMediumHighNumber, LowMediumHighNumberUtil } from "./assets";
 import { MyComponent, MyComponentType } from "./component";
 import { ConfigFile } from "./config-file";
 import { DatabaseBase, DataReferenceTypes, IDataReferences, IKeyValue, IProperty, PropertyEditTypes, ViewElementBase } from "./database";
@@ -1133,6 +1133,31 @@ export class ThreatStateUtil {
   }
 }
 
+export enum RiskStrategies {
+  Avoid = 1,
+  Mitigate = 2,
+  Transfer = 3,
+  Accept = 4,
+}
+
+export class RiskStrategyUtil {
+  public static GetKeys(): RiskStrategies[] {
+    return [RiskStrategies.Avoid, RiskStrategies.Mitigate, RiskStrategies.Transfer, RiskStrategies.Accept];
+  }
+
+  public static ToString(state: RiskStrategies): string {
+    switch (state) {
+      case RiskStrategies.Avoid: return 'properties.riskstrategy.Avoid';
+      case RiskStrategies.Mitigate: return 'properties.riskstrategy.Mitigate';
+      case RiskStrategies.Transfer: return 'properties.riskstrategy.Transfer';
+      case RiskStrategies.Accept: return 'properties.riskstrategy.Accept';
+      default:
+        console.error('Missing State in RiskStrategyUtil.ToString()', state);
+        return 'Undefined';
+    }
+  }
+}
+
 /**
  * Class for threats in project
  */
@@ -1148,7 +1173,7 @@ export class ThreatMapping extends DatabaseBase {
     else if (this.ThreatOrigin) res += this.ThreatOrigin.GetProperty('Name') + ' on ';
     if (this.Target) res += this.Target.GetProperty('Name');
     else if (this.Targets) res += this.Targets.map(x => x.GetProperty('Name')).join(', ');
-    return res.replace('\n', ' ');
+    return res;
   }
   public set Name(val: string) { 
     this.Data['Name'] = val;
@@ -1167,6 +1192,14 @@ export class ThreatMapping extends DatabaseBase {
   public set IsGenerated(val: boolean) { this.Data['IsGenerated'] = val; }
   public get Severity(): ThreatSeverities { return this.Data['Severity']; }
   public set Severity(val: ThreatSeverities) { this.Data['Severity'] = val; }
+  public get Likelihood(): LowMediumHighNumber { return this.Data['Likelihood']; }
+  public set Likelihood(val: LowMediumHighNumber) { this.Data['Likelihood'] = val; }
+  public get Risk(): LowMediumHighNumber { return this.Data['Risk']; }
+  public set Risk(val: LowMediumHighNumber) { this.Data['Risk'] = val; }
+  public get RiskStrategy(): RiskStrategies { return this.Data['RiskStrategy']; }
+  public set RiskStrategy(val: RiskStrategies) { this.Data['RiskStrategy'] = val; }
+  public get RiskStrategyReason(): string { return this.Data['RiskStrategyReason']; }
+  public set RiskStrategyReason(val: string) { this.Data['RiskStrategyReason'] = val; }
   public get Target(): ViewElementBase {
     let target: any = this.project.GetDFDElement(this.Data['targetID']);
     if (!target) target = this.project.GetComponent(this.Data['targetID']);
