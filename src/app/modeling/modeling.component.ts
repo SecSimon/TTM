@@ -51,7 +51,7 @@ interface ITabContainer {
 })
 export class ModelingComponent extends SideNavBase implements OnInit {
   private nodes: INavigationNode[];
-  private _selectedObject: ViewElementBase;
+  private _selectedObject: any;
   private _selectedTabIndex = 0;
 
   public get selectedNode(): INavigationNode { 
@@ -81,8 +81,8 @@ export class ModelingComponent extends SideNavBase implements OnInit {
     }, 100);
   }
 
-  public get selectedObject(): ViewElementBase { return this._selectedObject; }
-  public set selectedObject(val: ViewElementBase) { 
+  public get selectedObject(): any { return this._selectedObject; }
+  public set selectedObject(val: any) { 
     this._selectedObject = val; 
   }
 

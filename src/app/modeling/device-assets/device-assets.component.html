@@ -102,7 +102,7 @@
         <div class="row">
           <div class="column1">
             <mat-list class="prop-list" [class.prop-list-light]="!theme.IsDarkMode" [class.prop-list-dark]="theme.IsDarkMode">
-              <div mat-subheader>{{ 'general.Datas' | translate }} <button mat-icon-button (click)="AddMyData(assetGroup)" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000" style="margin-left: 15px;"><mat-icon>add</mat-icon></button></div>
+              <div mat-subheader>{{ 'general.Datas' | translate }} <button mat-icon-button (click)="AddMyData(assetGroup, $event)" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000" style="margin-left: 15px;"><mat-icon>add</mat-icon></button></div>
               <mat-list-item *ngFor="let data of assetGroup.GetMyDataFlat()" (click)="selectedMyData = data"
               [class.highlight-light]="selectedMyData === data && !theme.IsDarkMode" [class.highlight-dark]="selectedMyData === data && theme.IsDarkMode"
               matTooltip="{{data.Name}}" matTooltipShowDelay="1000">

@@ -97,7 +97,7 @@ export class DeviceAssetsComponent implements OnInit {
     return this.colArray;
   }
 
-  public GetArrayRange(array: AssetGroup[]|MyData[], index, colCnt) {
+  public GetArrayRange(array: any[], index, colCnt) {
     if (array.length > 0 && colCnt > 1) {
       const size = Math.round(array.length / colCnt);
       //console.log(array.length, index, colCnt, size);
