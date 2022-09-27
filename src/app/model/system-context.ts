@@ -34,6 +34,10 @@ export class SystemContext extends DatabaseBase {
       this.UseCaseDiagram.Name = 'Use Cases';
       this.UseCaseDiagram.Elements.Name = 'Use Case Diagram';
     }
+
+    if (this.UseCaseDiagram) {
+      this.UseCaseDiagram.IsUseCaseDiagram = true;
+    }
   }
 
   public FindReferences(pf: ProjectFile, cf: ConfigFile): IDataReferences[] {
@@ -56,7 +60,8 @@ export enum ContextElementTypes {
   UseCase = 4,
   Flow = 5,
   TrustArea = 6,
-  MobileApp = 7
+  MobileApp = 7,
+  ExternalEntity = 8
 }
 
 export class ContextElementTypeUtil {
@@ -69,6 +74,7 @@ export class ContextElementTypeUtil {
       case ContextElementTypes.UseCase: return SystemUseCase;
       case ContextElementTypes.Flow: return ContextFlow;
       case ContextElementTypes.TrustArea: return SystemContextContainer;
+      case ContextElementTypes.ExternalEntity: return SystemExternalEntity;
       default:
         console.error('Missing Element Type in ContextElementTypeUtil.Constructor()', typeID);
         return null;
@@ -84,6 +90,7 @@ export class ContextElementTypeUtil {
       case ContextElementTypes.UseCase: return 'Use Case';
       case ContextElementTypes.Flow: return 'Flow';
       case ContextElementTypes.TrustArea: return 'Trust Area';
+      case ContextElementTypes.ExternalEntity: return 'External Entity';
       case ContextElementTypes.None: return 'Container';
       default:
         console.error('Missing Element Type in ContextElementTypeUtil.ToString()', typeID);
@@ -167,6 +174,7 @@ export class ContextElement extends ViewElementBase implements IElementType {
     else if (type == ContextElementTypes.Interactor) res = new Interactor(data, pf, cf);
     else if (type == ContextElementTypes.UseCase) res = new SystemUseCase(data, pf, cf);
     else if (type == ContextElementTypes.Flow) res = new ContextFlow(data, pf, cf);
+    else if (type == ContextElementTypes.ExternalEntity) res = new SystemExternalEntity(data, pf, cf);
     else if (type == ContextElementTypes.None) res = new SystemContextContainer(data, pf, cf);
     else {
       throw new Error('Unknown Type: ' + data['Type']);
@@ -190,6 +198,8 @@ export class DeviceInterfaceNameUtil {
 }
 
 export class Device extends ContextElement {
+
+  public static Icon: string = 'memory';
 
   public get Name(): string { return this.Data['Name']; }
   public set Name(val: string) {
@@ -662,6 +672,8 @@ export class SystemUseCase extends ContextElement {
 
 export class MobileApp extends ContextElement {
 
+  public static Icon: string = 'devices';
+
   public get Name(): string { return this.Data['Name']; }
   public set Name(val: string) {
     this.Data['Name'] = val;
@@ -825,6 +837,18 @@ export class MobileApp extends ContextElement {
     this.AddProperty('properties.InterfaceRight', 'InterfaceRight', '', true, PropertyEditTypes.DevInterfaceName, true);
     this.AddProperty('properties.InterfaceBottom', 'InterfaceBottom', '', true, PropertyEditTypes.DevInterfaceName, true);
     this.AddProperty('properties.InterfaceLeft', 'InterfaceLeft', '', true, PropertyEditTypes.DevInterfaceName, true);
+  }
+}
+
+export class SystemExternalEntity extends ContextElement {
+
+  constructor(data: {}, pf: ProjectFile, cf: ConfigFile) {
+    super(data, ContextElementTypes.ExternalEntity, pf, cf);
+  }
+
+  protected initProperties(): void {
+    super.initProperties();
+    this.GetProperties().find(x => x.ID == 'Name').Type = PropertyEditTypes.TextBox;
   }
 }
 

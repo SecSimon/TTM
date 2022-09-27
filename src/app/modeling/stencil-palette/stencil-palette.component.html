@@ -387,6 +387,20 @@
     <mat-expansion-panel expanded="true">
       <mat-expansion-panel-header>
         <mat-panel-title>
+          External Entity
+        </mat-panel-title>
+        <mat-panel-description>
+          <mat-icon>select_all</mat-icon>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <div style="display: flex; flex-wrap: wrap;">
+        <div draggable="true" (dragstart)="onDragContext($event, {name: 'External Entity'})" (dragend)="onDragEnd()" class="draggable-element"><div class="external-entity element-base element-small" [style.border-color]="StrokeColor">External Entity</div></div>
+      </div>
+    </mat-expansion-panel>
+    <mat-expansion-panel expanded="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
           Trust Area
         </mat-panel-title>
         <mat-panel-description>

@@ -140,7 +140,7 @@ enum CTypes {
   GridLine = 'GL'
 }
 
-abstract class CanvasBase {
+export abstract class CanvasBase {
   public static BackgroundColorDark = '#1E1E1E';
   public static BackgroundColorLight = '#FFFFFF';
   public static GridSize = 20;
@@ -178,6 +178,35 @@ abstract class CanvasBase {
       this.Canvas.selection = true;
       this.mouseMovingState = MouseMovingStates.Selecting;
     }
+  }
+
+  public get ShowGrid(): boolean {
+    let arr = null;
+    let arrStr = this.locStorage.Get(LocStorageKeys.PAGE_MODELING_DIAGRAM_SHOW_GRID);
+    if (arrStr) arr = JSON.parse(arrStr);
+    if (arr && arr[this.Diagram.DiagramType] != null) return arr[this.Diagram.DiagramType];
+    return true;
+  }
+  public set ShowGrid(val: boolean) {
+    let arrStr = this.locStorage.Get(LocStorageKeys.PAGE_MODELING_DIAGRAM_SHOW_GRID);
+    let arr = {};
+    if (arrStr != null) arr = JSON.parse(arrStr);
+    arr[this.Diagram.DiagramType] = val;
+
+    let setGridLine = (obj: any) => {
+      if (obj[CProps.myType] == CTypes.GridLine) obj[CProps.visible] = val;
+    };
+    let checkObjects = (objs: any[]) => {
+      objs.forEach(x => {
+        setGridLine(x);
+        if (x._objects) checkObjects(x._objects);
+      });
+    };
+    checkObjects(this.Canvas.getObjects());
+
+    this.locStorage.Set(LocStorageKeys.PAGE_MODELING_DIAGRAM_SHOW_GRID, JSON.stringify(arr));
+    this.Canvas.requestRenderAll();
+    this.onCanvasModified();
   }
 
   private mouseMovingState: MouseMovingStates = MouseMovingStates.None;
@@ -439,16 +468,22 @@ abstract class CanvasBase {
     });
   }
 
+  public GetImage() {
+    return this.Canvas.toDataURL({
+      format: 'image/png'
+    });
+  }
+
   public SaveImage() {
     /*
     let obj = this.Canvas.getActiveObject();
     if (obj) {
-      if (this.theme.IsDarkMode) this.setColors(false);
+      if (this.theme.IsDarkMode) this.SetColors(false);
       let newTab = window.open();
       let img = new Image();
       img.onload = () => {
         newTab.document.body.append(img);
-        if (this.theme.IsDarkMode) this.setColors(true);
+        if (this.theme.IsDarkMode) this.SetColors(true);
       }
       img.src = this.Canvas.toDataURL({
         format: 'image/png',
@@ -460,16 +495,94 @@ abstract class CanvasBase {
     }
      */
 
-    if (this.theme.IsDarkMode) this.setColors(false);
+    if (this.theme.IsDarkMode) this.SetColors(false);
     let newTab = window.open();
     let img = new Image();
     img.onload = () => {
       newTab.document.body.append(img);
-      if (this.theme.IsDarkMode) this.setColors(true);
+      if (this.theme.IsDarkMode) this.SetColors(true);
     }
-    img.src = this.Canvas.toDataURL({
-      format: 'image/png'
+    img.src = this.GetImage();
+  }
+
+  public SetColors(isDarkMode: boolean) {
+    this.isDarkMode = isDarkMode;
+    if (isDarkMode) {
+      this.StrokeColor = 'white';
+      this.BackgroundColor = CanvasBase.BackgroundColorDark;
+    }
+    else {
+      this.StrokeColor = 'black';
+      this.BackgroundColor = CanvasBase.BackgroundColorLight;
+    }
+
+    this.setCanvasColor();
+  }
+
+  public PrintMode(showGrid: boolean) {
+    this.SetColors(false);
+
+    let setColor = (obj: any) => {
+      if (obj.stroke && obj.stroke == this.theme.Primary) {
+        obj.set('stroke', this.StrokeColor);
+      }
+      if (obj.fill && obj.fill == this.theme.Primary) {
+        let fill = '';
+        if (obj.fill == 'white') fill = 'black';
+        else if (obj.fill == 'black' || obj.fill == 'rgb(0,0,0)') fill = 'white';
+        else if (obj.fill == 'transparent') fill = obj.fill;
+        else if (obj.fill == CanvasBase.BackgroundColorDark) fill = CanvasBase.BackgroundColorLight;
+        else if (obj.fill == CanvasBase.BackgroundColorLight) fill = CanvasBase.BackgroundColorDark;
+        obj.set('fill', fill);
+      }
+      if (obj.cornerColor && obj.cornerColor == this.theme.Primary) {
+        let col = '';
+        if (obj.cornerColor == 'transparent') col = 'transparent';
+        else if (obj.cornerColor == 'white') col = 'black';
+        else if (obj.cornerColor == 'black') col = 'white';
+        obj.set('cornerColor', col);
+      }
+    };
+    let setGridLine = (obj: any) => {
+      if (obj[CProps.myType] == CTypes.GridLine) {
+        obj[CProps.visible] = showGrid;
+      }
+    };
+    let checkObjects = (objs: any[]) => {
+      objs.forEach(x => {
+        setColor(x);
+        setGridLine(x);
+        if (x._objects) checkObjects(x._objects);
+      });
+    };
+    checkObjects(this.Canvas.getObjects());
+  }
+
+  public FitToCanvas(width: number) {
+    let xMin = Number.MAX_VALUE, xMax = Number.MIN_VALUE, yMin = Number.MAX_VALUE, yMax = Number.MIN_VALUE;
+    this.Canvas.getObjects().forEach(ele => {
+      if (ele[CProps.myType] != CTypes.GridLine) {
+        if (ele['aCoords']['tl']['x'] < xMin) xMin = ele['aCoords']['tl']['x'];
+        if (ele['aCoords']['br']['x'] > xMax) xMax = ele['aCoords']['br']['x'];
+        if (ele['aCoords']['tl']['y'] < yMin) yMin = ele['aCoords']['tl']['y'];
+        if (ele['aCoords']['br']['y'] > yMax) yMax = ele['aCoords']['br']['y'];
+      }
     });
+
+    xMin -= 5;
+    yMin -= 5;
+    xMax += 5;
+    yMax += 5;
+    let vpt = this.Canvas.viewportTransform;
+    vpt[4] = -xMin;
+    vpt[5] = -yMin;
+
+    const zoom = width / (xMax - xMin); // width / actual width
+    const newHeight = (yMax - yMin) * zoom;
+    this.Canvas.setZoom(zoom);
+
+    this.Canvas.requestRenderAll();
+    return [width, newHeight];
   }
 
   protected initializeCanvas(cc: HTMLElement): boolean {
@@ -484,9 +597,9 @@ abstract class CanvasBase {
 
     this.Canvas.setWidth(cc.clientWidth);
     this.Canvas.setHeight(cc.clientHeight - 5);
-    this.setColors(this.theme.IsDarkMode);
+    this.SetColors(this.theme.IsDarkMode);
     this.theme.ThemeChanged.subscribe((isDark) => {
-      this.setColors(isDark);
+      this.SetColors(isDark);
     });
 
     fabric.Object.prototype.transparentCorners = false;
@@ -563,8 +676,8 @@ abstract class CanvasBase {
     const cSize = 3000;
 
     for (let i = -cSize; i < cSize; i += CanvasBase.GridSize) {
-      this.Canvas.add(new fabric.Line([i, -cSize, i, cSize], { stroke: this.StrokeColor, selectable: false, evented: false, myType: CTypes.GridLine, opacity: 0.07 }));
-      this.Canvas.add(new fabric.Line([-cSize, i, cSize, i], { stroke: this.StrokeColor, selectable: false, evented: false, myType: CTypes.GridLine, opacity: 0.07 }));
+      this.Canvas.add(new fabric.Line([i, -cSize, i, cSize], { stroke: this.StrokeColor, selectable: false, evented: false, myType: CTypes.GridLine, opacity: 0.07, visible: this.ShowGrid }));
+      this.Canvas.add(new fabric.Line([-cSize, i, cSize, i], { stroke: this.StrokeColor, selectable: false, evented: false, myType: CTypes.GridLine, opacity: 0.07, visible: this.ShowGrid }));
     }
 
 
@@ -1107,6 +1220,7 @@ abstract class CanvasBase {
         this.Canvas.remove(flow);
       }
       else {
+        if (obj._objects) obj._objects.filter(x => x['type'] == 'group').forEach(x => this.Canvas.remove(x));
         this.Canvas.remove(obj);
       }
 
@@ -1791,20 +1905,6 @@ abstract class CanvasBase {
     }
   }
 
-  private setColors(isDarkMode: boolean) {
-    this.isDarkMode = isDarkMode;
-    if (isDarkMode) {
-      this.StrokeColor = 'white';
-      this.BackgroundColor = CanvasBase.BackgroundColorDark;
-    }
-    else {
-      this.StrokeColor = 'black';
-      this.BackgroundColor = CanvasBase.BackgroundColorLight;
-    }
-
-    this.setCanvasColor();
-  }
-
   private setCanvasColor() {
     if (this.Canvas.backgroundColor != this.BackgroundColor) {
       this.Canvas.backgroundColor = this.BackgroundColor;
@@ -1861,7 +1961,7 @@ abstract class CanvasBase {
   }
 }
 
-class HWDFCanvas extends CanvasBase {
+export class HWDFCanvas extends CanvasBase {
   public Diagram: HWDFDiagram;
 
   protected initializeCanvas(cc: HTMLElement): boolean {
@@ -1911,7 +2011,7 @@ class HWDFCanvas extends CanvasBase {
     else if (dragDropData.stencilRef.templateID) {
       let template = this.dataService.Config.GetStencilTypeTemplate(dragDropData.stencilRef.templateID);
       for (let i = 0; i < template.StencilTypes.length; i++) {
-        element = this.createElement({ stencilRef: { name: '', stencilID: template.StencilTypes[i].ID } }, posX + template.Layout[i].x, posY + template.Layout[i].y) as DFDElement;
+        element = this.createElement({ stencilRef: { name: template.StencilTypes[i].Name, stencilID: template.StencilTypes[i].ID } }, posX + template.Layout[i].x, posY + template.Layout[i].y) as DFDElement;
         if (template.StencilTypes[i].ElementTypeID == ElementTypeIDs.PhyTrustArea || template.StencilTypes[i].ElementTypeID == ElementTypeIDs.LogTrustArea) {
           element.Name = StringExtension.FindUniqueName(dragDropData.stencilRef.name, this.dataService.Project.GetDFDElements().map(x => x.Name));
           let obj = this.getCanvasElementByID(element.ID);
@@ -2354,7 +2454,7 @@ class HWDFCanvas extends CanvasBase {
   }
 }
 
-class CtxCanvas extends CanvasBase {
+export class CtxCanvas extends CanvasBase {
 
   public Diagram: CtxDiagram;
 
@@ -2482,6 +2582,10 @@ class CtxCanvas extends CanvasBase {
     else if (dragDropData.contextRef.name == 'Use Case') {
       element = ContextElement.Instantiate(ContextElementTypes.UseCase, this.dataService.Project, this.dataService.Config);
       visElement = this.createUseCase(posX, posY, element);
+    }
+    else if (dragDropData.contextRef.name == 'External Entity') {
+      element = ContextElement.Instantiate(ContextElementTypes.ExternalEntity, this.dataService.Project, this.dataService.Config);
+      visElement = this.createExternalEntity(posX, posY, element);
     }
     else if (dragDropData.contextRef.name == 'Trust Area') {
       element = ContextElement.Instantiate(ContextElementTypes.TrustArea, this.dataService.Project, this.dataService.Config);
@@ -3118,6 +3222,53 @@ class CtxCanvas extends CanvasBase {
       'top': -hg / 2,
       'rx': wg / 2,
       'ry': hg / 2
+    });
+    this.onCanvasModified();
+  }
+
+  private createExternalEntity(left: number, top: number, element: ContextElement): fabric.Object {
+    let wid = 140;
+    let hei = 75;
+    let e = new fabric.Rect({
+      stroke: element instanceof DFDElementRef ? this.theme.Primary : this.StrokeColor, strokeWidth: this.StrokeWidth,
+      width: wid, height: hei, fill: 'transparent', myType: CTypes.ElementBorder
+    });
+    let etype = new fabric.Text('<<External Entity>>', {
+      fontSize: 12, fill: this.StrokeColor,
+      originX: 'center', left: wid / 2, top: 5,
+      myType: CTypes.ElementType
+    });
+    let etxt = new fabric.Text(element.GetProperty('Name'), {
+      fontSize: 16, fill: this.StrokeColor,
+      originX: 'center', left: wid / 2, top: hei / 2 - 8, textAlign: 'center',
+      myType: CTypes.ElementName
+    });
+
+    let g = new fabric.Group([e, etype, etxt, ...this.createFlowAnchors(wid, hei)], {
+      left: left, top: top,
+      hasControls: true,
+      lockRotation: true, lockScalingX: false, lockScalingY: false,
+      hasBorders: false, subTargetCheck: true,
+      ID: element.ID, canvasID: uuidv4()
+    });
+
+    g.on('scaling', (e) => this.onScaleExternalEntity(e));
+
+    g.setControlsVisibility({ mtr: false }); // remove rotate button
+    return g;
+  }
+
+  private onScaleExternalEntity(event) {
+    this.onScaleElement(event);
+    let g = event.transform.target;
+    let e = g._objects.find(x => x[CProps.myType] == CTypes.ElementBorder);
+
+    let wg = g.width * g.scaleX, hg = g.height * g.scaleY;
+    e.set({
+      'height': hg, 'width': wg,
+      'scaleX': 1, 'scaleY': 1,
+      'left': -wg / 2,
+      'top': -hg / 2
     });
     this.onCanvasModified();
   }

@@ -358,7 +358,7 @@ export class ModelingComponent extends SideNavBase implements OnInit {
 
       let assets: INavigationNode = {
         name: () => 'Assets',
-        icon: 'account_balance',
+        icon: AssetGroup.Icon,
         iconAlignLeft: true,
         canSelect: true,
         data: dev.AssetGroup,
@@ -469,7 +469,7 @@ export class ModelingComponent extends SideNavBase implements OnInit {
 
       let assets: INavigationNode = {
         name: () => 'Assets',
-        icon: 'account_balance',
+        icon: AssetGroup.Icon,
         iconAlignLeft: true,
         canSelect: true,
         data: app.AssetGroup,
@@ -625,7 +625,7 @@ export class ModelingComponent extends SideNavBase implements OnInit {
 
     let devices: INavigationNode = {
       name: () => 'Devices',
-      icon: 'memory',
+      icon: Device.Icon,
       iconAlignLeft: false,
       canSelect: false,
       canAdd: true,
@@ -638,7 +638,7 @@ export class ModelingComponent extends SideNavBase implements OnInit {
 
     let apps: INavigationNode = {
       name: () => 'Apps',
-      icon: 'devices',
+      icon: MobileApp.Icon,
       iconAlignLeft: false,
       canSelect: false,
       canAdd: true,

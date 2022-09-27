@@ -14,6 +14,10 @@ export class ObjImpact extends DatabaseBase {
   public get BusinessImpact(): string[] { return this.Data['BusinessImpact']; }
   public set BusinessImpact(val: string[]) { this.Data['BusinessImpact'] = val; }
 
+  public StepProperties: string[] = [
+    'DeviceGoals', 'BusinessGoals', 'BusinessImpact'
+  ];
+
   constructor(data, pf: ProjectFile, cf: ConfigFile) {
     super(data);
     this.project = pf;

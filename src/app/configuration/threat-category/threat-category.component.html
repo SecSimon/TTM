@@ -8,9 +8,8 @@
     <textarea matInput [(ngModel)]="threatCat.Impact"></textarea>
   </mat-form-field>
   <div style="margin-top: 10px; display: flex; flex-wrap: wrap;">
-    <table *ngFor="let impact of GetImpactCategories()" style="min-width: 150px;">
-      <tr><td style="text-align: center;">{{GetImpactCategoryName(impact) | translate}}</td></tr>
-      <tr><td style="text-align: center;"><mat-checkbox color="primary" [checked]="threatCat.ImpactCats.includes(impact)" (change)="ImpactCatChanged(threatCat, impact)"></mat-checkbox></td></tr>
+    <table *ngFor="let impact of GetImpactCategories()" style="min-width: 200px;">
+      <tr><td><mat-checkbox color="primary" [checked]="threatCat.ImpactCats.includes(impact)" (change)="ImpactCatChanged(threatCat, impact)">{{GetImpactCategoryName(impact) | translate}}</mat-checkbox></td></tr>
     </table>
   </div>
 </div>

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { MyComponentTypeGroup, MyComponent, MyComponentStack, MyComponentType } from '../../model/component';
@@ -30,7 +30,7 @@ export class StackComponent implements OnInit {
   @Output()
   public selectionChanged = new EventEmitter<MyComponent>();
 
-  constructor(public theme: ThemeService, private dataService: DataService, private dialog: MatDialog, private dialogService: DialogService) { }
+  constructor(public theme: ThemeService, private dataService: DataService, private dialog: MatDialog, private dialogService: DialogService, public elRef: ElementRef) { }
 
   ngOnInit(): void {
   }

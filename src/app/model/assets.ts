@@ -1,5 +1,5 @@
 import { ConfigFile } from "./config-file";
-import { DatabaseBase, DataReferenceTypes, IDataReferences } from "./database";
+import { DatabaseBase, DataReferenceTypes, IDataReferences, PropertyEditTypes } from "./database";
 import { ProjectFile } from "./project-file";
 
 export enum LowMediumHighNumber {
@@ -56,12 +56,21 @@ export class MyData extends DatabaseBase {
     if (asset) asset.RemoveMyData(this);
   }
 
+  protected initProperties() {
+    super.initProperties();
+
+    this.AddProperty('properties.Sensitivity', 'Sensitivity', '', true, PropertyEditTypes.LowMediumHighSelect, true);
+  }
+
   public static FromJSON(data, pf: ProjectFile, cf: ConfigFile): MyData {
     return new MyData(data, pf, cf);
   }
 }
 
 export class AssetGroup extends DatabaseBase {
+  
+  public static Icon: string = 'account_balance';
+
   private config: ConfigFile;
   private project: ProjectFile;
 
@@ -167,6 +176,12 @@ export class AssetGroup extends DatabaseBase {
         this.file.DeleteAssetGroup(ref.Param as AssetGroup);
       }
     });
+  }
+
+  protected initProperties() {
+    super.initProperties();
+
+    this.AddProperty('properties.IsActive', 'IsActive', '', true, PropertyEditTypes.CheckBox, true);
   }
 
   public static FromJSON(data, pf: ProjectFile, cf: ConfigFile): AssetGroup {

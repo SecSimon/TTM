@@ -1,0 +1,43 @@
+<div class="website-container">
+  <mat-drawer-container class="drawer-container">
+    <mat-drawer mode="side" opened style="border-right-width: 0px;">
+      <app-side-nav style="width: 100%; height: 100%;" selectedRoute="/reporting"></app-side-nav>
+    </mat-drawer>
+
+    <mat-drawer-content [class.splitter-light2]="!theme.IsDarkMode" [class.splitter-dark2]="theme.IsDarkMode">
+      <div style="margin: 10px;">
+        <h2>{{'side-nav.reporting' | translate}}</h2>
+        <button mat-raised-button [disabled]="IsReportGenerating" (click)="GenerateReport()">{{'pages.reporting.GenerateReport' | translate}}</button>
+        <button mat-icon-button [disabled]="IsReportGenerating" [matMenuTriggerFor]="settings">
+          <mat-icon>settings</mat-icon>
+        </button>
+        <mat-menu #settings="matMenu">
+          <button mat-menu-item>
+            <mat-slide-toggle color="primary" [(ngModel)]="ShowCharts" (click)="$event.stopPropagation()">
+              {{'pages.reporting.showCharts' | translate}}
+            </mat-slide-toggle>
+          </button>
+          <button mat-menu-item>
+            <mat-slide-toggle color="primary" [(ngModel)]="DiagramShowGrid" (click)="$event.stopPropagation()">
+              {{'pages.reporting.showGrid' | translate}}
+            </mat-slide-toggle>
+          </button>
+        </mat-menu>
+        <mat-progress-spinner *ngIf="IsReportGenerating" style="display: inline; margin-left: 5px;" [diameter]="25" mode="indeterminate"></mat-progress-spinner>
+        <button mat-raised-button [disabled]="!IsReportGenerated" color="primary" style="margin-left: 50px;" (click)="SaveHTML()">{{'pages.reporting.DownloadHTML' | translate}}</button>
+        <button mat-raised-button [disabled]="!IsReportGenerated" color="primary" style="margin-left: 10px;" (click)="SaveDOCX()">{{'pages.reporting.DownloadDOCX' | translate}}</button>
+
+        <div style="margin-top: 30px;">
+          <div #reportcontent style="background-color: white; color: black; max-width: 210mm; padding: 25mm;">
+            <h1>TTModeler Report <img src='/assets/icons/favicon.192x192.png' style="width: 50px; margin-left: 20px; vertical-align: middle;" alt='logo'></h1>
+            <p>{{'report.for' | translate}}</p>
+            <h2>{{Project.GetProjectName()}}</h2>
+            <p>{{GetDate() | date}}, {{'properties.Version' | translate}} {{Project.UserVersion}}</p>
+            <ng-container *ngIf="!IsReportGenerated">{{'pages.reporting.toBeGenerated' | translate}}</ng-container>
+          </div>
+        </div>
+      </div>
+    </mat-drawer-content>
+  </mat-drawer-container>
+  <app-status-bar></app-status-bar>
+</div>

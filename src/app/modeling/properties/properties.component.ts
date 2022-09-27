@@ -19,7 +19,16 @@ export class PropertiesComponent implements OnInit {
 
   public get selectedObject(): DatabaseBase { return this._selectedObject; }
   @Input()
-  public set selectedObject(val: DatabaseBase) { this._selectedObject = val; };
+  public set selectedObject(val: DatabaseBase) { 
+    this._selectedObject = val;
+    setTimeout(() => {
+      Array.from(document.getElementsByTagName('textarea')).forEach(x => {
+        x.style.height = 'auto';
+        x.style.height = x.scrollHeight.toString() + 'px';
+      }); 
+    }, 10);
+    
+  };
 
   public get selectedElement(): DFDElement { return this._selectedObject as DFDElement; }
   

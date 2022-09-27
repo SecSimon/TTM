@@ -31,7 +31,10 @@ export enum LocStorageKeys {
   PAGE_MODELING_DIAGRAM_ARROW_BEND ="page_modeling_diagram_arrow_bend",
   PAGE_MODELING_DIAGRAM_ARROW_NAME ="page_modeling_diagram_arrow_name",
   PAGE_MODELING_DIAGRAM_ARROW_POS ="page_modeling_diagram_arrow_pos",
+  PAGE_MODELING_DIAGRAM_SHOW_GRID ="page_modeling_diagram_show_grid",
   PAGE_MODELING_THREAT_IDENT_TAB_INDEX = "page_modeling_threat_ident_tab_index",
+  PAGE_REPORTING_DIAGRAM_SHOW_GRID  = "page_reporting_diagram_show_grid",
+  PAGE_REPORTING_SHOW_CHARTS  = "page_reporting_show_charts",
   WELCOME_TOUR_STARTED      = "welcome_tour_started"
 }
 

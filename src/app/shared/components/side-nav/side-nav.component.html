@@ -46,6 +46,13 @@
   </div>
   -->
   <div>
+    <button name="/reporting" class="sidenav-icon-button" [class.disabled]="!dataService.HasProject" [class.btn-selected-light]="IsSelected('/reporting')" [class.btn-selected-dark]="IsSelected('/reporting', true)" (click)="OnClick('/reporting')"  (mouseenter)="OnMouseEnter('/reporting')" (mouseleave)="OnMouseLeave()" matTooltip="{{'side-nav.reporting' | translate}}" matTooltipPosition="right">
+      <button mat-icon-button [class.btn-light]="!theme.IsDarkMode" [class.btn-dark]="theme.IsDarkMode">
+        <mat-icon [class.icon-selected-light]="IsHoveredOrSelected('/reporting')" [class.icon-selected-dark]="IsHoveredOrSelected('/reporting', true)">receipt_long</mat-icon> 
+      </button>
+    </button>
+  </div>
+  <div>
     <button name="/configuration" routerLink="/configuration" class="sidenav-icon-button" [class.disabled]="!dataService.IsLoggedIn && !dataService.IsGuest" [class.btn-selected-light]="IsSelected('/configuration')" [class.btn-selected-dark]="IsSelected('/configuration', true)" (click)="OnClick('/configuration')"  (mouseenter)="OnMouseEnter('/configuration')" (mouseleave)="OnMouseLeave()" matTooltip="{{'side-nav.configuration' | translate}}" matTooltipPosition="right">
       <button mat-icon-button [class.btn-light]="!theme.IsDarkMode" [class.btn-dark]="theme.IsDarkMode">
         <mat-icon [class.icon-selected-light]="IsHoveredOrSelected('/configuration')" [class.icon-selected-dark]="IsHoveredOrSelected('/configuration', true)">settings</mat-icon> 

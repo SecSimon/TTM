@@ -25,10 +25,13 @@ export abstract class Diagram extends DatabaseBase {
   }
 
   public get Canvas(): string { return this.Data['Canvas']; }
-  public set Canvas(val: string) { this.Data['Canvas'] = val; }
+  public set Canvas(val: string) { 
+    if (val == this.Data['Canvas']) return;
+    this.Data['Canvas'] = val; 
+  }
 
   public get DiagramType(): DiagramTypes { return this.Data['DiagramType']; }
-  public set DiagramType(val: DiagramTypes) {this.Data['DiagramType'] = val; }
+  public set DiagramType(val: DiagramTypes) { this.Data['DiagramType'] = val; }
 
   public abstract get Elements(): IContainer;
 
@@ -89,6 +92,9 @@ export class CtxDiagram extends Diagram {
   public get Elements(): SystemContextContainer {
     return this.project?.GetContextElement(this.elementsID) as SystemContextContainer;
   }
+
+  public get IsUseCaseDiagram(): boolean { return this.Data['IsUseCaseDiagram']; }
+  public set IsUseCaseDiagram(val: boolean) { this.Data['IsUseCaseDiagram'] = val; }
 
   constructor(data: {}, pf: ProjectFile, cf: ConfigFile) {
     super(data, pf, cf);

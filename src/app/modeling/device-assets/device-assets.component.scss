@@ -14,3 +14,42 @@
 .disable {
   pointer-events: none;
 }
+
+.disableAsset {
+  opacity: 0.5;
+}
+
+.assetColumn {
+  display: block; 
+  float: left; 
+}
+
+.assetButton {
+  width: 25px;
+  height: 25px;
+  line-height: 20px;
+  font-size: 20px;
+  .mat-icon {
+    opacity: 0.4;
+  }
+}
+
+.highlight-light { 
+  background-color: rgba(0,0,0,0.1); 
+  .mat-icon {
+    opacity: 1 !important;
+  }
+}
+.highlight-dark { 
+  background-color: rgba(255,255,255,0.1); 
+  .mat-icon {
+    opacity: 1 !important;
+  }
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}

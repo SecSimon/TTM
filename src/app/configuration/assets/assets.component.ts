@@ -155,7 +155,7 @@ export class AssetsComponent extends NavTreeBase implements OnInit {
     if (this.assetGroup) {
       let groupNodes = [];
       let root = createGroup(this.assetGroup, null, null, groupNodes);
-      root.icon = 'account_balance'; 
+      root.icon = AssetGroup.Icon; 
       root.iconAlignLeft = false;
       root.canDelete = false;
   

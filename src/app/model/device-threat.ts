@@ -1,4 +1,4 @@
-import { LowMediumHighNumber } from "./assets";
+import { AssetGroup, LowMediumHighNumber, MyData } from "./assets";
 import { ConfigFile } from "./config-file";
 import { DatabaseBase, IDataReferences } from "./database";
 import { ProjectFile } from "./project-file";
@@ -7,6 +7,19 @@ import { ImpactCategories, ThreatCategory } from "./threat-model";
 export class DeviceThreat extends DatabaseBase {
   private project: ProjectFile;
   private config: ConfigFile;
+
+  public get AffectedAssetObjects(): (AssetGroup|MyData)[] {
+    let res = [];
+    if (this.Data['affectedAssetObjectIDs']) {
+      this.project.GetAssetGroups().filter(x => this.Data['affectedAssetObjectIDs'].includes(x.ID)).forEach(x => res.push(x));
+      this.project.GetMyDatas().filter(x => this.Data['affectedAssetObjectIDs'].includes(x.ID)).forEach(x => res.push(x));
+    }
+    
+    return res;
+  }
+  public set AffectedAssetObjects(val: (AssetGroup|MyData)[]) {
+    this.Data['affectedAssetObjectIDs'] = val?.map(x => x.ID);
+  }
 
   public get ThreatCategory(): ThreatCategory { return this.config.GetThreatCategory(this.Data['threatCategoryID']); }
   public set ThreatCategory(val: ThreatCategory) { 

@@ -46,15 +46,15 @@ export class HomeComponent implements OnInit {
         this.locStorage.Set(LocStorageKeys.LANGUAGE, 'en');
       }
 
+      this.tourService.initialize([
+        createStep('change-settings'),
+        createStep('message-history'),
+        createStep('save-file'),
+        createStep('set-progress')
+      ]);
       if ([UserModes.LoggedIn, UserModes.Guest].includes(this.dataService.UserMode)) {
         let wcs = this.locStorage.Get(LocStorageKeys.WELCOME_TOUR_STARTED);
         if (!wcs) {
-          this.tourService.initialize([
-            createStep('change-settings'),
-            createStep('message-history'),
-            createStep('save-file'),
-            createStep('set-progress')
-          ]);
           this.tourService.start();
           this.locStorage.Set(LocStorageKeys.WELCOME_TOUR_STARTED, JSON.stringify(true));
         }

@@ -5,6 +5,7 @@
   <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle (click)="OnNodeClick(node, $event)" (dblclick)="OnNodeDoubleClick(node)" (contextmenu)="OpenContextMenu($event, node)"
   [class.highlight-light]="activeNode === node && !theme.IsDarkMode" [class.highlight-dark]="activeNode === node && theme.IsDarkMode"
   [style.font-weight]="node.isBold ? 'bold' : 'normal'" class="disable-select">
+    <mat-checkbox *ngIf="node.canCheck" color="primary" style="margin-right: 5px;" [disabled]="!node.checkEnabled || !checkEnabled" [checked]="node.isChecked" (change)="OnNodeChecked(node)"></mat-checkbox>
     <mat-icon *ngIf="node.iconAlignLeft && node.icon" style="margin-right: 5px;">{{node.icon}}</mat-icon>
     <span *ngIf="!node.isRenaming" style="margin-right: 15px;" [style.opacity]="(node.isInactive &&node.isInactive()) ? 0.5 : 1">{{node.name()}}</span>
     <ng-container *ngIf="node.isRenaming"><input id="renameBox" type="text" style="width: -webkit-fill-available;" [ngModel]="node.name()" (keydown)="OnRename($event, node)" autofocus (focusout)="OnRename($event, node)" onfocus="this.select();"/></ng-container>
@@ -26,6 +27,7 @@
           {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
         </mat-icon>
       </button>
+      <mat-checkbox *ngIf="node.canCheck" color="primary" style="margin-right: 5px;" [disabled]="!node.checkEnabled || !checkEnabled" [checked]="node.isChecked" (change)="OnNodeChecked(node)"></mat-checkbox>
       <mat-icon *ngIf="node.iconAlignLeft && node.icon" style="margin-right: 5px;">{{node.icon}}</mat-icon>
       <span *ngIf="!node.isRenaming" style="margin-right: 15px;" [style.opacity]="(node.isInactive &&node.isInactive()) ? 0.5 : 1">{{node.name()}}</span>
       <ng-container *ngIf="node.isRenaming"><input id="renameBox" type="text" style="width: -webkit-fill-available;" [ngModel]="node.name()" (keydown)="OnRename($event, node)" autofocus (focusout)="OnRename($event, node)" onfocus="this.select();"/></ng-container>

@@ -6,10 +6,12 @@ import { ConfigurationModule } from '../configuration/configuration.module';
 import { ModelingRoutingModule } from '../modeling/modeling-routing.module';
 import { SharedModule } from '../shared/shared.module';
 import { DashboardComponent } from './dashboard.component';
+import { ResultsChartComponent } from './results-chart/results-chart.component';
+import { ResultsAnalysisComponent } from './results-analysis/results-analysis.component';
 
 
 @NgModule({
-  declarations: [DashboardComponent],
+  declarations: [DashboardComponent, ResultsChartComponent, ResultsAnalysisComponent],
   imports: [
     CommonModule,
     SharedModule,

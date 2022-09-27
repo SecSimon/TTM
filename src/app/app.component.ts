@@ -168,7 +168,7 @@ export class AppComponent {
       if (this.dataService.Config && this.configID == this.dataService.Config.ID) {
         if (!this.dataService.Config.FileChanged) {
           let val = JSON.stringify(this.dataService.Config.ToJSON());
-          if (val != this.configStr) {
+          if (val !== this.configStr) {
             this.configStr = val;
             this.dataService.Config.FileChanged = true;
           }
@@ -182,7 +182,7 @@ export class AppComponent {
       if (this.dataService.Project && this.projectID == this.dataService.Project.ID) {
         if (!this.dataService.Project.FileChanged) {
           let val = JSON.stringify(this.dataService.Project.ToJSON());
-          if (val != this.projectStr) {
+          if (val !== this.projectStr) {
             this.projectStr = val;
             this.dataService.Project.FileChanged = true;
           }

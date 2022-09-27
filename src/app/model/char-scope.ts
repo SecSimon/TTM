@@ -36,6 +36,11 @@ export class CharScope extends DatabaseBase {
   public get Assumptions(): string[] { return this.Data['Assumptions']; }
   public set Assumptions(val: string[]) { this.Data['Assumptions'] = val; }
 
+  public StepProperties: string[] = [
+    'Application', 'Sector', 'Function', 'Requirements', 'Criticality', 'LocEnv', 'Connectivity', 'TargetMarket', 'Standards', 'InvolvedPeople',
+    'Budget', 'Timeframe', 'ExpectedOutput', 'Assumptions'
+  ];
+
   constructor(data, pf: ProjectFile, cf: ConfigFile) {
     super(data);
     this.project = pf;

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { MyComponent, MyComponentStack } from '../model/component';
 import { DatabaseBase, ViewElementBase } from '../model/database';
-import { DataFlow, DFDElement, ElementTypeIDs } from '../model/dfd-model';
+import { DataFlow, DFDContainerRef, DFDElement, DFDElementRef, ElementTypeIDs } from '../model/dfd-model';
 import { CtxDiagram, Diagram, DiagramTypes, HWDFDiagram } from '../model/diagram';
 import { FlowArrowPositions } from '../model/system-context';
 import { IPropertyRestriction, MappingStates, ThreatMapping, RuleTypes, ITypeIDs, IDetailRestriction, RestrictionTypes, ThreatRule, RuleGenerationTypes, PropertyComparisonTypes, ThreatQuestion, ThreatStates } from '../model/threat-model';
@@ -220,6 +220,7 @@ export class ThreatEngineService {
         const requiredStencil = this.dataService.Config.GetStencilType(rule.StencilRestriction.stencilTypeID);
         if (requiredStencil.IsDefault) threatApplies = (element as DFDElement).Type.ElementTypeID == requiredStencil.ElementTypeID;
         else threatApplies = (element as DFDElement).Type.ID == rule.StencilRestriction.stencilTypeID; 
+        threatApplies = threatApplies && !(element instanceof DFDElementRef || element instanceof DFDContainerRef);
       }
       else if (rule.RuleType == RuleTypes.Component) {
         threatApplies = (element as MyComponent).Type.ID == rule.ComponentRestriction.componentTypeID;

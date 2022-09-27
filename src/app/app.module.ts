@@ -19,9 +19,10 @@ import { LoginModule } from './login/login.module';
 import { ModelingModule } from './modeling/modeling.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { MitigationOverviewModule } from './mitigation-overview/mitigation-overview.module';
+import { ReportingModule } from './reporting/reporting.module';
+import { ConfigurationModule } from './configuration/configuration.module';
 
 import { AppComponent } from './app.component';
-import { ConfigurationModule } from './configuration/configuration.module';
 
 // AoT requires an exported function for factories
 const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => {
@@ -42,6 +43,7 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => {
     ModelingModule,
     DashboardModule,
     MitigationOverviewModule,
+    ReportingModule,
     ConfigurationModule,
     AppRoutingModule,
     TourMatMenuModule.forRoot(),

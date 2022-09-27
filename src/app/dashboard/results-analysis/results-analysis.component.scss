@@ -1,0 +1,23 @@
+@import 'stylesTheme.scss';
+
+.selected-entry {
+  td {
+    @extend .primary-color;
+  }
+}
+
+th, td {
+  font-size: small;
+}
+
+.filterInput {
+  float: right;
+  margin-right: 5px;
+  margin-top: 2px;
+  width: 200px;
+  height: 25px;
+}
+
+.disable {
+  pointer-events: none;
+}

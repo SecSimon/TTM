@@ -192,7 +192,7 @@ export class StencilPaletteComponent implements OnInit {
 
   private addDFDElementReferences(elementType: ElementTypeIDs): IStencilRef[] {
     let res: IStencilRef[] = [];
-    this.dataService.Project.GetDFDElements().filter(x => !(x instanceof DFDElementRef || x instanceof DFDContainerRef) && x.Type?.ElementTypeID == elementType && this.dataService.Project.FindDiagramOfElement(x.ID).ID != this.selectedNode?.data?.ID).forEach(ele => {
+    this.dataService.Project.GetDFDElements().filter(x => !(x instanceof DFDElementRef || x instanceof DFDContainerRef) && x.Type?.ElementTypeID == elementType && this.dataService.Project.FindDiagramOfElement(x.ID)?.ID != this.selectedNode?.data?.ID).forEach(ele => {
       res.push({ elementID: ele.ID, name: ele.Name });
     });
 
@@ -285,6 +285,11 @@ export class StencilPaletteComponent implements OnInit {
     else if (ctxRef.name == 'Use Case') {
       wid = '140px';
       hei = '50px';
+      left = '-145px';
+    }
+    else if (ctxRef.name == 'External Entity') {
+      wid = '140px';
+      hei = '75px';
       left = '-145px';
     }
     else if (ctxRef.name == 'Trust Area') {

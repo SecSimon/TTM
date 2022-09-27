@@ -4,6 +4,84 @@
       <ng-template mat-tab-label>
         {{'pages.modeling.deviceassets.assetview' | translate}}
       </ng-template>
+
+      <ng-template #assetGroupTemplate let-item let-colCnt="colCnt" let-isFirst="isFirst">
+        <div [class.disableAsset]="!item.IsActive" [class.highlight-dark]="theme.IsDarkMode && selectedObject == item" [class.highlight-light]="!theme.IsDarkMode && selectedObject == item" (click)="SelectObject($event, item)">
+          <div [style.textAlign]="isFirst ? 'center' : 'left'" [style.height]="isFirst ? '40px' : 'auto'">
+            <!--<mat-icon *ngIf="IsNewAssetGroup(item)" style="vertical-align: bottom;">add_circle_outline</mat-icon>-->
+            <span [style.fontWeight]="isFirst ? 'bold' : 'normal'">{{item.Name}}</span>
+            <button mat-icon-button *ngIf="!hideButtons" class="assetButton" (click)="DeleteGroup(item)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000"><mat-icon>delete</mat-icon></button>
+            <button mat-icon-button *ngIf="!hideButtons" class="assetButton" (click)="AddGroup(item, $event)" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000"><mat-icon>add</mat-icon></button>
+            <button mat-icon-button *ngIf="!hideButtons" class="assetButton" (click)="AddMyData(item, $event)" matTooltip="{{'general.Data' | translate}}" matTooltipShowDelay="1000"><mat-icon>description</mat-icon></button>
+          </div>
+          <div>
+            <div *ngFor="let data of item.AssociatedData" style="margin-left: 20px;" (click)="SelectObject($event, data)" [class.highlight-dark]="theme.IsDarkMode && selectedObject == data" [class.highlight-light]="!theme.IsDarkMode && selectedObject == data">
+              <mat-icon>description</mat-icon><span style="vertical-align: super;">{{data.Name}}</span> <button mat-icon-button *ngIf="!hideButtons" class="assetButton" style="vertical-align: super;" (click)="DeleteMyData(data)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000"><mat-icon>delete</mat-icon></button>
+            </div>
+          </div>
+          <div>
+            <div class="row">
+              <div *ngFor="let col of GetColArray(colCnt); index as i" style="float: left;" [style.width]="(100/colCnt).toString() + '%'">
+                <div *ngFor="let group of GetArrayRange(item.SubGroups, i, colCnt)" [class.disableAsset]="!group.IsActive" [style.marginLeft]="isFirst ? '0px' : '20px'" (click)="SelectObject($event, group)" [class.highlight-dark]="theme.IsDarkMode && selectedObject == group" [class.highlight-light]="!theme.IsDarkMode && selectedObject == group">
+                  <!--<mat-icon *ngIf="IsNewAssetGroup(group)" style="vertical-align: bottom;">add_circle_outline</mat-icon>-->
+                  <span>{{group.Name}}</span>
+                  <button mat-icon-button *ngIf="!hideButtons" class="assetButton" (click)="DeleteGroup(group)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000"><mat-icon>delete</mat-icon></button>
+                  <button mat-icon-button *ngIf="!hideButtons" class="assetButton" (click)="AddGroup(group, $event)" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000"><mat-icon>add</mat-icon></button>
+                  <button mat-icon-button *ngIf="!hideButtons" class="assetButton" (click)="AddMyData(group, $event)" matTooltip="{{'general.Data' | translate}}" matTooltipShowDelay="1000"><mat-icon>description</mat-icon></button>
+                  <div *ngFor="let data of group.AssociatedData" style="margin-left: 20px;" (click)="SelectObject($event, data)" [class.highlight-dark]="theme.IsDarkMode && selectedObject == data" [class.highlight-light]="!theme.IsDarkMode && selectedObject == data">
+                    <mat-icon>description</mat-icon><span style="vertical-align: super;">{{data.Name}}</span> <button mat-icon-button *ngIf="!hideButtons" class="assetButton" style="vertical-align: super;" (click)="DeleteMyData(data)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000"><mat-icon>delete</mat-icon></button>
+                  </div>
+                  <div style="margin-left: 20px;">
+                    <div *ngFor="let sub of group.SubGroups" [ngTemplateOutlet]="assetGroupTemplate" [ngTemplateOutletContext]="{$implicit: sub, colCnt: 1}"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+
+      <ng-template matTabContent>
+        <div style="margin: 5px; height: calc(100% - 10px); font-size: small;">
+          <div style="height: 100px;">
+            <svg height="100%" width="100%" viewBox="0 0 100 100"  preserveAspectRatio="none">
+              <path d="M50,0 L100,70 L100,100 L0,100 L0,70 Z" [attr.fill]="theme.IsDarkMode ? bgColorDark : bgColorLight"/> 
+            </svg>
+          </div>
+          <div style="min-height: 200px; overflow: hidden; display: flex; margin-top: 5px;">
+            <ng-container *ngFor="let col of assetGroupsCols; index as i; first as isFirst; last as isLast">
+              <div *ngIf="isFirst" style="display: block; float: left;" [style.min-width]="GetGapWidth()">&nbsp;</div>
+              <div class="assetColumn" [class.disableAsset]="!col.IsActive" [style.width]="GetColumnWidth()" [style.backgroundColor]="theme.IsDarkMode ? bgColorDark : bgColorLight">
+                <div style="margin: 5px;">
+                  <ng-container [ngTemplateOutlet]="assetGroupTemplate" [ngTemplateOutletContext]="{$implicit: col, isFirst: true, colCnt: 1}"></ng-container>
+                </div>
+              </div>
+              <div style="float: left; display: flex; justify-content: center; align-items: center;" [style.width]="GetGapWidth()">
+                <ng-container *ngIf="!isLast">&nbsp;</ng-container>
+                <ng-container *ngIf="isLast"><button mat-icon-button *ngIf="!hideButtons" class="assetButton" (click)="AddGroup(assetGroup, $event)" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000"><mat-icon>add</mat-icon></button></ng-container>
+              </div>
+            </ng-container>
+            <div *ngIf="assetGroupsCols.length == 0" style="width: 100%; display: flex; justify-content: center; align-items: center;">
+              <button mat-icon-button *ngIf="!hideButtons" class="assetButton" (click)="AddGroup(assetGroup, $event)" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000"><mat-icon>add</mat-icon></button>
+            </div>
+          </div>
+          <div style="min-height: 100px; overflow: hidden;">
+            <div class="assetColumn" style="width: 100%; margin-top: 5px; margin-bottom: 5px;" [style.backgroundColor]="theme.IsDarkMode ? bgColorDark : bgColorLight">
+              <ng-container *ngIf="assetGroupBase">
+                <div style="margin: 5px;">
+                  <ng-container [ngTemplateOutlet]="assetGroupTemplate" [ngTemplateOutletContext]="{$implicit: assetGroupBase, isFirst: true, colCnt: 3}"></ng-container>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+    </mat-tab>
+
+    <mat-tab>
+      <ng-template mat-tab-label>
+        {{'pages.modeling.deviceassets.assettree' | translate}}
+      </ng-template>
       <ng-template matTabContent>
         <as-split direction="horizontal" unit="pixel" [gutterSize]="3" [restrictMove]="true" (dragEnd)="OnSplitSizeChange($event, 0)">
           <as-split-area [size]="GetSplitSize(0, 0, 350)" [order]=1 [class.splitter-light2]="!theme.IsDarkMode" [class.splitter-dark2]="theme.IsDarkMode">
@@ -18,13 +96,13 @@
 
     <mat-tab>
       <ng-template mat-tab-label>
-        {{'pages.modeling.deviceassets.dataview' | translate}}
+        {{'pages.modeling.deviceassets.datalist' | translate}}
       </ng-template>
       <ng-template matTabContent>
         <div class="row">
           <div class="column1">
             <mat-list class="prop-list" [class.prop-list-light]="!theme.IsDarkMode" [class.prop-list-dark]="theme.IsDarkMode">
-              <div mat-subheader>{{ 'general.Datas' | translate }} <button mat-icon-button (click)="AddMyData()" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000" style="margin-left: 15px;"><mat-icon>add</mat-icon></button></div>
+              <div mat-subheader>{{ 'general.Datas' | translate }} <button mat-icon-button (click)="AddMyData(assetGroup)" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000" style="margin-left: 15px;"><mat-icon>add</mat-icon></button></div>
               <mat-list-item *ngFor="let data of assetGroup.GetMyDataFlat()" (click)="selectedMyData = data"
               [class.highlight-light]="selectedMyData === data && !theme.IsDarkMode" [class.highlight-dark]="selectedMyData === data && theme.IsDarkMode"
               matTooltip="{{data.Name}}" matTooltipShowDelay="1000">

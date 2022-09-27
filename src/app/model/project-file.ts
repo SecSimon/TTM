@@ -94,6 +94,8 @@ export class ProjectFile extends DatabaseBase {
   public get Notes(): INote[] { return this.Data['Notes']; }
   public set Notes(val: INote[]) { this.Data['Notes'] = val; }
 
+  public GetProjectName(): string { return StringExtension.FromCamelCase(this.Name.replace('.ttmp', '')); }
+
   public GetCharScope(): CharScope { return this.charScope; }
   public GetObjImpact(): ObjImpact { return this.objImpact; }
   public GetSysContext(): SystemContext { return this.sysContext; }
@@ -552,13 +554,13 @@ export class ProjectFile extends DatabaseBase {
 
     if (val.charSope) res.charScope = CharScope.FromJSON(val.charSope, res, cf);
     if (val.objImpact) res.objImpact = ObjImpact.FromJSON(val.objImpact, res, cf);
-    if (val.sysContext) res.sysContext = SystemContext.FromJSON(val.sysContext, res, cf);
     val.assetGroups?.forEach(x => res.assetGroups.push(AssetGroup.FromJSON(x, res, cf)));
     val.myData?.forEach(x => res.myData.push(MyData.FromJSON(x, res, cf)));
 
     val.contextElements?.forEach(x => res.contextElementMap.set(x['ID'], ContextElement.FromJSON(x, res, cf)));
     val.dfdElements.forEach(x => res.dfdElementMap.set(x['ID'], DFDElement.FromJSON(x, res, cf)));
     val.diagrams.forEach(x => res.diagrams.push(Diagram.FromJSON(x, res, cf)));
+    if (val.sysContext) res.sysContext = SystemContext.FromJSON(val.sysContext, res, cf);
 
     val.threatActors?.forEach(x => res.threatActors.push(ThreatActor.FromJSON(x, cf)));
     if (val.threatSources) res.threatSources = ThreatSources.FromJSON(val.threatSources, res, cf);

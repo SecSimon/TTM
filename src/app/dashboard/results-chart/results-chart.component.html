@@ -1,0 +1,12 @@
+<ng-container *ngIf="diagram">
+  <div>
+    <h3 style="text-align: center; margin-top: 0px; margin-bottom: 5px;">{{diagram.xAxisLabel}}</h3>
+    
+    <ngx-charts-bar-vertical-stacked [scheme]="diagram.scheme" [class.chartDark]="theme.IsDarkMode" [view]="diagram.view"
+    [results]="diagram.results" [xAxisLabel]="diagram.xAxisLabel" [yAxisLabel]="diagram.yAxisLabel" [yAxisTickFormatting]="CutDigits"
+    [xAxis]="true" [yAxis]="true" [showXAxisLabel]="false" [showYAxisLabel]="true" [animations]="true"
+    legendTitle="" [legend]="true" [legendPosition]="legendPosition" [barPadding]="3"
+    >
+    </ngx-charts-bar-vertical-stacked>
+  </div>
+</ng-container>

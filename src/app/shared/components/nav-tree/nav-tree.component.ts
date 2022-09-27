@@ -7,6 +7,9 @@ import { NavTreeBase } from './nav-tree-base';
 
 export interface INavigationNode {
   name: () => string;
+  canCheck?: boolean;
+  checkEnabled?: boolean;
+  isChecked?: boolean;
   canSelect: boolean;
   isExpanded?: boolean;
   children?: INavigationNode[];
@@ -49,14 +52,32 @@ export class NavTreeComponent implements OnInit {
   @Input()
   public set activeNode(val: INavigationNode) {
     this._activeNode = val;
+
     this.selectedNodeChanged.emit(val);
     setTimeout(() => {
       document.getElementById('renameBox')?.focus();
     }, 100);
   }
 
+  @Input()
+  public checkEnabled: boolean = true;
+
+  @Input()
+  public canCheckMultiple: boolean = true;
+
+  @Input()
+  public set checkedNodes(val: INavigationNode[]) {
+    const nodes = NavTreeBase.FlattenNodes(this.dataSource.data); 
+    nodes.forEach(node => {
+      node.isChecked = false || val?.some(x => x.data == node.data);
+    });
+  }
+
   @Output()
   public selectedNodeChanged = new EventEmitter<INavigationNode>();
+
+  @Output() 
+  public checkedNodesChanged = new EventEmitter<INavigationNode[]>();
 
   @Output()
   public nodeDoubleClicked = new EventEmitter<INavigationNode>();
@@ -114,6 +135,12 @@ export class NavTreeComponent implements OnInit {
     if (!node.canSelect) return;
     
     this.nodeDoubleClicked.emit(node);
+  }
+
+  public OnNodeChecked(node: INavigationNode) {
+    if (!this.canCheckMultiple && !node.isChecked) NavTreeBase.FlattenNodes(this.dataSource.data).forEach(x => x.isChecked = false);
+    node.isChecked = !node.isChecked;
+    this.checkedNodesChanged.emit(NavTreeBase.FlattenNodes(this.dataSource.data).filter(x => x.isChecked));
   }
 
   public OnEditName(node: INavigationNode) {

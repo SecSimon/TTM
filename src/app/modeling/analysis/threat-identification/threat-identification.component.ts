@@ -1,7 +1,8 @@
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { LowMediumHighNumber, LowMediumHighNumberUtil } from '../../../model/assets';
+import { AssetGroup, LowMediumHighNumber, LowMediumHighNumberUtil, MyData } from '../../../model/assets';
 import { DeviceThreat } from '../../../model/device-threat';
+import { Device, MobileApp } from '../../../model/system-context';
 import { ThreatCategory, ThreatCategoryGroup } from '../../../model/threat-model';
 import { NavTreeBase } from '../../../shared/components/nav-tree/nav-tree-base';
 import { INavigationNode, NavTreeComponent } from '../../../shared/components/nav-tree/nav-tree.component';
@@ -15,40 +16,71 @@ import { ThemeService } from '../../../util/theme.service';
   styleUrls: ['./threat-identification.component.scss']
 })
 export class ThreatIdentificationComponent implements OnInit {
-  private nodes: INavigationNode[];
-  private _selectedNode;
+  private assetNodes: INavigationNode[];
+  private categoryNodes: INavigationNode[];
+  private _selectedAssetNode;
+  private _selectedCategoryNode;
+  private _selectedThreat = null;
 
-  public get selectedNode(): INavigationNode { return this._selectedNode; }
-  public set selectedNode(val: INavigationNode) {
-    this._selectedNode = val;
-    this.selectedThreat = null;
+  public get deviceThreats(): DeviceThreat[] { return this.dataService.Project.GetDeviceThreats(); }
+
+  public get selectedThreat(): DeviceThreat { return this._selectedThreat; }
+  public set selectedThreat(val: DeviceThreat) {
+    this._selectedThreat = val;
+    if (val && val.ThreatCategory) {
+      this.selectedCategoryNode = NavTreeBase.FlattenNodes(this.categoryNodes).find(x => x.data == val.ThreatCategory);
+      if (this.catsTree) this.catsTree.checkedNodes = [this.selectedCategoryNode];
+    }
+    else {
+      if (this.catsTree) this.catsTree.checkedNodes = null;
+    }
+    if (val && val.AffectedAssetObjects?.length > 0) {
+      const nodes = NavTreeBase.FlattenNodes(this.assetNodes);
+      this.selectedAssetNode = nodes.find(x => x.data == val.AffectedAssetObjects[0]);
+      if (this.assetsTree) this.assetsTree.checkedNodes = nodes.filter(x => val.AffectedAssetObjects.includes(x.data));
+    }
+    else {
+      if (this.assetsTree) this.assetsTree.checkedNodes = null;
+    }
   }
 
-  @Input() get deviceThreats(): DeviceThreat[] { return this.dataService.Project.GetDeviceThreats(); }
-
-  public get selectedThreatCat(): ThreatCategory {
-    if (this.selectedNode && this.selectedNode.data instanceof ThreatCategory) return this.selectedNode.data;
+  public get selectedAssetNode(): INavigationNode { return this._selectedAssetNode; }
+  public set selectedAssetNode(val: INavigationNode) {
+    this._selectedAssetNode = val;
   }
 
-  public currentDeviceThreats(): DeviceThreat[] {
-    return this.deviceThreats.filter(x => x.ThreatCategory?.ID == this.selectedThreatCat?.ID);
+  public get selectedAssetObject(): AssetGroup|MyData {
+    return this.selectedAssetNode?.data;
   }
-  public selectedThreat: DeviceThreat = null;
 
-  @ViewChild('catTree') navTree: NavTreeComponent;
-
-  public SetNavTreeData(nodes) {
-    this.navTree.SetNavTreeData(nodes);
+  public get selectedCategoryNode(): INavigationNode { return this._selectedCategoryNode; }
+  public set selectedCategoryNode(val: INavigationNode) {
+    this._selectedCategoryNode = val;
   }
+
+  public get selectedCategory(): ThreatCategory {
+    return this._selectedCategoryNode?.data;
+  }
+  @ViewChild('assetsTree') assetsTree: NavTreeComponent;
+  @ViewChild('catsTree') catsTree: NavTreeComponent;
 
   constructor(public theme: ThemeService, private dataService: DataService, private locStorage: LocalStorageService) { }
+
+  public OnCheckedAssetNodesChanged(event) {
+    if (this.selectedThreat) this.selectedThreat.AffectedAssetObjects = event?.map(x => x.data);
+  }
+
+  public OnCheckedCategoryChanged(event) {
+    if (this.selectedThreat) this.selectedThreat.ThreatCategory = event?.length == 1 ? event[0].data : null;
+  }
 
   ngOnInit(): void {
   }
 
   ngAfterViewInit(): void {
     setTimeout(() => {
-      this.createNodes();
+      this.createAssetNodes();
+      this.createCategoryNodes();
     }, 10);
   }
 
@@ -58,7 +90,7 @@ export class ThreatIdentificationComponent implements OnInit {
   }
 
   public AddThreat() {
-    let dt = this.dataService.Project.CreateDeviceThreat(this.selectedThreatCat);
+    let dt = this.dataService.Project.CreateDeviceThreat(this.selectedCategory);
     this.selectedThreat = dt;
   }
 
@@ -68,11 +100,6 @@ export class ThreatIdentificationComponent implements OnInit {
 
   public GetLMHName(type: LowMediumHighNumber) {
     return LowMediumHighNumberUtil.ToString(type);
-  }
-
-  public OnTabChange() {
-    this.selectedNode = null;
-    this.selectedThreat = null;
   }
 
   public drop(event: CdkDragDrop<string[]>, selectedArray) {
@@ -85,17 +112,6 @@ export class ThreatIdentificationComponent implements OnInit {
     moveItemInArray(this.deviceThreats, prev, curr);
   }
 
-  public GetSelectedTabIndex() {
-    let index = this.locStorage.Get(LocStorageKeys.PAGE_MODELING_THREAT_IDENT_TAB_INDEX);
-    if (index != null) return index;
-    else return 0;
-  }
-
-  public SetSelectedTabIndex(event) {
-    this.selectedNode = null;
-    this.locStorage.Set(LocStorageKeys.PAGE_MODELING_THREAT_IDENT_TAB_INDEX, event);
-  }
-
   public GetSplitSize(splitter: number, gutter: number, defaultSize: number) {
     let size = this.locStorage.Get(LocStorageKeys.PAGE_MODELING_ASSETS_SPLIT_SIZE_X + splitter.toString());
     if (size != null) return Number(JSON.parse(size)[gutter]);
@@ -106,14 +122,90 @@ export class ThreatIdentificationComponent implements OnInit {
     this.locStorage.Set(LocStorageKeys.PAGE_MODELING_ASSETS_SPLIT_SIZE_X + splitter.toString(), JSON.stringify(event['sizes']));
   }
 
-  private createNodes() {
-    const prevNodes = this.nodes;
-    this.nodes = [];
+  private createAssetNodes() {
+    const prevNodes = this.assetNodes;
+    this.assetNodes = [];
 
-    let createCategory = (cat: ThreatCategory, group: ThreatCategoryGroup, groupNode: INavigationNode, root: INavigationNode): INavigationNode => {
+    let file = this.dataService.Project;
+
+    let createData = (data: MyData, parentGroup: AssetGroup): INavigationNode => {
+      let d: INavigationNode = {
+        name: () => data.Name,
+        canSelect: true,
+        canCheck: true,
+        checkEnabled: true,
+        isChecked: false,
+        isInactive: () => { return !parentGroup.IsActive; },
+        data: data,
+        iconAlignLeft: true,
+        icon: 'description'
+      };
+
+      return d;
+    };
+
+    let createGroup = (group: AssetGroup, groupNodes: INavigationNode[]): INavigationNode => {
+      let g: INavigationNode = {
+        name: () => group.Name,
+        canSelect: true,
+        canCheck: true,
+        checkEnabled: true,
+        isChecked: false,
+        isInactive: () => { return !group.IsActive; },
+        data: group,
+        children: []
+      };
+
+      if (g.isExpanded == null && !group.IsActive) g.isExpanded = false;
+
+      group.AssociatedData.forEach(x => {
+        let data = createData(x, group);
+        g.children.push(data);
+      });
+
+      group.SubGroups.forEach(x => {
+        let subGroup = createGroup(x, groupNodes);
+        g.children.push(subGroup);
+      });
+
+      groupNodes.push(g);
+      return g;
+    };
+
+    
+    let groupNodes = [];
+    file.GetDevices().forEach(dev => {
+      let root = createGroup(dev.AssetGroup, groupNodes);
+      root.canSelect = root.canCheck = false;
+      root.icon = Device.Icon;
+      root.iconAlignLeft = false;
+      root.name = () => { return dev.Name; }
+      this.assetNodes.push(root);
+    });
+
+    file.GetMobileApps().forEach(app => {
+      let root = createGroup(app.AssetGroup, groupNodes);
+      root.icon = MobileApp.Icon;
+      root.iconAlignLeft = false;
+      root.name = () => { return app.Name; }
+      this.assetNodes.push(root);
+    });
+
+    NavTreeBase.TransferExpandedState(prevNodes, this.assetNodes);
+    this.assetsTree.SetNavTreeData(this.assetNodes);
+  }
+
+  private createCategoryNodes() {
+    const prevNodes = this.categoryNodes;
+    this.categoryNodes = [];
+
+    let createCategory = (cat: ThreatCategory): INavigationNode => {
       let node: INavigationNode = {
         name: () => cat.Name,
         canSelect: true,
+        canCheck: true,
+        checkEnabled: true,
+        isChecked: false,
         data: cat
       };
       return node;
@@ -139,12 +231,13 @@ export class ThreatIdentificationComponent implements OnInit {
 
     this.dataService.Config.GetThreatCategoryGroups().forEach(x => {
       let g = createGroup(x);
-      x.ThreatCategories.forEach(y => g.children.push(createCategory(y, x, g, root)));
+      x.ThreatCategories.forEach(y => g.children.push(createCategory(y)));
       root.children.push(g);
     });
 
-    this.nodes.push(root);
-    NavTreeBase.TransferExpandedState(prevNodes, this.nodes);
-    this.SetNavTreeData(this.nodes);
+    this.categoryNodes.push(root);
+
+    NavTreeBase.TransferExpandedState(prevNodes, this.categoryNodes);
+    this.catsTree.SetNavTreeData(this.categoryNodes);
   }
 }
