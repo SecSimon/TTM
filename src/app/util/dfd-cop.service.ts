@@ -6,6 +6,7 @@ import { DataService } from './data.service';
 export enum DFDRuleTypes {
   AtLeastOneDF = 1, // at least one data flow for EE, DS, P, PL
   DFconnectsP = 2, // every data flow connects to a least one process
+  TooManyProcesses = 3, // not more than 7 processes recommended
   IFNotUsed = 101 // interface is not used in any data flow
 }
 
@@ -36,6 +37,7 @@ export class DFDCopService {
     if (diagram.DiagramType == DiagramTypes.DataFlow) {
       res.push(...this.checkRule1(diagram));
       res.push(...this.checkRule2(diagram));
+      res.push(...this.checkRule3(diagram));
     }
     else {
       res.push(...this.checkRule101(diagram));
@@ -89,6 +91,19 @@ export class DFDCopService {
         res.push({ DiagramID: diagram.ID, RuleType: DFDRuleTypes.DFconnectsP, Type: DFDIssueTypes.Warning, Element: df });
       }
     });
+
+    return res;
+  }
+
+  private checkRule3(diagram: HWDFDiagram): IDFDIssue[] {
+    let res: IDFDIssue[] = [];
+
+    let elements = diagram.Elements.GetChildrenFlat();
+    let ps = elements.filter(x => x.Type.ElementTypeID == ElementTypeIDs.LogProcessing);
+
+    if (ps.length > 7) {
+      res.push({ DiagramID: diagram.ID, RuleType: DFDRuleTypes.TooManyProcesses, Type: DFDIssueTypes.Warning, Element: null });
+    }
 
     return res;
   }

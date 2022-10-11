@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { DatabaseBase, IKeyValue, IProperty, PropertyEditTypes, PropertyEditTypesUtil } from '../../model/database';
 import { DataFlow, ElementTypeIDs, ElementTypeUtil, Interface, StencilType, LogDataStore, LogExternalEntity, LogProcessing, LogTrustArea, PhysicalLink, StencilTypeTemplate, Protocol, StencilThreatMnemonic, IElementTypeThreat } from '../../model/dfd-model';
-import { RestrictionTypes, RuleTypes, ThreatRule } from '../../model/threat-model';
+import { RestrictionTypes, RuleTypes, ThreatCategoryGroup, ThreatRule } from '../../model/threat-model';
 import { NavTreeBase } from '../../shared/components/nav-tree/nav-tree-base';
 import { INavigationNode } from '../../shared/components/nav-tree/nav-tree.component';
 import { DataService } from '../../util/data.service';
@@ -227,7 +227,7 @@ export class StencilsComponent extends NavTreeBase implements OnInit {
   }
 
   public AddMnemonicLetter() {
-    this.selectedThreatMnemonic.Letters.push({ Name: StringExtension.FindUniqueName('Letter', this.selectedThreatMnemonic.Letters.map(x => x.Name)), Letter: '', Description: '', AffectedElementTypes: [] });
+    this.selectedThreatMnemonic.Letters.push({ Name: StringExtension.FindUniqueName('Letter', this.selectedThreatMnemonic.Letters.map(x => x.Name)), Letter: '', Description: '', AffectedElementTypes: [], threatCategoryID: '' });
   }
 
   public DeleteMnemonicLetter(letter: IElementTypeThreat) {
@@ -270,6 +270,10 @@ export class StencilsComponent extends NavTreeBase implements OnInit {
       return a.ElementTypeID - b.ElementTypeID;
     });
     return res;
+  }
+
+  public GetThreatCategoryGroups(): ThreatCategoryGroup[] {
+    return this.dataService.Config.GetThreatCategoryGroups().filter(x => x.ThreatCategories.length > 0);
   }
 
   public GetProtocols(): Protocol[] {

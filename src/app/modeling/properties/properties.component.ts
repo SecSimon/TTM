@@ -1,13 +1,14 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
 import { LowMediumHighNumber, LowMediumHighNumberUtil } from '../../model/assets';
 import { MyComponent } from '../../model/component';
 import { DatabaseBase, IProperty, ViewElementBase } from '../../model/database';
 import { DataFlowEntity, DFDElement, ElementTypeIDs, IElementTypeThreat, StencilType } from '../../model/dfd-model';
 import { Diagram, DiagramTypes } from '../../model/diagram';
-import { Device, DeviceInterfaceNames, DeviceInterfaceNameUtil, FlowArrowPositions, FlowArrowPositionUtil, FlowLineTypes, FlowLineTypeUtil, FlowTypes, FlowTypeUtil, SystemUseCase } from '../../model/system-context';
+import { Device, DeviceInterfaceNameUtil, FlowArrowPositions, FlowArrowPositionUtil, FlowLineTypes, FlowLineTypeUtil, FlowTypes, FlowTypeUtil, SystemUseCase } from '../../model/system-context';
 import { DataService } from '../../util/data.service';
 import { DialogService } from '../../util/dialog.service';
 import { ThemeService } from '../../util/theme.service';
+import { ThreatEngineService } from '../../util/threat-engine.service';
 
 @Component({
   selector: 'app-properties',
@@ -28,6 +29,9 @@ export class PropertiesComponent implements OnInit {
       }); 
     }, 10);
     
+    setTimeout(() => {
+      this.FocusFirst();
+    }, 100);
   };
 
   public get selectedElement(): DFDElement { return this._selectedObject as DFDElement; }
@@ -41,9 +45,26 @@ export class PropertiesComponent implements OnInit {
   @Output()
   public openDiagram = new EventEmitter<Diagram>();
 
-  constructor(public theme: ThemeService, private dataService: DataService, private dialog: DialogService) { }
+  constructor(public theme: ThemeService, private dataService: DataService, private dialog: DialogService, private threatEngine: ThreatEngineService) { }
 
   ngOnInit(): void {
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  public onKeyDown(event: KeyboardEvent) {
+    if (event.key == 'F2') {
+      event.preventDefault();
+      this.FocusFirst();
+    }
+  }
+
+  public FocusFirst() {
+    const table = document.getElementById('proptable');
+    if (table) {
+      if (table.children.length > 0 && table.children[1].children.length > 0 && table.children[1].children[1].children.length > 0) {
+        (table.children[1].children[1].children[0] as HTMLElement).focus();
+      }
+    }
   }
 
   public GetValue(prop: IProperty) {
@@ -204,19 +225,7 @@ export class PropertiesComponent implements OnInit {
   }
 
   public AddMnemonicThreat(letter: IElementTypeThreat) {
-    if (this.selectedObject) {
-      let dia = this.dataService.Project.FindDiagramOfElement(this.selectedObject.ID);
-      let map = this.dataService.Project.CreateThreatMapping(dia.ID, false);
-      map.SetMapping('', [], this.selectedObject as DFDElement, [], null, null);
-      map.IsGenerated = false;
-      map.Name = letter.Name;
-      map.Description = letter.Description;
-      this.dialog.OpenThreatMappingDialog(map, true).subscribe(result => {
-        if (!result) {
-          this.dataService.Project.DeleteThreatMapping(map);
-        }
-      });
-    }
+    this.threatEngine.AddMnemonicThreat(this.selectedElement, letter);
   }
 
   public OpenQuestionnaire() {

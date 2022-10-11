@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { MyComponent, MyComponentStack } from '../model/component';
 import { DatabaseBase, ViewElementBase } from '../model/database';
-import { DataFlow, DFDContainerRef, DFDElement, DFDElementRef, ElementTypeIDs } from '../model/dfd-model';
+import { DataFlow, DFDContainerRef, DFDElement, DFDElementRef, ElementTypeIDs, IElementTypeThreat } from '../model/dfd-model';
 import { CtxDiagram, Diagram, DiagramTypes, HWDFDiagram } from '../model/diagram';
 import { FlowArrowPositions } from '../model/system-context';
 import { IPropertyRestriction, MappingStates, ThreatMapping, RuleTypes, ITypeIDs, IDetailRestriction, RestrictionTypes, ThreatRule, RuleGenerationTypes, PropertyComparisonTypes, ThreatQuestion, ThreatStates } from '../model/threat-model';
 import { DataService } from './data.service';
+import { DialogService } from './dialog.service';
 
 interface IEvalResult {
   target: ViewElementBase;
@@ -16,7 +17,7 @@ interface IEvalResult {
 })
 export class ThreatEngineService {
 
-  constructor(private dataService: DataService) { }
+  constructor(private dataService: DataService, private dialog: DialogService) { }
 
   /**
    * Generate threats for all diagrams and MyComponent stacks
@@ -150,6 +151,27 @@ export class ThreatEngineService {
       else x.RuleStillApplies = false;
     });
     return pf.GetThreatMappings().filter(x => x.ViewID == stack.ID);
+  }
+
+  public AddMnemonicThreat(element: DFDElement, letter: IElementTypeThreat) {
+    if (element) {
+      let dia = this.dataService.Project.FindDiagramOfElement(element.ID);
+      let map = this.dataService.Project.CreateThreatMapping(dia.ID, false);
+      map.SetMapping('', [], element, [], null, null);
+      map.IsGenerated = false;
+      map.Name = letter.Name;
+      map.Description = letter.Description;
+      if (letter.threatCategoryID) {
+        map.ThreatCategories = [this.dataService.Config.GetThreatCategory(letter.threatCategoryID)];
+      }
+      const dialogRef = this.dialog.OpenThreatMappingDialog(map, true);
+      dialogRef.subscribe(result => {
+        if (!result) {
+          this.dataService.Project.DeleteThreatMapping(map);
+        }
+      });
+      return dialogRef;
+    }
   }
 
   /**

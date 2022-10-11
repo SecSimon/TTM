@@ -310,6 +310,16 @@
               <mat-label>{{'properties.Description' | translate}}</mat-label>
               <input matInput type="text" [(ngModel)]="selectedMnemonicLetter.Description" matTooltip="{{selectedMnemonicLetter.Description}}" matTooltipShowDelay="1000">
             </mat-form-field>
+            <mat-form-field appearance="fill" style="width: 100%;">
+              <mat-label>{{'general.ThreatCategory' | translate}}</mat-label>
+              <mat-select [(value)]="selectedMnemonicLetter.threatCategoryID">
+                <mat-optgroup *ngFor="let group of GetThreatCategoryGroups()" [label]="group.Name">
+                  <mat-option *ngFor="let cat of group.ThreatCategories" [value]="cat.ID" matTooltip="{{cat.Description}}" matTooltipShowDelay="1000">
+                    {{cat.Name}}
+                  </mat-option>
+                </mat-optgroup>
+              </mat-select>
+            </mat-form-field>
           </div>
         </ng-container>
       </div>

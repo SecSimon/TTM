@@ -28,7 +28,7 @@ export class IssueTableComponent implements OnInit {
   public get selectedIssues(): IDFDIssue[] { return this._selectedIssues; }
   public set selectedIssues(val: IDFDIssue[]) {
     if (val.length == this._selectedIssues.length) {
-      if (val.every(x => this._selectedIssues.some(y => y.Element.ID == x.Element.ID && y.DiagramID == x.DiagramID && y.RuleType == x.RuleType && y.Type == x.Type))) return;
+      if (val.every(x => this._selectedIssues.some(y => y.Element?.ID == x.Element?.ID && y.DiagramID == x.DiagramID && y.RuleType == x.RuleType && y.Type == x.Type))) return;
     }
     this._selectedIssues = val;
   } 
@@ -41,7 +41,7 @@ export class IssueTableComponent implements OnInit {
   @Input() public set selectedObject(val: ViewElementBase) {
     if (val && this._selectedObject?.ID == val.ID) return;
     this._selectedObject = val;
-    this.selectedIssues = this.Issues.filter(x => x.Element.ID == val?.ID);
+    this.selectedIssues = this.Issues.filter(x => x.Element?.ID == val?.ID);
   }
   @Output() public selectedObjectChanged = new EventEmitter<ViewElementBase>();
 
@@ -127,6 +127,7 @@ export class IssueTableComponent implements OnInit {
       case DFDRuleTypes.AtLeastOneDF: return 'pages.modeling.issuetable.atLeastOneDF';
       case DFDRuleTypes.DFconnectsP: return 'pages.modeling.issuetable.DFconnectsP';
       case DFDRuleTypes.IFNotUsed: return 'pages.modeling.issuetable.IFNotUsed';
+      case DFDRuleTypes.TooManyProcesses: return 'pages.modeling.issuetable.TooManyProcesses';
       default: return entry.RuleType;
     }
   }

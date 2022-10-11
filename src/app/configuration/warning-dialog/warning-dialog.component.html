@@ -1,0 +1,9 @@
+<h2 mat-dialog-title>{{'general.Warning' | translate}}</h2>
+<mat-dialog-content>
+  <p>{{'dialog.warning.changeConfig' | translate}}</p>
+  <p><mat-checkbox color="primary" [(ngModel)]="data['consent']">{{'dialog.warning.consent' | translate}}</mat-checkbox></p>
+  <p><mat-checkbox color="primary" [(ngModel)]="data['remember']">{{'dialog.warning.rememberForToday' | translate}}</mat-checkbox></p>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button [disabled]="!data['consent']" [mat-dialog-close]="true">{{'general.OK' | translate}}</button>
+</mat-dialog-actions>

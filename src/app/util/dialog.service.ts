@@ -18,6 +18,8 @@ import { ITwoOptionDialogData, TwoOptionsDialogComponent } from '../shared/compo
 import { DataService } from './data.service';
 import { Mitigation, MitigationMapping, MitigationProcess } from '../model/mitigations';
 import { MitigationComponent } from '../configuration/mitigation/mitigation.component';
+import { SuggestedThreatsDialogComponent } from '../modeling/diagram/suggested-threats-dialog/suggested-threats-dialog.component';
+import { DFDElement } from '../model/dfd-model';
 
 export class MyBoolean {
   public Value: boolean;
@@ -30,8 +32,8 @@ export class DialogService {
 
   constructor(private dialog: MatDialog, private translate: TranslateService, private dataService: DataService) { }
 
-  public OpenTwoOptionsDialog(data: ITwoOptionDialogData, hasBackdrop = false): Observable<any> {
-    const dialogRef = this.dialog.open(TwoOptionsDialogComponent, { hasBackdrop: hasBackdrop, data: data });
+  public OpenTwoOptionsDialog(data: ITwoOptionDialogData, hasBackdrop = false, width = null): Observable<any> {
+    const dialogRef = this.dialog.open(TwoOptionsDialogComponent, { hasBackdrop: hasBackdrop, data: data, width: width });
     return dialogRef.afterClosed();
   }
 
@@ -230,6 +232,22 @@ export class DialogService {
       ]
     };
     return this.OpenTwoOptionsDialog(data);
+  }
+
+  public OpenSuggestThreatsDialog(element: DFDElement) {
+    let data: ITwoOptionDialogData = {
+      title: this.translate.instant('pages.modeling.diagram.suggestedthreats.dialogTitle'),
+      resultTrueText: this.translate.instant('general.Close'),
+      hasResultFalse: false,
+      resultFalseText: '',
+      resultTrueEnabled: () => true,
+      initalTrue: false,
+      component: SuggestedThreatsDialogComponent,
+      componentInputData: [
+        { Key: DFDElement, Value: element }
+      ]
+    };
+    return this.OpenTwoOptionsDialog(data, true, '800px');
   }
 
   public OpenProgresstrackerDialog() {

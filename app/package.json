@@ -1,7 +1,13 @@
 {
-  "name": "ttm",
-  "version": "0.0.1",
+  "name": "ttmodeler",
+  "version": "0.2.1",
+  "description": "Thing Threat Modeler for Internet of Things Devices",
+  "homepage": "https://www.simon-liebl.com/TTM",
+  "author": {
+    "name": "Simon Liebl",
+    "email": "s.liebl@oth-aw.de"
+  },
   "main": "main.js",
-  "private": true,
+  "private": false,
   "dependencies": {}
 }

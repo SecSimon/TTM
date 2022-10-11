@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, Output, EventEmitter, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter, ViewChild, HostListener } from '@angular/core';
 import { ThemeService } from '../../util/theme.service';
 
 import { v4 as uuidv4 } from 'uuid';
@@ -146,6 +146,7 @@ export abstract class CanvasBase {
   public static GridSize = 20;
 
   private mouseMode: MouseModes = MouseModes.Mouse;
+  protected copyID: string;
   protected isInitalized = false;
   protected isDarkMode = false;
   protected blockSelectionChangedAfterReceive = false;
@@ -158,6 +159,8 @@ export abstract class CanvasBase {
   public StrokeColor = 'black';
   public StrokeWidth = 2;
   public BackgroundColor = 'black';
+
+  public get CanCopy(): boolean { return this.copyID != null; }
 
   public get MouseMode(): MouseModes { return this.mouseMode; }
   public set MouseMode(val: MouseModes) {
@@ -413,6 +416,12 @@ export abstract class CanvasBase {
       this.tmpFlowLine = null;
     }
   }
+
+  public CopyElement() {
+    this.copyID = this.SelectedElement.ID;
+  }
+
+  public abstract PasteElement();
 
   public SetZoom(zoom: number, x = null, y = null) {
     if (!!x && !!y) {
@@ -1964,6 +1973,17 @@ export abstract class CanvasBase {
 export class HWDFCanvas extends CanvasBase {
   public Diagram: HWDFDiagram;
 
+  public PasteElement() {
+    if (!this.copyID) return;
+    const src = this.getViewBaseElement(this.copyID) as DFDElement;
+    const srcObj = this.getCanvasElementByID(this.copyID);
+    if (src) {
+      const copy = this.createElement({ stencilRef: { name: '', stencilID: src.Type.ID } }, srcObj.left +  srcObj.width + 10, srcObj.top);
+      copy.CopyFrom(src.Data);
+      copy.Name = StringExtension.FindUniqueName(src.Type.Name, this.getViewBaseElements().map(x => x.Name));
+    }
+  }
+
   protected initializeCanvas(cc: HTMLElement): boolean {
     if (!super.initializeCanvas(cc)) return false;
 
@@ -2468,6 +2488,17 @@ export class CtxCanvas extends CanvasBase {
     this.IsUseCaseDiagram = nodeType == 'use-case';
   }
 
+  public PasteElement() {
+    if (!this.copyID) return;
+    const src = this.getViewBaseElement(this.copyID) as ContextElement;
+    const srcObj = this.getCanvasElementByID(this.copyID);
+    if (src) {
+      const copy = this.createElement({ contextRef: { name: ContextElementTypeUtil.ToString(src.Type) } }, srcObj.left +  srcObj.width + 10, srcObj.top);
+      copy.CopyFrom(src.Data);
+      copy.Name = StringExtension.FindUniqueName(ContextElementTypeUtil.ToString(src.Type), this.getViewBaseElements().map(x => x.Name));
+    }
+  }
+
   protected initializeCanvas(cc: HTMLElement): boolean {
     if (!super.initializeCanvas(cc)) return false;
 
@@ -2571,7 +2602,7 @@ export class CtxCanvas extends CanvasBase {
       element = ContextElementRef.InstantiateRef(ref, this.dataService.Project, this.dataService.Config);
       visElement = this.createInteractor(posX, posY, element);
     }
-    else if (dragDropData.contextRef.name == 'Actor') {
+    else if (dragDropData.contextRef.name == 'Interactor') {
       element = ContextElement.Instantiate(ContextElementTypes.Interactor, this.dataService.Project, this.dataService.Config);
       visElement = this.createInteractor(posX, posY, element);
     }
@@ -3381,8 +3412,30 @@ export class DiagramComponent implements OnInit {
     }
   }
 
+  @HostListener('document:keydown', ['$event'])
+  public onKeyDown(event: KeyboardEvent) {
+    if (event.ctrlKey) {
+      if (event.key == 'c' && this.selectedElement) {
+        event.preventDefault();
+        this.Dia.CopyElement();
+      }
+      else if (event.key == 'v' && this.Dia.CanCopy) {
+        event.preventDefault();
+        this.Dia.PasteElement();
+      }
+    }
+    else if (event.key == 'Delete' && this.selectedElement) {
+      event.preventDefault();
+      this.Dia.OnDeleteElement(this.selectedElement);
+    }
+  }
+
   ngOnDestroy() {
     this.Dia.Save();
+  }
+
+  public ShowSuggestedThreats() {
+    this.dialog.OpenSuggestThreatsDialog(this.selectedElement as DFDElement);
   }
 
   public OnResized(event: ResizedEvent, container) {

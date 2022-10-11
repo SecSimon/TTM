@@ -98,6 +98,7 @@ export enum DataReferenceTypes {
   RemoveThreatCategoryFromThreatOrigin,
   RemoveThreatCategoryFromThreatRule,
   RemoveThreatCategoryFromThreatMapping,
+  RemoveThreatCategoryFromThreatMnemonic,
   RemoveThreatQuestionFromComponent,
   RemoveThreatOriginFromMitigation,
 

@@ -272,7 +272,7 @@ export class StencilPaletteComponent implements OnInit {
       hei = '350px';
       left = '-255px'
     }
-    else if (ctxRef.name == 'Actor' || ctxRef.elementType == ContextElementTypes.Interactor) {
+    else if (ctxRef.name == 'Interactor' || ctxRef.elementType == ContextElementTypes.Interactor) {
       wid = '40px';
       hei = '50px';
       left = '-45px';

@@ -1,8 +1,8 @@
 {
-  "name": "ttm",
-  "version": "0.2.0",
+  "name": "ttmodeler",
+  "version": "0.2.1",
   "description": "Thing Threat Modeler for Internet of Things Devices",
-  "homepage": "https://simon-liebl.com/TTM",
+  "homepage": "https://www.simon-liebl.com/TTM",
   "author": {
     "name": "Simon Liebl",
     "email": "s.liebl@oth-aw.de"
@@ -19,7 +19,7 @@
     "linux"
   ],
   "main": "app/main.js",
-  "private": true,
+  "private": false,
   "scripts": {
     "postinstall": "electron-builder install-app-deps",
     "ng": "ng",

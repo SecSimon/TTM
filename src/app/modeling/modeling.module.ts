@@ -23,12 +23,15 @@ import { ContainerTreeComponent } from './container-tree/container-tree.componen
 import { ChecklistComponent } from './checklist/checklist.component';
 import { MitigationTableComponent } from './mitigation-table/mitigation-table.component';
 import { MitigationMappingComponent } from './mitigation-mapping/mitigation-mapping.component';
-import { MitigationProcessComponent } from './mitigation-process/mitigation-process.component';;
+import { MitigationProcessComponent } from './mitigation-process/mitigation-process.component';
+import { SuggestedThreatsDialogComponent } from './diagram/suggested-threats-dialog/suggested-threats-dialog.component';;
 
 
 @NgModule({
-  declarations: [ModelingComponent, DiagramComponent, StencilPaletteComponent, StackComponent, 
-    PropertiesComponent, QuestionDialogComponent, ThreatTableComponent, ThreatMappingComponent, IssueTableComponent, DeviceAssetsComponent, CharScopeComponent, ObjImpactComponent, ThreatSourcesComponent, ThreatIdentificationComponent, DeviceThreatComponent, ContainerTreeComponent, ChecklistComponent, MitigationTableComponent, MitigationMappingComponent, MitigationProcessComponent],
+  declarations: [ModelingComponent, DiagramComponent, StencilPaletteComponent, StackComponent, PropertiesComponent, QuestionDialogComponent, 
+    ThreatTableComponent, ThreatMappingComponent, IssueTableComponent, DeviceAssetsComponent, CharScopeComponent, ObjImpactComponent, 
+    ThreatSourcesComponent, ThreatIdentificationComponent, DeviceThreatComponent, ContainerTreeComponent, ChecklistComponent, MitigationTableComponent, 
+    MitigationMappingComponent, MitigationProcessComponent, SuggestedThreatsDialogComponent],
   imports: [
     CommonModule,
     SharedModule,

@@ -1361,19 +1361,20 @@
         {
           "Name": "Spoofing",
           "Letter": "S",
-          "Description": "",
+          "Description": "Threat against the security goal authenticity",
           "AffectedElementTypes": [
             11,
             12,
             31,
             32,
             51
-          ]
+          ],
+          "threatCategoryID": "3bbe354c-317a-4f76-bdbb-75543b5d5aa4"
         },
         {
           "Name": "Tampering",
           "Letter": "T",
-          "Description": "",
+          "Description": "Threat against the security goal integrity",
           "AffectedElementTypes": [
             11,
             12,
@@ -1383,23 +1384,25 @@
             41,
             51,
             61
-          ]
+          ],
+          "threatCategoryID": "f0e814f3-b3d2-4357-b155-8fffd70ec42e"
         },
         {
           "Name": "Repudiation",
           "Letter": "R",
-          "Description": "",
+          "Description": "Threat against the security goal Non-repudiation",
           "AffectedElementTypes": [
             11,
             12,
             31,
             32
-          ]
+          ],
+          "threatCategoryID": "a77f314c-f74e-4340-a993-5a1a24f26db4"
         },
         {
           "Name": "Information Disclosure",
           "Letter": "I",
-          "Description": "",
+          "Description": "Threat against the security goal confidentiality",
           "AffectedElementTypes": [
             11,
             12,
@@ -1408,12 +1411,13 @@
             41,
             51,
             61
-          ]
+          ],
+          "threatCategoryID": "369640cc-1b53-4a2e-9e3b-a74c187e68e7"
         },
         {
           "Name": "Denial of Service",
           "Letter": "D",
-          "Description": "",
+          "Description": "Threat against the security goal availability",
           "AffectedElementTypes": [
             11,
             12,
@@ -1422,16 +1426,18 @@
             41,
             51,
             61
-          ]
+          ],
+          "threatCategoryID": "422b9042-212d-4467-a000-2528a2e09f8b"
         },
         {
           "Name": "Elevation of Privilege",
           "Letter": "E",
-          "Description": "",
+          "Description": "Threat against the security goal authorization",
           "AffectedElementTypes": [
             11,
             12
-          ]
+          ],
+          "threatCategoryID": "8687e614-c127-418b-8fda-536bb2f0708f"
         }
       ]
     },
@@ -1454,7 +1460,8 @@
             32,
             22,
             12
-          ]
+          ],
+          "threatCategoryID": "55379fba-d815-4e29-bd4b-9aa674ed6821"
         },
         {
           "Name": "Identifiability",
@@ -1470,7 +1477,8 @@
             32,
             22,
             12
-          ]
+          ],
+          "threatCategoryID": "5278c995-f9d9-410e-b012-2995ba30c353"
         },
         {
           "Name": "Non-Repudiation",
@@ -1484,7 +1492,8 @@
             61,
             22,
             12
-          ]
+          ],
+          "threatCategoryID": "700f5437-7d03-4bff-a0e6-50cfb82dc0e5"
         },
         {
           "Name": "Detectability",
@@ -1498,7 +1507,8 @@
             61,
             22,
             12
-          ]
+          ],
+          "threatCategoryID": "b98738a0-f79e-4b1e-86df-0e716eb61bc0"
         },
         {
           "Name": "Disclosure of Information",
@@ -1512,7 +1522,8 @@
             61,
             22,
             12
-          ]
+          ],
+          "threatCategoryID": "da86b5fc-d15d-41f7-a98f-01fe5e143651"
         },
         {
           "Name": "Unawareness",
@@ -1521,7 +1532,8 @@
           "AffectedElementTypes": [
             31,
             32
-          ]
+          ],
+          "threatCategoryID": "aead4d1d-0f64-42b4-a512-cbbc979af3ca"
         },
         {
           "Name": "Non-Compliance",
@@ -1535,7 +1547,8 @@
             61,
             22,
             12
-          ]
+          ],
+          "threatCategoryID": "2521b219-3d43-4fd8-bf96-d658eea44d01"
         }
       ]
     },
@@ -1547,17 +1560,18 @@
         {
           "Name": "Safety",
           "Letter": "S",
-          "Description": "",
+          "Description": "Threats threatening the safety of operation, humans, and machines",
           "AffectedElementTypes": [
             51,
             41,
             32
-          ]
+          ],
+          "threatCategoryID": "17a04fbd-365f-4345-97f8-88d3c7382ec1"
         },
         {
           "Name": "Privacy",
           "Letter": "P",
-          "Description": "",
+          "Description": "Threats threatening the privacy",
           "AffectedElementTypes": [
             51,
             11,
@@ -1565,7 +1579,8 @@
             22,
             12,
             41
-          ]
+          ],
+          "threatCategoryID": "7bbfe5d3-8a91-4210-99ab-79f670715e61"
         }
       ]
     }
@@ -2866,6 +2881,29 @@
         "422b9042-212d-4467-a000-2528a2e09f8b",
         "8687e614-c127-418b-8fda-536bb2f0708f"
       ]
+    },
+    {
+      "ID": "8bd271b7-2f94-4d3d-baae-d59d2b1fa78c",
+      "Name": "LINDDUN",
+      "Description": "",
+      "threatCategorieIDs": [
+        "55379fba-d815-4e29-bd4b-9aa674ed6821",
+        "5278c995-f9d9-410e-b012-2995ba30c353",
+        "700f5437-7d03-4bff-a0e6-50cfb82dc0e5",
+        "b98738a0-f79e-4b1e-86df-0e716eb61bc0",
+        "da86b5fc-d15d-41f7-a98f-01fe5e143651",
+        "aead4d1d-0f64-42b4-a512-cbbc979af3ca",
+        "2521b219-3d43-4fd8-bf96-d658eea44d01"
+      ]
+    },
+    {
+      "ID": "dd59986c-693d-43ae-8c4f-2b2bb76a60ec",
+      "Name": "Safety & Privacy",
+      "Description": "",
+      "threatCategorieIDs": [
+        "17a04fbd-365f-4345-97f8-88d3c7382ec1",
+        "7bbfe5d3-8a91-4210-99ab-79f670715e61"
+      ]
     }
   ],
   "threatCategories": [
@@ -3324,37 +3362,49 @@
       "ID": "3bbe354c-317a-4f76-bdbb-75543b5d5aa4",
       "Name": "Spoofing",
       "Description": "",
-      "ImpactCats": []
+      "ImpactCats": [
+        5
+      ]
     },
     {
       "ID": "f0e814f3-b3d2-4357-b155-8fffd70ec42e",
       "Name": "Tampering",
       "Description": "",
-      "ImpactCats": []
+      "ImpactCats": [
+        2
+      ]
     },
     {
       "ID": "a77f314c-f74e-4340-a993-5a1a24f26db4",
       "Name": "Repudiation",
       "Description": "",
-      "ImpactCats": []
+      "ImpactCats": [
+        6
+      ]
     },
     {
       "ID": "369640cc-1b53-4a2e-9e3b-a74c187e68e7",
       "Name": "Information disclosure",
       "Description": "",
-      "ImpactCats": []
+      "ImpactCats": [
+        1
+      ]
     },
     {
       "ID": "422b9042-212d-4467-a000-2528a2e09f8b",
       "Name": "Denial of Service",
       "Description": "",
-      "ImpactCats": []
+      "ImpactCats": [
+        3
+      ]
     },
     {
       "ID": "8687e614-c127-418b-8fda-536bb2f0708f",
       "Name": "Elevation of Privileges",
       "Description": "",
-      "ImpactCats": []
+      "ImpactCats": [
+        4
+      ]
     },
     {
       "ID": "c0bd6e2f-9784-4c11-9aee-115a966e0a4d",
@@ -3368,6 +3418,79 @@
         5,
         6,
         9,
+        10
+      ]
+    },
+    {
+      "ID": "55379fba-d815-4e29-bd4b-9aa674ed6821",
+      "Name": "Linkability",
+      "Description": "An adversary is able to link two items of interest without knowing the identity of the data subject(s) involved.",
+      "ImpactCats": [
+        10
+      ]
+    },
+    {
+      "ID": "5278c995-f9d9-410e-b012-2995ba30c353",
+      "Name": "Identifiability",
+      "Description": "An adversary is able to identify a data subject from a set of data subjects through an item of interest.  ​",
+      "ImpactCats": [
+        10
+      ]
+    },
+    {
+      "ID": "700f5437-7d03-4bff-a0e6-50cfb82dc0e5",
+      "Name": "Non-Repudiation",
+      "Description": "The data subject is unable to deny a claim (e.g., having performed an action, or sent a request).",
+      "ImpactCats": [
+        10
+      ]
+    },
+    {
+      "ID": "b98738a0-f79e-4b1e-86df-0e716eb61bc0",
+      "Name": "Detectability",
+      "Description": "An adversary is able to distinguish whether an item of interest about a data subject exists or not, regardless of being able to read the contents itself.",
+      "ImpactCats": [
+        10
+      ]
+    },
+    {
+      "ID": "da86b5fc-d15d-41f7-a98f-01fe5e143651",
+      "Name": "Disclosure of Information",
+      "Description": "An adversary is able to learn the content of an item of interest about a data subject.",
+      "ImpactCats": [
+        10,
+        1
+      ]
+    },
+    {
+      "ID": "aead4d1d-0f64-42b4-a512-cbbc979af3ca",
+      "Name": "Unawareness",
+      "Description": "The data subject is unaware of the collection, processing, storage, or sharing activities (and corresponding purposes) of the data subject’s personal data.",
+      "ImpactCats": [
+        10
+      ]
+    },
+    {
+      "ID": "2521b219-3d43-4fd8-bf96-d658eea44d01",
+      "Name": "Non-Compliance",
+      "Description": "The processing, storage, or handling of personal data is not compliant with legislation, regulation, and/or policy.",
+      "ImpactCats": [
+        10
+      ]
+    },
+    {
+      "ID": "17a04fbd-365f-4345-97f8-88d3c7382ec1",
+      "Name": "Safety",
+      "Description": "Threats threatening the safety of operation, humans, and machines",
+      "ImpactCats": [
+        9
+      ]
+    },
+    {
+      "ID": "7bbfe5d3-8a91-4210-99ab-79f670715e61",
+      "Name": "Privacy",
+      "Description": "Threats threatening the privacy",
+      "ImpactCats": [
         10
       ]
     }

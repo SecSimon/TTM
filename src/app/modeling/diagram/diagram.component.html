@@ -93,6 +93,9 @@
     <button mat-button class="toolBtn" (click)="Dia.SelectNextUninitObject()" [disabled]="Dia.ObjectCountToInit.length == 0" matTooltip="{{'pages.modeling.diagram.findUninitObject' | translate}}" matTooltipShowDelay="1000">
       <mat-icon style="z-index: 1;" [matBadge]="Dia.ObjectCountToInit" matBadgeColor="primary" matBadgeSize="small" [matBadgeHidden]="Dia.ObjectCountToInit.length == 0" matBadgePosition="below">update</mat-icon>
     </button>
+    <button mat-button class="toolBtn" [disabled]="!selectedElement" (click)="ShowSuggestedThreats()" matTooltip="{{'pages.modeling.diagram.suggestedThreats' | translate}}" matTooltipShowDelay="1000">
+      <mat-icon>flash_auto</mat-icon>
+    </button>
     <button mat-button class="toolBtn" [disabled]="!selectedElement" (click)="Dia.AddThreat()" matTooltip="{{'pages.modeling.diagram.addThreat' | translate}}" matTooltipShowDelay="1000">
       <mat-icon>flash_on</mat-icon>
     </button>
@@ -132,6 +135,14 @@
     <ng-template matMenuContent let-item="item">
       <ng-container *ngIf="selectedElement">
         <span *ngIf="item" style="margin-left: 20px; margin-right: 20px;">{{item.GetProperty('Name')}}</span> 
+        <button mat-menu-item (click)="Dia.CopyElement()">
+          <mat-icon>content_copy</mat-icon>
+          <span>{{'general.Copy' | translate}}</span>
+        </button>
+        <button mat-menu-item [disabled]="!Dia.CanCopy" (click)="Dia.PasteElement()">
+          <mat-icon>content_paste</mat-icon>
+          <span>{{'general.Paste' | translate}}</span>
+        </button>
         <button mat-menu-item (click)="Dia.OnDeleteElement(item)">
           <mat-icon>delete</mat-icon>
           <span>{{'pages.modeling.diagram.deleteElement' | translate}}</span>

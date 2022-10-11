@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, HostBinding, KeyValueDiffer, KeyValueDiffers, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostBinding, HostListener, KeyValueDiffer, KeyValueDiffers, ViewChild } from '@angular/core';
 import { ElectronService } from './core/services';
 import { TranslateService } from '@ngx-translate/core';
 import { APP_CONFIG } from '../environments/environment';
@@ -40,6 +40,15 @@ export class AppComponent {
     private dataService: DataService, private kvDiffers: KeyValueDiffers
   ) {
     this.translate.setDefaultLang('en');
+  }
+
+  @HostListener('window:beforeunload', ['$event'])
+  beforeunloadHandler($event) {
+    if (this.dataService.Project?.FileChanged || this.dataService.Config?.FileChanged) {
+      $event.preventDefault();
+      $event.returnValue = "false";
+      return false;
+    }
   }
 
   ngOnInit() {    

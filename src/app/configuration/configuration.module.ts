@@ -21,9 +21,10 @@ import { MitigationComponent } from './mitigation/mitigation.component';
 import { ChecklistsComponent } from './checklists/checklists.component';
 import { ThreatSourcesComponent } from './threat-sources/threat-sources.component';
 import { ThreatActorComponent } from './threat-actor/threat-actor.component';
+import { WarningDialogComponent } from './warning-dialog/warning-dialog.component';
 
 @NgModule({
-  declarations: [ConfigurationComponent, StencilsComponent, ThreatCategoriesComponent, ComponentsComponent, ThreatLibraryComponent, RulesComponent, ThreatRuleComponent, ThreatOriginComponent, ThreatQuestionComponent, AssetsComponent, MyDataComponent, ThreatCategoryComponent, MitigationsComponent, MitigationComponent, ChecklistsComponent, ThreatSourcesComponent, ThreatActorComponent],
+  declarations: [ConfigurationComponent, StencilsComponent, ThreatCategoriesComponent, ComponentsComponent, ThreatLibraryComponent, RulesComponent, ThreatRuleComponent, ThreatOriginComponent, ThreatQuestionComponent, AssetsComponent, MyDataComponent, ThreatCategoryComponent, MitigationsComponent, MitigationComponent, ChecklistsComponent, ThreatSourcesComponent, ThreatActorComponent, WarningDialogComponent],
   imports: [
     CommonModule,
     SharedModule,

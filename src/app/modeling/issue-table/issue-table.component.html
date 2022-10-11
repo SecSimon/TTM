@@ -10,7 +10,7 @@
     </ng-container>
     <ng-container matColumnDef="element">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'general.Element' | translate}} </th>
-      <td mat-cell *matCellDef="let entry"> {{entry.Element.Name}} </td>
+      <td mat-cell *matCellDef="let entry"> {{entry.Element?.Name}} </td>
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>

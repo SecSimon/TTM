@@ -6,7 +6,7 @@ import { ConfigFile } from './config-file';
 import { DatabaseBase, DataReferenceTypes, IContainer, IDataReferences, IElementType, IKeyValue, IProperty, PropertyEditTypes, ViewElementBase } from './database';
 import { ProjectFile } from './project-file';
 import { FlowArrowPositions, FlowLineTypes, FlowTypes, ICanvasFlow } from './system-context';
-import { RuleTypes, ThreatMapping, ThreatRule } from './threat-model';
+import { RuleTypes, ThreatCategory, ThreatMapping, ThreatRule } from './threat-model';
 
 export enum ElementTypeIDs {
   None = 0,
@@ -232,6 +232,7 @@ export interface IElementTypeThreat {
   Letter: string;
   Description: string;
   AffectedElementTypes: ElementTypeIDs[];
+  threatCategoryID: string;
 }
 
 export class StencilThreatMnemonic extends DatabaseBase {

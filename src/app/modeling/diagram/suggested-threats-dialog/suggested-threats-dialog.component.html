@@ -1,0 +1,29 @@
+<mat-accordion>
+  <mat-expansion-panel *ngFor="let mnemonic of mnemonicArray; index as index; first as isFirst; last as isLast" [expanded]="step === index" (opened)="SetStep(index)">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        {{mnemonic[0].Name}} ({{mnemonic[1].length}})
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <table>
+      <tr *ngFor="let letter of mnemonic[1]">
+        <td>
+          <mat-icon *ngIf="HasThreat(letter)">check_circle_outline</mat-icon>
+        </td>
+        <td style="width: 100%;">
+          <span style="font-size: large;">{{letter.Name}}</span><br/>{{letter.Description}}
+        </td>
+        <td>
+          <button mat-raised-button (click)="AddThreat(letter)">{{'general.Add' | translate}}</button>
+        </td>
+      </tr>
+    </table>
+
+    <mat-action-row>
+      <button mat-button *ngIf="!isFirst" (click)="PrevStep()">Previous</button>
+      <button mat-button *ngIf="isLast" (click)="NextStep()">End</button>
+      <button mat-button *ngIf="!isLast" (click)="NextStep()">Next</button>
+    </mat-action-row>
+  </mat-expansion-panel>
+</mat-accordion>

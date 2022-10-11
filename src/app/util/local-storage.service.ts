@@ -6,6 +6,7 @@ export enum LocStorageKeys {
   AUTH_LAST_CODE              = "auth_last_code",
   CURRENT_VERSION             = "current_verison",
   DARK_MODE                   = "dark_mode",
+  DIALOG_WARNING_CONSENT      = "dialog_warning_consent",
   GH_ACCOUNT_NAME             = "github_account_name",
   GH_USER_NAME                = "github_user_name",
   GH_USER_URL                 = "github_user_url",

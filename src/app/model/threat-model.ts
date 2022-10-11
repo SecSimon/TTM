@@ -5,7 +5,7 @@ import { MyComponent, MyComponentType } from "./component";
 import { ConfigFile } from "./config-file";
 import { DatabaseBase, DataReferenceTypes, IDataReferences, IKeyValue, IProperty, PropertyEditTypes, ViewElementBase } from "./database";
 import { DeviceThreat } from "./device-threat";
-import { ElementTypeIDs, ElementTypeUtil, StencilType } from "./dfd-model";
+import { ElementTypeIDs, ElementTypeUtil, StencilThreatMnemonic, StencilType } from "./dfd-model";
 import { Mitigation, MitigationMapping } from "./mitigations";
 import { ProjectFile } from "./project-file";
 
@@ -63,9 +63,6 @@ export class ThreatCategory extends DatabaseBase {
 
   public get ImpactCats(): ImpactCategories[] { return this.Data['ImpactCats']; }
 
-  public get Impact(): string { return this.Data['Impact']; }
-  public set Impact(val: string) { this.Data['Impact'] = val; }
-
   constructor(data, cf: ConfigFile) {
     super(data);
 
@@ -81,6 +78,9 @@ export class ThreatCategory extends DatabaseBase {
     });
     cf.GetThreatRules().filter(x => x.ThreatCategories?.includes(this)).forEach(x => {
       res.push({ Type: DataReferenceTypes.RemoveThreatCategoryFromThreatRule, Param: x });
+    });
+    cf.GetStencilThreatMnemonics().filter(x => x.Letters.some(y => y.threatCategoryID == this.ID)).forEach(x => {
+      res.push({ Type: DataReferenceTypes.RemoveThreatCategoryFromThreatMnemonic, Param: x });
     });
     pf?.GetThreatMappings().filter(x => x.ThreatCategories?.includes(this)).forEach(x => {
       res.push({ Type: DataReferenceTypes.RemoveThreatCategoryFromThreatMapping, Param: x });
@@ -106,6 +106,11 @@ export class ThreatCategory extends DatabaseBase {
       else if (ref.Type == DataReferenceTypes.RemoveThreatCategoryFromThreatRule) {
         let cats = (ref.Param as ThreatRule).Mapping.ThreatCategoryIDs;
         cats.splice(cats.indexOf(ref.Param.ID), 1);
+      }
+      else if (ref.Type == DataReferenceTypes.RemoveThreatCategoryFromThreatMnemonic) {
+        (ref.Param as StencilThreatMnemonic).Letters.forEach(x => {
+          if (x.threatCategoryID == this.ID) x.threatCategoryID = null;
+        });
       }
     });
   }
