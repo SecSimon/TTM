@@ -24,7 +24,7 @@ export class MitigationMappingComponent implements OnInit {
 
   @Output() public mitigationProcessChange = new EventEmitter();
 
-  constructor(@Optional() mapping: MitigationMapping, @Optional() isNew: MyBoolean, @Optional() elements: Array<ViewElementBase>, public theme: ThemeService, private dataService: DataService, private dialog: DialogService) {
+  constructor(@Optional() mapping: MitigationMapping, @Optional() isNew: MyBoolean, @Optional() elements: Array<ViewElementBase>, public theme: ThemeService, public dataService: DataService, private dialog: DialogService) {
     this.mitigationMapping = mapping;
     if (isNew) this.isManualEntry = isNew.Value;
     if (elements) this.elements = elements;

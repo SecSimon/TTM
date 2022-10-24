@@ -17,7 +17,7 @@ interface IMappingDetails {
 })
 export class MitigationEngineService {
 
-  constructor(private dataService: DataService) { }
+  constructor(public dataService: DataService) { }
 
   public GenerateDiagramMitigations(diagram: Diagram): MitigationMapping[] {
     return this.generateMitigations(diagram.ID);

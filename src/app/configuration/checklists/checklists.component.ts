@@ -44,7 +44,7 @@ export class ChecklistsComponent extends NavTreeBase implements OnInit {
   }
   public selectedRequirementType: RequirementType;
 
-  constructor(public theme: ThemeService, private dataService: DataService, private dialog: DialogService, 
+  constructor(public theme: ThemeService, public dataService: DataService, private dialog: DialogService, 
     private translate: TranslateService, private locStorage: LocalStorageService) { 
     super();
     dataService.ConfigChanged.subscribe(x => this.createNodes());

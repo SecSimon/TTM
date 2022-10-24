@@ -45,7 +45,7 @@ export class PropertiesComponent implements OnInit {
   @Output()
   public openDiagram = new EventEmitter<Diagram>();
 
-  constructor(public theme: ThemeService, private dataService: DataService, private dialog: DialogService, private threatEngine: ThreatEngineService) { }
+  constructor(public theme: ThemeService, public dataService: DataService, private dialog: DialogService, private threatEngine: ThreatEngineService) { }
 
   ngOnInit(): void {
   }
@@ -90,7 +90,7 @@ export class PropertiesComponent implements OnInit {
   }
 
   public GetStencilType() {
-    if (this.selectedObject instanceof DFDElement) return this.selectedObject.Type.ID;
+    if (this.selectedObject instanceof DFDElement) return this.selectedObject.GetProperty('Type').ID;
     return null;
   }
 
@@ -131,7 +131,7 @@ export class PropertiesComponent implements OnInit {
 
   public GetAvailablePhysicalElements(element: DatabaseBase) {
     if (element instanceof DataFlowEntity) {
-      return this.dataService.Project.GetDFDElements().filter(x => x.IsPhysical && x.Type.ElementTypeID == element.Type.ElementTypeID+1);
+      return this.dataService.Project.GetDFDElements().filter(x => x.IsPhysical && x.GetProperty('Type').ElementTypeID == element.GetProperty('Type').ElementTypeID+1);
     }
     return [];
   }
@@ -141,7 +141,7 @@ export class PropertiesComponent implements OnInit {
   }
 
   public GetAvailableInterfaces(dev: Device) {
-    return dev.HardwareDiagram.Elements.GetChildrenFlat().filter(x => x.Type.ElementTypeID == ElementTypeIDs.Interface);
+    return dev.HardwareDiagram.Elements.GetChildrenFlat().filter(x => x.GetProperty('Type').ElementTypeID == ElementTypeIDs.Interface);
   }
 
   public SetInterface(prop: IProperty, elementID: string) {
@@ -149,7 +149,7 @@ export class PropertiesComponent implements OnInit {
   }
 
   public GetAvailableTypes(element: DatabaseBase): StencilType[] {
-    if (element instanceof DFDElement) return this.dataService.Config.GetStencilTypes().filter(x => x.ElementTypeID == element.Type.ElementTypeID);
+    if (element instanceof DFDElement) return this.dataService.Config.GetStencilTypes().filter(x => x.ElementTypeID == element.GetProperty('Type').ElementTypeID);
     return [];
   }
 

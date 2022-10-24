@@ -13,7 +13,7 @@ export class DeviceThreatComponent implements OnInit {
   @Input() public deviceThreat: DeviceThreat;
   @Input() public showThreatCat = false;
 
-  constructor(private dataService: DataService) { }
+  constructor(public dataService: DataService) { }
 
   ngOnInit(): void {
   }

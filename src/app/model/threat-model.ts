@@ -515,7 +515,7 @@ export class ThreatQuestion extends DatabaseBase {
   }
   public get Property(): IProperty { return this.ComponentType.Properties.find(x => x.ID == this.Data['propertyID']); }
   public set Property(val: IProperty) { 
-    this.Data['id'] = val?.ID; 
+    this.Data['propertyID'] = val?.ID; 
     if (val && this.OptionType == OptionTypes.YesNo) {
       OptionTypesUtil.GetOptions(this.OptionType).forEach(x => {
         this.ChangesPerOption[x.Key] = {};
@@ -711,7 +711,7 @@ export class RestrictionUtil {
 
       res += wrap(stencil.Name);
       if (r.RestType == RestrictionTypes.Property) {
-        let prop = stencil.Properties.find(x => x.ID == r.PropertyRest.ID);
+        let prop = dataService.Config.GetAllStencilProperties(stencil).find(x => x.ID == r.PropertyRest.ID);
         res += '.' + wrap((prop && prop.DisplayName) ? prop.DisplayName : r.PropertyRest.ID); 
         res += spaces(r.PropertyRest.ComparisonType);
         if (prop && prop.Type == PropertyEditTypes.LowMediumHighSelect) res += wrap(translate.instant(LowMediumHighNumberUtil.ToString(r.PropertyRest.Value)));
@@ -965,7 +965,7 @@ export class ThreatRule extends DatabaseBase {
     if (val) this.Severity = val.Severity;
   }
   public get ThreatCategories(): ThreatCategory[] { return this.config.GetThreatCategories().filter(x => this.Mapping.ThreatCategoryIDs?.includes(x.ID)); }
-  public set ThreatCategories(val: ThreatCategory[]) { this.Mapping.ThreatCategoryIDs = val.map(x => x.ID); }
+  public set ThreatCategories(val: ThreatCategory[]) { this.Mapping.ThreatCategoryIDs = val?.map(x => x.ID); }
   public get Severity(): ThreatSeverities { return this.Data['Severity']; }
   public set Severity(val: ThreatSeverities) { this.Data['Severity'] = val; }
 

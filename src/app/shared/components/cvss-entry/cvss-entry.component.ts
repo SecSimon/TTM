@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { ICVSSEntry } from '../../../model/threat-model';
 
 import Cvss from 'cvss-calculator';
+import { DataService } from '../../../util/data.service';
 
 @Component({
   selector: 'app-cvss-entry',
@@ -16,7 +17,7 @@ export class CvssEntryComponent implements OnInit {
   }
   public set Score(val: number) { this.entry.Score = val; }
 
-  constructor() { }
+  constructor(public dataService: DataService) { }
 
   ngOnInit(): void {
     if (!this.Score) this.CalcScore();

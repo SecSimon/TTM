@@ -6,7 +6,7 @@
 
     <mat-drawer-content>
       <div class="title">
-        <h1><img src='https://github.com/SecSimon/TTM/blob/main/src/assets/icons/favicon.192x192.png?raw=true' style="width: 50px;" alt='logo'> {{'pages.home.title' | translate}}</h1>
+        <h1><img src='./assets/icons/favicon.192x192.png?raw=true' style="width: 50px;" alt='logo'> {{'pages.home.title' | translate}}</h1>
         <h3>{{'pages.home.subtitle' | translate}}</h3>
       </div>
       <div class="row">
@@ -44,6 +44,7 @@
                       <mat-icon matBadge="C" matBadgeOverlap="true" matBadgeColor="primary" matBadgeSize="small" matBadgePosition="below">file_upload</mat-icon>
                       {{'pages.home.menu.importConfig' | translate}}
                     </button>
+                    <button mat-menu-item (click)="dataService.ExchangeConfigWithDefault()">Default Configuration</button>
                     <button mat-menu-item *ngFor="let conf of dataService.AvailableGHConfigs" (click)="dataService.ExchangeConfig(conf)">{{conf.name}}</button>
                   </mat-menu>
                   <button mat-menu-item [disabled]="!dataService.Project" (click)="dataService.OnCloseProject()">

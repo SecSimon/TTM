@@ -23,7 +23,7 @@ export class AssetsComponent extends NavTreeBase implements OnInit {
   public get selectedAssetGroup(): AssetGroup { return (this.selectedNode?.data instanceof AssetGroup ? this.selectedNode.data : null); }
   public selectedMyData: MyData = null;
 
-  constructor(public theme: ThemeService, private dataService: DataService, private dialog: DialogService) {
+  constructor(public theme: ThemeService, public dataService: DataService, private dialog: DialogService) {
     super();
     dataService.ConfigChanged.subscribe(x => this.createNodes());
   }

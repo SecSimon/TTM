@@ -3,7 +3,7 @@
   <ng-container *ngIf="selectedChecklistType">
     <mat-form-field appearance="fill" style="width: 100%;">
       <mat-label>{{ 'properties.Description' | translate }}</mat-label>
-      <textarea matInput [(ngModel)]="selectedChecklistType.Description"></textarea>
+      <textarea matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="selectedChecklistType.Description"></textarea>
     </mat-form-field>
     
     <mat-tab-group style="height: 100%;" [selectedIndex]="GetSelectedTabIndex()" (selectedIndexChange)="SetSelectedTabIndex($event)">
@@ -28,7 +28,7 @@
                   <div style="margin: 10px 0 10px 10px;">
                     <mat-form-field appearance="fill" class="property-form-field">
                       <mat-label>{{'general.Name' | translate}}</mat-label>
-                      <input matInput type="text" [(ngModel)]="selectedLevel.Name" matTooltip="{{selectedLevel.Name}}" matTooltipShowDelay="1000">
+                      <input matInput type="text" [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="selectedLevel.Name" matTooltip="{{selectedLevel.Name}}" matTooltipShowDelay="1000">
                       <button *ngIf="selectedLevel.Name" matSuffix mat-icon-button (click)="selectedLevel.Name=''" matTooltip="{{'general.Clear' | translate}}" matTooltipShowDelay="1000">
                         <mat-icon>close</mat-icon>
                       </button>
@@ -36,12 +36,12 @@
                     <br/>
                     <mat-form-field appearance="fill" class="property-form-field">
                       <mat-label>{{'properties.Abbr' | translate}}</mat-label>
-                      <input matInput type="text" [(ngModel)]="selectedLevel.Abbr" matTooltip="{{selectedLevel.Abbr}}" matTooltipShowDelay="1000">
+                      <input matInput type="text" [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="selectedLevel.Abbr" matTooltip="{{selectedLevel.Abbr}}" matTooltipShowDelay="1000">
                     </mat-form-field>
                     <br/>
                     <mat-form-field appearance="fill" style="width: 100%;">
                       <mat-label>{{'properties.Description' | translate}}</mat-label>
-                      <input matInput type="text" [(ngModel)]="selectedLevel.Description" matTooltip="{{selectedLevel.Description}}" matTooltipShowDelay="1000">
+                      <input matInput type="text" [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="selectedLevel.Description" matTooltip="{{selectedLevel.Description}}" matTooltipShowDelay="1000">
                     </mat-form-field>
                   </div>
                 </ng-container>
@@ -60,7 +60,7 @@
                 <h2>{{selectedRequirementNode.name()}}</h2>
                 <mat-form-field appearance="fill" style="width: 100%;">
                   <mat-label>{{ 'properties.Description' | translate }}</mat-label>
-                  <textarea matInput [(ngModel)]="selectedRequirementType.Description"></textarea>
+                  <textarea matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="selectedRequirementType.Description"></textarea>
                 </mat-form-field>
                 <table>
                   <tr>

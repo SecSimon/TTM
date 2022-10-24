@@ -3,14 +3,14 @@
   <ng-container *ngIf="selectedThreatRuleGroup">
     <mat-form-field appearance="fill" style="width: 100%;">
       <mat-label>{{ 'properties.Description' | translate }}</mat-label>
-      <textarea matInput [(ngModel)]="selectedThreatRuleGroup.Description"></textarea>
+      <textarea matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="selectedThreatRuleGroup.Description"></textarea>
     </mat-form-field>
   </ng-container>
   <!--
   <ng-container *ngIf="selectedThreatRule">
     <mat-form-field appearance="fill" style="width: 100%;">
       <mat-label>{{ 'properties.Description' | translate }}</mat-label>
-      <textarea matInput [(ngModel)]="selectedThreatRule.Description"></textarea>
+      <textarea matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="selectedThreatRule.Description"></textarea>
     </mat-form-field>
   </ng-container>
   -->

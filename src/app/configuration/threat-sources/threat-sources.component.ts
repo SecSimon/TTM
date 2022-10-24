@@ -17,7 +17,7 @@ export class ThreatSourcesComponent extends NavTreeBase implements OnInit {
 
   public get selectedThreatActor(): ThreatActor { return (this.selectedNode?.data instanceof ThreatActor ? this.selectedNode.data : null); }
 
-  constructor(public theme: ThemeService, private dataService: DataService, private dialog: DialogService, private translate: TranslateService) {
+  constructor(public theme: ThemeService, public dataService: DataService, private dialog: DialogService, private translate: TranslateService) {
     super();
   }
 

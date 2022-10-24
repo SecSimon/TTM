@@ -34,7 +34,7 @@ export class QuestionDialogComponent implements OnInit {
     return this.selectedComponent != this.components[0];
   }
 
-  constructor(public dialogRef: MatDialogRef<QuestionDialogComponent>, @Inject(MAT_DIALOG_DATA) public data, private dataService: DataService, private dialog: DialogService) { 
+  constructor(public dialogRef: MatDialogRef<QuestionDialogComponent>, @Inject(MAT_DIALOG_DATA) public data, public dataService: DataService, private dialog: DialogService) { 
   }
 
   ngOnInit(): void {

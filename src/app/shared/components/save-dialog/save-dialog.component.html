@@ -35,7 +35,7 @@
     </mat-form-field>
     <mat-form-field>
       <mat-label>Name</mat-label>
-      <input matInput [formControl]="nameFormControl" [errorStateMatcher]="matcher">
+      <input matInput [spellcheck]="dataService.HasSpellCheck" [formControl]="nameFormControl" [errorStateMatcher]="matcher">
       <span matSuffix>.ttmc</span>
       <mat-error *ngIf="nameFormControl.hasError('required')">
         Name is <strong>required</strong>
@@ -48,7 +48,7 @@
 
   <mat-form-field class="field-width">
     <mat-label>{{'dialog.save.CommitMsg' | translate}}</mat-label>
-    <input matInput class="field-width" type="text" placeholder="Update" [(ngModel)]="data['msg']" (keydown.enter)="dialogRef.close(true)">
+    <input matInput [spellcheck]="dataService.HasSpellCheck" class="field-width" type="text" placeholder="Update" [(ngModel)]="data['msg']" (keydown.enter)="dialogRef.close(true)">
   </mat-form-field>
   <br/>
   <mat-checkbox *ngIf="data['removePW'] != null" [(ngModel)]="data['removePW']" color="primary" style="padding-bottom: 10px;">{{'dialog.save.removePW' | translate}}</mat-checkbox>

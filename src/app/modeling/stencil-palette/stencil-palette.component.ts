@@ -183,7 +183,7 @@ export class StencilPaletteComponent implements OnInit {
 
   private addContextElementReferences(type: ContextElementTypes): IContextRef[] {
     let res: IContextRef[] = [];
-    this.dataService.Project.GetContextElements().filter(x => !(x instanceof ContextElementRef || x instanceof SystemContextContainerRef) && x.Type == type && this.dataService.Project.FindDiagramOfElement(x.ID)?.ID != this.selectedNode?.data?.ID).forEach(ele => {
+    this.dataService.Project.GetContextElements().filter(x => !(x instanceof ContextElementRef || x instanceof SystemContextContainerRef) && x.GetProperty('Type') == type && this.dataService.Project.FindDiagramOfElement(x.ID)?.ID != this.selectedNode?.data?.ID).forEach(ele => {
       res.push({ elementID: ele.ID, elementType: type, name: ele.Name });
     });
 
@@ -192,7 +192,7 @@ export class StencilPaletteComponent implements OnInit {
 
   private addDFDElementReferences(elementType: ElementTypeIDs): IStencilRef[] {
     let res: IStencilRef[] = [];
-    this.dataService.Project.GetDFDElements().filter(x => !(x instanceof DFDElementRef || x instanceof DFDContainerRef) && x.Type?.ElementTypeID == elementType && this.dataService.Project.FindDiagramOfElement(x.ID)?.ID != this.selectedNode?.data?.ID).forEach(ele => {
+    this.dataService.Project.GetDFDElements().filter(x => !(x instanceof DFDElementRef || x instanceof DFDContainerRef) && x.GetProperty('Type')?.ElementTypeID == elementType && this.dataService.Project.FindDiagramOfElement(x.ID)?.ID != this.selectedNode?.data?.ID).forEach(ele => {
       res.push({ elementID: ele.ID, name: ele.Name });
     });
 
@@ -209,7 +209,7 @@ export class StencilPaletteComponent implements OnInit {
 
     let stencil: StencilType = null;
     if (stencilRef.stencilID) stencil = this.dataService.Config.GetStencilType(stencilRef.stencilID);
-    else if (stencilRef.elementID) stencil = this.dataService.Project.GetDFDElement(stencilRef.elementID).Type;
+    else if (stencilRef.elementID) stencil = this.dataService.Project.GetDFDElement(stencilRef.elementID).GetProperty('Type');
     else if (stencilRef.templateID) subdiv.classList.add('trust-area');
     
     if (stencil) {

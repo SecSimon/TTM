@@ -641,6 +641,7 @@ export class ModelingComponent extends SideNavBase implements OnInit {
       icon: MobileApp.Icon,
       iconAlignLeft: false,
       canSelect: false,
+      isExpanded: false,
       canAdd: true,
       onAdd: () => {
         this.dataService.Project.CreateMobileApp();

@@ -169,6 +169,10 @@ export class MyComponent extends ViewElementBase {
 
   public static FromJSON(data, pf: ProjectFile, cf: ConfigFile): MyComponent {
     let type = cf.GetMyComponentType(data['typeID']);
+    if (type == null) {
+      type = cf.CreateMyComponentType(cf.GetMyComponentTypeGroups(MyComponentTypeIDs.Software)[0]);
+      type.Name = data['Name'] = data['Name'] +  ' - ERROR - Missing type';
+    }
     return new MyComponent(data, type, pf, cf);
   }
 

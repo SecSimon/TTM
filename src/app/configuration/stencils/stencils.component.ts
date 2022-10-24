@@ -38,7 +38,8 @@ export class StencilsComponent extends NavTreeBase implements OnInit {
 
   public get typeThreats(): ThreatRule[] {
     if (!this.selectedType) return null;
-    return this.dataService.Config.GetThreatRules().filter(x => x.StencilRestriction?.stencilTypeID == this.selectedType.ID);
+    if (this.isStencilType) return this.dataService.Config.GetThreatRules().filter(x => x.StencilRestriction?.stencilTypeID == this.selectedType.ID);
+    if (this.isProtocol) return this.dataService.Config.GetThreatRules().filter(x => x.ProtocolRestriction?.protocolID == this.selectedProtocol.ID);
   }
   public get elementTypeThreats(): ThreatRule[] {
     if (!this.selectedElementType) return null;
@@ -64,7 +65,7 @@ export class StencilsComponent extends NavTreeBase implements OnInit {
   public menuTopLeftPosition =  {x: '0', y: '0'};
   @ViewChild('ctxMenu') public matMenuTrigger: MatMenuTrigger; 
 
-  constructor(public theme: ThemeService, private dataService: DataService, private dialog: DialogService, private locStorageService: LocalStorageService) { 
+  constructor(public theme: ThemeService, public dataService: DataService, private dialog: DialogService, private locStorageService: LocalStorageService) { 
     super();
     dataService.ConfigChanged.subscribe(x => this.createNodes());
   }
@@ -163,8 +164,16 @@ export class StencilsComponent extends NavTreeBase implements OnInit {
   }
 
   public AddThreat() {
-    let map = this.dataService.Config.CreateThreatRule(this.dataService.Config.StencilThreatRuleGroups, RuleTypes.Stencil);
-    map.StencilRestriction.stencilTypeID = this.selectedType.ID;
+    let map: ThreatRule;
+    if (this.isStencilType) {
+      map = this.dataService.Config.CreateThreatRule(this.dataService.Config.StencilThreatRuleGroups, RuleTypes.Stencil);
+      map.StencilRestriction.stencilTypeID = this.selectedType.ID;
+    }
+    else {
+      map = this.dataService.Config.CreateThreatRule(this.dataService.Config.StencilThreatRuleGroups, RuleTypes.Protocol);
+      map.ProtocolRestriction.protocolID = this.selectedProtocol.ID;
+    }
+    
     map.Name = StringExtension.FindUniqueName(this.selectedType.Name, this.dataService.Config.GetThreatRules().map(x => x.Name));
     this.selectedThreatRule = map;
   }
@@ -342,10 +351,12 @@ export class StencilsComponent extends NavTreeBase implements OnInit {
         });
       };
       if (t.canDuplicate) t.onDuplicate = () => {
-        let copy = JSON.parse(JSON.stringify(t.data)) as StencilType;
-        copy.Name = copy.Name + '-Copy';
-        this.dataService.Config.GetStencilTypes().push(copy);
+        let cp = this.dataService.Config.CreateStencilType(type.ElementTypeID);
+        cp.CopyFrom(type.Data);
+        cp.Name = cp.Name + '-Copy';
         this.createNodes();
+        this.selectedNode = this.FindNodeOfObject(cp);
+        this.selectedNode.isRenaming = true;
       };
 
       return t;
@@ -421,11 +432,11 @@ export class StencilsComponent extends NavTreeBase implements OnInit {
         },
         canDuplicate: !p.IsDefault,
         onDuplicate: () => {
-          let copy = JSON.parse(JSON.stringify(t.data)) as Protocol;
-          copy.Name = copy.Name + '-Copy';
-          this.dataService.Config.GetProtocols().push(copy);
+          let cp = this.dataService.Config.CreateProtocol();
+          cp.CopyFrom(p.Data);
+          cp.Name = cp.Name + '-Copy';
           this.createNodes();
-          this.selectedNode = this.FindNodeOfObject(copy);
+          this.selectedNode = this.FindNodeOfObject(cp);
           this.selectedNode.isRenaming = true;
         },
         canMoveUpDown: true,
@@ -486,11 +497,11 @@ export class StencilsComponent extends NavTreeBase implements OnInit {
         },
         canDuplicate: true,
         onDuplicate: () => {
-          let copy = JSON.parse(JSON.stringify(t.data)) as StencilTypeTemplate;
-          copy.Name = copy.Name + '-Copy';
-          this.dataService.Config.GetStencilTypeTemplates().push(copy);
+          let cp = this.dataService.Config.CreateStencilTypeTemplate();
+          cp.CopyFrom(template.Data);
+          cp.Name = cp.Name + '-Copy';
           this.createNodes();
-          this.selectedNode = this.FindNodeOfObject(copy);
+          this.selectedNode = this.FindNodeOfObject(cp);
           this.selectedNode.isRenaming = true;
         },
         canMoveUpDown: true,
@@ -551,11 +562,11 @@ export class StencilsComponent extends NavTreeBase implements OnInit {
         },
         canDuplicate: true,
         onDuplicate: () => {
-          let copy = JSON.parse(JSON.stringify(t.data)) as StencilThreatMnemonic;
-          copy.Name = copy.Name + '-Copy';
-          this.dataService.Config.GetStencilThreatMnemonics().push(copy);
+          let cp = this.dataService.Config.CreateStencilThreatMnemonic();
+          cp.CopyFrom(mnemonic.Data);
+          cp.Name = cp.Name + '-Copy';
           this.createNodes();
-          this.selectedNode = this.FindNodeOfObject(copy);
+          this.selectedNode = this.FindNodeOfObject(cp);
           this.selectedNode.isRenaming = true;
         },
         canMoveUpDown: true,

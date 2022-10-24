@@ -2,6 +2,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, Input, OnInit } from '@angular/core';
 import { LowMediumHighNumberUtil, LowMediumHighNumber } from '../../model/assets';
 import { ThreatActor } from '../../model/threat-source';
+import { DataService } from '../../util/data.service';
 import { ThemeService } from '../../util/theme.service';
 
 @Component({
@@ -14,7 +15,7 @@ export class ThreatActorComponent implements OnInit {
 
   @Input() public threatActor: ThreatActor;
 
-  constructor(public theme: ThemeService) { }
+  constructor(public theme: ThemeService, public dataService: DataService) { }
 
   ngOnInit(): void {
   }

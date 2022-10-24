@@ -1,6 +1,7 @@
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, Input, OnInit } from '@angular/core';
 import { ObjImpact } from '../../../model/obj-impact';
+import { DataService } from '../../../util/data.service';
 import { ThemeService } from '../../../util/theme.service';
 
 @Component({
@@ -17,7 +18,7 @@ export class ObjImpactComponent implements OnInit {
   public arrays;
   public isEdtingArray: boolean[] = [];
 
-  constructor(public theme: ThemeService) { }
+  constructor(public theme: ThemeService, public dataService: DataService) { }
 
   ngOnInit(): void {
     this.arrays = [

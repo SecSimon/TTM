@@ -2,15 +2,15 @@
   <h2>{{selectedNode.name()}}</h2>
   <mat-form-field *ngIf="isStencilType" appearance="fill" style="width: 100%;">
     <mat-label>{{ 'properties.Description' | translate }}</mat-label>
-    <textarea matInput [(ngModel)]="selectedType.Description"></textarea>
+    <textarea matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="selectedType.Description"></textarea>
   </mat-form-field>
   <mat-form-field *ngIf="isStencilTypeTemplate" appearance="fill" style="width: 100%;">
     <mat-label>{{ 'properties.Description' | translate }}</mat-label>
-    <textarea matInput [(ngModel)]="selectedTypeTemplate.Description"></textarea>
+    <textarea matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="selectedTypeTemplate.Description"></textarea>
   </mat-form-field>
   <mat-form-field *ngIf="isStencilThreatMnemonic" appearance="fill" style="width: 100%;">
     <mat-label>{{ 'properties.Description' | translate }}</mat-label>
-    <textarea matInput [(ngModel)]="selectedThreatMnemonic.Description"></textarea>
+    <textarea matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="selectedThreatMnemonic.Description"></textarea>
   </mat-form-field>
   <mat-tab-group *ngIf="isStencilType" [selectedIndex]="GetSelectedTabIndex()" (selectedIndexChange)="SetSelectedTabIndex($event)">
     <mat-tab label="{{'general.Properties' | translate}} ({{selectedType?.Properties?.length}})">
@@ -46,7 +46,7 @@
                 <div style="margin: 10px;">
                   <mat-form-field appearance="fill" class="property-form-field">
                     <mat-label>{{'general.PropertyName' | translate}}</mat-label>
-                    <input matInput type="text" [(ngModel)]="selectedProperty.DisplayName" matTooltip="{{selectedProperty.DisplayName}}" matTooltipShowDelay="1000">
+                    <input matInput type="text" [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="selectedProperty.DisplayName" matTooltip="{{selectedProperty.DisplayName}}" matTooltipShowDelay="1000">
                     <button *ngIf="selectedProperty.DisplayName" matSuffix mat-icon-button (click)="selectedProperty.DisplayName=''" matTooltip="{{'general.Clear' | translate}}" matTooltipShowDelay="1000">
                       <mat-icon>close</mat-icon>
                     </button>
@@ -61,7 +61,7 @@
                   <br/>
                   <mat-form-field appearance="fill" style="width: 100%;">
                     <mat-label>{{'general.Tooltip' | translate}}</mat-label>
-                    <input matInput type="text" [(ngModel)]="selectedProperty.Tooltip">
+                    <input matInput type="text" [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="selectedProperty.Tooltip">
                   </mat-form-field>
                   <br/>
                   <ng-container *ngIf="selectedProperty.Type == 'Check Box'">{{'general.DefaultValue' | translate}}: <mat-checkbox color="primary" [(ngModel)]="selectedProperty.DefaultValue"></mat-checkbox></ng-container>
@@ -150,7 +150,7 @@
     <div *ngFor="let stencil of selectedTypeTemplate.StencilTypes; index as i">
       <mat-form-field class="property-form-field disable" appearance="fill">
         <mat-label>{{'general.Element' | translate}}</mat-label>
-        <input matInput type="text" [ngModel]="stencil.GetProperty('Name')" matTooltip="stencil.GetProperty('Name')" matTooltipShowDelay="1000">
+        <input matInput type="text" [spellcheck]="dataService.HasSpellCheck" [ngModel]="stencil.GetProperty('Name')" matTooltip="stencil.GetProperty('Name')" matTooltipShowDelay="1000">
       </mat-form-field>
       <mat-form-field class="number-form-field" appearance="fill" style="margin-left: 10px;">
         <mat-label>X</mat-label>
@@ -204,7 +204,7 @@
                 <div style="margin: 10px;">
                   <mat-form-field appearance="fill" class="property-form-field">
                     <mat-label>{{'general.PropertyName' | translate}}</mat-label>
-                    <input matInput type="text" [(ngModel)]="selectedProperty.DisplayName" matTooltip="selectedProperty.DisplayName" matTooltipShowDelay="1000">
+                    <input matInput type="text" [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="selectedProperty.DisplayName" matTooltip="selectedProperty.DisplayName" matTooltipShowDelay="1000">
                     <button *ngIf="selectedProperty.DisplayName" matSuffix mat-icon-button (click)="selectedProperty.DisplayName=''" matTooltip="{{'general.Clear' | translate}}" matTooltipShowDelay="1000">
                       <mat-icon>close</mat-icon>
                     </button>
@@ -295,7 +295,7 @@
           <div style="margin: 10px 0 10px 10px;">
             <mat-form-field appearance="fill" class="property-form-field">
               <mat-label>{{'general.Name' | translate}}</mat-label>
-              <input matInput type="text" [(ngModel)]="selectedMnemonicLetter.Name" matTooltip="{{selectedMnemonicLetter.Name}}" matTooltipShowDelay="1000">
+              <input matInput type="text" [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="selectedMnemonicLetter.Name" matTooltip="{{selectedMnemonicLetter.Name}}" matTooltipShowDelay="1000">
               <button *ngIf="selectedMnemonicLetter.Name" matSuffix mat-icon-button (click)="selectedMnemonicLetter.Name=''" matTooltip="{{'general.Clear' | translate}}" matTooltipShowDelay="1000">
                 <mat-icon>close</mat-icon>
               </button>
@@ -303,12 +303,12 @@
             <br/>
             <mat-form-field appearance="fill" class="property-form-field">
               <mat-label>{{'properties.Letter' | translate}}</mat-label>
-              <input matInput type="text" [(ngModel)]="selectedMnemonicLetter.Letter" matTooltip="{{selectedMnemonicLetter.Letter}}" matTooltipShowDelay="1000">
+              <input matInput type="text" [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="selectedMnemonicLetter.Letter" matTooltip="{{selectedMnemonicLetter.Letter}}" matTooltipShowDelay="1000">
             </mat-form-field>
             <br/>
             <mat-form-field appearance="fill" style="width: 100%;">
               <mat-label>{{'properties.Description' | translate}}</mat-label>
-              <input matInput type="text" [(ngModel)]="selectedMnemonicLetter.Description" matTooltip="{{selectedMnemonicLetter.Description}}" matTooltipShowDelay="1000">
+              <input matInput type="text" [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="selectedMnemonicLetter.Description" matTooltip="{{selectedMnemonicLetter.Description}}" matTooltipShowDelay="1000">
             </mat-form-field>
             <mat-form-field appearance="fill" style="width: 100%;">
               <mat-label>{{'general.ThreatCategory' | translate}}</mat-label>

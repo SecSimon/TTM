@@ -37,18 +37,13 @@ export class AppComponent {
     private electronService: ElectronService, private translate: TranslateService,
     private theme: ThemeService, private locStorage: LocalStorageService,
     private overlay: OverlayContainer, private isLoadingService: IsLoadingService,
-    private dataService: DataService, private kvDiffers: KeyValueDiffers
+    public dataService: DataService, private kvDiffers: KeyValueDiffers
   ) {
     this.translate.setDefaultLang('en');
-  }
 
-  @HostListener('window:beforeunload', ['$event'])
-  beforeunloadHandler($event) {
-    if (this.dataService.Project?.FileChanged || this.dataService.Config?.FileChanged) {
-      $event.preventDefault();
-      $event.returnValue = "false";
-      return false;
-    }
+    window.onbeforeunload = (event) => {
+      return this.dataService.OnClose(event);
+    };
   }
 
   ngOnInit() {    

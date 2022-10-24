@@ -24,7 +24,7 @@ export class MitigationProcessComponent implements OnInit {
 
   @Output() public mitigationMappingsChange = new EventEmitter();
 
-  constructor(@Optional() mapping: MitigationProcess, public theme: ThemeService, private dataService: DataService, private dialog: DialogService) {
+  constructor(@Optional() mapping: MitigationProcess, public theme: ThemeService, public dataService: DataService, private dialog: DialogService) {
     this.mitigationProcess = mapping;
   }
 

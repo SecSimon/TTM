@@ -71,9 +71,9 @@
           <option *ngFor="let type of GetAvailableTypes(selectedObject)" [value]="type.ID">{{type.Name}}</option>
         </select>
         <!--Text Area-->
-        <textarea *ngIf="prop.Type == 'Text Area'" type="text" style="width: 100%; font-size: inherit;" [value]="GetValue(prop)" (input)="SetValue(prop, $event['target']['value'])" [disabled]="!prop.Editable"></textarea>
+        <textarea *ngIf="prop.Type == 'Text Area'" type="text" [spellcheck]="dataService.HasSpellCheck" style="width: 100%; font-size: inherit;" [value]="GetValue(prop)" (input)="SetValue(prop, $event['target']['value'])" [disabled]="!prop.Editable"></textarea>
         <!--Text Box-->
-        <input *ngIf="prop.Type == 'Text Box'" type="text" style="width: 100%;" [value]="GetValue(prop)" (input)="SetValue(prop, $event['target']['value'])" [disabled]="!prop.Editable">
+        <input *ngIf="prop.Type == 'Text Box'" type="text" [spellcheck]="dataService.HasSpellCheck" style="width: 100%;" [value]="GetValue(prop)" (input)="SetValue(prop, $event['target']['value'])" [disabled]="!prop.Editable">
       </td>
     </tr>
     <ng-container *ngIf="IsDFDElement()">

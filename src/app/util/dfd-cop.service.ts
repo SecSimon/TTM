@@ -28,7 +28,7 @@ export interface IDFDIssue {
 })
 export class DFDCopService {
 
-  constructor(private dataService: DataService) { }
+  constructor(public dataService: DataService) { }
 
   public CheckDFDRules(diagram: HWDFDiagram): IDFDIssue[] {
     if (!diagram.Elements) return [];

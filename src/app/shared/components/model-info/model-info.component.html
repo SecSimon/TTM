@@ -3,12 +3,12 @@
   <div>
     <mat-form-field appearance="fill" style="min-width: 660px; width: 100%;">
       <mat-label>{{ 'properties.Description' | translate }}</mat-label>
-      <textarea matInput [(ngModel)]="Project.Description"></textarea>
+      <textarea matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="Project.Description"></textarea>
     </mat-form-field>
     <br/>
     <mat-form-field appearance="fill" class="property-form-field">
       <mat-label>{{ 'properties.Version' | translate }}</mat-label>
-      <input matInput [(ngModel)]="Project.UserVersion"/>
+      <input matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="Project.UserVersion"/>
     </mat-form-field>
     <div class="row">
       <div class="column1">
@@ -28,7 +28,7 @@
         <div *ngIf="selectedUser" style="margin: 10px 0 10px 10px">
           <mat-form-field appearance="fill" class="property-form-field">
             <mat-label>{{ 'properties.Name' | translate }}</mat-label>
-            <input matInput [(ngModel)]="selectedUser.Name"/>
+            <input matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="selectedUser.Name"/>
             <button *ngIf="selectedUser.Name" matSuffix mat-icon-button (click)="selectedUser.Name=''" matTooltip="{{'general.Clear' | translate}}" matTooltipShowDelay="1000">
               <mat-icon>close</mat-icon>
             </button>
@@ -55,11 +55,11 @@
             <mat-icon>delete</mat-icon>
           </button>
         </ng-container>
-        <input *ngIf="isEdtingArray[0][index]" id="renameBox" type="text" style="width: -webkit-fill-available;" [ngModel]="item.Task" (keydown)="OnRenameItem($event, Project.Tasks, 0, index, 'Task')" autofocus (focusout)="OnRenameItem($event, Project.Tasks, 0, index, 'Task')" onfocus="this.select();"/>
+        <input *ngIf="isEdtingArray[0][index]" [spellcheck]="dataService.HasSpellCheck" id="renameBox" type="text" style="width: -webkit-fill-available;" [ngModel]="item.Task" (keydown)="OnRenameItem($event, Project.Tasks, 0, index, 'Task')" autofocus (focusout)="OnRenameItem($event, Project.Tasks, 0, index, 'Task')" onfocus="this.select();"/>
       </div>
     </div>
     <div style="padding: 5px 10px;">
-      <mat-icon>chevron_right</mat-icon><input matInput style="width: calc(100% - 24px); vertical-align: super; font-size: 14px;" (keydown)="OnTaskKeyDown($event)" placeholder="{{'pages.modeling.charscope.addDescription' | translate}}"/>
+      <mat-icon>chevron_right</mat-icon><input matInput [spellcheck]="dataService.HasSpellCheck" style="width: calc(100% - 24px); vertical-align: super; font-size: 14px;" (keydown)="OnTaskKeyDown($event)" placeholder="{{'pages.modeling.charscope.addDescription' | translate}}"/>
     </div>
   </div>
   <div>
@@ -75,11 +75,11 @@
             <mat-icon>delete</mat-icon>
           </button>
         </ng-container>
-        <input *ngIf="isEdtingArray[1][index]" id="renameBox" type="text" style="width: -webkit-fill-available;" [ngModel]="item.Note" (keydown)="OnRenameItem($event, Project.Notes, 1, index, 'Note')" autofocus (focusout)="OnRenameItem($event, Project.Notes, 1, index, 'Note')" onfocus="this.select();"/>
+        <input *ngIf="isEdtingArray[1][index]" [spellcheck]="dataService.HasSpellCheck" id="renameBox" type="text" style="width: -webkit-fill-available;" [ngModel]="item.Note" (keydown)="OnRenameItem($event, Project.Notes, 1, index, 'Note')" autofocus (focusout)="OnRenameItem($event, Project.Notes, 1, index, 'Note')" onfocus="this.select();"/>
       </div>
     </div>
     <div style="padding: 5px 10px;">
-      <mat-icon>chevron_right</mat-icon><input matInput style="width: calc(100% - 24px); vertical-align: super; font-size: 14px;" (keydown)="OnNoteKeyDown($event)" placeholder="{{'pages.modeling.charscope.addDescription' | translate}}"/>
+      <mat-icon>chevron_right</mat-icon><input matInput [spellcheck]="dataService.HasSpellCheck" style="width: calc(100% - 24px); vertical-align: super; font-size: 14px;" (keydown)="OnNoteKeyDown($event)" placeholder="{{'pages.modeling.charscope.addDescription' | translate}}"/>
     </div>
   </div>
   <div>

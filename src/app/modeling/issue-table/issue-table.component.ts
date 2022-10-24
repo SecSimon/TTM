@@ -64,7 +64,7 @@ export class IssueTableComponent implements OnInit {
 
   @ViewChild(MatSort) sort: MatSort;
 
-  constructor(public theme: ThemeService, private dataService: DataService, private dfdCop: DFDCopService) {
+  constructor(public theme: ThemeService, public dataService: DataService, private dfdCop: DFDCopService) {
     let onDataChanged = () => {
       if (this.changesCounter == 0) {
         setTimeout(() => {

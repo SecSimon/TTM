@@ -8,7 +8,7 @@
     <mat-checkbox *ngIf="node.canCheck" color="primary" style="margin-right: 5px;" [disabled]="!node.checkEnabled || !checkEnabled" [checked]="node.isChecked" (change)="OnNodeChecked(node)"></mat-checkbox>
     <mat-icon *ngIf="node.iconAlignLeft && node.icon" style="margin-right: 5px;">{{node.icon}}</mat-icon>
     <span *ngIf="!node.isRenaming" style="margin-right: 15px;" [style.opacity]="(node.isInactive &&node.isInactive()) ? 0.5 : 1">{{node.name()}}</span>
-    <ng-container *ngIf="node.isRenaming"><input id="renameBox" type="text" style="width: -webkit-fill-available;" [ngModel]="node.name()" (keydown)="OnRename($event, node)" autofocus (focusout)="OnRename($event, node)" onfocus="this.select();"/></ng-container>
+    <ng-container *ngIf="node.isRenaming"><input [spellcheck]="dataService.HasSpellCheck" id="renameBox" type="text" style="width: -webkit-fill-available;" [ngModel]="node.name()" (keydown)="OnRename($event, node)" autofocus (focusout)="OnRename($event, node)" onfocus="this.select();"/></ng-container>
     <button mat-icon-button *ngIf="node.canRename && !node.isRenaming" (click)="OnEditName(node)" matTooltip="{{'general.Rename' | translate}}" matTooltipShowDelay="1000"><mat-icon>edit</mat-icon></button>
     <button mat-icon-button *ngIf="node.canDuplicate" (click)="node.onDuplicate()" matTooltip="{{'general.Duplicate' | translate}}" matTooltipShowDelay="1000"><mat-icon>content_copy</mat-icon></button>
     <button mat-icon-button *ngIf="node.canDelete" (click)="node.onDelete()" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000"><mat-icon>delete</mat-icon></button>
@@ -30,7 +30,7 @@
       <mat-checkbox *ngIf="node.canCheck" color="primary" style="margin-right: 5px;" [disabled]="!node.checkEnabled || !checkEnabled" [checked]="node.isChecked" (change)="OnNodeChecked(node)"></mat-checkbox>
       <mat-icon *ngIf="node.iconAlignLeft && node.icon" style="margin-right: 5px;">{{node.icon}}</mat-icon>
       <span *ngIf="!node.isRenaming" style="margin-right: 15px;" [style.opacity]="(node.isInactive &&node.isInactive()) ? 0.5 : 1">{{node.name()}}</span>
-      <ng-container *ngIf="node.isRenaming"><input id="renameBox" type="text" style="width: -webkit-fill-available;" [ngModel]="node.name()" (keydown)="OnRename($event, node)" autofocus (focusout)="OnRename($event, node)" onfocus="this.select();"/></ng-container>
+      <ng-container *ngIf="node.isRenaming"><input [spellcheck]="dataService.HasSpellCheck" id="renameBox" type="text" style="width: -webkit-fill-available;" [ngModel]="node.name()" (keydown)="OnRename($event, node)" autofocus (focusout)="OnRename($event, node)" onfocus="this.select();"/></ng-container>
       <button mat-icon-button *ngIf="node.canRename && !node.isRenaming" (click)="OnEditName(node)" matTooltip="{{'general.Rename' | translate}}" matTooltipShowDelay="1000"><mat-icon>edit</mat-icon></button>
       <button mat-icon-button *ngIf="node.canDelete" (click)="node.onDelete()" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000"><mat-icon>delete</mat-icon></button>
       <button mat-icon-button *ngIf="node.canAdd && !node.addOptions" (click)="node.onAdd()" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000"><mat-icon>add</mat-icon></button>

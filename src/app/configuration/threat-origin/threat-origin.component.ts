@@ -25,7 +25,7 @@ export class ThreatOriginComponent implements OnInit {
 
   public selectedMitigation: Mitigation;
 
-  constructor(@Optional() origin: ThreatOrigin, @Optional() canEdit: MyBoolean, public theme: ThemeService, private dataService: DataService, private translate: TranslateService) { 
+  constructor(@Optional() origin: ThreatOrigin, @Optional() canEdit: MyBoolean, public theme: ThemeService, public dataService: DataService, private translate: TranslateService) { 
     if (origin) {
       this.threatOrigin = origin;
       this.isShownInDialog = true;

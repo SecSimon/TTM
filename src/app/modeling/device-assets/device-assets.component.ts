@@ -57,7 +57,7 @@ export class DeviceAssetsComponent implements OnInit {
   public readonly bgColorDark = '#424242';
   public readonly bgColorLight = '#e7e5e5';
 
-  constructor(public theme: ThemeService, private dataService: DataService, private locStorage: LocalStorageService, private dialog: DialogService, public elRef: ElementRef) { }
+  constructor(public theme: ThemeService, public dataService: DataService, private locStorage: LocalStorageService, private dialog: DialogService, public elRef: ElementRef) { }
 
   ngOnInit(): void {
   }

@@ -3,7 +3,7 @@
   <ng-container *ngIf="selectedComponentType">
     <mat-form-field appearance="fill" style="width: 100%;">
       <mat-label>{{ 'properties.Description' | translate }}</mat-label>
-      <textarea matInput [(ngModel)]="selectedComponentType.Description"></textarea>
+      <textarea matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="selectedComponentType.Description"></textarea>
     </mat-form-field>
     <mat-checkbox color="primary" [(ngModel)]="selectedComponentType.IsActive">{{'properties.IsActive' | translate}}</mat-checkbox>
     <mat-checkbox color="primary" [(ngModel)]="selectedComponentType.IsThirdParty" style="margin-left: 15px;">{{'properties.IsThirdParty' | translate}}</mat-checkbox>
@@ -30,7 +30,7 @@
                   <div style="margin: 10px;">
                     <mat-form-field appearance="fill" class="property-form-field">
                       <mat-label>{{'general.PropertyName' | translate}}</mat-label>
-                      <input matInput type="text" [(ngModel)]="selectedProperty.DisplayName" matTooltip="{{selectedProperty.DisplayName}}" matTooltipShowDelay="1000">
+                      <input matInput type="text" [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="selectedProperty.DisplayName" matTooltip="{{selectedProperty.DisplayName}}" matTooltipShowDelay="1000">
                       <button *ngIf="selectedProperty.DisplayName" matSuffix mat-icon-button (click)="selectedProperty.DisplayName=''" matTooltip="{{'general.Clear' | translate}}" matTooltipShowDelay="1000">
                         <mat-icon>close</mat-icon>
                       </button>
@@ -45,7 +45,7 @@
                     <br/>
                     <mat-form-field appearance="fill" style="width: 100%;">
                       <mat-label>{{'general.Tooltip' | translate}}</mat-label>
-                      <input matInput type="text" [(ngModel)]="selectedProperty.Tooltip">
+                      <input matInput type="text" [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="selectedProperty.Tooltip">
                     </mat-form-field>
                     <!--
                     <br/>
@@ -114,18 +114,18 @@
           <div style="margin-top: 10px;">
             <mat-form-field appearance="fill" class="property-form-field">
               <mat-label>{{'general.Threat' | translate}}</mat-label>
-              <input matInput type="text" [(ngModel)]="newThreat.name" matTooltip="{{newThreat.name}}" matTooltipShowDelay="1000">
+              <input matInput type="text" [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="newThreat.name" matTooltip="{{newThreat.name}}" matTooltipShowDelay="1000">
             </mat-form-field>
             <br/>
             <mat-form-field appearance="fill" class="property-form-field">
               <mat-label>{{'general.Property' | translate}}</mat-label>
-              <input matInput type="text" [(ngModel)]="newThreat.property" matTooltip="{{newThreat.property}}" matTooltipShowDelay="1000">
+              <input matInput type="text" [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="newThreat.property" matTooltip="{{newThreat.property}}" matTooltipShowDelay="1000">
             </mat-form-field>
             <mat-checkbox color="primary" [disabled]="newThreat.property == ''" [(ngModel)]="newThreat.threatGen" style="margin-left: 10px;" labelPosition="before">Threat generated when Property == </mat-checkbox>
             <br/>
             <mat-form-field appearance="fill" style="width: 100%;">
               <mat-label>{{'properties.Question' | translate}}</mat-label>
-              <input matInput type="text" [(ngModel)]="newThreat.question" matTooltip="{{newThreat.question}}" matTooltipShowDelay="1000">
+              <input matInput type="text" [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="newThreat.question" matTooltip="{{newThreat.question}}" matTooltipShowDelay="1000">
             </mat-form-field>
             <button mat-raised-button style="float: right; margin-right: 5px;" [disabled]="newThreat.name == '' || newThreat.question == ''" (click)="AddNewThreat()">{{'general.Add' | translate}}</button>
             <mat-checkbox color="primary" [disabled]="newThreat.property == ''" [(ngModel)]="newThreat.yesResult" labelPosition="before">Answering the question with Yes sets the property to</mat-checkbox>

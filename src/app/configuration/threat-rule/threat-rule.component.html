@@ -3,7 +3,7 @@
   <br/>
   <mat-form-field appearance="fill" class="property-form-field" *ngIf="canEditName">
     <mat-label>{{ 'properties.Name' | translate }}</mat-label>
-    <input matInput [(ngModel)]="threatRule.Name"/>
+    <input matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="threatRule.Name"/>
     <button *ngIf="threatRule.Name" matSuffix mat-icon-button (click)="threatRule.Name=''" matTooltip="{{'general.Clear' | translate}}" matTooltipShowDelay="1000">
       <mat-icon>close</mat-icon>
     </button>
@@ -61,7 +61,7 @@
     </mat-form-field>
     <mat-form-field appearance="fill" style="width: 100%;">
       <mat-label>{{ 'properties.Description' | translate }}</mat-label>
-      <textarea matInput [(ngModel)]="threatRule.Description"></textarea>
+      <textarea matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="threatRule.Description"></textarea>
     </mat-form-field>
     <ng-container *ngIf="[1,2].includes(threatRule.RuleType)">
       <mat-form-field appearance="fill" class="property-form-field">
@@ -86,7 +86,7 @@
     <div *ngIf="threatRule.RuleType == 1">
       <mat-form-field appearance="fill" class="property-form-field disable">
         <mat-label>{{ 'properties.StencilType' | translate }}</mat-label>
-        <input matInput [value]="selectedStencilType?.Name"  matTooltip="{{selectedStencilType?.Name}}" matTooltipShowDelay="1000"/>
+        <input matInput [spellcheck]="dataService.HasSpellCheck" [value]="selectedStencilType?.Name"  matTooltip="{{selectedStencilType?.Name}}" matTooltipShowDelay="1000"/>
       </mat-form-field>
       <br/>
       {{'properties.Restrictions' | translate}} 
@@ -334,7 +334,7 @@
     <div *ngIf="threatRule.RuleType == 3">
       <mat-form-field appearance="fill" class="property-form-field disable">
         <mat-label>{{ 'properties.ComponentType' | translate }}</mat-label>
-        <input matInput [value]="selectedComponentType?.Name"  matTooltip="{{selectedComponentType?.Name}}" matTooltipShowDelay="1000"/>
+        <input matInput [spellcheck]="dataService.HasSpellCheck" [value]="selectedComponentType?.Name"  matTooltip="{{selectedComponentType?.Name}}" matTooltipShowDelay="1000"/>
       </mat-form-field>
       <br/>
       {{'properties.Restrictions' | translate}} 
@@ -390,7 +390,7 @@
     <div *ngIf="threatRule.RuleType == 4">
       <mat-form-field appearance="fill" class="property-form-field disable">
         <mat-label>{{ 'general.Protocol' | translate }}</mat-label>
-        <input matInput [value]="selectedProtocol?.Name"  matTooltip="{{selectedProtocol?.Name}}" matTooltipShowDelay="1000"/>
+        <input matInput [spellcheck]="dataService.HasSpellCheck" [value]="selectedProtocol?.Name"  matTooltip="{{selectedProtocol?.Name}}" matTooltipShowDelay="1000"/>
       </mat-form-field>
       <br/>
       {{'properties.Restrictions' | translate}} 

@@ -107,7 +107,7 @@ export class ThreatTableComponent implements OnInit {
   
   @ViewChild(MatSort) sort: MatSort;
 
-  constructor(public theme: ThemeService, private dataService: DataService, private threatEngine: ThreatEngineService, 
+  constructor(public theme: ThemeService, public dataService: DataService, private threatEngine: ThreatEngineService, 
     private dialog: DialogService, private translate: TranslateService) { 
     let onDataChanged = () => {
       if (this.autoRefreshThreats) {

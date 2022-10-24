@@ -1,7 +1,7 @@
 {
   "Data": {
     "ID": "3bf9addd-53b8-4d01-9971-7128326f856d",
-    "Name": "Default Configuration",
+    "Name": "MyDefaultConfig.ttmc",
     "Description": "",
     "Version": 2,
     "threatLibraryID": "e17870ae-2c37-435c-a284-8df90ff7a5f0",
@@ -247,6 +247,33 @@
       "ID": "e0b99432-98a6-4e32-86d7-ca5f58897cc2",
       "Properties": [
         {
+          "DisplayName": "Sanitizes Input",
+          "ID": "47889e58-6875-4fe5-aa04-91ea9054a166",
+          "Tooltip": "",
+          "HasGetter": false,
+          "Editable": true,
+          "Type": "Check Box",
+          "DefaultValue": false
+        },
+        {
+          "DisplayName": "Sanitizes Output",
+          "ID": "5afac92d-d86d-49bc-8fd8-84242a651767",
+          "Tooltip": "",
+          "HasGetter": false,
+          "Editable": true,
+          "Type": "Check Box",
+          "DefaultValue": false
+        },
+        {
+          "DisplayName": "Uses Authorization Mechanism",
+          "ID": "eb92cc8a-bceb-48a5-b0fd-0894a1d91c5c",
+          "Tooltip": "Implements or uses a mechanism for authorization",
+          "HasGetter": false,
+          "Editable": true,
+          "Type": "Check Box",
+          "DefaultValue": false
+        },
+        {
           "DisplayName": "Processed Data",
           "ID": "ProcessedData",
           "Tooltip": "Data that the element processes, stores, produces, or receives",
@@ -300,24 +327,6 @@
       "IsDefault": true,
       "Properties": [
         {
-          "DisplayName": "Processed Data",
-          "ID": "ProcessedData",
-          "Tooltip": "Data that the element processes, stores, produces, or receives",
-          "Editable": true,
-          "HasGetter": true,
-          "Type": "Data Select",
-          "DefaultValue": []
-        },
-        {
-          "DisplayName": "Data Sensitivity",
-          "ID": "ProcessedDataSensitivity",
-          "Tooltip": "Sensitivity of the processed data",
-          "Editable": true,
-          "HasGetter": true,
-          "Type": "Low Medium High Select",
-          "DefaultValue": 2
-        },
-        {
           "DisplayName": "Contains Logs",
           "ID": "ContainsLogs",
           "Editable": true,
@@ -337,6 +346,24 @@
           "Editable": true,
           "Type": "Check Box",
           "DefaultValue": false
+        },
+        {
+          "DisplayName": "Processed Data",
+          "ID": "ProcessedData",
+          "Tooltip": "Data that the element processes, stores, produces, or receives",
+          "Editable": true,
+          "HasGetter": true,
+          "Type": "Data Select",
+          "DefaultValue": []
+        },
+        {
+          "DisplayName": "Data Sensitivity",
+          "ID": "ProcessedDataSensitivity",
+          "Tooltip": "Sensitivity of the processed data",
+          "Editable": true,
+          "HasGetter": true,
+          "Type": "Low Medium High Select",
+          "DefaultValue": 2
         }
       ],
       "ID": "c7598413-4382-43e9-9904-fd9d877eb7a9"
@@ -429,6 +456,15 @@
       "ID": "02b39924-b8f2-44da-a2bc-be1bd2450f68",
       "Properties": [
         {
+          "DisplayName": "Allows User Input",
+          "ID": "7632a126-216a-4463-83ef-6ce82331d9f8",
+          "Tooltip": "",
+          "HasGetter": false,
+          "Editable": true,
+          "Type": "Check Box",
+          "DefaultValue": true
+        },
+        {
           "DisplayName": "Processed Data",
           "ID": "ProcessedData",
           "Tooltip": "Data that the element processes, stores, produces, or receives",
@@ -445,15 +481,6 @@
           "HasGetter": true,
           "Type": "Low Medium High Select",
           "DefaultValue": 2
-        },
-        {
-          "DisplayName": "Allows User Input",
-          "ID": "7632a126-216a-4463-83ef-6ce82331d9f8",
-          "Tooltip": "",
-          "HasGetter": false,
-          "Editable": true,
-          "Type": "Check Box",
-          "DefaultValue": true
         }
       ]
     },
@@ -499,6 +526,24 @@
       "ElementTypeID": 41,
       "IsDefault": true,
       "Properties": [
+        {
+          "DisplayName": "Uses Custom Com. Protocol",
+          "ID": "1fec597f-dfd0-4fcc-b348-828307b946ee",
+          "Tooltip": "Implements or uses a custom communication protocol",
+          "HasGetter": false,
+          "Editable": true,
+          "Type": "Check Box",
+          "DefaultValue": false
+        },
+        {
+          "DisplayName": "Has JSON Payload",
+          "ID": "758fa1ec-35f3-44a2-9f3d-0e5c21fc92c4",
+          "Tooltip": "",
+          "HasGetter": false,
+          "Editable": true,
+          "Type": "Check Box",
+          "DefaultValue": false
+        },
         {
           "DisplayName": "Overwrite Data",
           "ID": "OverwriteDataProperties",
@@ -890,6 +935,22 @@
       "Properties": []
     },
     {
+      "ID": "99f696a1-6684-4650-993c-d83d1cdb35a2",
+      "Name": "HTTP",
+      "Description": "",
+      "IsDefault": false,
+      "Properties": [],
+      "ElementTypeID": 41,
+      "PropertyOverwrites": [
+        {
+          "Key": "ProtocolStack",
+          "Value": [
+            "857c7b5e-e034-41f8-9b60-ee11aa9771f1"
+          ]
+        }
+      ]
+    },
+    {
       "ElementTypeID": 41,
       "Name": "HTTPS",
       "Description": "",
@@ -911,7 +972,17 @@
       "Description": "",
       "ID": "dffbfc0a-850b-4de0-95fb-ab9ea4273d88",
       "IsDefault": false,
-      "Properties": []
+      "Properties": [
+        {
+          "DisplayName": "Measures Human-related Value",
+          "ID": "13649f62-1bd6-4b50-9646-a9df988262a5",
+          "Tooltip": "",
+          "HasGetter": false,
+          "Editable": true,
+          "Type": "Check Box",
+          "DefaultValue": false
+        }
+      ]
     },
     {
       "Name": "JTAG",
@@ -1009,7 +1080,26 @@
       "Description": "",
       "ElementTypeID": 61,
       "IsDefault": false,
-      "Properties": [],
+      "Properties": [
+        {
+          "DisplayName": "Has WPS",
+          "ID": "8fbc9cce-7d30-425a-ac50-c5ca44d206b0",
+          "Tooltip": "Supports Wi-Fi Protected Setup (WPS)",
+          "HasGetter": false,
+          "Editable": true,
+          "Type": "Check Box",
+          "DefaultValue": false
+        },
+        {
+          "DisplayName": "Uses WPA3",
+          "ID": "f7509951-f156-4774-89e9-1966b03ef03e",
+          "Tooltip": "Uses the Wi-Fi Protected Access 3 protocol",
+          "HasGetter": false,
+          "Editable": true,
+          "Type": "Check Box",
+          "DefaultValue": false
+        }
+      ],
       "PropertyOverwrites": [
         {
           "Key": "IsWireless",
@@ -1023,7 +1113,35 @@
       "Description": "",
       "ElementTypeID": 61,
       "IsDefault": false,
-      "Properties": [],
+      "Properties": [
+        {
+          "DisplayName": "Has Secure Version",
+          "ID": "80419a47-0ac7-488f-b958-da045b67d91f",
+          "Tooltip": "At the time of writing, it is advised to use at least Bluetooh BR/EDR version 4.1 or Bluetooth LE version 4.2",
+          "HasGetter": false,
+          "Editable": true,
+          "Type": "Check Box",
+          "DefaultValue": false
+        },
+        {
+          "DisplayName": "Has Secure Mode",
+          "ID": "cf1429d9-c9e7-4dc4-a54c-42596f246692",
+          "Tooltip": "Secure modes are numeric comparison, passkey entry and out of band. Just works is not secure.",
+          "HasGetter": false,
+          "Editable": true,
+          "Type": "Check Box",
+          "DefaultValue": false
+        },
+        {
+          "DisplayName": "Has Highest Security Level",
+          "ID": "a4f10f42-4b29-4cbf-a849-0844b011609b",
+          "Tooltip": "There are four security levels. The highest level, Security Level 4, should be used.",
+          "HasGetter": false,
+          "Editable": true,
+          "Type": "Check Box",
+          "DefaultValue": false
+        }
+      ],
       "PropertyOverwrites": [
         {
           "Key": "IsWireless",
@@ -1053,7 +1171,17 @@
       "Description": "",
       "ElementTypeID": 71,
       "IsDefault": false,
-      "Properties": [],
+      "Properties": [
+        {
+          "DisplayName": "Has Network Monitoring",
+          "ID": "6e0c2499-9e6b-42da-8e9c-c34d40fca0db",
+          "Tooltip": "",
+          "HasGetter": false,
+          "Editable": true,
+          "Type": "Check Box",
+          "DefaultValue": false
+        }
+      ],
       "ID": "4a5bbdcf-ef9a-49cb-ac4c-a05dcefd95d2"
     },
     {
@@ -1215,21 +1343,19 @@
       ]
     },
     {
-      "ID": "6970555e-8c1f-466b-add7-35babed4a7fa",
-      "Name": "RFID Tag",
+      "ID": "4b7a61d0-c430-48ea-8730-03a81542a5d8",
+      "Name": "Microphone",
       "Description": "",
       "IsDefault": false,
-      "Properties": [
-        {
-          "DisplayName": "Has EPC",
-          "ID": "edc587ce-e8d8-4340-9e42-d90627777c62",
-          "Tooltip": "Has Electronic Product Code (EPC)",
-          "HasGetter": false,
-          "Editable": true,
-          "Type": "Check Box",
-          "DefaultValue": true
-        }
-      ],
+      "Properties": [],
+      "ElementTypeID": 51
+    },
+    {
+      "ID": "210ba217-67da-4bda-9063-3c95716eb5b9",
+      "Name": "Loudspeaker",
+      "Description": "",
+      "IsDefault": false,
+      "Properties": [],
       "ElementTypeID": 51
     },
     {
@@ -1278,6 +1404,24 @@
       ]
     },
     {
+      "ID": "6970555e-8c1f-466b-add7-35babed4a7fa",
+      "Name": "RFID Tag",
+      "Description": "",
+      "IsDefault": false,
+      "Properties": [
+        {
+          "DisplayName": "Has EPC",
+          "ID": "edc587ce-e8d8-4340-9e42-d90627777c62",
+          "Tooltip": "Has Electronic Product Code (EPC)",
+          "HasGetter": false,
+          "Editable": true,
+          "Type": "Check Box",
+          "DefaultValue": true
+        }
+      ],
+      "ElementTypeID": 51
+    },
+    {
       "ID": "2d7223ec-7361-4f2a-bfea-d6c437e9a4f4",
       "Name": "Key File",
       "Description": "",
@@ -1294,6 +1438,62 @@
         }
       ],
       "ElementTypeID": 21
+    },
+    {
+      "ID": "59076fab-74e3-415a-93f5-fffd12e3d79c",
+      "Name": "Web Server",
+      "Description": "",
+      "IsDefault": false,
+      "Properties": [],
+      "ElementTypeID": 11
+    },
+    {
+      "ID": "ed2c7ab5-2fbf-44fc-83b1-d06b38e861f3",
+      "Name": "User",
+      "Description": "",
+      "IsDefault": false,
+      "Properties": [],
+      "ElementTypeID": 32
+    },
+    {
+      "ID": "2ca5ca37-5df9-4b94-ad56-b383c1f7be40",
+      "Name": "Bluetooth",
+      "Description": "",
+      "IsDefault": false,
+      "Properties": [],
+      "ElementTypeID": 41,
+      "PropertyOverwrites": [
+        {
+          "Key": "ProtocolStack",
+          "Value": [
+            "f805dd78-eac2-4967-8dfc-231605a75ace"
+          ]
+        }
+      ]
+    },
+    {
+      "ID": "c628fae9-68f2-4abc-886c-3fc103048e9f",
+      "Name": "GPS Tracker",
+      "Description": "",
+      "IsDefault": false,
+      "Properties": [],
+      "ElementTypeID": 51
+    },
+    {
+      "ID": "0a168b12-fc9a-411c-bbf0-59599d0181f8",
+      "Name": "Cloud Service",
+      "Description": "",
+      "IsDefault": false,
+      "Properties": [],
+      "ElementTypeID": 11
+    },
+    {
+      "ID": "45244917-e4a2-4b03-89de-f18e9ddcad3f",
+      "Name": "Authentication",
+      "Description": "",
+      "IsDefault": false,
+      "Properties": [],
+      "ElementTypeID": 11
     }
   ],
   "stencilTypeTemplates": [
@@ -1627,6 +1827,13 @@
       ]
     },
     {
+      "ID": "857c7b5e-e034-41f8-9b60-ee11aa9771f1",
+      "Name": "HTTP",
+      "Description": "",
+      "IsDefault": false,
+      "Properties": []
+    },
+    {
       "ID": "21731335-5e66-455c-9b6a-6796ac85577a",
       "Name": "HTTPS",
       "Description": "",
@@ -1657,7 +1864,7 @@
     },
     {
       "ID": "f805dd78-eac2-4967-8dfc-231605a75ace",
-      "Name": "BLE",
+      "Name": "Bluetooth",
       "Description": "",
       "IsDefault": false,
       "Properties": []
@@ -2044,6 +2251,14 @@
           "HasGetter": false,
           "Editable": true,
           "Type": "Check Box"
+        },
+        {
+          "DisplayName": "Has Secure Management Access",
+          "ID": "6962d897-bf88-4745-9f2c-a8aa9d981f93",
+          "Tooltip": "Is the access for device management secured (unique password/certificate, MFA, etc.)?",
+          "HasGetter": false,
+          "Editable": true,
+          "Type": "Check Box"
         }
       ]
     },
@@ -2202,20 +2417,29 @@
       ]
     },
     {
-      "ID": "dda38dcf-c681-4aa7-831a-7d0943ffbdcf",
-      "Name": "TCP/IP",
-      "Description": "",
-      "ComponentTypeID": 1,
-      "IsActive": true,
-      "Properties": []
-    },
-    {
       "ID": "693eb3c8-9d8a-42ce-91aa-0ac4c190d7dc",
       "Name": "MQTT Client",
       "Description": "",
       "ComponentTypeID": 1,
       "IsThirdParty": true,
-      "Properties": []
+      "Properties": [
+        {
+          "DisplayName": "Uses TLS",
+          "ID": "6d7716ae-9870-46a1-9231-a713a0dcd5a0",
+          "Tooltip": "Are only messages on port 8883 sent (MQTT over TLS)?",
+          "HasGetter": false,
+          "Editable": true,
+          "Type": "Check Box"
+        },
+        {
+          "DisplayName": "Has Client Authentication",
+          "ID": "de628891-642c-4b7c-b88b-abf7988721dc",
+          "Tooltip": "Is the client authenticated and authorized using its own X.509 certificate?",
+          "HasGetter": false,
+          "Editable": true,
+          "Type": "Check Box"
+        }
+      ]
     },
     {
       "ID": "c80fa1ff-def0-49b3-ad47-0c9f56c21fe6",
@@ -2223,7 +2447,40 @@
       "Description": "",
       "ComponentTypeID": 1,
       "IsThirdParty": true,
-      "Properties": []
+      "Properties": [
+        {
+          "DisplayName": "HasSecureModel",
+          "ID": "4338e868-4e3c-4473-ba27-6148e8b1fc0f",
+          "Tooltip": "Is the security mode 'Sign' or 'SignAndEncrypt'?",
+          "HasGetter": false,
+          "Editable": true,
+          "Type": "Check Box"
+        },
+        {
+          "DisplayName": "AuthenticatesUsers",
+          "ID": "1e3a8fb8-4a34-44be-8168-996a7e0283f1",
+          "Tooltip": "Are all users authenticated (identifier 'anonymous' is not allowed)? ",
+          "HasGetter": false,
+          "Editable": true,
+          "Type": "Check Box"
+        },
+        {
+          "DisplayName": "Uses Strong Crypto Algorithms",
+          "ID": "3f4c724d-3d4d-4b6b-9252-ef43b4240d79",
+          "Tooltip": "Is a strong security policy chosen that uses strong cryptographic algorithms?",
+          "HasGetter": false,
+          "Editable": true,
+          "Type": "Check Box"
+        },
+        {
+          "DisplayName": "Uses Certificates",
+          "ID": "34344cae-d072-4901-a7be-4084a2534b45",
+          "Tooltip": "Are only connections accepted that provide a trusted certificate?",
+          "HasGetter": false,
+          "Editable": true,
+          "Type": "Check Box"
+        }
+      ]
     },
     {
       "ID": "fe464818-7cef-4aba-9d18-0bc2357ca56c",
@@ -2243,11 +2500,68 @@
     },
     {
       "ID": "ce3cdda1-0737-468e-83e7-ca20098551d1",
-      "Name": "HTTP Server",
+      "Name": "Web Server",
       "Description": "",
       "ComponentTypeID": 1,
       "IsThirdParty": true,
-      "Properties": []
+      "Properties": [
+        {
+          "DisplayName": "Uses Secure Protocols",
+          "ID": "9ea829dc-59d5-437c-8d24-9908feac2941",
+          "Tooltip": "Does the sever use secure protocols?",
+          "HasGetter": false,
+          "Editable": true,
+          "Type": "Check Box"
+        },
+        {
+          "DisplayName": "Uses Secure TLS",
+          "ID": "aa99758d-30a6-4e0f-9d11-1d46c0f43d6c",
+          "Tooltip": "Does the server use at least TLS 1.2 and older versions of SSL/TLS are disabled?",
+          "HasGetter": false,
+          "Editable": true,
+          "Type": "Check Box"
+        },
+        {
+          "DisplayName": "Has Server Version Banner",
+          "ID": "6faf97a0-6039-4b7b-ba7c-6b9ef003ede3",
+          "Tooltip": "Has the server a version banner?",
+          "HasGetter": false,
+          "Editable": true,
+          "Type": "Check Box"
+        },
+        {
+          "DisplayName": "Has Regular Patches",
+          "ID": "defc6bcc-2bc9-457a-abab-666ec78d4f73",
+          "Tooltip": "Is the sever regular updated and patched?",
+          "HasGetter": false,
+          "Editable": true,
+          "Type": "Check Box"
+        },
+        {
+          "DisplayName": "Has Web Application Firewall",
+          "ID": "6f65b93f-53ad-424f-a81b-4777ad48ec97",
+          "Tooltip": "Does the system deploy a web application firewall (WAF)?",
+          "HasGetter": false,
+          "Editable": true,
+          "Type": "Check Box"
+        },
+        {
+          "DisplayName": "Is API Monitoring",
+          "ID": "b125fa52-c06e-4e54-88b5-5e9d3929f643",
+          "Tooltip": "Are all API calls monitored for potential API misuse?",
+          "HasGetter": false,
+          "Editable": true,
+          "Type": "Check Box"
+        },
+        {
+          "DisplayName": "Runs on Root",
+          "ID": "39de06c5-7cfc-4fb8-8a1f-22a8888cf4ed",
+          "Tooltip": "Is the service running with root privileges?",
+          "HasGetter": false,
+          "Editable": true,
+          "Type": "Check Box"
+        }
+      ]
     },
     {
       "ID": "a6659758-d5b9-47ab-961e-a77703652cf4",
@@ -2289,14 +2603,6 @@
           "Type": "Check Box"
         }
       ]
-    },
-    {
-      "ID": "bc2d8f91-7339-4153-bc54-596985edc9c5",
-      "Name": "Monitoring API",
-      "Description": "",
-      "ComponentTypeID": 1,
-      "IsThirdParty": true,
-      "Properties": []
     },
     {
       "ID": "2d746c06-a57d-41af-9712-f9d8059425eb",
@@ -2466,7 +2772,6 @@
       "Name": "Connectivity",
       "Description": "",
       "myComponentTypeIDs": [
-        "dda38dcf-c681-4aa7-831a-7d0943ffbdcf",
         "693eb3c8-9d8a-42ce-91aa-0ac4c190d7dc",
         "c80fa1ff-def0-49b3-ad47-0c9f56c21fe6",
         "fe464818-7cef-4aba-9d18-0bc2357ca56c",
@@ -2481,8 +2786,7 @@
       "myComponentTypeIDs": [
         "ce3cdda1-0737-468e-83e7-ca20098551d1",
         "a6659758-d5b9-47ab-961e-a77703652cf4",
-        "2ca79dc4-0a73-4fc2-859b-1b5701530183",
-        "bc2d8f91-7339-4153-bc54-596985edc9c5"
+        "2ca79dc4-0a73-4fc2-859b-1b5701530183"
       ],
       "ComponentTypeID": 1
     }
@@ -2518,6 +2822,14 @@
           "HasGetter": false,
           "Editable": true,
           "Type": "Check Box"
+        },
+        {
+          "DisplayName": "Has Incident Response Team",
+          "ID": "263b5363-2c09-45dd-8ff8-1a430fb7e93a",
+          "Tooltip": "Is there a incident response team within the organization?",
+          "HasGetter": false,
+          "Editable": true,
+          "Type": "Check Box"
         }
       ]
     },
@@ -2533,7 +2845,16 @@
       "ID": "8902950a-6c5e-426b-baa2-71794e74f720",
       "Name": "Penetration Testing",
       "Description": "",
-      "Properties": [],
+      "Properties": [
+        {
+          "DisplayName": "Has Regular Pentests",
+          "ID": "d4cb3498-4689-49f2-9f37-8bd45e62a972",
+          "Tooltip": "Are penetration tests regularly (at least annually) performed?",
+          "HasGetter": false,
+          "Editable": true,
+          "Type": "Check Box"
+        }
+      ],
       "ComponentTypeID": 2,
       "IsActive": true
     },
@@ -2633,16 +2954,160 @@
       ],
       "ComponentTypeID": 2,
       "IsActive": true
+    },
+    {
+      "ID": "44fd3f80-7e55-41af-b452-283556dd1894",
+      "Name": "Privacy Impact Assessment",
+      "Description": "The PIA should address the following at minimum: identification of sensitive data stored on the device, mechanisms used to inform users of data collected; consent for data collection; processes for use and review of personal data before it is transferred, notice concerning the timing and frequency of data collection, and the ability for users to opt-in or out of data sharing.",
+      "Properties": [
+        {
+          "DisplayName": "Has PIA",
+          "ID": "8f4a0dd3-2083-42eb-89bd-48480a082342",
+          "Tooltip": "Is a privacy impact assessment conducted?",
+          "HasGetter": false,
+          "Editable": true,
+          "Type": "Check Box"
+        },
+        {
+          "DisplayName": "Has Regular PIA Update",
+          "ID": "f3d756ae-7451-4738-986c-0e15d22cb2b2",
+          "Tooltip": "Is the privacy impact assessment regularly updated (e.g. annually)?",
+          "HasGetter": false,
+          "Editable": true,
+          "Type": "Check Box"
+        }
+      ],
+      "ComponentTypeID": 2,
+      "IsActive": true
+    },
+    {
+      "ID": "be1f1524-fd62-4957-a08d-844b070dbb00",
+      "Name": "Safety Impact Assessment",
+      "Description": "Evaluate the safety impacts of an IoT system, log all safety risks, prioritize the risks, and implement mitigations for each risk. Incorporate device and environmental controls to enforce safety requirements, as necessary.",
+      "Properties": [
+        {
+          "DisplayName": "Has SIA",
+          "ID": "a1e7923f-848d-4532-b967-700925af1a77",
+          "Tooltip": "Is a safety impact assessment conducted?",
+          "HasGetter": false,
+          "Editable": true,
+          "Type": "Check Box"
+        },
+        {
+          "DisplayName": "Has Fault Tree Analysis",
+          "ID": "d0e4fa19-2b29-48b3-b81b-2be909af26d8",
+          "Tooltip": "Is a fault tree analysis conducted?",
+          "HasGetter": false,
+          "Editable": true,
+          "Type": "Check Box"
+        }
+      ],
+      "ComponentTypeID": 2,
+      "IsActive": true
+    },
+    {
+      "ID": "23a8870f-e7f4-4e07-80be-8cb890f509e8",
+      "Name": "Identity and Access Management",
+      "Description": "",
+      "Properties": [
+        {
+          "DisplayName": "Has Account Management",
+          "ID": "524e227d-483e-45ae-b002-3041d15fe7e9",
+          "Tooltip": "Is there a regular audit of the account management (user, administrator, etc.)?",
+          "HasGetter": false,
+          "Editable": true,
+          "Type": "Check Box"
+        },
+        {
+          "DisplayName": "Has Certificate-based Authentication",
+          "ID": "330a4f44-1471-460d-889f-4f33a3b8ce72",
+          "Tooltip": "Is certificate-based authentication used to access the system?",
+          "HasGetter": false,
+          "Editable": true,
+          "Type": "Check Box"
+        }
+      ],
+      "ComponentTypeID": 2,
+      "IsActive": true
+    },
+    {
+      "ID": "34f3948e-4d7f-4f0b-a86b-e649c427bc8e",
+      "Name": "Certificate Management",
+      "Description": "",
+      "Properties": [
+        {
+          "DisplayName": "Uses Short-dated Certificates ",
+          "ID": "40c05808-37a1-4394-a9d5-8491b55c3a9b",
+          "Tooltip": "Is the lifetime of operational certificates no longer than 3 years?",
+          "HasGetter": false,
+          "Editable": true,
+          "Type": "Check Box"
+        },
+        {
+          "DisplayName": "Has Revocation Process",
+          "ID": "083e93ef-da95-4064-a698-6fbd5cf997f5",
+          "Tooltip": "Is there a process for certificate revocation?",
+          "HasGetter": false,
+          "Editable": true,
+          "Type": "Check Box"
+        },
+        {
+          "DisplayName": "Has Management Policy",
+          "ID": "46d35b81-19e3-404e-9fe2-af5088971ffe",
+          "Tooltip": "Is there a certificate management policy (creation, processing, storage, etc.)?",
+          "HasGetter": false,
+          "Editable": true,
+          "Type": "Check Box"
+        },
+        {
+          "DisplayName": "Has Automated Renewal Process",
+          "ID": "0c0d40fd-7f0a-412d-ae80-efce58906308",
+          "Tooltip": "Is there an automated process to renew certificates?",
+          "HasGetter": false,
+          "Editable": true,
+          "Type": "Check Box"
+        }
+      ],
+      "ComponentTypeID": 2,
+      "IsActive": true
+    },
+    {
+      "ID": "2c884e0a-ab3c-43f7-95c7-f4a320e8bbe1",
+      "Name": "Supply Chain Risk Management",
+      "Description": "",
+      "Properties": [
+        {
+          "DisplayName": "Has SCRM Program",
+          "ID": "7e3faca4-9b7a-4f8e-8fbe-cb461ca6870f",
+          "Tooltip": "Is there a established supply chain risk management program?",
+          "HasGetter": false,
+          "Editable": true,
+          "Type": "Check Box"
+        },
+        {
+          "DisplayName": "Has Third Party Monitoring",
+          "ID": "2614fc88-29cb-4d84-9902-5f7ca7f98410",
+          "Tooltip": "Are third party components (hardware, software) tracked, monitored, and regularly updated?",
+          "HasGetter": false,
+          "Editable": true,
+          "Type": "Check Box"
+        }
+      ],
+      "ComponentTypeID": 2,
+      "IsActive": true
     }
   ],
   "myComponentPTypeGroups": [
     {
       "ID": "152dc4f8-0f67-4967-bb95-0994a48082f3",
-      "Name": "Secure Design and Implementation",
+      "Name": "Design & Implementation",
       "Description": "",
       "myComponentTypeIDs": [
         "0f33d280-4c59-4f4c-96ba-c3688a28b4ba",
-        "f0f7230f-18e3-4074-8d24-99e71b76bddf"
+        "f0f7230f-18e3-4074-8d24-99e71b76bddf",
+        "44fd3f80-7e55-41af-b452-283556dd1894",
+        "be1f1524-fd62-4957-a08d-844b070dbb00",
+        "2c884e0a-ab3c-43f7-95c7-f4a320e8bbe1"
       ],
       "ComponentTypeID": 2
     },
@@ -2652,7 +3117,9 @@
       "Description": "",
       "myComponentTypeIDs": [
         "dab1370c-408e-45a0-9552-bae85d15b0fe",
-        "4ba356ca-b581-4dab-a0cf-b401f4422ee0"
+        "4ba356ca-b581-4dab-a0cf-b401f4422ee0",
+        "23a8870f-e7f4-4e07-80be-8cb890f509e8",
+        "34f3948e-4d7f-4f0b-a86b-e649c427bc8e"
       ],
       "ComponentTypeID": 2
     },
@@ -2931,7 +3398,7 @@
     },
     {
       "ID": "c46b7c74-5979-409d-8ceb-631b8833c596",
-      "Name": "Obtaining of control",
+      "Name": "Obtaining of access/control",
       "Description": "",
       "ImpactCats": [
         4
@@ -3525,7 +3992,8 @@
         "97b5a1d4-be82-4485-82f6-e4532795a20b",
         "a20d6e53-4426-4700-a04f-a4018bc7bfce",
         "680ceebd-357c-49d6-8bfd-390dc6c51dde",
-        "a0729a41-bcc9-43d8-9c86-bfb26c64e93c"
+        "a0729a41-bcc9-43d8-9c86-bfb26c64e93c",
+        "04d5f07e-2482-451b-9e24-94cb650da53b"
       ]
     },
     {
@@ -3543,7 +4011,8 @@
         "1447713d-9ad6-454e-81d8-c9f4ef34c72b",
         "f5949698-47d4-48ee-a116-2d212695c41f",
         "b8835cb9-3c77-496e-ac2d-2ed6fa7f2d78",
-        "c7787e71-5c70-462c-9558-ce20e7cfdfe8"
+        "c7787e71-5c70-462c-9558-ce20e7cfdfe8",
+        "4e007b60-94e7-4df3-b3bd-109eb8627da2"
       ]
     },
     {
@@ -3639,7 +4108,9 @@
         "6509fe5f-7e27-40ec-bd08-97e29c67f8c1",
         "ed84da5f-3181-4be1-bef4-d911077b1910",
         "b26fc3e4-7a38-4f00-acdb-ec78246d0b25",
-        "3162421f-ca5b-400d-bbe8-58a510be9abf"
+        "3162421f-ca5b-400d-bbe8-58a510be9abf",
+        "b48781b2-24a2-481b-b7c1-3390dbeeb973",
+        "e060675a-41d0-4c4d-9e16-311bb4adec7b"
       ]
     },
     {
@@ -3661,7 +4132,8 @@
       "threatOriginGroupIDs": [],
       "threatOriginIDs": [
         "30cf5142-2339-4130-8a6e-2b05869e6df2",
-        "afd4bceb-31b0-41cd-9eae-02d2eba6b41c"
+        "afd4bceb-31b0-41cd-9eae-02d2eba6b41c",
+        "7742f998-ab1e-4f64-8ac6-12b3f97b936a"
       ]
     },
     {
@@ -3693,7 +4165,9 @@
         "4ee3fc8a-87a5-4fdf-868f-fb35cd12dc91",
         "bf289171-82c3-431a-b3f1-28d17e5a6546",
         "2f483201-0209-4320-ba2e-2d692274aab5",
-        "05e04798-41ce-4919-a92b-264f7e985de2"
+        "05e04798-41ce-4919-a92b-264f7e985de2",
+        "0217b20a-5e3a-4244-8dce-819e28050a47",
+        "1909127e-50bd-4892-8b1f-1a2123a4fa61"
       ]
     },
     {
@@ -3756,7 +4230,11 @@
           "Score": 9.4
         }
       },
-      "threatCategorieIDs": [],
+      "threatCategorieIDs": [
+        "8a3d81d9-3317-4e5d-88fe-a0e0592295fe",
+        "d0bcd70c-fbad-4a16-a606-8b0682ae7afe",
+        "f7639a0c-e85b-4947-bbec-2ac4a0911827"
+      ],
       "ThreatExploited": [
         "O"
       ],
@@ -4252,7 +4730,8 @@
           "S": "U",
           "C": "L",
           "I": "N",
-          "A": "H"
+          "A": "H",
+          "Score": 7.1
         }
       },
       "Severity": 3
@@ -5451,7 +5930,7 @@
     },
     {
       "ID": "06c24920-2ce3-49ca-8134-9fa81fb2cdef",
-      "Name": "Identify spoofing",
+      "Name": "Identity spoofing",
       "Description": "",
       "OriginTypes": [
         2
@@ -5465,7 +5944,8 @@
       "threatCategorieIDs": [
         "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
         "4f5e6bf4-c9c4-4ea6-9b0e-5c861570e6ec",
-        "c46b7c74-5979-409d-8ceb-631b8833c596"
+        "c46b7c74-5979-409d-8ceb-631b8833c596",
+        "3bbe354c-317a-4f76-bdbb-75543b5d5aa4"
       ],
       "AttackTechnique": {
         "CVSS": {},
@@ -5634,6 +6114,168 @@
         "CWEID": 862
       },
       "Severity": 3
+    },
+    {
+      "ID": "4e007b60-94e7-4df3-b3bd-109eb8627da2",
+      "Name": "Replay attack",
+      "Description": "Replaying a capture network package",
+      "OriginTypes": [
+        1
+      ],
+      "ThreatIntroduced": [
+        "I",
+        "C"
+      ],
+      "ThreatExploited": [
+        "O"
+      ],
+      "threatCategorieIDs": [
+        "d0bcd70c-fbad-4a16-a606-8b0682ae7afe",
+        "f3fe9ca9-4c34-40fc-a270-3e6252d01e6f"
+      ],
+      "Weakness": {
+        "CWEID": 294
+      },
+      "Severity": 2
+    },
+    {
+      "ID": "b48781b2-24a2-481b-b7c1-3390dbeeb973",
+      "Name": "Cross Site Scripting (XSS)",
+      "Description": "See CWE-79 and CAPEC-63",
+      "OriginTypes": [
+        1,
+        2
+      ],
+      "ThreatIntroduced": [
+        "I"
+      ],
+      "ThreatExploited": [
+        "O"
+      ],
+      "threatCategorieIDs": [
+        "f19e41bd-9fd9-4046-a195-28d441207fa0",
+        "c0bd6e2f-9784-4c11-9aee-115a966e0a4d",
+        "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
+        "c46b7c74-5979-409d-8ceb-631b8833c596"
+      ],
+      "Weakness": {
+        "CWEID": 79
+      },
+      "AttackTechnique": {
+        "CVSS": {},
+        "CAPECID": 63
+      },
+      "Severity": 4
+    },
+    {
+      "ID": "04d5f07e-2482-451b-9e24-94cb650da53b",
+      "Name": "Use of broken/risky cryptographic algorithm",
+      "Description": "",
+      "OriginTypes": [
+        1
+      ],
+      "ThreatIntroduced": [
+        "I"
+      ],
+      "ThreatExploited": [
+        "O"
+      ],
+      "threatCategorieIDs": [
+        "f19e41bd-9fd9-4046-a195-28d441207fa0",
+        "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
+        "c17cbe5c-3210-42fc-be1e-05f1f915865b"
+      ],
+      "Weakness": {
+        "CWEID": 327
+      },
+      "Severity": 3
+    },
+    {
+      "ID": "7742f998-ab1e-4f64-8ac6-12b3f97b936a",
+      "Name": "Unawareness",
+      "Description": "The affected subject is not aware of the collection, processing, storage, or sharing of the subject's data.",
+      "OriginTypes": [],
+      "ThreatIntroduced": [
+        "C",
+        "I"
+      ],
+      "ThreatExploited": [
+        "O"
+      ],
+      "threatCategorieIDs": [
+        "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
+        "aead4d1d-0f64-42b4-a512-cbbc979af3ca",
+        "7bbfe5d3-8a91-4210-99ab-79f670715e61"
+      ]
+    },
+    {
+      "ID": "0217b20a-5e3a-4244-8dce-819e28050a47",
+      "Name": "Credential stuffing",
+      "Description": "",
+      "OriginTypes": [
+        2
+      ],
+      "ThreatIntroduced": [
+        "I"
+      ],
+      "ThreatExploited": [
+        "O"
+      ],
+      "threatCategorieIDs": [
+        "c46b7c74-5979-409d-8ceb-631b8833c596"
+      ],
+      "AttackTechnique": {
+        "CVSS": {},
+        "CAPECID": 600
+      },
+      "Severity": 3
+    },
+    {
+      "ID": "1909127e-50bd-4892-8b1f-1a2123a4fa61",
+      "Name": "Password spraying",
+      "Description": "",
+      "OriginTypes": [
+        2
+      ],
+      "ThreatIntroduced": [
+        "I"
+      ],
+      "ThreatExploited": [
+        "O"
+      ],
+      "threatCategorieIDs": [
+        "c46b7c74-5979-409d-8ceb-631b8833c596"
+      ],
+      "AttackTechnique": {
+        "CVSS": {},
+        "CAPECID": 565
+      },
+      "Severity": 3
+    },
+    {
+      "ID": "e060675a-41d0-4c4d-9e16-311bb4adec7b",
+      "Name": "Insecure default settings",
+      "Description": "",
+      "OriginTypes": [
+        1
+      ],
+      "ThreatIntroduced": [
+        "C",
+        "I",
+        "S"
+      ],
+      "ThreatExploited": [
+        "O"
+      ],
+      "threatCategorieIDs": [
+        "f19e41bd-9fd9-4046-a195-28d441207fa0",
+        "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
+        "c46b7c74-5979-409d-8ceb-631b8833c596"
+      ],
+      "Weakness": {
+        "CWEID": 1188
+      },
+      "Severity": 2
     }
   ],
   "threatQuestions": [
@@ -7396,6 +8038,650 @@
       "componentTypeID": "02b94aae-efea-451e-a017-81be68db03d7",
       "Question": "Are configuration changes logged?",
       "propertyID": "0bd863c2-5505-4226-9b28-bab9715c99d1"
+    },
+    {
+      "ID": "3c8b59af-daec-41fc-91a2-798dba990138",
+      "Name": "Unsecure mode",
+      "Description": "",
+      "ChangesPerOption": {
+        "general.Yes": {
+          "Active": true,
+          "Value": true
+        },
+        "general.No": {
+          "Active": true,
+          "Value": false
+        },
+        "general.N/A": {
+          "Active": true,
+          "Value": "undefined"
+        }
+      },
+      "OptionType": 1,
+      "componentTypeID": "c80fa1ff-def0-49b3-ad47-0c9f56c21fe6",
+      "Question": "Is the security mode 'Sign' or 'SignAndEncrypt'?",
+      "propertyID": "4338e868-4e3c-4473-ba27-6148e8b1fc0f"
+    },
+    {
+      "ID": "9e121d1d-f4da-4ca3-bc88-e4669388bf53",
+      "Name": "Missing user authentication",
+      "Description": "",
+      "ChangesPerOption": {
+        "general.Yes": {
+          "Active": true,
+          "Value": true
+        },
+        "general.No": {
+          "Active": true,
+          "Value": false
+        },
+        "general.N/A": {
+          "Active": true,
+          "Value": "undefined"
+        }
+      },
+      "OptionType": 1,
+      "componentTypeID": "c80fa1ff-def0-49b3-ad47-0c9f56c21fe6",
+      "Question": "Are all users authenticated (identifier 'anonymous' is not allowed)? ",
+      "propertyID": "1e3a8fb8-4a34-44be-8168-996a7e0283f1"
+    },
+    {
+      "ID": "dc941be3-a445-4474-98ff-4b19af31772c",
+      "Name": "Weak cryptographic algorithms",
+      "Description": "",
+      "ChangesPerOption": {
+        "general.Yes": {
+          "Active": true,
+          "Value": true
+        },
+        "general.No": {
+          "Active": true,
+          "Value": false
+        },
+        "general.N/A": {
+          "Active": true,
+          "Value": "undefined"
+        }
+      },
+      "OptionType": 1,
+      "componentTypeID": "c80fa1ff-def0-49b3-ad47-0c9f56c21fe6",
+      "Question": "Is a strong security policy chosen that uses strong cryptographic algorithms?",
+      "propertyID": "3f4c724d-3d4d-4b6b-9252-ef43b4240d79"
+    },
+    {
+      "ID": "3d3eb2da-41ed-4f3d-8851-c03422948c97",
+      "Name": "Missing certificate",
+      "Description": "",
+      "ChangesPerOption": {
+        "general.Yes": {
+          "Active": true,
+          "Value": true
+        },
+        "general.No": {
+          "Active": true,
+          "Value": false
+        },
+        "general.N/A": {
+          "Active": true,
+          "Value": "undefined"
+        }
+      },
+      "OptionType": 1,
+      "componentTypeID": "c80fa1ff-def0-49b3-ad47-0c9f56c21fe6",
+      "Question": "Are only connections accepted that provide a trusted certificate?",
+      "propertyID": "34344cae-d072-4901-a7be-4084a2534b45"
+    },
+    {
+      "ID": "bb58f761-c25c-4f98-9b41-26320247b929",
+      "Name": "Unsecure protocols",
+      "Description": "",
+      "ChangesPerOption": {
+        "general.Yes": {
+          "Active": true,
+          "Value": true
+        },
+        "general.No": {
+          "Active": true,
+          "Value": false
+        },
+        "general.N/A": {
+          "Active": true,
+          "Value": "undefined"
+        }
+      },
+      "OptionType": 1,
+      "componentTypeID": "ce3cdda1-0737-468e-83e7-ca20098551d1",
+      "Question": "Does the sever use secure protocols?",
+      "propertyID": "9ea829dc-59d5-437c-8d24-9908feac2941"
+    },
+    {
+      "ID": "484a3974-f2e1-4535-905b-c7da674c3951",
+      "Name": "Unsecure SSL/TLS version",
+      "Description": "",
+      "ChangesPerOption": {
+        "general.Yes": {
+          "Active": true,
+          "Value": true
+        },
+        "general.No": {
+          "Active": true,
+          "Value": false
+        },
+        "general.N/A": {
+          "Active": true,
+          "Value": "undefined"
+        }
+      },
+      "OptionType": 1,
+      "componentTypeID": "ce3cdda1-0737-468e-83e7-ca20098551d1",
+      "Question": "Does the server use at least TLS 1.2 and older versions of SSL/TLS are disabled?",
+      "propertyID": "aa99758d-30a6-4e0f-9d11-1d46c0f43d6c"
+    },
+    {
+      "ID": "a9b8f571-99ec-471e-9bf0-6144757681d9",
+      "Name": "Exposes server version",
+      "Description": "",
+      "ChangesPerOption": {
+        "general.Yes": {
+          "Active": true,
+          "Value": true
+        },
+        "general.No": {
+          "Active": true,
+          "Value": false
+        },
+        "general.N/A": {
+          "Active": true,
+          "Value": "undefined"
+        }
+      },
+      "OptionType": 1,
+      "componentTypeID": "ce3cdda1-0737-468e-83e7-ca20098551d1",
+      "Question": "Has the server a version banner?",
+      "propertyID": "6faf97a0-6039-4b7b-ba7c-6b9ef003ede3"
+    },
+    {
+      "ID": "023c9fa3-b198-4038-9d04-17ad84d15f76",
+      "Name": "Missing patches",
+      "Description": "",
+      "ChangesPerOption": {
+        "general.Yes": {
+          "Active": true,
+          "Value": true
+        },
+        "general.No": {
+          "Active": true,
+          "Value": false
+        },
+        "general.N/A": {
+          "Active": true,
+          "Value": "undefined"
+        }
+      },
+      "OptionType": 1,
+      "componentTypeID": "ce3cdda1-0737-468e-83e7-ca20098551d1",
+      "Question": "Is the sever regular updated and patched?",
+      "propertyID": "defc6bcc-2bc9-457a-abab-666ec78d4f73"
+    },
+    {
+      "ID": "db5fb272-c8bc-4f16-a6c9-37c80bd4225c",
+      "Name": "Missing web application firewall",
+      "Description": "",
+      "ChangesPerOption": {
+        "general.Yes": {
+          "Active": true,
+          "Value": true
+        },
+        "general.No": {
+          "Active": true,
+          "Value": false
+        },
+        "general.N/A": {
+          "Active": true,
+          "Value": "undefined"
+        }
+      },
+      "OptionType": 1,
+      "componentTypeID": "ce3cdda1-0737-468e-83e7-ca20098551d1",
+      "Question": "Does the system deploy a web application firewall (WAF)?",
+      "propertyID": "6f65b93f-53ad-424f-a81b-4777ad48ec97"
+    },
+    {
+      "ID": "d39b86e3-5ed9-4e92-a0c6-2103aee69114",
+      "Name": "Undetected misuse of API",
+      "Description": "",
+      "ChangesPerOption": {
+        "general.Yes": {
+          "Active": true,
+          "Value": true
+        },
+        "general.No": {
+          "Active": true,
+          "Value": false
+        },
+        "general.N/A": {
+          "Active": true,
+          "Value": "undefined"
+        }
+      },
+      "OptionType": 1,
+      "componentTypeID": "ce3cdda1-0737-468e-83e7-ca20098551d1",
+      "Question": "Are all API calls monitored for potential API misuse?",
+      "propertyID": "b125fa52-c06e-4e54-88b5-5e9d3929f643"
+    },
+    {
+      "ID": "2bf5c055-bca4-490c-90dd-5e967b925a75",
+      "Name": "Unsecure management access",
+      "Description": "",
+      "ChangesPerOption": {
+        "general.Yes": {
+          "Active": true,
+          "Value": true
+        },
+        "general.No": {
+          "Active": true,
+          "Value": false
+        },
+        "general.N/A": {
+          "Active": true,
+          "Value": "undefined"
+        }
+      },
+      "OptionType": 1,
+      "componentTypeID": "44545d3e-fa0a-44c7-a19e-8164dab646dc",
+      "Question": "Is the access for device management secured (unique password/certificate, MFA, etc.)?",
+      "propertyID": "6962d897-bf88-4745-9f2c-a8aa9d981f93"
+    },
+    {
+      "ID": "facbd825-63f0-4a9b-b357-1035efe81c50",
+      "Name": "Unsecure message",
+      "Description": "",
+      "ChangesPerOption": {
+        "general.Yes": {
+          "Active": true,
+          "Value": true
+        },
+        "general.No": {
+          "Active": true,
+          "Value": false
+        },
+        "general.N/A": {
+          "Active": true,
+          "Value": "undefined"
+        }
+      },
+      "OptionType": 1,
+      "componentTypeID": "693eb3c8-9d8a-42ce-91aa-0ac4c190d7dc",
+      "Question": "Are only messages on port 8883 sent (MQTT over TLS)?",
+      "propertyID": "6d7716ae-9870-46a1-9231-a713a0dcd5a0"
+    },
+    {
+      "ID": "da6c4bc6-6173-4e55-9559-296e1c52d086",
+      "Name": "Client spoofing",
+      "Description": "",
+      "ChangesPerOption": {
+        "general.Yes": {
+          "Active": true,
+          "Value": true
+        },
+        "general.No": {
+          "Active": true,
+          "Value": false
+        },
+        "general.N/A": {
+          "Active": true,
+          "Value": "undefined"
+        }
+      },
+      "OptionType": 1,
+      "componentTypeID": "693eb3c8-9d8a-42ce-91aa-0ac4c190d7dc",
+      "Question": "Is the client authenticated and authorized using its own X.509 certificate?",
+      "propertyID": "de628891-642c-4b7c-b88b-abf7988721dc"
+    },
+    {
+      "ID": "c1284da0-cb8e-47bc-acf4-a09856baf20b",
+      "Name": "No privacy impact assessment",
+      "Description": "The PIA should address the following at minimum: identification of sensitive data stored on the device, mechanisms used to inform users of data collected; consent for data collection; processes for use and review of personal data before it is transferred, notice concerning the timing and frequency of data collection, and the ability for users to opt-in or out of data sharing.",
+      "ChangesPerOption": {
+        "general.Yes": {
+          "Active": true,
+          "Value": true
+        },
+        "general.No": {
+          "Active": true,
+          "Value": false
+        },
+        "general.N/A": {
+          "Active": true,
+          "Value": "undefined"
+        }
+      },
+      "OptionType": 1,
+      "componentTypeID": "44fd3f80-7e55-41af-b452-283556dd1894",
+      "Question": "Is a privacy impact assessment conducted?",
+      "propertyID": "8f4a0dd3-2083-42eb-89bd-48480a082342"
+    },
+    {
+      "ID": "4a2dccf6-91b4-4719-b9cb-d89651045673",
+      "Name": "Outdated privacy impact assessment",
+      "Description": "",
+      "ChangesPerOption": {
+        "general.Yes": {
+          "Active": true,
+          "Value": true
+        },
+        "general.No": {
+          "Active": true,
+          "Value": false
+        },
+        "general.N/A": {
+          "Active": true,
+          "Value": "undefined"
+        }
+      },
+      "OptionType": 1,
+      "componentTypeID": "44fd3f80-7e55-41af-b452-283556dd1894",
+      "Question": "Is the privacy impact assessment regularly updated (e.g. annually)?",
+      "propertyID": "f3d756ae-7451-4738-986c-0e15d22cb2b2"
+    },
+    {
+      "ID": "a0647742-dcb0-4706-9cdf-a6b969bf3e76",
+      "Name": "No safety impact assessment",
+      "Description": "Evaluate the safety impacts of an IoT system, log all safety risks, prioritize the risks, and implement mitigations for each risk. Incorporate device and environmental controls to enforce safety requirements, as necessary",
+      "ChangesPerOption": {
+        "general.Yes": {
+          "Active": true,
+          "Value": true
+        },
+        "general.No": {
+          "Active": true,
+          "Value": false
+        },
+        "general.N/A": {
+          "Active": true,
+          "Value": "undefined"
+        }
+      },
+      "OptionType": 1,
+      "componentTypeID": "be1f1524-fd62-4957-a08d-844b070dbb00",
+      "Question": "Is a safety impact assessment conducted?",
+      "propertyID": "a1e7923f-848d-4532-b967-700925af1a77"
+    },
+    {
+      "ID": "f32f6039-042f-4dc2-a8ef-ba75c463cb46",
+      "Name": "No fault tree analysis",
+      "Description": "Conduct fault tree analysis to identify and prioritize safety risks associated with the IoT system.",
+      "ChangesPerOption": {
+        "general.Yes": {
+          "Active": true,
+          "Value": true
+        },
+        "general.No": {
+          "Active": true,
+          "Value": false
+        },
+        "general.N/A": {
+          "Active": true,
+          "Value": "undefined"
+        }
+      },
+      "OptionType": 1,
+      "componentTypeID": "be1f1524-fd62-4957-a08d-844b070dbb00",
+      "Question": "Is a fault tree analysis conducted?",
+      "propertyID": "d0e4fa19-2b29-48b3-b81b-2be909af26d8"
+    },
+    {
+      "ID": "dd4edd5b-398c-40d1-8d1d-239e9e63827e",
+      "Name": "No account management",
+      "Description": "",
+      "ChangesPerOption": {
+        "general.Yes": {
+          "Active": true,
+          "Value": true
+        },
+        "general.No": {
+          "Active": true,
+          "Value": false
+        },
+        "general.N/A": {
+          "Active": true,
+          "Value": "undefined"
+        }
+      },
+      "OptionType": 1,
+      "componentTypeID": "23a8870f-e7f4-4e07-80be-8cb890f509e8",
+      "Question": "Is there a regular audit of the account management (user, administrator, etc.)?",
+      "propertyID": "524e227d-483e-45ae-b002-3041d15fe7e9"
+    },
+    {
+      "ID": "b89dd14a-9e2b-46eb-9236-92968ed70fdb",
+      "Name": "Weak authentication",
+      "Description": "",
+      "ChangesPerOption": {
+        "general.Yes": {
+          "Active": true,
+          "Value": true
+        },
+        "general.No": {
+          "Active": true,
+          "Value": false
+        },
+        "general.N/A": {
+          "Active": true,
+          "Value": "undefined"
+        }
+      },
+      "OptionType": 1,
+      "componentTypeID": "23a8870f-e7f4-4e07-80be-8cb890f509e8",
+      "Question": "Is certificate-based authentication used to access the system?",
+      "propertyID": "330a4f44-1471-460d-889f-4f33a3b8ce72"
+    },
+    {
+      "ID": "50aceb90-7382-434f-bc25-278df0527b49",
+      "Name": "Root privileges",
+      "Description": "",
+      "ChangesPerOption": {
+        "general.Yes": {
+          "Active": true,
+          "Value": true
+        },
+        "general.No": {
+          "Active": true,
+          "Value": false
+        },
+        "general.N/A": {
+          "Active": true,
+          "Value": "undefined"
+        }
+      },
+      "OptionType": 1,
+      "componentTypeID": "ce3cdda1-0737-468e-83e7-ca20098551d1",
+      "Question": "Is the service running with root privileges?",
+      "propertyID": "39de06c5-7cfc-4fb8-8a1f-22a8888cf4ed"
+    },
+    {
+      "ID": "da56feac-ab79-46ba-82df-b6529f907327",
+      "Name": "Certificates with long lifetime",
+      "Description": "Device certificates may be used without expiration. In this case, short-term operational certificates should be established.",
+      "ChangesPerOption": {
+        "general.Yes": {
+          "Active": true,
+          "Value": true
+        },
+        "general.No": {
+          "Active": true,
+          "Value": false
+        },
+        "general.N/A": {
+          "Active": true,
+          "Value": "undefined"
+        }
+      },
+      "OptionType": 1,
+      "componentTypeID": "34f3948e-4d7f-4f0b-a86b-e649c427bc8e",
+      "Question": "Is the lifetime of operational certificates no longer than 3 years?",
+      "propertyID": "40c05808-37a1-4394-a9d5-8491b55c3a9b"
+    },
+    {
+      "ID": "f327dd5b-67d4-42ca-af4c-a67f70ed2c0e",
+      "Name": "No revocation process",
+      "Description": "",
+      "ChangesPerOption": {
+        "general.Yes": {
+          "Active": true,
+          "Value": true
+        },
+        "general.No": {
+          "Active": true,
+          "Value": false
+        },
+        "general.N/A": {
+          "Active": true,
+          "Value": "undefined"
+        }
+      },
+      "OptionType": 1,
+      "componentTypeID": "34f3948e-4d7f-4f0b-a86b-e649c427bc8e",
+      "Question": "Is there a process for certificate revocation?",
+      "propertyID": "083e93ef-da95-4064-a698-6fbd5cf997f5"
+    },
+    {
+      "ID": "8278b519-37ca-4689-9ae7-8b65bf16137b",
+      "Name": "No management policy",
+      "Description": "",
+      "ChangesPerOption": {
+        "general.Yes": {
+          "Active": true,
+          "Value": true
+        },
+        "general.No": {
+          "Active": true,
+          "Value": false
+        },
+        "general.N/A": {
+          "Active": true,
+          "Value": "undefined"
+        }
+      },
+      "OptionType": 1,
+      "componentTypeID": "34f3948e-4d7f-4f0b-a86b-e649c427bc8e",
+      "Question": "Is there a certificate management policy (creation, processing, storage, etc.)?",
+      "propertyID": "46d35b81-19e3-404e-9fe2-af5088971ffe"
+    },
+    {
+      "ID": "ca2da121-e451-497b-9c49-5126d497589d",
+      "Name": "No automated renewal process",
+      "Description": "",
+      "ChangesPerOption": {
+        "general.Yes": {
+          "Active": true,
+          "Value": true
+        },
+        "general.No": {
+          "Active": true,
+          "Value": false
+        },
+        "general.N/A": {
+          "Active": true,
+          "Value": "undefined"
+        }
+      },
+      "OptionType": 1,
+      "componentTypeID": "34f3948e-4d7f-4f0b-a86b-e649c427bc8e",
+      "Question": "Is there an automated process to renew certificates?",
+      "propertyID": "0c0d40fd-7f0a-412d-ae80-efce58906308"
+    },
+    {
+      "ID": "884ab7b7-1449-4400-8098-eb803094dace",
+      "Name": "No incident response team",
+      "Description": "",
+      "ChangesPerOption": {
+        "general.Yes": {
+          "Active": true,
+          "Value": true
+        },
+        "general.No": {
+          "Active": true,
+          "Value": false
+        },
+        "general.N/A": {
+          "Active": true,
+          "Value": "undefined"
+        }
+      },
+      "OptionType": 1,
+      "componentTypeID": "25032887-439e-4599-84bf-05d906641a0b",
+      "Question": "Is there a incident response team within the organization?",
+      "propertyID": "263b5363-2c09-45dd-8ff8-1a430fb7e93a"
+    },
+    {
+      "ID": "b3066f22-a08d-4b53-b75a-bc918a24d326",
+      "Name": "No supply chain risk management program",
+      "Description": "",
+      "ChangesPerOption": {
+        "general.Yes": {
+          "Active": true,
+          "Value": true
+        },
+        "general.No": {
+          "Active": true,
+          "Value": false
+        },
+        "general.N/A": {
+          "Active": true,
+          "Value": "undefined"
+        }
+      },
+      "OptionType": 1,
+      "componentTypeID": "2c884e0a-ab3c-43f7-95c7-f4a320e8bbe1",
+      "Question": "Is there a established supply chain risk management program?",
+      "propertyID": "7e3faca4-9b7a-4f8e-8fbe-cb461ca6870f"
+    },
+    {
+      "ID": "7d1d4c4f-21e6-4042-9562-793624b85352",
+      "Name": "Risks from third party components",
+      "Description": "",
+      "ChangesPerOption": {
+        "general.Yes": {
+          "Active": true,
+          "Value": true
+        },
+        "general.No": {
+          "Active": true,
+          "Value": false
+        },
+        "general.N/A": {
+          "Active": true,
+          "Value": "undefined"
+        }
+      },
+      "OptionType": 1,
+      "componentTypeID": "2c884e0a-ab3c-43f7-95c7-f4a320e8bbe1",
+      "Question": "Are third party components (hardware, software) tracked, monitored, and regularly updated?",
+      "propertyID": "2614fc88-29cb-4d84-9902-5f7ca7f98410"
+    },
+    {
+      "ID": "a1c43a03-c0a6-4f68-acce-f2bec5433535",
+      "Name": "No regular penetration tests",
+      "Description": "",
+      "ChangesPerOption": {
+        "general.Yes": {
+          "Active": true,
+          "Value": true
+        },
+        "general.No": {
+          "Active": true,
+          "Value": false
+        },
+        "general.N/A": {
+          "Active": true,
+          "Value": "undefined"
+        }
+      },
+      "OptionType": 1,
+      "componentTypeID": "8902950a-6c5e-426b-baa2-71794e74f720",
+      "Question": "Are penetration tests regularly (at least annually) performed?",
+      "propertyID": "d4cb3498-4689-49f2-9f37-8bd45e62a972"
     }
   ],
   "threatRuleGroups": [
@@ -7411,7 +8697,6 @@
         "821594a6-02e5-4a15-9a72-9cca5b57ee92",
         "7cfa63f6-262b-4da3-aa88-6478522b45c5",
         "5c21d6b7-2390-4f72-b29e-7d7985a30293",
-        "18b56da2-a891-4137-a1d6-13f8b4a31d00",
         "13b5172b-9d6c-49a3-9580-fb256d5cd506",
         "ddfef636-378c-4874-b2ea-33b0fcfe22c5",
         "32dab43f-2dc8-4109-9420-ee7c118a82d5",
@@ -7451,7 +8736,31 @@
         "e5f4b790-5898-495d-9b51-5a16d452edff",
         "e2529607-c1fd-472d-ad14-c7f2cc719282",
         "a3c2f053-c8d6-4626-ae54-79f87ae171c3",
-        "221071ed-1d87-43cc-8052-b615e6ebef04"
+        "221071ed-1d87-43cc-8052-b615e6ebef04",
+        "240eabff-0c74-40e7-9748-d4cc46f59403",
+        "ad30b363-be03-41a8-a422-3ad63cb077b1",
+        "a727e065-ff95-47d5-8aac-625dfc7a453c",
+        "ee25afa7-0267-4f20-96bb-9912494a383e",
+        "12c29b20-0467-40ab-9208-2c01d6142eab",
+        "063b7019-22aa-4eb8-8e6f-9f81dbeb513b",
+        "df2c1c56-e04e-4b33-aae2-e13c9305a370",
+        "1cd3c1af-ff49-461f-9f55-fadb851a0893",
+        "a1ac559b-0ed9-4e5c-815d-80d6dc23308e",
+        "132c57c4-fe66-4c94-95e3-98a67669a4a5",
+        "c9be8d05-1ea5-4947-a786-33b505f2c5fd",
+        "56e4871b-bcb7-48f6-bd9e-5a8273d0b62c",
+        "d9290f90-aa79-432f-92e0-267226771aea",
+        "961c5b9f-ea27-48ec-b526-514636536540",
+        "b76247eb-309c-4fad-9a8c-28fea0a98555",
+        "797fda2f-6e6e-4100-acc9-2192b485a0e5",
+        "b9b2fbaa-be5c-48ca-bddc-6d4cb5989f96",
+        "ba71d0ae-0a71-40d5-a3e3-f15c3a3baa2b",
+        "b05b7085-3952-4f0d-bb85-7c380eb32f92",
+        "8d604765-2981-4a70-9cb0-9569411503cc",
+        "2b0c94a0-f2c7-4068-86e4-2d5f7ed3fe94",
+        "2c32278f-ea97-4aa1-8e85-982f76dee1b9",
+        "a777fa41-a13f-4225-af47-e4458a0c8f9e",
+        "ab670c99-4f5c-41c7-974c-a6704df1661b"
       ]
     },
     {
@@ -7535,7 +8844,35 @@
         "dbf5eca4-f98b-443d-b9a1-8113fafc962e",
         "85519ed2-313e-4c85-85fd-f89109f845d4",
         "871318c9-4e0c-4ff4-a475-06195ea4e3bb",
-        "bf9e6225-fb28-429a-84f1-fe3be63c3d95"
+        "bf9e6225-fb28-429a-84f1-fe3be63c3d95",
+        "ea2ba48d-b7f9-42c9-b9d9-f4a9816383b0",
+        "7f6ca653-a703-480c-b5d8-d82243171994",
+        "289c20cd-ea84-4375-8453-b045b94e1dc6",
+        "3a44327d-24d1-4c53-a3ea-7d891fb86f47",
+        "ea738f65-e0e7-4dc1-93b9-8798c4c8eeaf",
+        "6ffb7af3-466f-4cb7-965e-d60956b2ae7e",
+        "b2c6473b-9498-4b23-a02f-13e3818496d0",
+        "ca66721c-381d-43a1-9129-7643f04065d3",
+        "ff998b64-8348-4f41-8350-22ad07c68448",
+        "ab1d49fc-cb77-46cf-aeff-b4a28eb0d692",
+        "e014189e-5d3c-40c7-aac2-23202be3ccd4",
+        "a89ed38a-c36b-445b-a8c2-89e7289cdb9e",
+        "104ac1d9-34d6-4ce7-97f1-6d3dedcfbb59",
+        "2b82faea-2950-430d-8b52-273d9b0320e2",
+        "eaee9e9f-c3d7-42d7-9f8a-3d538cb9a17e",
+        "03778e71-e9a1-4528-b1db-547990486b27",
+        "359293f9-3fe1-4b61-99cb-332809add1f5",
+        "60b7ed0a-97b4-4904-a3bf-6d3ebdf01954",
+        "65c95996-5153-4f47-a7cd-0ffe05f96309",
+        "23c52b69-1923-416b-99a4-620d36961365",
+        "d0a3fe39-6894-44c5-91ec-1f1019ffda37",
+        "fdc27962-5622-47e7-8de8-ca1b60009276",
+        "d0bd34ae-02d2-46e9-b45a-0130be9713c4",
+        "662c14ed-b7cf-490a-97b8-978836d022bb",
+        "2d55c643-21db-426a-be29-d21f7f1965a4",
+        "3c1166bd-b978-4361-9846-33cd050dd968",
+        "42b3d570-e03c-440d-b7a4-87614c6b2e2c",
+        "d54bae32-33ff-4b3a-b583-07b53b4c947b"
       ]
     },
     {
@@ -7547,7 +8884,8 @@
         "78cbfae0-bbd0-47a5-91ff-223518ffd7b1",
         "4198e708-4e70-41f4-9466-dfc4cc171bfc",
         "27b2bc15-e19c-452e-b096-4f910810e42f",
-        "5d6a6968-e654-4080-91f2-a0755ae8f9e0"
+        "5d6a6968-e654-4080-91f2-a0755ae8f9e0",
+        "e95a6d53-4e91-412b-ba0e-7a6e2dd5a52b"
       ],
       "threatRuleIDs": []
     },
@@ -7561,7 +8899,9 @@
         "da0924b8-967c-406e-a2f5-a6ebac21de1d",
         "b8e6349e-a52a-4f15-a349-312fc809fbb8",
         "7b825bd7-222e-476f-bf22-85fe2e50eb6c",
-        "32d4322f-482d-4a59-8f62-964ef8014a0b"
+        "32d4322f-482d-4a59-8f62-964ef8014a0b",
+        "4440ba48-7d42-44cd-b5de-f6664ccc6259",
+        "ef5ee1a2-c3b4-492d-b7be-d2285f10107c"
       ]
     },
     {
@@ -7601,7 +8941,10 @@
       "threatRuleGroupIDs": [],
       "threatRuleIDs": [
         "21c438f5-30d1-4cfc-9deb-78827b036a22",
-        "8aa3a3b1-0aff-4e15-ad59-cc40b75dbdbd"
+        "8aa3a3b1-0aff-4e15-ad59-cc40b75dbdbd",
+        "14a5667b-7aa9-41ef-82d1-c2a4e8e454aa",
+        "94f3da7c-2e51-4025-9521-d91bf790cdea",
+        "7892b860-7ed4-4109-ae03-3c290271fef6"
       ]
     },
     {
@@ -7615,6 +8958,52 @@
         "a625c7a8-adde-4721-85fe-336a25d1da61",
         "d4a9ad7c-c4fe-49ae-ba3f-0bb48a60642d",
         "c78c1ed5-3f0a-4e70-810c-9527f1aadad2"
+      ]
+    },
+    {
+      "ID": "e95a6d53-4e91-412b-ba0e-7a6e2dd5a52b",
+      "Name": "STRIDE",
+      "Description": "",
+      "threatRuleGroupIDs": [
+        "12b0ec09-b6a6-48b9-8600-fc1816f3fe5f",
+        "662f8645-0847-4a94-bd50-14b4615526cc",
+        "dd000a59-4eba-47ad-8fa5-4d2909ac5c44"
+      ],
+      "threatRuleIDs": []
+    },
+    {
+      "ID": "12b0ec09-b6a6-48b9-8600-fc1816f3fe5f",
+      "Name": "Spoofing",
+      "Description": "",
+      "threatRuleGroupIDs": [],
+      "threatRuleIDs": [
+        "6b4eb6d6-a03f-4678-a033-924bd5526f13",
+        "c6bc382b-d155-41c4-a41b-959d8a223e54",
+        "ab65566e-a317-4e67-b647-d79ac948a62b",
+        "87e896bb-eb2e-4481-801b-a11d31a4e5e3",
+        "38053480-8db1-4185-adcc-9ebb5b913bef"
+      ]
+    },
+    {
+      "ID": "662f8645-0847-4a94-bd50-14b4615526cc",
+      "Name": "Repudiation",
+      "Description": "",
+      "threatRuleGroupIDs": [],
+      "threatRuleIDs": [
+        "596fe057-9387-4f5c-bd01-ef81613739f4",
+        "3517184d-2795-45e8-8dde-667eb7aa8051",
+        "df93be9d-b184-4ee1-a1d0-4966c03721fc",
+        "8cc8d956-c72b-478c-88ba-e3dd362825a1",
+        "6e270c51-65fe-497d-baaa-e390617e27a6"
+      ]
+    },
+    {
+      "ID": "dd000a59-4eba-47ad-8fa5-4d2909ac5c44",
+      "Name": "Denial of Service",
+      "Description": "",
+      "threatRuleGroupIDs": [],
+      "threatRuleIDs": [
+        "b0d91b9a-111b-464b-8011-3e02defafe1d"
       ]
     }
   ],
@@ -8295,45 +9684,6 @@
       "Severity": 2
     },
     {
-      "ID": "18b56da2-a891-4137-a1d6-13f8b4a31d00",
-      "Name": "Log manipulation",
-      "Description": "",
-      "IsActive": true,
-      "RuleGenerationType": 1,
-      "Mapping": {
-        "ThreatOriginID": "97c0d7a1-13c7-43d5-b03c-75845f973af5",
-        "ThreatCategoryIDs": [
-          "f19e41bd-9fd9-4046-a195-28d441207fa0",
-          "c17cbe5c-3210-42fc-be1e-05f1f915865b"
-        ]
-      },
-      "RuleType": 1,
-      "StencilRestriction": {
-        "stencilTypeID": "a74ba004-2165-4721-9b9b-2ce4b9df88c2",
-        "DetailRestrictions": [
-          {
-            "IsOR": true,
-            "Layer": 0,
-            "RestType": 3,
-            "PropertyRest": {
-              "ID": "",
-              "ComparisonType": "==",
-              "Value": null
-            },
-            "PhyElementRest": {
-              "Property": {
-                "ID": "IsEncrypted",
-                "ComparisonType": "==",
-                "Value": false
-              }
-            }
-          }
-        ]
-      },
-      "overridenRuleIDs": [],
-      "Severity": 2
-    },
-    {
       "ID": "13b5172b-9d6c-49a3-9580-fb256d5cd506",
       "Name": "Decommissioned data store",
       "Description": "",
@@ -8343,7 +9693,8 @@
         "ThreatOriginID": "327a2f35-8cf5-46d5-a973-a174f6f7be23",
         "ThreatCategoryIDs": [
           "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
-          "c46b7c74-5979-409d-8ceb-631b8833c596"
+          "c46b7c74-5979-409d-8ceb-631b8833c596",
+          "11a5c06f-875c-43fa-a01f-79f4819f98dd"
         ]
       },
       "RuleType": 1,
@@ -8509,7 +9860,7 @@
     {
       "ID": "4611ab6f-adbf-47f3-86ff-8af0ac645d80",
       "Name": "Improper user input validation",
-      "Description": "",
+      "Description": "Verify that all input is verified for correctness using an approved list input validation approach.",
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
@@ -8611,7 +9962,8 @@
       "RuleGenerationType": 2,
       "Mapping": {
         "ThreatCategoryIDs": [
-          "f2ba26f4-b2da-49a8-aba2-14e42a746d6a"
+          "f2ba26f4-b2da-49a8-aba2-14e42a746d6a",
+          "17a04fbd-365f-4345-97f8-88d3c7382ec1"
         ]
       },
       "RuleType": 1,
@@ -8665,7 +10017,7 @@
     },
     {
       "ID": "2759171a-24e3-4bfe-8ca7-5814902a000e",
-      "Name": "Cleartext storage on physical storage",
+      "Name": "Cleartext storage on unencrypted physical storage",
       "Description": "",
       "IsActive": true,
       "RuleGenerationType": 2,
@@ -8820,7 +10172,7 @@
     {
       "ID": "3084a3b9-fdba-4bb1-97fa-c59ddbea7d22",
       "Name": "SQL Injection",
-      "Description": "",
+      "Description": "SQL injection is an attack in which malicious code is inserted into strings that are later passed to an instance of SQL Server for parsing and execution. Any procedure that constructs SQL statements should be reviewed for injection vulnerabilities because SQL Server will execute all syntactically valid queries that it receives. Even parameterized data can be manipulated by a skilled and determined attacker.",
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
@@ -12527,6 +13879,2248 @@
         ]
       },
       "Severity": 3
+    },
+    {
+      "ID": "6b4eb6d6-a03f-4678-a033-924bd5526f13",
+      "Name": "Spoofing the sender process",
+      "Description": "The sender process may be spoofed by an attacker and this may lead to unauthorized access to the receiver process. Consider using a standard authentication mechanism to identify the source process.",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
+          "4f5e6bf4-c9c4-4ea6-9b0e-5c861570e6ec",
+          "c46b7c74-5979-409d-8ceb-631b8833c596",
+          "3bbe354c-317a-4f76-bdbb-75543b5d5aa4"
+        ],
+        "ThreatOriginID": "06c24920-2ce3-49ca-8134-9fa81fb2cdef"
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 2,
+      "DFDRestriction": {
+        "AppliesReverse": false,
+        "Target": -1,
+        "NodeTypes": [
+          {
+            "TypeIDs": [
+              "e0b99432-98a6-4e32-86d7-ca5f58897cc2"
+            ]
+          },
+          {
+            "TypeIDs": [
+              "e0b99432-98a6-4e32-86d7-ca5f58897cc2",
+              "c7598413-4382-43e9-9904-fd9d877eb7a9",
+              "04be7cf6-00dd-4aa8-b90b-e9bf105e39e7"
+            ]
+          }
+        ],
+        "NodeRestrictions": [
+          {
+            "Layer": 0,
+            "NodeNumber": -1,
+            "IsOR": false,
+            "RestType": 2,
+            "PropertyRest": {
+              "ID": "",
+              "ComparisonType": "==",
+              "Value": null
+            },
+            "DataflowRest": {
+              "TrustAreaIDs": []
+            }
+          },
+          {
+            "Layer": 0,
+            "NodeNumber": -1,
+            "IsOR": false,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "ProvidesSenderAuthenticity",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          }
+        ]
+      },
+      "Severity": 2
+    },
+    {
+      "ID": "c6bc382b-d155-41c4-a41b-959d8a223e54",
+      "Name": "Spoofing the receiver process",
+      "Description": "The receiver may be spoofed by an attacker and this may lead to information disclosure by the sender. Consider using a standard authentication mechanism to identify the destination process.",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
+          "4f5e6bf4-c9c4-4ea6-9b0e-5c861570e6ec",
+          "c46b7c74-5979-409d-8ceb-631b8833c596",
+          "3bbe354c-317a-4f76-bdbb-75543b5d5aa4"
+        ],
+        "ThreatOriginID": "06c24920-2ce3-49ca-8134-9fa81fb2cdef"
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 2,
+      "DFDRestriction": {
+        "AppliesReverse": false,
+        "Target": -1,
+        "NodeTypes": [
+          {
+            "TypeIDs": []
+          },
+          {
+            "TypeIDs": [
+              "e0b99432-98a6-4e32-86d7-ca5f58897cc2"
+            ]
+          }
+        ],
+        "NodeRestrictions": [
+          {
+            "Layer": 0,
+            "NodeNumber": -1,
+            "IsOR": false,
+            "RestType": 2,
+            "PropertyRest": {
+              "ID": "",
+              "ComparisonType": "==",
+              "Value": null
+            },
+            "DataflowRest": {
+              "TrustAreaIDs": []
+            }
+          },
+          {
+            "Layer": 0,
+            "NodeNumber": -1,
+            "IsOR": false,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "ProvidesReceiverAuthenticity",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          }
+        ]
+      },
+      "Severity": 2
+    },
+    {
+      "ID": "ab65566e-a317-4e67-b647-d79ac948a62b",
+      "Name": "Spoofing the external entity",
+      "Description": "The external entity may be spoofed by an attacker and this may lead to unauthorized access to the receiver process. Consider using a standard authentication mechanism to identify the external entity.",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
+          "4f5e6bf4-c9c4-4ea6-9b0e-5c861570e6ec",
+          "c46b7c74-5979-409d-8ceb-631b8833c596",
+          "3bbe354c-317a-4f76-bdbb-75543b5d5aa4"
+        ],
+        "ThreatOriginID": "06c24920-2ce3-49ca-8134-9fa81fb2cdef"
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 2,
+      "DFDRestriction": {
+        "AppliesReverse": false,
+        "Target": -1,
+        "NodeTypes": [
+          {
+            "TypeIDs": [
+              "02b39924-b8f2-44da-a2bc-be1bd2450f68",
+              "03e3750c-8549-4589-8269-e0121b3f26a4"
+            ]
+          },
+          {
+            "TypeIDs": [
+              "e0b99432-98a6-4e32-86d7-ca5f58897cc2"
+            ]
+          }
+        ],
+        "NodeRestrictions": [
+          {
+            "Layer": 0,
+            "NodeNumber": -1,
+            "IsOR": false,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "ProvidesSenderAuthenticity",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          }
+        ]
+      },
+      "Severity": 2
+    },
+    {
+      "ID": "87e896bb-eb2e-4481-801b-a11d31a4e5e3",
+      "Name": "Spoofing of source data store",
+      "Description": "The data store may be spoofed by an attacker and this may lead to incorrect data delivered to the receiver. Consider using a standard authentication mechanism to identify the source data store.",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "d0bcd70c-fbad-4a16-a606-8b0682ae7afe",
+          "3bbe354c-317a-4f76-bdbb-75543b5d5aa4"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 2,
+      "DFDRestriction": {
+        "AppliesReverse": false,
+        "Target": -1,
+        "NodeTypes": [
+          {
+            "TypeIDs": [
+              "c7598413-4382-43e9-9904-fd9d877eb7a9"
+            ]
+          },
+          {
+            "TypeIDs": []
+          }
+        ],
+        "NodeRestrictions": [
+          {
+            "Layer": 0,
+            "NodeNumber": -1,
+            "IsOR": false,
+            "RestType": 2,
+            "PropertyRest": {
+              "ID": "",
+              "ComparisonType": "==",
+              "Value": null
+            },
+            "DataflowRest": {
+              "TrustAreaIDs": []
+            }
+          }
+        ]
+      },
+      "Severity": 2
+    },
+    {
+      "ID": "38053480-8db1-4185-adcc-9ebb5b913bef",
+      "Name": "Spoofing of destination data store",
+      "Description": "The data store may be spoofed by an attacker and this may lead to data being written to the attacker's target instead of the data store. Consider using a standard authentication mechanism to identify the destination data store.",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "d0bcd70c-fbad-4a16-a606-8b0682ae7afe",
+          "3bbe354c-317a-4f76-bdbb-75543b5d5aa4"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 2,
+      "DFDRestriction": {
+        "AppliesReverse": false,
+        "Target": -1,
+        "NodeTypes": [
+          {
+            "TypeIDs": []
+          },
+          {
+            "TypeIDs": [
+              "c7598413-4382-43e9-9904-fd9d877eb7a9"
+            ]
+          }
+        ],
+        "NodeRestrictions": [
+          {
+            "Layer": 0,
+            "NodeNumber": -1,
+            "IsOR": false,
+            "RestType": 2,
+            "PropertyRest": {
+              "ID": "",
+              "ComparisonType": "==",
+              "Value": null
+            },
+            "DataflowRest": {
+              "TrustAreaIDs": []
+            }
+          }
+        ]
+      },
+      "Severity": 2
+    },
+    {
+      "ID": "4440ba48-7d42-44cd-b5de-f6664ccc6259",
+      "Name": "Replay attack",
+      "Description": "",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatOriginID": "4e007b60-94e7-4df3-b3bd-109eb8627da2",
+        "ThreatCategoryIDs": [
+          "d0bcd70c-fbad-4a16-a606-8b0682ae7afe",
+          "f3fe9ca9-4c34-40fc-a270-3e6252d01e6f"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 2,
+      "DFDRestriction": {
+        "AppliesReverse": false,
+        "Target": -1,
+        "NodeTypes": [
+          {
+            "TypeIDs": []
+          },
+          {
+            "TypeIDs": []
+          }
+        ],
+        "NodeRestrictions": [
+          {
+            "Layer": 0,
+            "NodeNumber": -1,
+            "IsOR": false,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "1fec597f-dfd0-4fcc-b348-828307b946ee",
+              "ComparisonType": "==",
+              "Value": true
+            }
+          }
+        ]
+      },
+      "Severity": 2
+    },
+    {
+      "ID": "240eabff-0c74-40e7-9748-d4cc46f59403",
+      "Name": "Log manipulation",
+      "Description": "",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatOriginID": "97c0d7a1-13c7-43d5-b03c-75845f973af5",
+        "ThreatCategoryIDs": [
+          "f19e41bd-9fd9-4046-a195-28d441207fa0",
+          "c17cbe5c-3210-42fc-be1e-05f1f915865b"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 1,
+      "StencilRestriction": {
+        "stencilTypeID": "c7598413-4382-43e9-9904-fd9d877eb7a9",
+        "DetailRestrictions": [
+          {
+            "IsOR": false,
+            "Layer": 0,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "ContainsLogs",
+              "ComparisonType": "==",
+              "Value": true
+            }
+          },
+          {
+            "IsOR": true,
+            "Layer": 0,
+            "RestType": 3,
+            "PropertyRest": {
+              "ID": "",
+              "ComparisonType": "==",
+              "Value": null
+            },
+            "PhyElementRest": {
+              "Property": {
+                "ID": "IsEncrypted",
+                "ComparisonType": "==",
+                "Value": false
+              }
+            }
+          }
+        ]
+      },
+      "Severity": 2
+    },
+    {
+      "ID": "ef5ee1a2-c3b4-492d-b7be-d2285f10107c",
+      "Name": "Risks from logging",
+      "Description": "Log readers can come under attack via log files. Consider ways to canonicalize data in all logs. Implement a single reader for the logs, if possible, in order to reduce attack surface area. Be sure to understand and document log file elements which come from untrusted sources.",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {},
+      "overridenRuleIDs": [],
+      "RuleType": 2,
+      "DFDRestriction": {
+        "AppliesReverse": true,
+        "Target": -1,
+        "NodeTypes": [
+          {
+            "TypeIDs": [
+              "e0b99432-98a6-4e32-86d7-ca5f58897cc2"
+            ]
+          },
+          {
+            "TypeIDs": [
+              "c7598413-4382-43e9-9904-fd9d877eb7a9"
+            ]
+          }
+        ],
+        "NodeRestrictions": [
+          {
+            "Layer": 0,
+            "NodeNumber": 1,
+            "IsOR": false,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "ContainsLogs",
+              "ComparisonType": "==",
+              "Value": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "ID": "ad30b363-be03-41a8-a422-3ad63cb077b1",
+      "Name": "JSON Processing",
+      "Description": "If a dataflow contains JSON, JSON processing and hijacking threats may be exploited.",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "f19e41bd-9fd9-4046-a195-28d441207fa0",
+          "f7639a0c-e85b-4947-bbec-2ac4a0911827",
+          "f3fe9ca9-4c34-40fc-a270-3e6252d01e6f"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 1,
+      "StencilRestriction": {
+        "stencilTypeID": "b395ada9-bc1d-4df9-b9f3-a1b09ee2a5aa",
+        "DetailRestrictions": [
+          {
+            "IsOR": true,
+            "Layer": 0,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "758fa1ec-35f3-44a2-9f3d-0e5c21fc92c4",
+              "ComparisonType": "==",
+              "Value": true
+            }
+          }
+        ]
+      },
+      "Severity": 2
+    },
+    {
+      "ID": "a727e065-ff95-47d5-8aac-625dfc7a453c",
+      "Name": "Cross Site Scripting",
+      "Description": "",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatOriginID": "b48781b2-24a2-481b-b7c1-3390dbeeb973",
+        "ThreatCategoryIDs": [
+          "f19e41bd-9fd9-4046-a195-28d441207fa0",
+          "c0bd6e2f-9784-4c11-9aee-115a966e0a4d",
+          "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
+          "c46b7c74-5979-409d-8ceb-631b8833c596"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 1,
+      "StencilRestriction": {
+        "stencilTypeID": "59076fab-74e3-415a-93f5-fffd12e3d79c",
+        "DetailRestrictions": [
+          {
+            "IsOR": true,
+            "Layer": 0,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "47889e58-6875-4fe5-aa04-91ea9054a166",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          },
+          {
+            "IsOR": true,
+            "Layer": 0,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "5afac92d-d86d-49bc-8fd8-84242a651767",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          }
+        ]
+      },
+      "Severity": 4
+    },
+    {
+      "ID": "596fe057-9387-4f5c-bd01-ef81613739f4",
+      "Name": "Lower trusted subject updates logs",
+      "Description": "If you have trust levels, is anyone other outside of the highest trust level allowed to log? Letting everyone write to your logs can lead to repudiation problems. Only allow trusted code to log.",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatOriginID": "97c0d7a1-13c7-43d5-b03c-75845f973af5",
+        "ThreatCategoryIDs": [
+          "f19e41bd-9fd9-4046-a195-28d441207fa0",
+          "c17cbe5c-3210-42fc-be1e-05f1f915865b",
+          "a77f314c-f74e-4340-a993-5a1a24f26db4"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 2,
+      "DFDRestriction": {
+        "AppliesReverse": false,
+        "Target": -1,
+        "NodeTypes": [
+          {
+            "TypeIDs": []
+          },
+          {
+            "TypeIDs": [
+              "c7598413-4382-43e9-9904-fd9d877eb7a9"
+            ]
+          }
+        ],
+        "NodeRestrictions": [
+          {
+            "Layer": 0,
+            "NodeNumber": 1,
+            "IsOR": false,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "ContainsLogs",
+              "ComparisonType": "==",
+              "Value": true
+            }
+          },
+          {
+            "Layer": 0,
+            "NodeNumber": -1,
+            "IsOR": false,
+            "RestType": 2,
+            "PropertyRest": {
+              "ID": "",
+              "ComparisonType": "==",
+              "Value": null
+            },
+            "DataflowRest": {
+              "TrustAreaIDs": []
+            }
+          }
+        ]
+      },
+      "Severity": 2
+    },
+    {
+      "ID": "3517184d-2795-45e8-8dde-667eb7aa8051",
+      "Name": "Data logs from unknown source",
+      "Description": "If you have trust levels, is anyone other outside of the highest trust level allowed to log? Letting everyone write to your logs can lead to repudiation problems. Only allow trusted code to log.",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatOriginID": "97c0d7a1-13c7-43d5-b03c-75845f973af5",
+        "ThreatCategoryIDs": [
+          "f19e41bd-9fd9-4046-a195-28d441207fa0",
+          "c17cbe5c-3210-42fc-be1e-05f1f915865b",
+          "a77f314c-f74e-4340-a993-5a1a24f26db4"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 2,
+      "DFDRestriction": {
+        "AppliesReverse": false,
+        "Target": -1,
+        "NodeTypes": [
+          {
+            "TypeIDs": []
+          },
+          {
+            "TypeIDs": [
+              "c7598413-4382-43e9-9904-fd9d877eb7a9"
+            ]
+          }
+        ],
+        "NodeRestrictions": [
+          {
+            "Layer": 0,
+            "NodeNumber": 1,
+            "IsOR": false,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "ContainsLogs",
+              "ComparisonType": "==",
+              "Value": true
+            }
+          },
+          {
+            "Layer": 0,
+            "NodeNumber": -1,
+            "IsOR": false,
+            "RestType": 2,
+            "PropertyRest": {
+              "ID": "",
+              "ComparisonType": "==",
+              "Value": null
+            },
+            "DataflowRest": {
+              "TrustAreaIDs": []
+            }
+          }
+        ]
+      },
+      "Severity": 2
+    },
+    {
+      "ID": "ee25afa7-0267-4f20-96bb-9912494a383e",
+      "Name": "Insufficient auditiing",
+      "Description": "Does the log capture enough data to understand what happened in the past? Do your logs capture enough data to understand an incident after the fact? Is such capture lightweight enough to be left on all the time? Do you have enough data to deal with repudiation claims? Make sure you log sufficient and appropriate data to handle a repudiation claims. You might want to talk to an audit expert as well as a privacy expert about your choice of data.",
+      "IsActive": true,
+      "RuleGenerationType": 2,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "c17cbe5c-3210-42fc-be1e-05f1f915865b",
+          "a77f314c-f74e-4340-a993-5a1a24f26db4"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 1,
+      "StencilRestriction": {
+        "stencilTypeID": "a74ba004-2165-4721-9b9b-2ce4b9df88c2",
+        "DetailRestrictions": []
+      }
+    },
+    {
+      "ID": "df93be9d-b184-4ee1-a1d0-4966c03721fc",
+      "Name": "Potential data repudiation",
+      "Description": "The receiver claims that it did not receive data from a source outside the trust boundary. Consider using logging or auditing to record the source, time, and summary of the received data.",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "c17cbe5c-3210-42fc-be1e-05f1f915865b",
+          "a77f314c-f74e-4340-a993-5a1a24f26db4"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 2,
+      "DFDRestriction": {
+        "AppliesReverse": false,
+        "Target": -1,
+        "NodeTypes": [
+          {
+            "TypeIDs": []
+          },
+          {
+            "TypeIDs": [
+              "e0b99432-98a6-4e32-86d7-ca5f58897cc2"
+            ]
+          }
+        ],
+        "NodeRestrictions": [
+          {
+            "Layer": 0,
+            "NodeNumber": -1,
+            "IsOR": false,
+            "RestType": 2,
+            "PropertyRest": {
+              "ID": "",
+              "ComparisonType": "==",
+              "Value": null
+            },
+            "DataflowRest": {
+              "TrustAreaIDs": []
+            }
+          }
+        ]
+      },
+      "Severity": 1
+    },
+    {
+      "ID": "8cc8d956-c72b-478c-88ba-e3dd362825a1",
+      "Name": "External entity potentially denies receiving data",
+      "Description": "The receiver claims that it did not receive data from a process on the other side of the trust boundary. Consider using logging or auditing to record the source, time, and summary of the received data.",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "c17cbe5c-3210-42fc-be1e-05f1f915865b",
+          "a77f314c-f74e-4340-a993-5a1a24f26db4"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 2,
+      "DFDRestriction": {
+        "AppliesReverse": false,
+        "Target": -1,
+        "NodeTypes": [
+          {
+            "TypeIDs": []
+          },
+          {
+            "TypeIDs": [
+              "02b39924-b8f2-44da-a2bc-be1bd2450f68",
+              "03e3750c-8549-4589-8269-e0121b3f26a4"
+            ]
+          }
+        ],
+        "NodeRestrictions": [
+          {
+            "Layer": 0,
+            "NodeNumber": -1,
+            "IsOR": false,
+            "RestType": 2,
+            "PropertyRest": {
+              "ID": "",
+              "ComparisonType": "==",
+              "Value": null
+            },
+            "DataflowRest": {
+              "TrustAreaIDs": []
+            }
+          }
+        ]
+      },
+      "Severity": 1
+    },
+    {
+      "ID": "6e270c51-65fe-497d-baaa-e390617e27a6",
+      "Name": "Data store denies potentially writing data",
+      "Description": "The receiver claims that it did not write data received from an entity on the other side of the trust boundary. Consider using logging or auditing to record the source, time, and summary of the received data.",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "c17cbe5c-3210-42fc-be1e-05f1f915865b",
+          "a77f314c-f74e-4340-a993-5a1a24f26db4"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 2,
+      "DFDRestriction": {
+        "AppliesReverse": false,
+        "Target": -1,
+        "NodeTypes": [
+          {
+            "TypeIDs": []
+          },
+          {
+            "TypeIDs": [
+              "c7598413-4382-43e9-9904-fd9d877eb7a9"
+            ]
+          }
+        ],
+        "NodeRestrictions": [
+          {
+            "Layer": 0,
+            "NodeNumber": -1,
+            "IsOR": false,
+            "RestType": 2,
+            "PropertyRest": {
+              "ID": "",
+              "ComparisonType": "==",
+              "Value": null
+            },
+            "DataflowRest": {
+              "TrustAreaIDs": []
+            }
+          }
+        ]
+      }
+    },
+    {
+      "ID": "12c29b20-0467-40ab-9208-2c01d6142eab",
+      "Name": "Authorization bypass",
+      "Description": "Custom authentication schemes are susceptible to common weaknesses such as weak credential change management, credential equivalence, easily guessable credentials, null credentials, downgrade authentication or a weak credential change management system. Consider the impact and potential mitigations for your custom authentication scheme.",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "c8a14b27-b13f-4358-9f3f-691d01c97c77"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 1,
+      "StencilRestriction": {
+        "stencilTypeID": "e0b99432-98a6-4e32-86d7-ca5f58897cc2",
+        "DetailRestrictions": [
+          {
+            "IsOR": true,
+            "Layer": 0,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "eb92cc8a-bceb-48a5-b0fd-0894a1d91c5c",
+              "ComparisonType": "==",
+              "Value": true
+            }
+          }
+        ]
+      },
+      "Severity": 3
+    },
+    {
+      "ID": "b0d91b9a-111b-464b-8011-3e02defafe1d",
+      "Name": "Data store inaccessible",
+      "Description": "An external agent prevents access to a data store on the other side of the trust boundary.",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatOriginID": "c7787e71-5c70-462c-9558-ce20e7cfdfe8",
+        "ThreatCategoryIDs": [
+          "f7639a0c-e85b-4947-bbec-2ac4a0911827",
+          "f3fe9ca9-4c34-40fc-a270-3e6252d01e6f",
+          "f2b91aaf-7d9f-4baf-8713-13d7625174d9"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 2,
+      "DFDRestriction": {
+        "AppliesReverse": true,
+        "Target": -1,
+        "NodeTypes": [
+          {
+            "TypeIDs": []
+          },
+          {
+            "TypeIDs": [
+              "c7598413-4382-43e9-9904-fd9d877eb7a9"
+            ]
+          }
+        ],
+        "NodeRestrictions": [
+          {
+            "Layer": 0,
+            "NodeNumber": -1,
+            "IsOR": false,
+            "RestType": 2,
+            "PropertyRest": {
+              "ID": "",
+              "ComparisonType": "==",
+              "Value": null
+            },
+            "DataflowRest": {
+              "TrustAreaIDs": []
+            }
+          }
+        ]
+      },
+      "Severity": 2
+    },
+    {
+      "ID": "063b7019-22aa-4eb8-8e6f-9f81dbeb513b",
+      "Name": "Eavesdropping",
+      "Description": "",
+      "IsActive": true,
+      "RuleGenerationType": 2,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
+          "61d04f2d-83b1-4152-9aba-4ad188eef06d",
+          "bcd08af5-29bf-4ed8-ab6c-e311e88f4c84",
+          "7bbfe5d3-8a91-4210-99ab-79f670715e61"
+        ],
+        "ThreatOriginID": "6bf04ffa-1f83-4637-a866-d02ff10d752b"
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 1,
+      "StencilRestriction": {
+        "stencilTypeID": "4b7a61d0-c430-48ea-8730-03a81542a5d8",
+        "DetailRestrictions": []
+      },
+      "Severity": 3
+    },
+    {
+      "ID": "df2c1c56-e04e-4b33-aae2-e13c9305a370",
+      "Name": "Privacy-violating interaction",
+      "Description": "",
+      "IsActive": true,
+      "RuleGenerationType": 2,
+      "Mapping": {
+        "ThreatOriginID": "6bf04ffa-1f83-4637-a866-d02ff10d752b",
+        "ThreatCategoryIDs": [
+          "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
+          "af3ee78e-9e83-4bd1-b9b5-13ec28765518"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 1,
+      "StencilRestriction": {
+        "stencilTypeID": "4b7a61d0-c430-48ea-8730-03a81542a5d8",
+        "DetailRestrictions": []
+      },
+      "Severity": 3
+    },
+    {
+      "ID": "14a5667b-7aa9-41ef-82d1-c2a4e8e454aa",
+      "Name": "Processing of sensitive data",
+      "Description": "Personal information such as talks, coughs, etc. is exposed and processed by an external system",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatOriginID": "7dc1eb8e-2312-4b2f-becf-f9725d45cdce",
+        "ThreatCategoryIDs": [
+          "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
+          "c46b7c74-5979-409d-8ceb-631b8833c596",
+          "d6eafa9e-6d9d-42aa-a734-0eb11f25607b",
+          "e6ba8518-0074-492c-95e5-ebe89fa601fe",
+          "7bbfe5d3-8a91-4210-99ab-79f670715e61"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 2,
+      "DFDRestriction": {
+        "AppliesReverse": true,
+        "Target": 0,
+        "NodeTypes": [
+          {
+            "TypeIDs": [
+              "4b7a61d0-c430-48ea-8730-03a81542a5d8"
+            ]
+          },
+          {
+            "TypeIDs": []
+          }
+        ],
+        "NodeRestrictions": []
+      },
+      "Severity": 4
+    },
+    {
+      "ID": "94f3da7c-2e51-4025-9521-d91bf790cdea",
+      "Name": "Exposure of sensitive data",
+      "Description": "The loudspeaker discloses sensitive information in the public",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatOriginID": "7dc1eb8e-2312-4b2f-becf-f9725d45cdce",
+        "ThreatCategoryIDs": [
+          "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
+          "c46b7c74-5979-409d-8ceb-631b8833c596",
+          "af3ee78e-9e83-4bd1-b9b5-13ec28765518",
+          "7bbfe5d3-8a91-4210-99ab-79f670715e61"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 2,
+      "DFDRestriction": {
+        "AppliesReverse": true,
+        "Target": 1,
+        "NodeTypes": [
+          {
+            "TypeIDs": []
+          },
+          {
+            "TypeIDs": [
+              "210ba217-67da-4bda-9063-3c95716eb5b9"
+            ]
+          }
+        ],
+        "NodeRestrictions": []
+      },
+      "Severity": 4
+    },
+    {
+      "ID": "1cd3c1af-ff49-461f-9f55-fadb851a0893",
+      "Name": "Risk of explosion",
+      "Description": "The battery may explode",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "bc4b439c-6197-48d3-a308-7fd323d2ea5e",
+          "6b8c08cb-3f02-413a-96b4-179bb1f67997",
+          "17a04fbd-365f-4345-97f8-88d3c7382ec1"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 1,
+      "StencilRestriction": {
+        "stencilTypeID": "1dc32bac-147f-42a4-a13c-44e5b59f7b81",
+        "DetailRestrictions": []
+      },
+      "Severity": 3
+    },
+    {
+      "ID": "ea2ba48d-b7f9-42c9-b9d9-f4a9816383b0",
+      "Name": "Unsecure mode",
+      "Description": "",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "8a3d81d9-3317-4e5d-88fe-a0e0592295fe",
+          "d0bcd70c-fbad-4a16-a606-8b0682ae7afe",
+          "f7639a0c-e85b-4947-bbec-2ac4a0911827"
+        ],
+        "ThreatOriginID": "e58fcbde-e429-4704-9f22-c00d187994bc"
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 3,
+      "ComponentRestriction": {
+        "componentTypeID": "c80fa1ff-def0-49b3-ad47-0c9f56c21fe6",
+        "DetailRestrictions": [
+          {
+            "IsOR": true,
+            "Layer": 0,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "4338e868-4e3c-4473-ba27-6148e8b1fc0f",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          }
+        ]
+      },
+      "Severity": 3
+    },
+    {
+      "ID": "7f6ca653-a703-480c-b5d8-d82243171994",
+      "Name": "Missing user authentication",
+      "Description": "",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatOriginID": "d46f6e31-ae41-4d6e-93fc-0e6c3bbb295d",
+        "ThreatCategoryIDs": [
+          "c46b7c74-5979-409d-8ceb-631b8833c596"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 3,
+      "ComponentRestriction": {
+        "componentTypeID": "c80fa1ff-def0-49b3-ad47-0c9f56c21fe6",
+        "DetailRestrictions": [
+          {
+            "IsOR": true,
+            "Layer": 0,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "1e3a8fb8-4a34-44be-8168-996a7e0283f1",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          }
+        ]
+      },
+      "Severity": 3
+    },
+    {
+      "ID": "289c20cd-ea84-4375-8453-b045b94e1dc6",
+      "Name": "Weak cryptographic algorithms",
+      "Description": "",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatOriginID": "a0729a41-bcc9-43d8-9c86-bfb26c64e93c",
+        "ThreatCategoryIDs": [
+          "f19e41bd-9fd9-4046-a195-28d441207fa0",
+          "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 3,
+      "ComponentRestriction": {
+        "componentTypeID": "c80fa1ff-def0-49b3-ad47-0c9f56c21fe6",
+        "DetailRestrictions": [
+          {
+            "IsOR": true,
+            "Layer": 0,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "3f4c724d-3d4d-4b6b-9252-ef43b4240d79",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          }
+        ]
+      },
+      "Severity": 2
+    },
+    {
+      "ID": "3a44327d-24d1-4c53-a3ea-7d891fb86f47",
+      "Name": "Missing certificate",
+      "Description": "",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "d0bcd70c-fbad-4a16-a606-8b0682ae7afe"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 3,
+      "ComponentRestriction": {
+        "componentTypeID": "c80fa1ff-def0-49b3-ad47-0c9f56c21fe6",
+        "DetailRestrictions": [
+          {
+            "IsOR": true,
+            "Layer": 0,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "34344cae-d072-4901-a7be-4084a2534b45",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          }
+        ]
+      }
+    },
+    {
+      "ID": "ea738f65-e0e7-4dc1-93b9-8798c4c8eeaf",
+      "Name": "Unsecure protocols",
+      "Description": "",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatOriginID": "31f89637-4b8a-41e9-acac-9d012767a424",
+        "ThreatCategoryIDs": [
+          "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
+          "c46b7c74-5979-409d-8ceb-631b8833c596",
+          "8a3d81d9-3317-4e5d-88fe-a0e0592295fe"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 3,
+      "ComponentRestriction": {
+        "componentTypeID": "ce3cdda1-0737-468e-83e7-ca20098551d1",
+        "DetailRestrictions": [
+          {
+            "IsOR": true,
+            "Layer": 0,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "9ea829dc-59d5-437c-8d24-9908feac2941",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          }
+        ]
+      },
+      "Severity": 3
+    },
+    {
+      "ID": "6ffb7af3-466f-4cb7-965e-d60956b2ae7e",
+      "Name": "Unsecure SSL/TLS version",
+      "Description": "",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatOriginID": "a0729a41-bcc9-43d8-9c86-bfb26c64e93c",
+        "ThreatCategoryIDs": [
+          "f19e41bd-9fd9-4046-a195-28d441207fa0",
+          "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 3,
+      "ComponentRestriction": {
+        "componentTypeID": "ce3cdda1-0737-468e-83e7-ca20098551d1",
+        "DetailRestrictions": [
+          {
+            "IsOR": true,
+            "Layer": 0,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "aa99758d-30a6-4e0f-9d11-1d46c0f43d6c",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          }
+        ]
+      },
+      "Severity": 3
+    },
+    {
+      "ID": "b2c6473b-9498-4b23-a02f-13e3818496d0",
+      "Name": "Exposes server version",
+      "Description": "",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatOriginID": "6bf04ffa-1f83-4637-a866-d02ff10d752b",
+        "ThreatCategoryIDs": [
+          "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 3,
+      "ComponentRestriction": {
+        "componentTypeID": "ce3cdda1-0737-468e-83e7-ca20098551d1",
+        "DetailRestrictions": [
+          {
+            "IsOR": true,
+            "Layer": 0,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "6faf97a0-6039-4b7b-ba7c-6b9ef003ede3",
+              "ComparisonType": "==",
+              "Value": true
+            }
+          }
+        ]
+      },
+      "Severity": 1
+    },
+    {
+      "ID": "ca66721c-381d-43a1-9129-7643f04065d3",
+      "Name": "Missing patches",
+      "Description": "",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
+          "c46b7c74-5979-409d-8ceb-631b8833c596"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 3,
+      "ComponentRestriction": {
+        "componentTypeID": "ce3cdda1-0737-468e-83e7-ca20098551d1",
+        "DetailRestrictions": [
+          {
+            "IsOR": true,
+            "Layer": 0,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "defc6bcc-2bc9-457a-abab-666ec78d4f73",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          }
+        ]
+      },
+      "Severity": 2
+    },
+    {
+      "ID": "ff998b64-8348-4f41-8350-22ad07c68448",
+      "Name": "Missing web application firewall",
+      "Description": "",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "f19e41bd-9fd9-4046-a195-28d441207fa0"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 3,
+      "ComponentRestriction": {
+        "componentTypeID": "ce3cdda1-0737-468e-83e7-ca20098551d1",
+        "DetailRestrictions": [
+          {
+            "IsOR": true,
+            "Layer": 0,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "6f65b93f-53ad-424f-a81b-4777ad48ec97",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          }
+        ]
+      },
+      "Severity": 2
+    },
+    {
+      "ID": "a1ac559b-0ed9-4e5c-815d-80d6dc23308e",
+      "Name": "Unsecure Bluetooth version",
+      "Description": "",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatOriginID": "a0729a41-bcc9-43d8-9c86-bfb26c64e93c",
+        "ThreatCategoryIDs": [
+          "f19e41bd-9fd9-4046-a195-28d441207fa0",
+          "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 1,
+      "StencilRestriction": {
+        "stencilTypeID": "2460a6c9-40e5-44c7-b133-10c6654efd18",
+        "DetailRestrictions": [
+          {
+            "IsOR": true,
+            "Layer": 0,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "80419a47-0ac7-488f-b958-da045b67d91f",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          }
+        ]
+      },
+      "Severity": 2
+    },
+    {
+      "ID": "132c57c4-fe66-4c94-95e3-98a67669a4a5",
+      "Name": "Unsecure Bluetooth mode",
+      "Description": "",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatOriginID": "04d5f07e-2482-451b-9e24-94cb650da53b",
+        "ThreatCategoryIDs": [
+          "f19e41bd-9fd9-4046-a195-28d441207fa0",
+          "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
+          "c17cbe5c-3210-42fc-be1e-05f1f915865b"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 1,
+      "StencilRestriction": {
+        "stencilTypeID": "2460a6c9-40e5-44c7-b133-10c6654efd18",
+        "DetailRestrictions": [
+          {
+            "IsOR": true,
+            "Layer": 0,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "cf1429d9-c9e7-4dc4-a54c-42596f246692",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          }
+        ]
+      },
+      "Severity": 3
+    },
+    {
+      "ID": "c9be8d05-1ea5-4947-a786-33b505f2c5fd",
+      "Name": "Unsecure Bluetooth level",
+      "Description": "",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatOriginID": "a0729a41-bcc9-43d8-9c86-bfb26c64e93c",
+        "ThreatCategoryIDs": [
+          "f19e41bd-9fd9-4046-a195-28d441207fa0",
+          "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 1,
+      "StencilRestriction": {
+        "stencilTypeID": "2460a6c9-40e5-44c7-b133-10c6654efd18",
+        "DetailRestrictions": [
+          {
+            "IsOR": true,
+            "Layer": 0,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "a4f10f42-4b29-4cbf-a849-0844b011609b",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          }
+        ]
+      },
+      "Severity": 2
+    },
+    {
+      "ID": "56e4871b-bcb7-48f6-bd9e-5a8273d0b62c",
+      "Name": "Network access",
+      "Description": "",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
+          "c46b7c74-5979-409d-8ceb-631b8833c596",
+          "8a3d81d9-3317-4e5d-88fe-a0e0592295fe",
+          "f7639a0c-e85b-4947-bbec-2ac4a0911827"
+        ],
+        "ThreatOriginID": "3162421f-ca5b-400d-bbe8-58a510be9abf"
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 1,
+      "StencilRestriction": {
+        "stencilTypeID": "59f2fd67-bc38-4447-9c14-d9306283bbe9",
+        "DetailRestrictions": [
+          {
+            "IsOR": true,
+            "Layer": 0,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "8fbc9cce-7d30-425a-ac50-c5ca44d206b0",
+              "ComparisonType": "==",
+              "Value": true
+            }
+          }
+        ]
+      },
+      "Severity": 3
+    },
+    {
+      "ID": "d9290f90-aa79-432f-92e0-267226771aea",
+      "Name": "Outdated protocol",
+      "Description": "",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "f19e41bd-9fd9-4046-a195-28d441207fa0",
+          "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
+          "c17cbe5c-3210-42fc-be1e-05f1f915865b"
+        ],
+        "ThreatOriginID": "04d5f07e-2482-451b-9e24-94cb650da53b"
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 1,
+      "StencilRestriction": {
+        "stencilTypeID": "59f2fd67-bc38-4447-9c14-d9306283bbe9",
+        "DetailRestrictions": [
+          {
+            "IsOR": true,
+            "Layer": 0,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "f7509951-f156-4774-89e9-1966b03ef03e",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          }
+        ]
+      },
+      "Severity": 3
+    },
+    {
+      "ID": "961c5b9f-ea27-48ec-b526-514636536540",
+      "Name": "Weak cryptographic algorithms",
+      "Description": "Some Bluetooth versions use weak cryptographic algorithms",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "8a3d81d9-3317-4e5d-88fe-a0e0592295fe",
+          "d0bcd70c-fbad-4a16-a606-8b0682ae7afe",
+          "f7639a0c-e85b-4947-bbec-2ac4a0911827"
+        ],
+        "ThreatOriginID": "a0729a41-bcc9-43d8-9c86-bfb26c64e93c"
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 4,
+      "ProtocolRestriction": {
+        "protocolID": "f805dd78-eac2-4967-8dfc-231605a75ace",
+        "DetailRestrictions": []
+      },
+      "Severity": 2
+    },
+    {
+      "ID": "b76247eb-309c-4fad-9a8c-28fea0a98555",
+      "Name": "Exposure of personal information",
+      "Description": "",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatOriginID": "7dc1eb8e-2312-4b2f-becf-f9725d45cdce",
+        "ThreatCategoryIDs": [
+          "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
+          "c46b7c74-5979-409d-8ceb-631b8833c596"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 1,
+      "StencilRestriction": {
+        "stencilTypeID": "dffbfc0a-850b-4de0-95fb-ab9ea4273d88",
+        "DetailRestrictions": [
+          {
+            "IsOR": true,
+            "Layer": 0,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "13649f62-1bd6-4b50-9646-a9df988262a5",
+              "ComparisonType": "==",
+              "Value": true
+            }
+          }
+        ]
+      },
+      "Severity": 3
+    },
+    {
+      "ID": "797fda2f-6e6e-4100-acc9-2192b485a0e5",
+      "Name": "Location tracking",
+      "Description": "",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatOriginID": "6bf04ffa-1f83-4637-a866-d02ff10d752b",
+        "ThreatCategoryIDs": [
+          "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
+          "2765e61e-29a9-498e-adf8-4d653f488e3d",
+          "7bbfe5d3-8a91-4210-99ab-79f670715e61"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 1,
+      "StencilRestriction": {
+        "stencilTypeID": "c628fae9-68f2-4abc-886c-3fc103048e9f",
+        "DetailRestrictions": []
+      },
+      "Severity": 3
+    },
+    {
+      "ID": "b9b2fbaa-be5c-48ca-bddc-6d4cb5989f96",
+      "Name": "Human injury",
+      "Description": "",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "f2ba26f4-b2da-49a8-aba2-14e42a746d6a",
+          "17a04fbd-365f-4345-97f8-88d3c7382ec1"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 1,
+      "StencilRestriction": {
+        "stencilTypeID": "5deb66fa-ff3e-49b6-b0d2-66a39708d259",
+        "DetailRestrictions": []
+      },
+      "Severity": 3
+    },
+    {
+      "ID": "7892b860-7ed4-4109-ae03-3c290271fef6",
+      "Name": "User unawareness of data collection",
+      "Description": "Personal information such as talks, coughs, etc. is exposed and processed by an external system",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatOriginID": "7742f998-ab1e-4f64-8ac6-12b3f97b936a",
+        "ThreatCategoryIDs": [
+          "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
+          "aead4d1d-0f64-42b4-a512-cbbc979af3ca",
+          "7bbfe5d3-8a91-4210-99ab-79f670715e61"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 2,
+      "DFDRestriction": {
+        "AppliesReverse": true,
+        "Target": 0,
+        "NodeTypes": [
+          {
+            "TypeIDs": [
+              "4b7a61d0-c430-48ea-8730-03a81542a5d8"
+            ]
+          },
+          {
+            "TypeIDs": []
+          }
+        ],
+        "NodeRestrictions": []
+      },
+      "Severity": 2
+    },
+    {
+      "ID": "ba71d0ae-0a71-40d5-a3e3-f15c3a3baa2b",
+      "Name": "Location Tracking",
+      "Description": "",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "61d04f2d-83b1-4152-9aba-4ad188eef06d",
+          "2765e61e-29a9-498e-adf8-4d653f488e3d",
+          "5278c995-f9d9-410e-b012-2995ba30c353",
+          "7bbfe5d3-8a91-4210-99ab-79f670715e61"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 1,
+      "StencilRestriction": {
+        "stencilTypeID": "2460a6c9-40e5-44c7-b133-10c6654efd18",
+        "DetailRestrictions": []
+      },
+      "Severity": 2
+    },
+    {
+      "ID": "b05b7085-3952-4f0d-bb85-7c380eb32f92",
+      "Name": "Full-scale outage",
+      "Description": "A full-scale outage may cause the solution to be unavailable for its users. This may be caused by natural events but also by a malicious actor.",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatOriginID": "8f9a24d4-e962-4136-b0ec-8e9f797a6f62",
+        "ThreatCategoryIDs": [
+          "b869918c-0b47-45c3-8fab-0b698043aa66"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 1,
+      "StencilRestriction": {
+        "stencilTypeID": "0a168b12-fc9a-411c-bbf0-59599d0181f8",
+        "DetailRestrictions": []
+      },
+      "Severity": 3
+    },
+    {
+      "ID": "8d604765-2981-4a70-9cb0-9569411503cc",
+      "Name": "Attackers may be undetected",
+      "Description": "",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "c46b7c74-5979-409d-8ceb-631b8833c596",
+          "8a3d81d9-3317-4e5d-88fe-a0e0592295fe",
+          "f3fe9ca9-4c34-40fc-a270-3e6252d01e6f",
+          "f2b91aaf-7d9f-4baf-8713-13d7625174d9"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 1,
+      "StencilRestriction": {
+        "stencilTypeID": "4a5bbdcf-ef9a-49cb-ac4c-a05dcefd95d2",
+        "DetailRestrictions": [
+          {
+            "IsOR": true,
+            "Layer": 0,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "6e0c2499-9e6b-42da-8e9c-c34d40fca0db",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          }
+        ]
+      },
+      "Severity": 2
+    },
+    {
+      "ID": "2b0c94a0-f2c7-4068-86e4-2d5f7ed3fe94",
+      "Name": "Credential cracking",
+      "Description": "",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatOriginID": "296e95fe-e06d-4ae3-be84-da98df4a122c",
+        "ThreatCategoryIDs": [
+          "c46b7c74-5979-409d-8ceb-631b8833c596"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 1,
+      "StencilRestriction": {
+        "stencilTypeID": "45244917-e4a2-4b03-89de-f18e9ddcad3f",
+        "DetailRestrictions": []
+      },
+      "Severity": 2
+    },
+    {
+      "ID": "2c32278f-ea97-4aa1-8e85-982f76dee1b9",
+      "Name": "Credential stuffing",
+      "Description": "",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatOriginID": "0217b20a-5e3a-4244-8dce-819e28050a47",
+        "ThreatCategoryIDs": [
+          "c46b7c74-5979-409d-8ceb-631b8833c596"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 1,
+      "StencilRestriction": {
+        "stencilTypeID": "45244917-e4a2-4b03-89de-f18e9ddcad3f",
+        "DetailRestrictions": []
+      },
+      "Severity": 3
+    },
+    {
+      "ID": "a777fa41-a13f-4225-af47-e4458a0c8f9e",
+      "Name": "Password spraying",
+      "Description": "",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatOriginID": "1909127e-50bd-4892-8b1f-1a2123a4fa61",
+        "ThreatCategoryIDs": [
+          "c46b7c74-5979-409d-8ceb-631b8833c596"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 1,
+      "StencilRestriction": {
+        "stencilTypeID": "45244917-e4a2-4b03-89de-f18e9ddcad3f",
+        "DetailRestrictions": []
+      },
+      "Severity": 3
+    },
+    {
+      "ID": "ab670c99-4f5c-41c7-974c-a6704df1661b",
+      "Name": "Unsecure default settings",
+      "Description": "",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatOriginID": "e060675a-41d0-4c4d-9e16-311bb4adec7b",
+        "ThreatCategoryIDs": [
+          "f19e41bd-9fd9-4046-a195-28d441207fa0",
+          "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
+          "c46b7c74-5979-409d-8ceb-631b8833c596"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 1,
+      "StencilRestriction": {
+        "stencilTypeID": "9ebe3a8f-eedb-40cd-9cbf-d1012a1829e2",
+        "DetailRestrictions": []
+      },
+      "Severity": 2
+    },
+    {
+      "ID": "ab1d49fc-cb77-46cf-aeff-b4a28eb0d692",
+      "Name": "Undetected misuse of API",
+      "Description": "",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {},
+      "overridenRuleIDs": [],
+      "RuleType": 3,
+      "ComponentRestriction": {
+        "componentTypeID": "ce3cdda1-0737-468e-83e7-ca20098551d1",
+        "DetailRestrictions": [
+          {
+            "IsOR": true,
+            "Layer": 0,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "b125fa52-c06e-4e54-88b5-5e9d3929f643",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          }
+        ]
+      },
+      "Severity": 1
+    },
+    {
+      "ID": "e014189e-5d3c-40c7-aac2-23202be3ccd4",
+      "Name": "Unsecure management access",
+      "Description": "",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "f19e41bd-9fd9-4046-a195-28d441207fa0",
+          "c46b7c74-5979-409d-8ceb-631b8833c596"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 3,
+      "ComponentRestriction": {
+        "componentTypeID": "44545d3e-fa0a-44c7-a19e-8164dab646dc",
+        "DetailRestrictions": [
+          {
+            "IsOR": true,
+            "Layer": 0,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "6962d897-bf88-4745-9f2c-a8aa9d981f93",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          }
+        ]
+      },
+      "Severity": 4
+    },
+    {
+      "ID": "a89ed38a-c36b-445b-a8c2-89e7289cdb9e",
+      "Name": "Unsecure message",
+      "Description": "",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatOriginID": "e58fcbde-e429-4704-9f22-c00d187994bc",
+        "ThreatCategoryIDs": [
+          "8a3d81d9-3317-4e5d-88fe-a0e0592295fe",
+          "d0bcd70c-fbad-4a16-a606-8b0682ae7afe",
+          "f7639a0c-e85b-4947-bbec-2ac4a0911827"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 3,
+      "ComponentRestriction": {
+        "componentTypeID": "693eb3c8-9d8a-42ce-91aa-0ac4c190d7dc",
+        "DetailRestrictions": [
+          {
+            "IsOR": true,
+            "Layer": 0,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "6d7716ae-9870-46a1-9231-a713a0dcd5a0",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          }
+        ]
+      },
+      "Severity": 4
+    },
+    {
+      "ID": "104ac1d9-34d6-4ce7-97f1-6d3dedcfbb59",
+      "Name": "Client spoofing",
+      "Description": "",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatOriginID": "d46f6e31-ae41-4d6e-93fc-0e6c3bbb295d",
+        "ThreatCategoryIDs": [
+          "c46b7c74-5979-409d-8ceb-631b8833c596"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 3,
+      "ComponentRestriction": {
+        "componentTypeID": "693eb3c8-9d8a-42ce-91aa-0ac4c190d7dc",
+        "DetailRestrictions": [
+          {
+            "IsOR": true,
+            "Layer": 0,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "de628891-642c-4b7c-b88b-abf7988721dc",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          }
+        ]
+      },
+      "Severity": 3
+    },
+    {
+      "ID": "2b82faea-2950-430d-8b52-273d9b0320e2",
+      "Name": "No privacy impact assessment",
+      "Description": "",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "7bbfe5d3-8a91-4210-99ab-79f670715e61"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 3,
+      "ComponentRestriction": {
+        "componentTypeID": "44fd3f80-7e55-41af-b452-283556dd1894",
+        "DetailRestrictions": [
+          {
+            "IsOR": true,
+            "Layer": 0,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "8f4a0dd3-2083-42eb-89bd-48480a082342",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          }
+        ]
+      },
+      "Severity": 1
+    },
+    {
+      "ID": "eaee9e9f-c3d7-42d7-9f8a-3d538cb9a17e",
+      "Name": "Outdated privacy impact assessment",
+      "Description": "",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {},
+      "overridenRuleIDs": [],
+      "RuleType": 3,
+      "ComponentRestriction": {
+        "componentTypeID": "44fd3f80-7e55-41af-b452-283556dd1894",
+        "DetailRestrictions": [
+          {
+            "IsOR": true,
+            "Layer": 0,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "f3d756ae-7451-4738-986c-0e15d22cb2b2",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          }
+        ]
+      }
+    },
+    {
+      "ID": "03778e71-e9a1-4528-b1db-547990486b27",
+      "Name": "No safety impact assessment",
+      "Description": "Evaluate the safety impacts of an IoT system, log all safety risks, prioritize the risks, and implement mitigations for each risk. Incorporate device and environmental controls to enforce safety requirements, as necessary",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "17a04fbd-365f-4345-97f8-88d3c7382ec1"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 3,
+      "ComponentRestriction": {
+        "componentTypeID": "be1f1524-fd62-4957-a08d-844b070dbb00",
+        "DetailRestrictions": [
+          {
+            "IsOR": true,
+            "Layer": 0,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "a1e7923f-848d-4532-b967-700925af1a77",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          }
+        ]
+      },
+      "Severity": 1
+    },
+    {
+      "ID": "359293f9-3fe1-4b61-99cb-332809add1f5",
+      "Name": "No fault tree analysis",
+      "Description": "",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "17a04fbd-365f-4345-97f8-88d3c7382ec1"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 3,
+      "ComponentRestriction": {
+        "componentTypeID": "be1f1524-fd62-4957-a08d-844b070dbb00",
+        "DetailRestrictions": [
+          {
+            "IsOR": true,
+            "Layer": 0,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "d0e4fa19-2b29-48b3-b81b-2be909af26d8",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          }
+        ]
+      },
+      "Severity": 1
+    },
+    {
+      "ID": "60b7ed0a-97b4-4904-a3bf-6d3ebdf01954",
+      "Name": "No account management",
+      "Description": "",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "c46b7c74-5979-409d-8ceb-631b8833c596"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 3,
+      "ComponentRestriction": {
+        "componentTypeID": "23a8870f-e7f4-4e07-80be-8cb890f509e8",
+        "DetailRestrictions": [
+          {
+            "IsOR": true,
+            "Layer": 0,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "524e227d-483e-45ae-b002-3041d15fe7e9",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          }
+        ]
+      },
+      "Severity": 2
+    },
+    {
+      "ID": "65c95996-5153-4f47-a7cd-0ffe05f96309",
+      "Name": "Weak authentication",
+      "Description": "",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "c46b7c74-5979-409d-8ceb-631b8833c596"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 3,
+      "ComponentRestriction": {
+        "componentTypeID": "23a8870f-e7f4-4e07-80be-8cb890f509e8",
+        "DetailRestrictions": [
+          {
+            "IsOR": true,
+            "Layer": 0,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "330a4f44-1471-460d-889f-4f33a3b8ce72",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          }
+        ]
+      },
+      "Severity": 2
+    },
+    {
+      "ID": "23c52b69-1923-416b-99a4-620d36961365",
+      "Name": "Root privileges",
+      "Description": "",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "c8a14b27-b13f-4358-9f3f-691d01c97c77"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 3,
+      "ComponentRestriction": {
+        "componentTypeID": "ce3cdda1-0737-468e-83e7-ca20098551d1",
+        "DetailRestrictions": [
+          {
+            "IsOR": true,
+            "Layer": 0,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "39de06c5-7cfc-4fb8-8a1f-22a8888cf4ed",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          }
+        ]
+      },
+      "Severity": 3
+    },
+    {
+      "ID": "d0a3fe39-6894-44c5-91ec-1f1019ffda37",
+      "Name": "Certificates with long lifetime",
+      "Description": "Device certificates may be used without expiration. In this case, short-term operational certificates should be established.",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "c46b7c74-5979-409d-8ceb-631b8833c596"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 3,
+      "ComponentRestriction": {
+        "componentTypeID": "34f3948e-4d7f-4f0b-a86b-e649c427bc8e",
+        "DetailRestrictions": [
+          {
+            "IsOR": true,
+            "Layer": 0,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "40c05808-37a1-4394-a9d5-8491b55c3a9b",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          }
+        ]
+      },
+      "Severity": 2
+    },
+    {
+      "ID": "fdc27962-5622-47e7-8de8-ca1b60009276",
+      "Name": "No revocation process",
+      "Description": "",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "c46b7c74-5979-409d-8ceb-631b8833c596",
+          "b1ff0675-f9b7-4ffb-bdd5-f621c6580d9a"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 3,
+      "ComponentRestriction": {
+        "componentTypeID": "34f3948e-4d7f-4f0b-a86b-e649c427bc8e",
+        "DetailRestrictions": [
+          {
+            "IsOR": true,
+            "Layer": 0,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "083e93ef-da95-4064-a698-6fbd5cf997f5",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          }
+        ]
+      },
+      "Severity": 2
+    },
+    {
+      "ID": "d0bd34ae-02d2-46e9-b45a-0130be9713c4",
+      "Name": "No management policy",
+      "Description": "",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "c46b7c74-5979-409d-8ceb-631b8833c596"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 3,
+      "ComponentRestriction": {
+        "componentTypeID": "34f3948e-4d7f-4f0b-a86b-e649c427bc8e",
+        "DetailRestrictions": [
+          {
+            "IsOR": true,
+            "Layer": 0,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "46d35b81-19e3-404e-9fe2-af5088971ffe",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          }
+        ]
+      },
+      "Severity": 2
+    },
+    {
+      "ID": "662c14ed-b7cf-490a-97b8-978836d022bb",
+      "Name": "No automated renewal process",
+      "Description": "",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "c46b7c74-5979-409d-8ceb-631b8833c596",
+          "b1ff0675-f9b7-4ffb-bdd5-f621c6580d9a"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 3,
+      "ComponentRestriction": {
+        "componentTypeID": "34f3948e-4d7f-4f0b-a86b-e649c427bc8e",
+        "DetailRestrictions": [
+          {
+            "IsOR": true,
+            "Layer": 0,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "0c0d40fd-7f0a-412d-ae80-efce58906308",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          }
+        ]
+      },
+      "Severity": 2
+    },
+    {
+      "ID": "2d55c643-21db-426a-be29-d21f7f1965a4",
+      "Name": "No incident response team",
+      "Description": "",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {},
+      "overridenRuleIDs": [],
+      "RuleType": 3,
+      "ComponentRestriction": {
+        "componentTypeID": "25032887-439e-4599-84bf-05d906641a0b",
+        "DetailRestrictions": [
+          {
+            "IsOR": true,
+            "Layer": 0,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "263b5363-2c09-45dd-8ff8-1a430fb7e93a",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          }
+        ]
+      },
+      "Severity": 2
+    },
+    {
+      "ID": "3c1166bd-b978-4361-9846-33cd050dd968",
+      "Name": "No supply chain risk management program",
+      "Description": "",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {},
+      "overridenRuleIDs": [],
+      "RuleType": 3,
+      "ComponentRestriction": {
+        "componentTypeID": "2c884e0a-ab3c-43f7-95c7-f4a320e8bbe1",
+        "DetailRestrictions": [
+          {
+            "IsOR": true,
+            "Layer": 0,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "7e3faca4-9b7a-4f8e-8fbe-cb461ca6870f",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          }
+        ]
+      },
+      "Severity": 1
+    },
+    {
+      "ID": "42b3d570-e03c-440d-b7a4-87614c6b2e2c",
+      "Name": "Risks from third party components",
+      "Description": "",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {},
+      "overridenRuleIDs": [],
+      "RuleType": 3,
+      "ComponentRestriction": {
+        "componentTypeID": "2c884e0a-ab3c-43f7-95c7-f4a320e8bbe1",
+        "DetailRestrictions": [
+          {
+            "IsOR": true,
+            "Layer": 0,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "2614fc88-29cb-4d84-9902-5f7ca7f98410",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          }
+        ]
+      },
+      "Severity": 3
+    },
+    {
+      "ID": "d54bae32-33ff-4b3a-b583-07b53b4c947b",
+      "Name": "No regular penetration tests",
+      "Description": "",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {},
+      "overridenRuleIDs": [],
+      "RuleType": 3,
+      "ComponentRestriction": {
+        "componentTypeID": "8902950a-6c5e-426b-baa2-71794e74f720",
+        "DetailRestrictions": [
+          {
+            "IsOR": true,
+            "Layer": 0,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "d4cb3498-4689-49f2-9f37-8bd45e62a972",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          }
+        ]
+      },
+      "Severity": 2
     }
   ],
   "mitigations": [
@@ -12920,6 +16514,154 @@
           ]
         }
       ]
+    },
+    {
+      "ID": "6149966a-4422-4b32-ac28-88a2ded07354",
+      "Name": "Cloud service recovery",
+      "Description": "",
+      "mitigatedThreatOriginIDs": [],
+      "mitigatedThreatRuleIDs": [
+        "b05b7085-3952-4f0d-bb85-7c380eb32f92"
+      ],
+      "MitigationTips": [
+        {
+          "Name": "Adopt a geographically redudant configuration",
+          "Description": "",
+          "LifeCycles": [
+            "O"
+          ]
+        }
+      ]
+    },
+    {
+      "ID": "113386c4-73e2-4e37-a390-83c3ef939633",
+      "Name": "OPC UA secure configuration",
+      "Description": "See Practical Security Recommendations for building OPC UA Applications by OPC Fundation",
+      "mitigatedThreatOriginIDs": [],
+      "mitigatedThreatRuleIDs": [
+        "ea2ba48d-b7f9-42c9-b9d9-f4a9816383b0",
+        "7f6ca653-a703-480c-b5d8-d82243171994",
+        "289c20cd-ea84-4375-8453-b045b94e1dc6",
+        "3a44327d-24d1-4c53-a3ea-7d891fb86f47"
+      ],
+      "MitigationTips": [
+        {
+          "Name": "User authentication",
+          "Description": "The possibility of logging in with the identifier ‘anonymous’ should be used only for accessing non-critical UA server resources as it does not provide any protection",
+          "LifeCycles": [
+            "C",
+            "I"
+          ]
+        },
+        {
+          "Name": "Security mode",
+          "Description": " The SecurityMode should be ‘Sign’ or ‘SignAndEncrypt’",
+          "LifeCycles": [
+            "I"
+          ]
+        },
+        {
+          "Name": "Cryptographic algorithms",
+          "Description": "At a minimum, the SecurityPolicy ‘Basic256Sha256’ should be chosen",
+          "LifeCycles": [
+            "I"
+          ]
+        },
+        {
+          "Name": "Use certificates",
+          "Description": "Don’t accept connections which do not provide trusted certificates",
+          "LifeCycles": [
+            "I"
+          ]
+        },
+        {
+          "Name": "Certificate and private key storage",
+          "Description": "Never store private keys or the corresponding certificate files (.pfx/p12) on an unencrypted file system",
+          "LifeCycles": [
+            "I"
+          ]
+        },
+        {
+          "Name": " Managing and maintaining certificates",
+          "Description": "Use certificate trust lists and certificate revocation lists to manage valid certificates",
+          "LifeCycles": [
+            "I"
+          ]
+        }
+      ]
+    },
+    {
+      "ID": "6986a3d3-c10f-4ffb-a348-fafe9c8c9150",
+      "Name": "MQTT secure configuration",
+      "Description": "",
+      "mitigatedThreatOriginIDs": [],
+      "mitigatedThreatRuleIDs": [
+        "a89ed38a-c36b-445b-a8c2-89e7289cdb9e",
+        "104ac1d9-34d6-4ce7-97f1-6d3dedcfbb59"
+      ],
+      "MitigationTips": [
+        {
+          "Name": "Define access control lists for topcis",
+          "Description": "",
+          "LifeCycles": [
+            "C",
+            "I"
+          ]
+        },
+        {
+          "Name": "Use MQTT over TLS",
+          "Description": "Use MQTT over TLS on port 8883",
+          "LifeCycles": [
+            "I"
+          ]
+        },
+        {
+          "Name": "Use X.509 client certificates",
+          "Description": "",
+          "LifeCycles": [
+            "I"
+          ]
+        },
+        {
+          "Name": "Define maximum message size",
+          "Description": "MQTT defines a maximum message size of 256MB. In most MQTT deployment scenarios, messages are often smaller than a kilobyte. If you are familiar with your usage scenario and you know the maximum message size that can occur, it makes sense to decrease the maximum allowed message size to that limit. If no limit is set, it is possible for malicious MQTT clients to send large messages (which can result in excessive memory consumption and unneeded bandwidth usage).",
+          "LifeCycles": [
+            "I"
+          ]
+        }
+      ]
+    },
+    {
+      "ID": "76ed8c24-b89e-4eb1-9d09-a97548729ba5",
+      "Name": "DoS protection",
+      "Description": "DoS depends on the used network interfaces, protocols and operating system",
+      "mitigatedThreatOriginIDs": [],
+      "mitigatedThreatRuleIDs": [
+        "7b825bd7-222e-476f-bf22-85fe2e50eb6c"
+      ],
+      "MitigationTips": [
+        {
+          "Name": "Use challenges",
+          "Description": "Use challenges like CAPTCHA to filter requests by bots",
+          "LifeCycles": [
+            "I"
+          ]
+        },
+        {
+          "Name": "Use a web application firewall",
+          "Description": "",
+          "LifeCycles": [
+            "I"
+          ]
+        },
+        {
+          "Name": "Use intrusion detection/prevention system",
+          "Description": "Use a intrusion detection/prevention such as Fail2ban",
+          "LifeCycles": [
+            "I"
+          ]
+        }
+      ]
     }
   ],
   "mitigationGroups": [
@@ -12932,7 +16674,8 @@
         "4df9ab6b-eb2f-4fc7-8bd7-8b6c2d03e922",
         "627ed2f3-d2af-4f25-925b-2e93a9578a93",
         "b6aceef6-08e1-4b2f-83a7-32c2bc736962",
-        "10c43f72-7e1c-4055-b8e8-321d17a0109e"
+        "10c43f72-7e1c-4055-b8e8-321d17a0109e",
+        "3103fa1a-00eb-4361-864d-7f129333db08"
       ],
       "mitigationIDs": []
     },
@@ -12962,7 +16705,10 @@
       "Description": "",
       "mitigationGroupIDs": [],
       "mitigationIDs": [
-        "ea061d92-c31b-4644-8f5f-5093f513dd9d"
+        "ea061d92-c31b-4644-8f5f-5093f513dd9d",
+        "113386c4-73e2-4e37-a390-83c3ef939633",
+        "6986a3d3-c10f-4ffb-a348-fafe9c8c9150",
+        "76ed8c24-b89e-4eb1-9d09-a97548729ba5"
       ]
     },
     {
@@ -12986,6 +16732,15 @@
         "34eb5948-314a-4a99-a782-c5ed7d26df01",
         "51afbfbf-f5f5-40f7-908f-5db63ed5e1ca",
         "43834e91-cb84-407e-9819-ffbc58b405a0"
+      ]
+    },
+    {
+      "ID": "3103fa1a-00eb-4361-864d-7f129333db08",
+      "Name": "Recovery",
+      "Description": "",
+      "mitigationGroupIDs": [],
+      "mitigationIDs": [
+        "6149966a-4422-4b32-ac28-88a2ded07354"
       ]
     }
   ],

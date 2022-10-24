@@ -17,7 +17,7 @@ interface IEvalResult {
 })
 export class ThreatEngineService {
 
-  constructor(private dataService: DataService, private dialog: DialogService) { }
+  constructor(public dataService: DataService, private dialog: DialogService) { }
 
   /**
    * Generate threats for all diagrams and MyComponent stacks
@@ -97,8 +97,8 @@ export class ThreatEngineService {
     // Stencil threats
     if ([DiagramTypes.Hardware, DiagramTypes.DataFlow].includes(diagram.DiagramType)) checkElements(RuleTypes.Stencil, (diagram as HWDFDiagram).Elements.GetChildrenFlat());
     // DFD threats
-    if (diagram.DiagramType == DiagramTypes.DataFlow) checkElements(RuleTypes.DFD, (diagram as HWDFDiagram).Elements.GetChildrenFlat().filter(x => x.Type.ElementTypeID == ElementTypeIDs.DataFlow));
-    if (diagram.DiagramType == DiagramTypes.DataFlow) checkElements(RuleTypes.Protocol, (diagram as HWDFDiagram).Elements.GetChildrenFlat().filter(x => x.Type.ElementTypeID == ElementTypeIDs.DataFlow));
+    if (diagram.DiagramType == DiagramTypes.DataFlow) checkElements(RuleTypes.DFD, (diagram as HWDFDiagram).Elements.GetChildrenFlat().filter(x => x.GetProperty('Type').ElementTypeID == ElementTypeIDs.DataFlow));
+    if (diagram.DiagramType == DiagramTypes.DataFlow) checkElements(RuleTypes.Protocol, (diagram as HWDFDiagram).Elements.GetChildrenFlat().filter(x => x.GetProperty('Type').ElementTypeID == ElementTypeIDs.DataFlow));
 
     mappingsBefore.forEach(x => {
       if (x.ThreatState == ThreatStates.NotSet) x.MappingState = MappingStates.Removed; // mark all mappings that does not apply anymore as to remove
@@ -205,8 +205,13 @@ export class ThreatEngineService {
 
       const df = element as DataFlow;
       if (rule.DFDRestriction.NodeTypes.length == 2) {
-        if (checkDataFlow(df, 0, false)[0]) {
-          return [ { target: df, elements: [df.Sender, df, df.Receiver] } ];
+        const result = checkDataFlow(df, 0, false); 
+        if (result[0]) {
+          const targetNum = result[1] ? (1 - rule.DFDRestriction.Target) : rule.DFDRestriction.Target; // consider reverse
+          let target: ViewElementBase = df;
+          if (targetNum == 0) target = df.Sender;
+          else if (targetNum == 1) target = df.Receiver;
+          return [ { target: target, elements: [df.Sender, df, df.Receiver] } ];
         }
       }
       else {
@@ -240,8 +245,8 @@ export class ThreatEngineService {
       // check stencil/component type 
       if (rule.RuleType == RuleTypes.Stencil) {
         const requiredStencil = this.dataService.Config.GetStencilType(rule.StencilRestriction.stencilTypeID);
-        if (requiredStencil.IsDefault) threatApplies = (element as DFDElement).Type.ElementTypeID == requiredStencil.ElementTypeID;
-        else threatApplies = (element as DFDElement).Type.ID == rule.StencilRestriction.stencilTypeID; 
+        if (requiredStencil.IsDefault) threatApplies = (element as DFDElement).GetProperty('Type').ElementTypeID == requiredStencil.ElementTypeID;
+        else threatApplies = (element as DFDElement).GetProperty('Type').ID == rule.StencilRestriction.stencilTypeID; 
         threatApplies = threatApplies && !(element instanceof DFDElementRef || element instanceof DFDContainerRef);
       }
       else if (rule.RuleType == RuleTypes.Component) {
@@ -350,7 +355,7 @@ export class ThreatEngineService {
     }
     else if (r.RestType == RestrictionTypes.DataFlowCrosses) {
       if (r.DataflowRest.TrustAreaIDs.length == 0) return (element as DataFlow).Sender.Parent.ID != (element as DataFlow).Receiver.Parent.ID;
-      else return r.DataflowRest.TrustAreaIDs.includes((element as DataFlow).Sender.Parent.Type.ID) || r.DataflowRest.TrustAreaIDs.includes((element as DataFlow).Receiver.Parent.Type.ID);
+      else return r.DataflowRest.TrustAreaIDs.includes((element as DataFlow).Sender.Parent.GetProperty('Type').ID) || r.DataflowRest.TrustAreaIDs.includes((element as DataFlow).Receiver.Parent.GetProperty('Type').ID);
     }
     else if (r.RestType == RestrictionTypes.PhysicalElement) {
       if (ruleType == RuleTypes.Stencil) { return ThreatEngineService.EvalProp(r.PhyElementRest.Property, (element as DFDElement).PhysicalElement); }
@@ -407,8 +412,8 @@ export class ThreatEngineService {
     let res = false;
     typeIDs.TypeIDs.forEach(id => {
       let stencil = this.dataService.Config.GetStencilType(id);
-      if (stencil.IsDefault) res = res || element.Type.ElementTypeID == stencil.ElementTypeID; 
-      else res = res || stencil.ID == element.Type.ID;
+      if (stencil.IsDefault) res = res || element.GetProperty('Type').ElementTypeID == stencil.ElementTypeID; 
+      else res = res || stencil.ID == element.GetProperty('Type').ID;
     });
     return res;
   };

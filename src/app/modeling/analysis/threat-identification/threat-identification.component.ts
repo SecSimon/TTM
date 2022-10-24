@@ -64,7 +64,7 @@ export class ThreatIdentificationComponent implements OnInit {
   @ViewChild('assetsTree') assetsTree: NavTreeComponent;
   @ViewChild('catsTree') catsTree: NavTreeComponent;
 
-  constructor(public theme: ThemeService, private dataService: DataService, private locStorage: LocalStorageService) { }
+  constructor(public theme: ThemeService, public dataService: DataService, private locStorage: LocalStorageService) { }
 
   public OnCheckedAssetNodesChanged(event) {
     if (this.selectedThreat) this.selectedThreat.AffectedAssetObjects = event?.map(x => x.data);

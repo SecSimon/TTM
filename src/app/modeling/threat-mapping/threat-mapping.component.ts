@@ -27,7 +27,7 @@ export class ThreatMappingComponent implements OnInit {
 
   @Input() canEdit: boolean = true;
 
-  constructor(@Optional() mapping: ThreatMapping, public theme: ThemeService, private dataService: DataService, private dialog: DialogService) {
+  constructor(@Optional() mapping: ThreatMapping, public theme: ThemeService, public dataService: DataService, private dialog: DialogService) {
     this.threatMapping = mapping;
   }
 

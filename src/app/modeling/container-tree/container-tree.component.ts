@@ -54,7 +54,7 @@ export class ContainerTreeComponent implements OnInit {
   public GetNodeInfo(node: ViewElementBase) {
     if (this.infoMap.has(node.ID)) return this.infoMap.get(node.ID);
 
-    if (node instanceof DataFlow && (node.Sender || node.Receiver)) {
+    if (node instanceof DataFlow && node.Sender && node.Receiver && !node.ShowName) {
       return '(' + node.Sender?.GetProperty('Name') + '->' + node.Receiver?.GetProperty('Name') + ')';
     }
     else {

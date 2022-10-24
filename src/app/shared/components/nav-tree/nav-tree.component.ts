@@ -2,6 +2,7 @@ import { NestedTreeControl } from '@angular/cdk/tree';
 import { Component, Input, OnInit, Output, EventEmitter, ViewChild } from '@angular/core';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
+import { DataService } from '../../../util/data.service';
 import { ThemeService } from '../../../util/theme.service';
 import { NavTreeBase } from './nav-tree-base';
 
@@ -82,7 +83,7 @@ export class NavTreeComponent implements OnInit {
   @Output()
   public nodeDoubleClicked = new EventEmitter<INavigationNode>();
 
-  constructor(public theme: ThemeService) { }
+  constructor(public theme: ThemeService, public dataService: DataService) { }
 
   ngOnInit(): void {
   }

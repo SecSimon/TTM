@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { EventEmitter, Injectable } from '@angular/core';
+import { EventEmitter, Injectable, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 import { Octokit } from '@octokit/rest';
 import { LocalStorageService, LocStorageKeys } from './local-storage.service';
@@ -66,6 +66,7 @@ export enum UserModes {
   providedIn: 'root'
 })
 export class DataService {
+  private hasSpellCheck: boolean = null;
 
   private userMode: UserModes = UserModes.None;
   private userName: string;
@@ -88,7 +89,7 @@ export class DataService {
   private config: ConfigFile;
 
   constructor(private locStorage: LocalStorageService, private isLoading: IsLoadingService, private http: HttpClient, private router: Router, private clipboard: Clipboard,
-    private dialog: MatDialog, private messagesService: MessagesService, private translate: TranslateService, private fileUpdate: FileUpdateService) { 
+    private dialog: MatDialog, private messagesService: MessagesService, private translate: TranslateService, private fileUpdate: FileUpdateService, private zone: NgZone) { 
     this.restoreUserAccount();
     if (this.UserMode == UserModes.LoggedIn) {
       this.retrieveRepositories();
@@ -115,7 +116,7 @@ export class DataService {
   public get UserAccount(): string { return this.userAccount; }
   public get UserURL(): string { return this.userURL; }
   public get UserEmail(): string { return this.userEmail; }
-  public get UserDisplayName(): string { return this.UserName ? this.UserName : this.UserAccount}
+  public get UserDisplayName(): string { return this.UserName ? this.UserName : this.UserAccount }
 
   public get Repos(): IGHRepository[] { return this.repos; }
   public get AvailableGHProjects(): IGHFile[] { return this.availableGHProjects; }
@@ -161,6 +162,18 @@ export class DataService {
   public get HasUnsavedChanges(): boolean {
     if (this.Project) return this.Project.FileChanged;
     return this.Config?.FileChanged;
+  }
+
+  public get HasSpellCheck(): boolean {
+    if (this.hasSpellCheck == null) {
+      const val = this.locStorage.Get(LocStorageKeys.SPELL_CHECK);
+      this.hasSpellCheck = val == 'true' || val == null;
+    }
+    return this.hasSpellCheck;
+  }
+  public set HasSpellCheck(val: boolean) {
+    this.hasSpellCheck = val;
+    this.locStorage.Set(LocStorageKeys.SPELL_CHECK, String(val));
   }
 
   public ProjectChanged = new EventEmitter<ProjectFile>();
@@ -393,6 +406,16 @@ export class DataService {
       }
     });
   }
+
+  public OnClose(event) {
+    if (this.Project?.FileChanged || this.Config?.FileChanged) {
+      this.zone.run(() => this.OnCloseProject());
+      event.returnValue = false;
+      return false;
+    }
+  }
+
+  first = false;
 
   private loadEncryptedProject(proj: IGHFile, projContent: IGHFileContent) {
     let pw = { 'pw': '' };
@@ -637,6 +660,7 @@ export class DataService {
   public ImportFile(isProject: boolean, fileInput: any) {
     if (fileInput.target.files && fileInput.target.files[0]) {
       const reader = new FileReader();
+      const fileName = fileInput.target.files[0].name;
       reader.onload = (e) => {
         const fileRes = reader.result;
         const file = JSON.parse(fileRes.toString());
@@ -644,8 +668,14 @@ export class DataService {
           const content = file['content'];
           const json = JSON.parse(content);
           this.selectedGHConfig = this.selectedGHProject = null;
-          if (isProject) this.loadProjectFile(json['Data']['Name'], json);
-          else this.loadConfigFile(fileInput.target.files[0].name, json);
+          if (isProject) {
+            this.loadProjectFile(json['Data']['Name'], json);
+            this.Project.FileChanged = true;
+          }
+          else {
+            this.loadConfigFile(fileName.replace('.ttmc', ''), json);
+            this.Config.FileChanged = true;
+          }
         }
         else {
           this.messagesService.Error('Unsupported file');
@@ -657,17 +687,7 @@ export class DataService {
   }
 
   public ExchangeConfig(conf: IGHFile) {
-    let data: ITwoOptionDialogData = {
-      title: this.translate.instant('dialog.configexchange.title'),
-      textContent: this.translate.instant('dialog.configexchange.desc'),
-      resultTrueText: this.translate.instant('general.Yes'),
-      hasResultFalse: true,
-      resultFalseText: this.translate.instant('general.No'),
-      resultTrueEnabled: () => { return true; },
-      initalTrue: false
-    };
-    const dialogRef = this.dialog.open(TwoOptionsDialogComponent, { hasBackdrop: false, data: data });
-    dialogRef.afterClosed().subscribe(res => {
+    this.exchangeConfigDialog().subscribe(res => {
       if (res) {
         const octokit = new Octokit({ auth: this.accessToken });
         octokit.repos.getContent(
@@ -695,6 +715,32 @@ export class DataService {
     });
   }
 
+  public ExchangeConfigWithDefault() {
+    this.exchangeConfigDialog().subscribe(res => {
+      if (res) {
+        let newConfig = ConfigFile.DefaultFile().ToJSON();
+        this.fileUpdate.UpdateConfigFile(newConfig);
+        let proj = this.Project.ToJSON();
+        proj.config = newConfig;
+        this.Project = ProjectFile.FromJSON(proj);
+        this.messagesService.Info('messages.info.exchangeConfig');
+      }
+    });
+  }
+
+  private exchangeConfigDialog() {
+    let data: ITwoOptionDialogData = {
+      title: this.translate.instant('dialog.configexchange.title'),
+      textContent: this.translate.instant('dialog.configexchange.desc'),
+      resultTrueText: this.translate.instant('general.Yes'),
+      hasResultFalse: true,
+      resultFalseText: this.translate.instant('general.No'),
+      resultTrueEnabled: () => { return true; },
+      initalTrue: false
+    };
+    return this.dialog.open(TwoOptionsDialogComponent, { hasBackdrop: false, data: data }).afterClosed();
+  }
+
   public GetProjectHistory() {
     return new Promise<IGHCommitInfo[]>((resolve, reject) => {
       let res: IGHCommitInfo[] = [];
@@ -714,7 +760,7 @@ export class DataService {
 
   public OnCloseProject() {
     return new Promise<void>((resolve, reject) => {
-      if (this.Project?.FileChanged && this.UserMode == UserModes.LoggedIn) {
+      if (this.Project?.FileChanged) {
         let data: ITwoOptionDialogData = {
           title: this.translate.instant('dialog.unsaved.title'),
           textContent: this.translate.instant('dialog.unsaved.save'),
@@ -727,11 +773,18 @@ export class DataService {
         const dialogRef = this.dialog.open(TwoOptionsDialogComponent, { hasBackdrop: false, data: data });
         dialogRef.afterClosed().subscribe(res => {
           if (res) {
-            this.OpenSaveProjectDialog('').then(() => {
+            if (this.UserMode == UserModes.LoggedIn) {
+              this.OpenSaveProjectDialog('').then(() => {
+                this.closeProject();
+                resolve();
+              })
+              .catch(() => reject());
+            }
+            else if (this.UserMode == UserModes.Guest) {
+              this.ExportFile(true);
               this.closeProject();
               resolve();
-            })
-            .catch(() => reject());
+            }
           }
           else {
             this.closeProject();
@@ -752,6 +805,7 @@ export class DataService {
     this.locStorage.Remove(LocStorageKeys.GH_LAST_PROJECT);
     this.Config = ConfigFile.DefaultFile();
     this.Config.FileChanged = false;
+    this.router.navigate(['/']);
   }
 
   public OpenRepo(proj) {
@@ -929,9 +983,9 @@ export class DataService {
             };
             this.repos.push(item);
           });
+          getFiles(octokit);
         }).finally(() => {
           this.isLoading.remove();
-          getFiles(octokit);
         });
       }
       else {
@@ -958,6 +1012,8 @@ export class DataService {
         isWritable: false
       };
       this.repos.push(item);
+    }).catch(err => {
+      this.messagesService.Error(err.message);
     }).finally(() => {
       this.isLoading.remove();
     });

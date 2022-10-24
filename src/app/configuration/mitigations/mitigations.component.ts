@@ -17,7 +17,7 @@ export class MitigationsComponent extends NavTreeBase implements OnInit {
   public get selectedMitigationGroup(): MitigationGroup { return (this.selectedNode?.data instanceof MitigationGroup ? this.selectedNode.data : null); }
   public get selectedMitigation(): Mitigation { return (this.selectedNode?.data instanceof Mitigation ? this.selectedNode.data : null); }
 
-  constructor(public theme: ThemeService, private dataService: DataService, private dialog: DialogService, private translate: TranslateService) { 
+  constructor(public theme: ThemeService, public dataService: DataService, private dialog: DialogService, private translate: TranslateService) { 
     super();
     dataService.ConfigChanged.subscribe(x => this.createNodes());
   }

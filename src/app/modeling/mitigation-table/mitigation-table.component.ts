@@ -97,7 +97,7 @@ export class MitigationTableComponent implements OnInit {
   
   @ViewChild(MatSort) sort: MatSort;
 
-  constructor(public theme: ThemeService, private dataService: DataService, private mitigationEngine: MitigationEngineService, private dialog: DialogService) { 
+  constructor(public theme: ThemeService, public dataService: DataService, private mitigationEngine: MitigationEngineService, private dialog: DialogService) { 
     let onDataChanged = () => {
       if (this.autoRefreshMitigations) {
         if (this.changesCounter == 0) {

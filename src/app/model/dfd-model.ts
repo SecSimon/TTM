@@ -147,7 +147,7 @@ export class StencilType extends DatabaseBase {
     let res: IDataReferences[] = [];
 
     // rules, elements
-    pf?.GetDFDElements().filter(x => x.Type.ID == this.ID).forEach(x => res.push({ Type: DataReferenceTypes.ResetStencilType , Param: x }));
+    pf?.GetDFDElements().filter(x => x.GetProperty('Type').ID == this.ID).forEach(x => res.push({ Type: DataReferenceTypes.ResetStencilType , Param: x }));
     cf.GetThreatRules().filter(x => x.RuleType == RuleTypes.Stencil && x.StencilRestriction?.stencilTypeID == this.ID).forEach(x => res.push({ Type: DataReferenceTypes.DeleteThreatRule , Param: x }));
 
     return res;
@@ -158,7 +158,7 @@ export class StencilType extends DatabaseBase {
     let def = cf.GetStencilTypes().find(x => x.IsDefault && x.ElementTypeID == this.ElementTypeID);
     refs.forEach(ref => {
       if (ref.Type == DataReferenceTypes.ResetStencilType) {
-        (ref.Param as DFDElement).Type = def; // reset the stencil type to default stencil
+        (ref.Param as DFDElement).SetProperty('Type', def); // reset the stencil type to default stencil
       }
       else if (ref.Type == DataReferenceTypes.DeleteThreatRule) {
         cf.DeleteThreatRule(ref.Param as ThreatRule);
@@ -317,7 +317,7 @@ export abstract class DFDElement extends ViewElementBase implements IElementType
       this.Data['IsPhyiscal'] = ElementTypeUtil.IsPhysical(type.ElementTypeID);
     }
 
-    if (!this.IsPhysical && this.Type.ElementTypeID != ElementTypeIDs.DataFlow) this.AddProperty('properties.PhysicalElement', 'PhysicalElement', 'properties.PhysicalElement.tt', true, PropertyEditTypes.PhysicalElementSelect, true);
+    if (!this.IsPhysical && this.GetProperty('Type').ElementTypeID != ElementTypeIDs.DataFlow) this.AddProperty('properties.PhysicalElement', 'PhysicalElement', 'properties.PhysicalElement.tt', true, PropertyEditTypes.PhysicalElementSelect, true);
   }
 
   public FindReferences(pf: ProjectFile, cf: ConfigFile): IDataReferences[] {
@@ -756,7 +756,7 @@ export class Protocol extends DatabaseBase {
 
     // DF protocol stack, DFD DFs
     cf.GetStencilTypes().filter(x => x.ElementTypeID == ElementTypeIDs.DataFlow).forEach(df => {
-      let stack = df.PropertyOverwrites.find(x => x.Key == 'ProtocolStack');
+      let stack = df.PropertyOverwrites?.find(x => x.Key == 'ProtocolStack');
       if (stack && stack.Value.includes(this.ID)) res.push({ Type: DataReferenceTypes.RemoveFromStencilProtocolStack, Param: df });
     });
     pf?.GetDFDElements().filter(x => x.Type.ElementTypeID == ElementTypeIDs.DataFlow).filter(x => (x as DataFlow).ProtocolStack.includes(this)).forEach(df => {
@@ -925,7 +925,7 @@ export class DataFlow extends DFDElement implements ICanvasFlow {
   }
 
   public GetProperty(id: string) {
-    if (!this.OverwriteProtocolProperties && this.protocolProperties.includes(id)) {
+    if (!this.OverwriteProtocolProperties && this.protocolProperties?.includes(id)) {
       return this.ProtocolStack.some(x => x.GetProperty(id));
     }
     return super.GetProperty(id);
@@ -1098,7 +1098,7 @@ export class DFDContainerRef extends DFDContainer {
   }
 
   public static InstantiateRef(ref: DFDContainer, pf: ProjectFile, cf: ConfigFile): DFDElement {
-    let res = new DFDContainerRef({}, ref.Type, pf, cf);
+    let res = new DFDContainerRef({}, ref.GetProperty('Type'), pf, cf);
     res.Ref = ref;
     res.Data['Name'] = 'Reference to ' + ref.ID;
     return res;

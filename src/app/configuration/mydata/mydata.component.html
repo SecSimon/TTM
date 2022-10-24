@@ -1,7 +1,7 @@
 <div>
   <mat-form-field appearance="fill" class="property-form-field">
     <mat-label>{{'general.Name' | translate}}</mat-label>
-    <input matInput type="text" [(ngModel)]="myData.Name" matTooltip="{{myData.Name}}" matTooltipShowDelay="1000">
+    <input matInput type="text" [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="myData.Name" matTooltip="{{myData.Name}}" matTooltipShowDelay="1000">
     <button *ngIf="myData.Name" matSuffix mat-icon-button (click)="myData.Name=''" matTooltip="{{'general.Clear' | translate}}" matTooltipShowDelay="1000">
       <mat-icon>close</mat-icon>
     </button>
@@ -9,7 +9,7 @@
   <br/>
   <mat-form-field appearance="fill" style="width: 100%;">
     <mat-label>{{'properties.Description' | translate}}</mat-label>
-    <textarea matInput type="text" [(ngModel)]="myData.Description"></textarea>
+    <textarea matInput [spellcheck]="dataService.HasSpellCheck" type="text" [(ngModel)]="myData.Description"></textarea>
   </mat-form-field>
   <br/>
   <mat-form-field appearance="fill" class="property-form-field">

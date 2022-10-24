@@ -146,6 +146,8 @@ export abstract class CanvasBase {
   public static GridSize = 20;
 
   private mouseMode: MouseModes = MouseModes.Mouse;
+  private xMax: number = null;
+  private yMax: number = null;
   protected copyID: string;
   protected isInitalized = false;
   protected isDarkMode = false;
@@ -159,6 +161,8 @@ export abstract class CanvasBase {
   public StrokeColor = 'black';
   public StrokeWidth = 2;
   public BackgroundColor = 'black';
+  public CanvasScreenWidth: number = 0;
+  public CanvasScreenHeight: number = 0;
 
   public get CanCopy(): boolean { return this.copyID != null; }
 
@@ -435,8 +439,13 @@ export abstract class CanvasBase {
   public OnResized(event: ResizedEvent, container) {
     this.initializeCanvas(container);
     if (this.Canvas) {
-      this.Canvas.setWidth(event.newRect.width);
-      this.Canvas.setHeight(event.newRect.height - 5);
+      const size = this.getCanvasSize();
+      this.CanvasScreenWidth = event.newRect.width;
+      this.CanvasScreenHeight = event.newRect.height - 5;
+      const newWid = event.newRect.width > size[2] ? event.newRect.width : size[2];
+      const newHei = event.newRect.height > size[3] ? event.newRect.height : size[3];
+      this.Canvas.setWidth(newWid);
+      this.Canvas.setHeight(newHei-5);
       this.Canvas.renderAll();
     }
   }
@@ -567,27 +576,23 @@ export abstract class CanvasBase {
     checkObjects(this.Canvas.getObjects());
   }
 
-  public FitToCanvas(width: number) {
-    let xMin = Number.MAX_VALUE, xMax = Number.MIN_VALUE, yMin = Number.MAX_VALUE, yMax = Number.MIN_VALUE;
-    this.Canvas.getObjects().forEach(ele => {
-      if (ele[CProps.myType] != CTypes.GridLine) {
-        if (ele['aCoords']['tl']['x'] < xMin) xMin = ele['aCoords']['tl']['x'];
-        if (ele['aCoords']['br']['x'] > xMax) xMax = ele['aCoords']['br']['x'];
-        if (ele['aCoords']['tl']['y'] < yMin) yMin = ele['aCoords']['tl']['y'];
-        if (ele['aCoords']['br']['y'] > yMax) yMax = ele['aCoords']['br']['y'];
-      }
-    });
-
-    xMin -= 5;
-    yMin -= 5;
-    xMax += 5;
-    yMax += 5;
+  public FitToCanvas(width: number, height: number = 0) {
+    const size = this.getCanvasSize();
+    let xMin = size[0], yMin = size[1], xMax = size[2], yMax = size[3]; 
     let vpt = this.Canvas.viewportTransform;
     vpt[4] = -xMin;
     vpt[5] = -yMin;
 
-    const zoom = width / (xMax - xMin); // width / actual width
-    const newHeight = (yMax - yMin) * zoom;
+    let zoom = width / (xMax - xMin); // width / actual width
+    let newHeight = (yMax - yMin) * zoom;
+
+    if (height > 0 && newHeight > height) {
+      const downscale = height / newHeight;
+      zoom *= downscale;
+      width *= downscale;
+      newHeight *= downscale;
+    }
+
     this.Canvas.setZoom(zoom);
 
     this.Canvas.requestRenderAll();
@@ -605,6 +610,8 @@ export abstract class CanvasBase {
     this.Canvas.targetFindTolerance = 2;
 
     this.Canvas.setWidth(cc.clientWidth);
+    this.CanvasScreenWidth = cc.clientWidth;
+    this.CanvasScreenHeight = cc.clientHeight - 5;
     this.Canvas.setHeight(cc.clientHeight - 5);
     this.SetColors(this.theme.IsDarkMode);
     this.theme.ThemeChanged.subscribe((isDark) => {
@@ -891,7 +898,10 @@ export abstract class CanvasBase {
       // pan canvas
       let vpt = this.Canvas.viewportTransform;
       vpt[4] += opt.e.clientX - this.Canvas.lastPosX;
+      if (vpt[4] > 0) vpt[4] = 0;
       vpt[5] += opt.e.clientY - this.Canvas.lastPosY;
+      if (vpt[5] > 0) vpt[5] = 0;
+
       this.Canvas.requestRenderAll();
       this.Canvas.lastPosX = opt.e.clientX;
       this.Canvas.lastPosY = opt.e.clientY;
@@ -948,14 +958,19 @@ export abstract class CanvasBase {
   protected onCanvasMouseOut(opt) {
     if (opt.target) {
       if (opt.target._objects) {
-        const objs = opt.target._objects.filter(x => CProps.fa in x);
+        let target = opt.target;
+        let objs = opt.target._objects.filter(x => CProps.fa in x);
+        if (opt.target[CProps.myType] == CTypes.FlowAnchor) {
+          objs = opt.target.group._objects.filter(x => CProps.fa in x);
+          target = opt.target.group;
+        }
         if (objs.length > 0) {
-          if (this.overTimeoutBuffer[opt.target[CProps.canvasID]] == null) {
-            this.overTimeoutBuffer[opt.target[CProps.canvasID]] = setTimeout(() => {
+          if (this.overTimeoutBuffer[target[CProps.canvasID]] == null) {
+            this.overTimeoutBuffer[target[CProps.canvasID]] = setTimeout(() => {
               objs.forEach(x => {
                 x.set(CProps.opacity, 0);
               });
-              delete this.overTimeoutBuffer[opt.target[CProps.canvasID]];
+              delete this.overTimeoutBuffer[target[CProps.canvasID]];
               this.Canvas.requestRenderAll();
             }, 500);
           }
@@ -1016,7 +1031,6 @@ export abstract class CanvasBase {
       let snap = (x) => {
         return Math.round(x / CanvasBase.GridSize * 4) % 4 == 0;
       }
-      //for (let i = -50; i < 50; i++) console.log(i, snap(i));
 
       if (snap(movingObj.left)) movingObj.set('left', Math.round(movingObj.left / CanvasBase.GridSize) * CanvasBase.GridSize);
       if (snap(movingObj.top)) movingObj.set('top', Math.round(movingObj.top / CanvasBase.GridSize) * CanvasBase.GridSize);
@@ -1067,6 +1081,24 @@ export abstract class CanvasBase {
         this.flowUpdateText(dfObj);
         this.Canvas.requestRenderAll();
       });
+    }
+    if (movingObj['left'] < 0) {
+      movingObj['left'] = 0;
+      this.Canvas.requestRenderAll();
+    }
+    if (movingObj['top'] < 0) {
+      movingObj['top'] = 0;
+      this.Canvas.requestRenderAll();
+    }
+    if (movingObj[CProps.myType] != CTypes.GridLine) {
+      if (movingObj['left'] + movingObj['width'] > this.xMax && movingObj['left'] + movingObj['width'] > this.Canvas['width']) {
+        this.Canvas.setWidth(movingObj['left'] + movingObj['width']);
+        this.Canvas.requestRenderAll();
+      }
+      if (movingObj['top'] + movingObj['height'] > this.yMax && movingObj['top'] + movingObj['height'] > this.Canvas['height']) {
+        this.Canvas.setHeight(movingObj['top'] + movingObj['height']);
+        this.Canvas.requestRenderAll();
+      }
     }
   }
 
@@ -1914,6 +1946,28 @@ export abstract class CanvasBase {
     }
   }
 
+  private getCanvasSize() {
+    let xMin = Number.MAX_VALUE, xMax = Number.MIN_VALUE, yMin = Number.MAX_VALUE, yMax = Number.MIN_VALUE;
+    this.Canvas.getObjects().forEach(ele => {
+      if (ele[CProps.myType] != CTypes.GridLine) {
+        if (ele['aCoords']['tl']['x'] < xMin) xMin = ele['aCoords']['tl']['x'];
+        if (ele['aCoords']['br']['x'] > xMax) xMax = ele['aCoords']['br']['x'];
+        if (ele['aCoords']['tl']['y'] < yMin) yMin = ele['aCoords']['tl']['y'];
+        if (ele['aCoords']['br']['y'] > yMax) yMax = ele['aCoords']['br']['y'];
+      }
+    });
+
+    xMin -= 5;
+    yMin -= 5;
+    xMax += 5;
+    yMax += 5;
+    
+    this.xMax = xMax;
+    this.yMax = yMax;
+
+    return [xMin, yMin, xMax, yMax];
+  }
+
   private setCanvasColor() {
     if (this.Canvas.backgroundColor != this.BackgroundColor) {
       this.Canvas.backgroundColor = this.BackgroundColor;
@@ -1978,9 +2032,9 @@ export class HWDFCanvas extends CanvasBase {
     const src = this.getViewBaseElement(this.copyID) as DFDElement;
     const srcObj = this.getCanvasElementByID(this.copyID);
     if (src) {
-      const copy = this.createElement({ stencilRef: { name: '', stencilID: src.Type.ID } }, srcObj.left +  srcObj.width + 10, srcObj.top);
+      const copy = this.createElement({ stencilRef: { name: '', stencilID: src.GetProperty('Type').ID } }, srcObj.left +  srcObj.width + 10, srcObj.top);
       copy.CopyFrom(src.Data);
-      copy.Name = StringExtension.FindUniqueName(src.Type.Name, this.getViewBaseElements().map(x => x.Name));
+      copy.Name = StringExtension.FindUniqueName(src.GetProperty('Type').Name, this.getViewBaseElements().map(x => x.Name));
     }
   }
 
@@ -2025,7 +2079,7 @@ export class HWDFCanvas extends CanvasBase {
       }
     }
     else if (dragDropData.stencilRef.elementID) {
-      type = this.dataService.Project.GetDFDElement(dragDropData.stencilRef.elementID).Type;
+      type = this.dataService.Project.GetDFDElement(dragDropData.stencilRef.elementID).GetProperty('Type');
       element = DFDElementRef.InstantiateRef(this.dataService.Project.GetDFDElement(dragDropData.stencilRef.elementID), this.dataService.Project, this.dataService.Config);
     }
     else if (dragDropData.stencilRef.templateID) {
@@ -2122,7 +2176,7 @@ export class HWDFCanvas extends CanvasBase {
       hasControls: true, lockRotation: true, lockScalingX: false, lockScalingY: false,
       hasBorders: false, subTargetCheck: true,
       ID: element.ID, canvasID: uuidv4(),
-      elementTypeID: element.Type.ElementTypeID, myType: CTypes.DataStore
+      elementTypeID: element.GetProperty('Type').ElementTypeID, myType: CTypes.DataStore
     });
 
     g.on('scaling', (e) => this.onScaleDataStore(e));
@@ -2214,7 +2268,7 @@ export class HWDFCanvas extends CanvasBase {
       left: left, top: top,
       hasControls: true, lockRotation: true, lockScalingX: false, lockScalingY: false, hasBorders: false,
       ID: element.ID, canvasID: uuidv4(),
-      elementTypeID: element.Type.ElementTypeID, myType: 'P', subTargetCheck: true
+      elementTypeID: element.GetProperty('Type').ElementTypeID, myType: 'P', subTargetCheck: true
     });
 
     g.on('scaling', (e) => this.onScaleProcessing(e));
@@ -2262,7 +2316,7 @@ export class HWDFCanvas extends CanvasBase {
       lockRotation: true, lockScalingX: false, lockScalingY: false,
       hasBorders: false, subTargetCheck: true,
       ID: element.ID, canvasID: uuidv4(),
-      elementTypeID: element.Type.ElementTypeID, myType: CTypes.ExternalEntity
+      elementTypeID: element.GetProperty('Type').ElementTypeID, myType: CTypes.ExternalEntity
     });
 
     g.on('scaling', (e) => this.onScaleExternalEntity(e));
@@ -2319,7 +2373,7 @@ export class HWDFCanvas extends CanvasBase {
       lockRotation: true, lockScalingX: false, lockScalingY: false,
       hasBorders: false, subTargetCheck: true,
       ID: element.ID, canvasID: uuidv4(),
-      elementTypeID: element.Type.ElementTypeID, myType: CTypes.PhysicalLink
+      elementTypeID: element.GetProperty('Type').ElementTypeID, myType: CTypes.PhysicalLink
     });
 
     g.on('scaling', (e) => this.onScalePhysicalLink(e));
@@ -2380,7 +2434,7 @@ export class HWDFCanvas extends CanvasBase {
       hasControls: true,
       hasBorders: false, subTargetCheck: true,
       ID: element.ID, canvasID: uuidv4(),
-      elementTypeID: element.Type.ElementTypeID, myType: CTypes.Interface
+      elementTypeID: element.GetProperty('Type').ElementTypeID, myType: CTypes.Interface
     });
 
     g.on('scaling', (e) => this.onScaleInterface(e));
@@ -2439,7 +2493,7 @@ export class HWDFCanvas extends CanvasBase {
       hasBorders: false,
       lockRotation: true,
       ID: element.ID, canvasID: uuidv4(),
-      elementTypeID: element.Type.ElementTypeID, myType: CTypes.TrustArea
+      elementTypeID: element.GetProperty('Type').ElementTypeID, myType: CTypes.TrustArea
     });
 
     g.on('scaling', (e) => this.onScaleTrustArea(e));
@@ -2493,9 +2547,9 @@ export class CtxCanvas extends CanvasBase {
     const src = this.getViewBaseElement(this.copyID) as ContextElement;
     const srcObj = this.getCanvasElementByID(this.copyID);
     if (src) {
-      const copy = this.createElement({ contextRef: { name: ContextElementTypeUtil.ToString(src.Type) } }, srcObj.left +  srcObj.width + 10, srcObj.top);
+      const copy = this.createElement({ contextRef: { name: ContextElementTypeUtil.ToString(src.GetProperty('Type')) } }, srcObj.left +  srcObj.width + 10, srcObj.top);
       copy.CopyFrom(src.Data);
-      copy.Name = StringExtension.FindUniqueName(ContextElementTypeUtil.ToString(src.Type), this.getViewBaseElements().map(x => x.Name));
+      copy.Name = StringExtension.FindUniqueName(ContextElementTypeUtil.ToString(src.GetProperty('Type')), this.getViewBaseElements().map(x => x.Name));
     }
   }
 
@@ -2624,7 +2678,7 @@ export class CtxCanvas extends CanvasBase {
     }
 
     element.NameChanged.subscribe(x => this.changeObjectName(element.ID));
-    element.TypeChanged.subscribe(x => this.changeObjectType(element.ID, ContextElementTypeUtil.ToString(element.Type)));
+    element.TypeChanged.subscribe(x => this.changeObjectType(element.ID, ContextElementTypeUtil.ToString(element.GetProperty('Type'))));
 
     this.Diagram.Elements.AddChild(element);
     this.Canvas.add(visElement);

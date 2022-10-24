@@ -31,7 +31,7 @@ export class RulesComponent extends NavTreeBase implements OnInit {
     return false;
   }
 
-  constructor(public theme: ThemeService, private dataService: DataService, private dialog: DialogService, private translate: TranslateService) { 
+  constructor(public theme: ThemeService, public dataService: DataService, private dialog: DialogService, private translate: TranslateService) { 
     super();
     dataService.ConfigChanged.subscribe(x => this.createNodes());
   }

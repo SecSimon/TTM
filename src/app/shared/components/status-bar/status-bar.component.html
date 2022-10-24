@@ -1,7 +1,7 @@
 <div class="status-bar background-color-primary">
   <button mat-icon-button tourAnchor="message-history" class="msgBtn" style="margin-left: 10px;" (click)="messagesService.ShowHistory()" matTooltip="{{'status-bar.messages' | translate}}" matTooltipShowDelay="1000">
-    <mat-icon class="iconBtn">error_outline</mat-icon>{{messagesService.ErrorMsgs.length}} 
-    <mat-icon class="iconBtn">warning_amber</mat-icon>{{messagesService.WarningMsgs.length}}
+    <mat-icon class="iconBtn">error_outline</mat-icon><span style="font-size: small;">{{messagesService.ErrorMsgs.length}}</span> 
+    <mat-icon class="iconBtn">warning_amber</mat-icon><span style="font-size: small;">{{messagesService.WarningMsgs.length}}</span>
     <ng-container *ngIf="messagesService.ShowSuccesses"><mat-icon class="iconBtn material-icons-outlined">check_circle</mat-icon>{{messagesService.SuccessMsgs.length}}</ng-container>
     <ng-container *ngIf="messagesService.ShowInfos"><mat-icon class="iconBtn material-icons-outlined">info</mat-icon>{{messagesService.InfoMsgs.length}}</ng-container>
   </button>

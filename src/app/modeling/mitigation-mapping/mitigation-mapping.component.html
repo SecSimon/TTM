@@ -1,7 +1,7 @@
 <div *ngIf="mitigationMapping" [class.disable]="!canEdit">
   <mat-form-field appearance="fill" class="property-form-field">
     <mat-label>{{ 'properties.Name' | translate }}</mat-label>
-    <input matInput [(ngModel)]="mitigationMapping.Name" matTooltip="{{mitigationMapping.Name}}" matTooltipShowDelay="1000"/>
+    <input matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="mitigationMapping.Name" matTooltip="{{mitigationMapping.Name}}" matTooltipShowDelay="1000"/>
   </mat-form-field>
   <mat-form-field appearance="fill" class="property-form-field" style="margin-left: 10px;">
     <mat-label>{{'properties.Status' | translate}}</mat-label>
@@ -54,7 +54,7 @@
   </mat-form-field>
   <mat-form-field appearance="fill" style="width: 100%;">
     <mat-label>{{ 'properties.Description' | translate }}</mat-label>
-    <textarea matInput [(ngModel)]="mitigationMapping.Description"></textarea>
+    <textarea matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="mitigationMapping.Description"></textarea>
   </mat-form-field>
   <mat-accordion class="expansion-panel-headers-align" style="pointer-events: initial;">
     <mat-expansion-panel *ngIf="mitigationMapping.Mitigation">

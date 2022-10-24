@@ -21,7 +21,7 @@ export class ChecklistComponent implements OnInit {
 
   @Input() checklist: Checklist;
 
-  constructor(private dataService: DataService) { }
+  constructor(public dataService: DataService) { }
 
   ngOnInit(): void {
     let device = this.dataService.Project.GetDevices().find(x => x.Checklists.includes(this.checklist));

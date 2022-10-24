@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 
 import cweDict from 'cwe-sdk/raw/cwe-dictionary.json';
+import { DataService } from '../../../util/data.service';
 
 @Component({
   selector: 'app-cwe-entry',
@@ -12,7 +13,7 @@ export class CweEntryComponent implements OnInit {
   @Input()
   public cweID: string | number;
 
-  constructor() {
+  constructor(public dataService: DataService) {
   }
 
   ngOnInit(): void {

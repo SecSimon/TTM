@@ -3,7 +3,7 @@
   <ng-container *ngIf="selectedThreatCatGroup">
     <mat-form-field appearance="fill" style="width: 100%;">
       <mat-label>{{ 'properties.Description' | translate }}</mat-label>
-      <textarea matInput [(ngModel)]="selectedThreatCatGroup.Description"></textarea>
+      <textarea matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="selectedThreatCatGroup.Description"></textarea>
     </mat-form-field>
     <table style="margin-top: 10px;">
       <tr>

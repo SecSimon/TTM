@@ -124,8 +124,11 @@
       <option value="3">300%</option>
       <option *ngIf="![0.33, 0.5, 0.66, 0.75, 1, 1.5, 2, 2.5, 3].includes(Zoom)" [value]="Zoom">{{ Zoom*100 | number:'1.0-0' }}%</option>
     </select>
+    <button mat-button class="toolBtn" style="margin-right: 5px; float: right;" (click)="Dia.FitToCanvas(Dia.CanvasScreenWidth, Dia.CanvasScreenHeight)" matTooltip="{{'pages.modeling.diagram.fitSceen' | translate}}" matTooltipShowDelay="1000">
+      <mat-icon>fit_screen</mat-icon>
+    </button>
   </div>
-  <div #cc style="width: 100%; float: left;" class="my-canvas" (resized)="Dia.OnResized($event, cc)" (mousedown)="Dia.OnOuterCanvasMouseDown($event)" (mouseup)="Dia.OnOuterCanvasMouseUp($event)" (contextmenu)="OpenContextMenu($event)">
+  <div #cc style="width: 100%; float: left; overflow: auto;" class="my-canvas" (resized)="Dia.OnResized($event, cc)" (mousedown)="Dia.OnOuterCanvasMouseDown($event)" (mouseup)="Dia.OnOuterCanvasMouseUp($event)" (contextmenu)="OpenContextMenu($event)">
     <!--<canvas #c style="margin-top: 1px;"></canvas>-->
     <!--<input type="button" value="x" id="inline-btn" style="position: absolute; left: 50px; top: 50px; z-index: 1;">-->
   </div>

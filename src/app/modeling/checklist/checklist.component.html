@@ -2,7 +2,7 @@
   <h2>{{checklist.Name}}</h2>
   <mat-form-field appearance="fill" style="width: 100%;">
     <mat-label>{{ 'properties.Description' | translate }}</mat-label>
-    <textarea matInput [(ngModel)]="checklist.Description"></textarea>
+    <textarea matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="checklist.Description"></textarea>
   </mat-form-field>
   <table style="border-spacing: 2px 2px;">
     <tr>

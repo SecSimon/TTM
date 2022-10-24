@@ -2,7 +2,7 @@
   <ng-container *ngIf="isShownInDialog">
     <mat-form-field appearance="fill" class="property-form-field">
       <mat-label>{{ 'properties.Name' | translate }}</mat-label>
-      <input matInput [(ngModel)]="threatOrigin.Name"  matTooltip="{{threatOrigin.Name}}" matTooltipShowDelay="1000"/>
+      <input matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="threatOrigin.Name"  matTooltip="{{threatOrigin.Name}}" matTooltipShowDelay="1000"/>
       <button *ngIf="threatOrigin.Name" matSuffix mat-icon-button (click)="threatOrigin.Name=''" matTooltip="{{'general.Clear' | translate}}" matTooltipShowDelay="1000">
         <mat-icon>close</mat-icon>
       </button>
@@ -10,11 +10,11 @@
   </ng-container>
   <mat-form-field appearance="fill" style="width: 100%;">
     <mat-label>{{ 'properties.Description' | translate }}</mat-label>
-    <textarea matInput [(ngModel)]="threatOrigin.Description"></textarea>
+    <textarea matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="threatOrigin.Description"></textarea>
   </mat-form-field>
   <mat-form-field appearance="fill" style="width: 100%;">
     <mat-label>{{ 'properties.Adversaries' | translate }}</mat-label>
-    <textarea matInput [(ngModel)]="threatOrigin.Adversaries"></textarea>
+    <textarea matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="threatOrigin.Adversaries"></textarea>
   </mat-form-field>
   <mat-form-field appearance="fill" class="property-form-field" *ngIf="isShownInDialog || !canEdit">
     <mat-label>{{'general.Group' | translate}}</mat-label>

@@ -39,7 +39,7 @@ export class ProgressTrackerComponent implements OnInit {
     return this.tracker;
   }
 
-  constructor(private dataService: DataService, private ttmService: TTMService, private router: Router) { }
+  constructor(public dataService: DataService, private ttmService: TTMService, private router: Router) { }
 
   ngOnInit(): void {
 

@@ -14,7 +14,7 @@ export class MyDataComponent implements OnInit {
   @Input() public myData: MyData;
   @Input() public showAssetGroup = false;
 
-  constructor(@Optional() mydata: MyData, private dataService: DataService) { 
+  constructor(@Optional() mydata: MyData, public dataService: DataService) { 
     if (mydata) {
       this.myData = mydata;
       this.showAssetGroup = true;

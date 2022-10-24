@@ -1,12 +1,13 @@
 {
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "cli": {
-    "defaultCollection": "@angular-eslint/schematics"
+    "defaultCollection": "@angular-eslint/schematics",
+    "analytics": false
   },
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "ttm": {
+    "ttmodeler": {
       "root": "",
       "sourceRoot": "src",
       "projectType": "application",
@@ -45,13 +46,16 @@
             },
             "allowedCommonJsDependencies": [
               "before-after-hook",
-              "once",
-              "fabric",
-              "crypto",
               "clone-deep",
+              "crypto",
+              "cvss-calculator",
+              "docx",
+              "fabric",
+              "file-saver",
+              "html2canvas",
+              "once",
               "rxjs",
-              "rxjs/operators",
-              "docx"
+              "rxjs/operators"
             ]
           },
           "configurations": {
@@ -124,27 +128,27 @@
         "serve": {
           "builder": "@angular-builders/custom-webpack:dev-server",
           "options": {
-            "browserTarget": "ttm:build"
+            "browserTarget": "ttmodeler:build"
           },
           "configurations": {
             "dev": {
-              "browserTarget": "ttm:build:dev"
+              "browserTarget": "ttmodeler:build:dev"
             },
             "production": {
-              "browserTarget": "ttm:build:production"
+              "browserTarget": "ttmodeler:build:production"
             },
             "web": {
-              "browserTarget": "ttm:build:web"
+              "browserTarget": "ttmodeler:build:web"
             },
             "web-production": {
-              "browserTarget": "ttm:build:web-production"
+              "browserTarget": "ttmodeler:build:web-production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "ttm:build"
+            "browserTarget": "ttmodeler:build"
           }
         },
         "test": {
@@ -180,7 +184,7 @@
         }
       }
     },
-    "ttm-e2e": {
+    "ttmodeler-e2e": {
       "root": "e2e",
       "projectType": "application",
       "architect": {
@@ -195,5 +199,5 @@
       }
     }
   },
-  "defaultProject": "ttm"
+  "defaultProject": "ttmodeler"
 }

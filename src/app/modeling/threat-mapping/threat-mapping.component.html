@@ -1,7 +1,7 @@
 <div *ngIf="threatMapping" [class.disable]="!canEdit">
   <mat-form-field appearance="fill" class="property-form-field">
     <mat-label>{{ 'properties.Name' | translate }}</mat-label>
-    <input matInput [(ngModel)]="threatMapping.Name" matTooltip="{{threatMapping.Name}}" matTooltipShowDelay="1000"/>
+    <input matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="threatMapping.Name" matTooltip="{{threatMapping.Name}}" matTooltipShowDelay="1000"/>
   </mat-form-field>
   <mat-form-field appearance="fill" class="property-form-field" style="margin-left: 10px;">
     <mat-label>{{'properties.Status' | translate}}</mat-label>
@@ -28,11 +28,11 @@
   <br/>
   <mat-form-field appearance="fill" class="property-form-field disable">
     <mat-label>{{ 'general.Target' | translate }}</mat-label>
-    <input matInput [value]="threatMapping.Target?.Name" matTooltip="{{threatMapping.Target?.GetProperty('Name')}}" matTooltipShowDelay="1000"/>
+    <input matInput [spellcheck]="dataService.HasSpellCheck" [value]="threatMapping.Target?.Name" matTooltip="{{threatMapping.Target?.GetProperty('Name')}}" matTooltipShowDelay="1000"/>
   </mat-form-field>
   <mat-form-field appearance="fill" class="disable" style="margin-left: 10px; width: calc(100% - 300px - 10px)">
     <mat-label>{{ 'general.Targets' | translate }}</mat-label>
-    <input matInput [value]="GetTargetsNames()"/>
+    <input matInput [spellcheck]="dataService.HasSpellCheck" [value]="GetTargetsNames()"/>
   </mat-form-field>
   <mat-form-field appearance="fill" style="width: 100%;">
     <mat-label>{{'general.ThreatCategories' | translate}}</mat-label>
@@ -84,11 +84,11 @@
   </mat-form-field>
   <mat-form-field appearance="fill" style="width: 100%;">
     <mat-label>{{ 'properties.RiskStrategyReason' | translate }}</mat-label>
-    <textarea matInput [(ngModel)]="threatMapping.RiskStrategyReason"></textarea>
+    <textarea matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="threatMapping.RiskStrategyReason"></textarea>
   </mat-form-field>
   <mat-form-field appearance="fill" style="width: 100%;">
     <mat-label>{{ 'properties.Description' | translate }}</mat-label>
-    <textarea matInput [(ngModel)]="threatMapping.Description"></textarea>
+    <textarea matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="threatMapping.Description"></textarea>
   </mat-form-field>
   <mat-accordion class="expansion-panel-headers-align" style="pointer-events: initial;">
     <mat-expansion-panel *ngIf="threatMapping.ThreatOrigin">

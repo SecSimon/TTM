@@ -6,7 +6,7 @@
     <button mat-button class="toolBtn" [class.toolBtn-Selected]="autoRefreshMitigations" (click)="autoRefreshMitigations = !autoRefreshMitigations" matTooltip="{{'pages.modeling.threattable.autoRefresh' | translate}}" matTooltipShowDelay="1000">
       <mat-icon>autorenew</mat-icon>
     </button>
-    <input matInput class="filterInput" (keyup)="ApplyFilter($event)" placeholder="{{'pages.modeling.search' | translate}}" [class.bg-color-light2]="!theme.IsDarkMode" [class.bg-color-dark2]="theme.IsDarkMode" [style.color]="theme.IsDarkMode ? 'white' : 'black'"/>
+    <input matInput [spellcheck]="dataService.HasSpellCheck" class="filterInput" (keyup)="ApplyFilter($event)" placeholder="{{'pages.modeling.search' | translate}}" [class.bg-color-light2]="!theme.IsDarkMode" [class.bg-color-dark2]="theme.IsDarkMode" [style.color]="theme.IsDarkMode ? 'white' : 'black'"/>
     <mat-progress-spinner *ngIf="refreshingMitigations" style="display: inline; vertical-align: super; margin-left: 5px;" [diameter]="20" mode="indeterminate"></mat-progress-spinner>
   </div>
   <div>

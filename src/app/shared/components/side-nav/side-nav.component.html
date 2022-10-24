@@ -103,6 +103,11 @@
         </button>
       </mat-menu>
       <mat-menu #languages="matMenu">
+        <button mat-menu-item>
+          <mat-slide-toggle color="primary" [(ngModel)]="dataService.HasSpellCheck" (click)="$event.stopPropagation()">
+            {{'side-nav.spellCheck' | translate}}
+          </mat-slide-toggle>
+        </button>
         <button mat-menu-item (click)="ChangeLanguage('en')">English</button>
         <button mat-menu-item (click)="ChangeLanguage('de')">Deutsch</button>
       </mat-menu>

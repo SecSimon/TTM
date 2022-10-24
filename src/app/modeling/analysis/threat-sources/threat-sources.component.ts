@@ -18,7 +18,7 @@ export class ThreatSourcesComponent implements OnInit {
 
   public isEdtingArray: boolean[] = [];
 
-  constructor(public theme: ThemeService, private dataService: DataService) { }
+  constructor(public theme: ThemeService, public dataService: DataService) { }
 
   ngOnInit(): void {
   }

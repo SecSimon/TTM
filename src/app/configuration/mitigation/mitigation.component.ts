@@ -30,7 +30,7 @@ export class MitigationComponent implements OnInit {
 
   public selectedMitigationTip: IMitigationTip;
 
-  constructor(@Optional() mitigation: Mitigation, public theme: ThemeService, private dataService: DataService, private dialog: DialogService, private translate: TranslateService) { 
+  constructor(@Optional() mitigation: Mitigation, public theme: ThemeService, public dataService: DataService, private dialog: DialogService, private translate: TranslateService) { 
     if (mitigation) {
       this.mitigation = mitigation;
       this.canEdit = false;

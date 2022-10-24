@@ -3,7 +3,7 @@
   <ng-container *ngIf="selectedAssetGroup">
     <mat-form-field appearance="fill" style="width: 100%;">
       <mat-label>{{ 'properties.Description' | translate }}</mat-label>
-      <textarea matInput [(ngModel)]="selectedAssetGroup.Description"></textarea>
+      <textarea matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="selectedAssetGroup.Description"></textarea>
     </mat-form-field>
     <mat-checkbox color="primary" [(ngModel)]="selectedAssetGroup.IsActive">{{'properties.IsActive' | translate}}</mat-checkbox>
   </ng-container>

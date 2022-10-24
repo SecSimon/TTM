@@ -11,11 +11,11 @@
           <mat-icon>delete</mat-icon>
         </button>
       </ng-container>
-      <input *ngIf="isEdtingArray[index]" id="renameBox" type="text" style="width: -webkit-fill-available;" [ngModel]="item" (keydown)="OnRenameItem($event, threatActor.Motive, index)" autofocus (focusout)="OnRenameItem($event, threatActor.Motive, index)" onfocus="this.select();"/>
+      <input *ngIf="isEdtingArray[index]" [spellcheck]="dataService.HasSpellCheck" id="renameBox" type="text" style="width: -webkit-fill-available;" [ngModel]="item" (keydown)="OnRenameItem($event, threatActor.Motive, index)" autofocus (focusout)="OnRenameItem($event, threatActor.Motive, index)" onfocus="this.select();"/>
     </div>
   </div>
   <div style="padding: 5px 10px;">
-    <mat-icon>chevron_right</mat-icon><input matInput style="width: calc(100% - 24px); vertical-align: super; font-size: 14px;" (keydown)="OnListKeyDown($event, threatActor.Motive)" placeholder="{{'pages.modeling.charscope.addDescription' | translate}}"/>
+    <mat-icon>chevron_right</mat-icon><input matInput [spellcheck]="dataService.HasSpellCheck" style="width: calc(100% - 24px); vertical-align: super; font-size: 14px;" (keydown)="OnListKeyDown($event, threatActor.Motive)" placeholder="{{'pages.modeling.charscope.addDescription' | translate}}"/>
   </div>
   <mat-form-field appearance="fill" class="property-form-field">
     <mat-label>{{ 'general.Likelihood' | translate }}</mat-label>

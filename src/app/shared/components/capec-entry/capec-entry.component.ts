@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 
 import capecDict from '../../../../assets/capec/mechanisms.json';
+import { DataService } from '../../../util/data.service';
 
 @Component({
   selector: 'app-capec-entry',
@@ -12,7 +13,7 @@ export class CapecEntryComponent implements OnInit {
   @Input()
   public capecID: string | number;
 
-  constructor() {
+  constructor(public dataService: DataService) {
   }
 
   ngOnInit(): void {

@@ -17,7 +17,7 @@ export class ThreatLibraryComponent extends NavTreeBase implements OnInit {
   public get selectedThreatOriginGroup(): ThreatOriginGroup { return (this.selectedNode?.data instanceof ThreatOriginGroup ? this.selectedNode.data : null); }
   public get selectedThreatOrigin(): ThreatOrigin { return (this.selectedNode?.data instanceof ThreatOrigin ? this.selectedNode.data : null); }
 
-  constructor(public theme: ThemeService, private dataService: DataService, private dialog: DialogService, private translate: TranslateService) {
+  constructor(public theme: ThemeService, public dataService: DataService, private dialog: DialogService, private translate: TranslateService) {
     super();
     dataService.ConfigChanged.subscribe(x => this.createNodes());
   }

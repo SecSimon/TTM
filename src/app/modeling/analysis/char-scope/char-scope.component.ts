@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { CharScope } from '../../../model/char-scope';
 import { ThemeService } from '../../../util/theme.service';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { DataService } from '../../../util/data.service';
 
 @Component({
   selector: 'app-char-scope',
@@ -18,7 +19,7 @@ export class CharScopeComponent implements OnInit {
   public isEdtingArray: boolean[] = [];
 
 
-  constructor(public theme: ThemeService) { }
+  constructor(public theme: ThemeService, public dataService: DataService) { }
 
   ngOnInit(): void {
     this.arrays = [

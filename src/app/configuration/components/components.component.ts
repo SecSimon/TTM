@@ -63,7 +63,7 @@ export class ComponentsComponent extends NavTreeBase implements OnInit {
   public menuTopLeftPosition =  {x: '0', y: '0'};
   @ViewChild('ctxMenu') public matMenuTrigger: MatMenuTrigger; 
 
-  constructor(public theme: ThemeService, private dataService: DataService, private dialog: DialogService, 
+  constructor(public theme: ThemeService, public dataService: DataService, private dialog: DialogService, 
     private translate: TranslateService, private locStorage: LocalStorageService) { 
     super();
     dataService.ConfigChanged.subscribe(x => this.createNodes());
@@ -272,7 +272,7 @@ export class ComponentsComponent extends NavTreeBase implements OnInit {
         onDelete: () => { 
           this.dialog.OpenDeleteObjectDialog(type).subscribe(res => {
             if (res) {
-              group.Types.splice(group.Types.indexOf(type), 1); 
+              this.dataService.Config.DeleteMyComponentType(type);
               if (this.selectedNode == node) this.selectedNode = null;
               this.createNodes();
             }

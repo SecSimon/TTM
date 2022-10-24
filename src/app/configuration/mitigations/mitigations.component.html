@@ -3,7 +3,7 @@
   <ng-container *ngIf="selectedMitigationGroup">
     <mat-form-field appearance="fill" style="width: 100%;">
       <mat-label>{{ 'properties.Description' | translate }}</mat-label>
-      <textarea matInput [(ngModel)]="selectedMitigationGroup.Description"></textarea>
+      <textarea matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="selectedMitigationGroup.Description"></textarea>
     </mat-form-field>
   </ng-container>
   <app-mitigation *ngIf="selectedMitigation" [node]="selectedNode" [mitigation]="selectedMitigation"></app-mitigation>

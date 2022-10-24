@@ -30,7 +30,7 @@ export class StackComponent implements OnInit {
   @Output()
   public selectionChanged = new EventEmitter<MyComponent>();
 
-  constructor(public theme: ThemeService, private dataService: DataService, private dialog: MatDialog, private dialogService: DialogService, public elRef: ElementRef) { }
+  constructor(public theme: ThemeService, public dataService: DataService, private dialog: MatDialog, private dialogService: DialogService, public elRef: ElementRef) { }
 
   ngOnInit(): void {
   }

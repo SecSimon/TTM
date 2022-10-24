@@ -55,7 +55,7 @@ export class ThreatRuleComponent implements OnInit {
 
   public selectedMitigation: Mitigation;
 
-  constructor(@Optional() rule: ThreatRule, public theme: ThemeService, private dataService: DataService, private dialog: DialogService, private translate: TranslateService) { 
+  constructor(@Optional() rule: ThreatRule, public theme: ThemeService, public dataService: DataService, private dialog: DialogService, private translate: TranslateService) { 
     if (rule) {
       this.threatRule = rule;
       this.canEdit = false;

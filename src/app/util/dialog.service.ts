@@ -30,7 +30,7 @@ export class MyBoolean {
 })
 export class DialogService {
 
-  constructor(private dialog: MatDialog, private translate: TranslateService, private dataService: DataService) { }
+  constructor(private dialog: MatDialog, private translate: TranslateService, public dataService: DataService) { }
 
   public OpenTwoOptionsDialog(data: ITwoOptionDialogData, hasBackdrop = false, width = null): Observable<any> {
     const dialogRef = this.dialog.open(TwoOptionsDialogComponent, { hasBackdrop: hasBackdrop, data: data, width: width });

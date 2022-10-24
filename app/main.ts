@@ -1,7 +1,6 @@
-import { app, BrowserWindow, screen } from 'electron';
+import {app, BrowserWindow, screen} from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
-import * as url from 'url';
 
 let win: BrowserWindow = null;
 const args = process.argv.slice(1),
@@ -9,8 +8,7 @@ const args = process.argv.slice(1),
 
 function createWindow(): BrowserWindow {
 
-  const electronScreen = screen;
-  const size = electronScreen.getPrimaryDisplay().workAreaSize;
+  const size = screen.getPrimaryDisplay().workAreaSize;
 
   // Create the browser window.
   win = new BrowserWindow({
@@ -21,17 +19,16 @@ function createWindow(): BrowserWindow {
     icon: '../dist/assets/icons/favicon.png',
     webPreferences: {
       nodeIntegration: true,
-      allowRunningInsecureContent: (serve) ? true : false,
+      allowRunningInsecureContent: (serve),
       contextIsolation: false,  // false if you want to run e2e test with Spectron
     },
   });
 
-
   if (serve) {
-    win.webContents.openDevTools();
-    require('electron-reload')(__dirname, {
-      electron: require(path.join(__dirname, '/../node_modules/electron'))
-    });
+    const debug = require('electron-debug');
+    debug();
+
+    require('electron-reloader')(module);
     win.loadURL('http://localhost:4200');
   } else {
     // Path when running electron executable
@@ -42,11 +39,8 @@ function createWindow(): BrowserWindow {
       pathIndex = '../dist/index.html';
     }
 
-    win.loadURL(url.format({
-      pathname: path.join(__dirname, pathIndex),
-      protocol: 'file:',
-      slashes: true
-    }));
+    const url = new URL(path.join('file:', __dirname, pathIndex));
+    win.loadURL(url.href);
   }
 
   // Emitted when the window is closed.
@@ -56,6 +50,8 @@ function createWindow(): BrowserWindow {
     // when you should delete the corresponding element.
     win = null;
   });
+
+  win.webContents.session.setSpellCheckerLanguages(['en-US', 'de']);
 
   return win;
 }

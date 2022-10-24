@@ -1,7 +1,7 @@
 <div *ngIf="mitigationProcess" [class.disable]="!canEdit">
   <mat-form-field appearance="fill" class="property-form-field">
     <mat-label>{{ 'properties.Name' | translate }}</mat-label>
-    <input matInput [(ngModel)]="mitigationProcess.Name" matTooltip="{{mitigationProcess.Name}}" matTooltipShowDelay="1000"/>
+    <input matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="mitigationProcess.Name" matTooltip="{{mitigationProcess.Name}}" matTooltipShowDelay="1000"/>
   </mat-form-field>
   <mat-form-field appearance="fill" class="property-form-field" style="margin-left: 10px;">
     <mat-label>{{'properties.Status' | translate}}</mat-label>
@@ -20,7 +20,7 @@
   <mat-slider style="width: 276px;" color="primary" thumbLabel [displayWith]="formatLabel" tickInterval="5" step="5" min="0" max="100" [(ngModel)]="mitigationProcess.Progress" (change)="OnProgressChange($event.value)"></mat-slider>
   <mat-form-field appearance="fill" style="width: 100%;">
     <mat-label>{{ 'properties.Description' | translate }}</mat-label>
-    <textarea matInput [(ngModel)]="mitigationProcess.Description"></textarea>
+    <textarea matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="mitigationProcess.Description"></textarea>
   </mat-form-field>
   <div>
     <h4>{{'general.Tasks' | translate}}</h4>
@@ -35,11 +35,11 @@
             <mat-icon>delete</mat-icon>
           </button>
         </ng-container>
-        <input *ngIf="isEdtingArray[0][index]" id="renameBox" type="text" style="width: -webkit-fill-available;" [ngModel]="item.Task" (keydown)="OnRenameItem($event, mitigationProcess.Tasks, 0, index, 'Task')" autofocus (focusout)="OnRenameItem($event, mitigationProcess.Tasks, 0, index, 'Task')" onfocus="this.select();"/>
+        <input *ngIf="isEdtingArray[0][index]" [spellcheck]="dataService.HasSpellCheck" id="renameBox" type="text" style="width: -webkit-fill-available;" [ngModel]="item.Task" (keydown)="OnRenameItem($event, mitigationProcess.Tasks, 0, index, 'Task')" autofocus (focusout)="OnRenameItem($event, mitigationProcess.Tasks, 0, index, 'Task')" onfocus="this.select();"/>
       </div>
     </div>
     <div style="padding: 5px 10px;">
-      <mat-icon>chevron_right</mat-icon><input matInput style="width: calc(100% - 24px); vertical-align: super; font-size: 14px;" (keydown)="OnTaskKeyDown($event)" placeholder="{{'pages.modeling.charscope.addDescription' | translate}}"/>
+      <mat-icon>chevron_right</mat-icon><input matInput [spellcheck]="dataService.HasSpellCheck" style="width: calc(100% - 24px); vertical-align: super; font-size: 14px;" (keydown)="OnTaskKeyDown($event)" placeholder="{{'pages.modeling.charscope.addDescription' | translate}}"/>
     </div>
   </div>
   <div>
@@ -55,11 +55,11 @@
             <mat-icon>delete</mat-icon>
           </button>
         </ng-container>
-        <input *ngIf="isEdtingArray[1][index]" id="renameBox" type="text" style="width: -webkit-fill-available;" [ngModel]="item.Note" (keydown)="OnRenameItem($event, mitigationProcess.Notes, 1, index, 'Note')" autofocus (focusout)="OnRenameItem($event, mitigationProcess.Notes, 1, index, 'Note')" onfocus="this.select();"/>
+        <input *ngIf="isEdtingArray[1][index]" [spellcheck]="dataService.HasSpellCheck" id="renameBox" type="text" style="width: -webkit-fill-available;" [ngModel]="item.Note" (keydown)="OnRenameItem($event, mitigationProcess.Notes, 1, index, 'Note')" autofocus (focusout)="OnRenameItem($event, mitigationProcess.Notes, 1, index, 'Note')" onfocus="this.select();"/>
       </div>
     </div>
     <div style="padding: 5px 10px;">
-      <mat-icon>chevron_right</mat-icon><input matInput style="width: calc(100% - 24px); vertical-align: super; font-size: 14px;" (keydown)="OnNoteKeyDown($event)" placeholder="{{'pages.modeling.charscope.addDescription' | translate}}"/>
+      <mat-icon>chevron_right</mat-icon><input matInput [spellcheck]="dataService.HasSpellCheck" style="width: calc(100% - 24px); vertical-align: super; font-size: 14px;" (keydown)="OnNoteKeyDown($event)" placeholder="{{'pages.modeling.charscope.addDescription' | translate}}"/>
     </div>
   </div>
   <mat-accordion class="expansion-panel-headers-align" style="pointer-events: initial;">

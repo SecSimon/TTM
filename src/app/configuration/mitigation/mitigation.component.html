@@ -1,14 +1,14 @@
 <div *ngIf="mitigation" [class.disable]="!canEdit">
   <mat-form-field appearance="fill" class="property-form-field" *ngIf="canEditName">
     <mat-label>{{ 'properties.Name' | translate }}</mat-label>
-    <input matInput [(ngModel)]="mitigation.Name"/>
+    <input matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="mitigation.Name"/>
     <button *ngIf="mitigation.Name" matSuffix mat-icon-button (click)="mitigation.Name=''" matTooltip="{{'general.Clear' | translate}}" matTooltipShowDelay="1000">
       <mat-icon>close</mat-icon>
     </button>
   </mat-form-field>
   <mat-form-field appearance="fill" style="width: 100%;">
     <mat-label>{{ 'properties.Description' | translate }}</mat-label>
-    <textarea matInput [(ngModel)]="mitigation.Description"></textarea>
+    <textarea matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="mitigation.Description"></textarea>
   </mat-form-field>
   <mat-form-field appearance="fill" class="property-form-field" *ngIf="canEditGroup">
     <mat-label>{{'general.Group' | translate}}</mat-label>
@@ -56,14 +56,14 @@
       <div style="margin: 10px 0 10px 10px;" *ngIf="selectedMitigationTip">
         <mat-form-field appearance="fill" class="property-form-field">
           <mat-label>{{ 'properties.Name' | translate }}</mat-label>
-          <input matInput [(ngModel)]="selectedMitigationTip.Name"/>
+          <input matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="selectedMitigationTip.Name"/>
           <button *ngIf="selectedMitigationTip.Name" matSuffix mat-icon-button (click)="selectedMitigationTip.Name=''" matTooltip="{{'general.Clear' | translate}}" matTooltipShowDelay="1000">
             <mat-icon>close</mat-icon>
           </button>
         </mat-form-field>
         <mat-form-field appearance="fill" style="width: 100%;">
           <mat-label>{{ 'properties.Description' | translate }}</mat-label>
-          <textarea matInput [(ngModel)]="selectedMitigationTip.Description"></textarea>
+          <textarea matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="selectedMitigationTip.Description"></textarea>
         </mat-form-field>
         <table style="margin-top: 10px;">
           <tr>

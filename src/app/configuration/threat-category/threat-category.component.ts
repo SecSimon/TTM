@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ImpactCategories, ImpactCategoryUtil, ThreatCategory } from '../../model/threat-model';
+import { DataService } from '../../util/data.service';
 
 @Component({
   selector: 'app-threat-category',
@@ -11,7 +12,7 @@ export class ThreatCategoryComponent implements OnInit {
   @Input() public threatCat: ThreatCategory;
   @Input() public canEdit: boolean = true;
 
-  constructor() { }
+  constructor(public dataService: DataService) { }
 
   ngOnInit(): void {
   }
