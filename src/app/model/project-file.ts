@@ -4,7 +4,7 @@ import { AssetGroup, LowMediumHighNumber, MyData } from "./assets";
 import { CharScope } from "./char-scope";
 import { MyComponentType, MyComponent, MyComponentStack, MyComponentTypeIDs } from "./component";
 import { ConfigFile } from "./config-file";
-import { DatabaseBase, DataChangedTypes, IDatabaseBase, IDataChanged, IDataReferences } from "./database";
+import { DatabaseBase, DataChangedTypes, IDatabaseBase, IDataChanged, IDataReferences, INote } from "./database";
 import { DFDContainerRef, DFDElement, DFDElementRef } from "./dfd-model";
 import { CtxDiagram, Diagram, DiagramTypes, HWDFDiagram } from "./diagram";
 import { ObjImpact } from "./obj-impact";
@@ -13,7 +13,7 @@ import { ThreatCategory, ThreatMapping } from "./threat-model";
 import { ThreatActor, ThreatSources } from "./threat-source";
 import { ContextElement, ContextElementRef, ContextElementTypes, Device, MobileApp, SystemContext, SystemContextContainerRef } from "./system-context";
 import { Checklist, ChecklistType } from "./checklist";
-import { INote, ITask, MitigationMapping, MitigationProcess } from "./mitigations";
+import { MitigationMapping, MitigationProcess } from "./mitigations";
 import { FileUpdateService } from "../util/file-update.service";
 
 export interface IProjectFile extends IDatabaseBase {
@@ -89,8 +89,8 @@ export class ProjectFile extends DatabaseBase {
   public set UserVersion(val: string) { this.Data['UserVersion'] = val; }
   public get Participants(): IUserInfo[] { return this.Data['Participants']; }
   public set Participants(val: IUserInfo[]) { this.Data['Participants'] = val; }
-  public get Tasks(): ITask[] { return this.Data['Tasks']; }
-  public set Tasks(val: ITask[]) { this.Data['Tasks'] = val; }
+  public get Tasks(): INote[] { return this.Data['Tasks']; }
+  public set Tasks(val: INote[]) { this.Data['Tasks'] = val; }
   public get Notes(): INote[] { return this.Data['Notes']; }
   public set Notes(val: INote[]) { this.Data['Notes'] = val; }
 

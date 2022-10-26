@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { ITask, MitigationMapping, MitigationProcess, MitigationProcessStates, MitigationProcessStateUtil, MitigationStates, MitigationStateUtil } from '../model/mitigations';
+import { INote } from '../model/database';
+import { MitigationMapping, MitigationProcess, MitigationProcessStates, MitigationProcessStateUtil, MitigationStates, MitigationStateUtil } from '../model/mitigations';
 import { NavTreeBase } from '../shared/components/nav-tree/nav-tree-base';
 import { INavigationNode } from '../shared/components/nav-tree/nav-tree.component';
 import { SideNavBase } from '../shared/components/side-nav/side-nav-base';
@@ -57,8 +58,8 @@ export class MitigationOverviewComponent extends SideNavBase implements OnInit {
     }
   }
 
-  public GetCheckedTasks(tasks: ITask[]) {
-    return tasks.filter(x => x.IsDone).length;
+  public GetCheckedTasks(tasks: INote[]) {
+    return tasks.filter(x => x.IsChecked).length;
   }
 
   public GetMitigationProcessStates() {

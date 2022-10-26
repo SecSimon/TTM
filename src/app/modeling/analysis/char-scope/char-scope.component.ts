@@ -61,27 +61,4 @@ export class CharScopeComponent implements OnInit {
     if (arr == this.charScope.ExpectedOutput) return start + 'ExpectedOutput';
     if (arr == this.charScope.Assumptions) return start + 'Assumptions';
   }
-
-  public OnDeleteItem(item: string, selectedArray: string[]) {
-    const index = selectedArray.indexOf(item);
-    if (index >= 0) selectedArray.splice(index, 1);
-  }
-
-  public OnListKeyDown(event: KeyboardEvent, arr: string[]) {
-    if (event.key == 'Enter') {
-      arr.push(event.target['value']);
-      event.target['value'] = '';
-    }
-  }
-
-  public OnRenameItem(event, items: string[], index: number) {
-    if (event.key === 'Enter' || event.type === 'focusout') {
-      items[index] = event.target['value'];
-      this.isEdtingArray[index] = false;
-    }
-  }
-
-  public drop(event: CdkDragDrop<string[]>, selectedArray: string[]) {
-    moveItemInArray(selectedArray, event.previousIndex, event.currentIndex);
-  }
 }

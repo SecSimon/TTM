@@ -314,10 +314,9 @@ export class ModelingComponent extends SideNavBase implements OnInit {
           if (type) {
             let newObj = this.dataService.Project.CreateChecklist(dev, type);
             this.createNodes();
-            setTimeout(() => {
-              this.selectedNode = NavTreeBase.FindNodeOfObject(newObj, this.nodes);
-              this.selectedNode.isRenaming = true;
-            }, 100);
+            const newNode = NavTreeBase.FindNodeOfObject(newObj, this.nodes);
+            this.selectedNode = newNode;
+            newNode.isRenaming = true;
           }
         },
         canDelete: true,
@@ -425,10 +424,9 @@ export class ModelingComponent extends SideNavBase implements OnInit {
           if (type) {
             let newObj = this.dataService.Project.CreateChecklist(app, type);
             this.createNodes();
-            setTimeout(() => {
-              this.selectedNode = NavTreeBase.FindNodeOfObject(newObj, this.nodes);
-              this.selectedNode.isRenaming = true;
-            }, 100);
+            const newNode = NavTreeBase.FindNodeOfObject(newObj, this.nodes);
+            this.selectedNode = newNode;
+            newNode.isRenaming = true;
           }
         },
         canDelete: true,
@@ -657,8 +655,11 @@ export class ModelingComponent extends SideNavBase implements OnInit {
       canSelect: false,
       canAdd: true,
       onAdd: () => {
-        this.dataService.Project.CreateDiagram(DiagramTypes.DataFlow);
+        let newObj = this.dataService.Project.CreateDiagram(DiagramTypes.DataFlow);
         this.createNodes();
+        const newNode = NavTreeBase.FindNodeOfObject(newObj, this.nodes);
+        this.selectedNode = newNode;
+        newNode.isRenaming = true;
       },
       children: [],
     };

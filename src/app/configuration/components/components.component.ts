@@ -87,6 +87,10 @@ export class ComponentsComponent extends NavTreeBase implements OnInit {
     return 'DisplayName' in item && 'ID' in item;
   }
 
+  public IsThreatRule(item: any): item is ThreatRule {
+    return item instanceof ThreatRule;
+  }
+
   public IsThreatQuestion(item: any): item is ThreatQuestion {
     return item instanceof ThreatQuestion;
   }
@@ -107,13 +111,36 @@ export class ComponentsComponent extends NavTreeBase implements OnInit {
     }
   }
 
+  public OnMoveUpThreatRule(rule: ThreatRule) {
+    let arr = this.dataService.Config.GetThreatRules();
+    let arrType = this.typeThreats;
+    let idxType = arrType.findIndex(x => x.ID == rule.ID);
+    if (idxType != 0) {
+      const prev = arr.findIndex(x => x.ID == rule.ID);
+      const curr = arr.findIndex(x => x.ID == arrType[idxType-1].ID);
+      this.dataService.Config.MoveItemInThreatRules(prev, curr);
+    } 
+  }
+
+  public OnMoveDownThreatRule(rule: ThreatRule) {
+    let arr = this.dataService.Config.GetThreatRules();
+    let arrType = this.typeThreats;
+    let idxType = arrType.findIndex(x => x.ID == rule.ID);
+    if (idxType != arrType.length-1) {
+      const prev = arr.findIndex(x => x.ID == rule.ID);
+      const curr = arr.findIndex(x => x.ID == arrType[idxType+1].ID);
+      this.dataService.Config.MoveItemInThreatRules(prev, curr);
+    }
+  }
+
   public OnMoveUpQuestion(quest: ThreatQuestion) {
     let arr = this.dataService.Config.GetThreatQuestions();
     let arrType = this.GetQuestions();
     let idxType = arrType.findIndex(x => x.ID == quest.ID);
     if (idxType != 0) {
-      let newIdx = arr.findIndex(x => x.ID == arrType[idxType-1].ID);
-      arr.splice(newIdx, 0, arr.splice(arr.findIndex(x => x.ID == quest.ID), 1)[0]);
+      const prev = arr.findIndex(x => x.ID == quest.ID);
+      const curr = arr.findIndex(x => x.ID == arrType[idxType-1].ID);
+      this.dataService.Config.MoveItemInThreatQuestions(prev, curr);
     } 
   }
 
@@ -122,8 +149,9 @@ export class ComponentsComponent extends NavTreeBase implements OnInit {
     let arrType = this.GetQuestions();
     let idxType = arrType.findIndex(x => x.ID == quest.ID);
     if (idxType != arrType.length-1) {
-      let newIdx = arr.findIndex(x => x.ID == arrType[idxType+1].ID);
-      arr.splice(newIdx, 0, arr.splice(arr.findIndex(x => x.ID == quest.ID), 1)[0]);
+      const prev = arr.findIndex(x => x.ID == quest.ID);
+      const curr = arr.findIndex(x => x.ID == arrType[idxType+1].ID);
+      this.dataService.Config.MoveItemInThreatQuestions(prev, curr);
     }
   }
 

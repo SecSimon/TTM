@@ -105,6 +105,20 @@
         <app-threat-origin [canEdit]="false" [threatOrigin]="threatMapping.ThreatOrigin"></app-threat-origin>
       </ng-template>
     </mat-expansion-panel>
+    <mat-expansion-panel *ngIf="threatMapping.ThreatQuestion">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          {{'general.Question' | translate}}
+        </mat-panel-title>
+        <mat-panel-description>
+          {{threatMapping.ThreatQuestion.Name}}
+          <mat-icon>info</mat-icon>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <ng-template matExpansionPanelContent>
+        <app-threat-question [canEdit]="false" [threatQuestion]="threatMapping.ThreatQuestion"></app-threat-question>
+      </ng-template>
+    </mat-expansion-panel>
     <mat-expansion-panel *ngIf="threatMapping.ThreatRule">
       <mat-expansion-panel-header>
         <mat-panel-title>

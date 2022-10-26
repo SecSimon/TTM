@@ -33,6 +33,7 @@ import { WarningDialogComponent } from './warning-dialog/warning-dialog.componen
   exports: [
     ThreatActorComponent,
     ThreatOriginComponent,
+    ThreatQuestionComponent,
     ThreatRuleComponent,
     AssetsComponent,
     ThreatCategoryComponent,

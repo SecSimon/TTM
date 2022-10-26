@@ -1,5 +1,5 @@
 import { ConfigFile } from "./config-file";
-import { DatabaseBase, DataReferenceTypes, IDataReferences, ViewElementBase } from "./database";
+import { DatabaseBase, DataReferenceTypes, IDataReferences, INote, ViewElementBase } from "./database";
 import { ProjectFile } from "./project-file";
 import { LifeCycle, MappingStates, ThreatMapping, ThreatOrigin, ThreatRule } from "./threat-model";
 
@@ -344,17 +344,6 @@ export class MitigationMapping extends DatabaseBase {
   }
 }
 
-export interface ITask {
-  Task: string;
-  IsDone: boolean;
-}
-
-export interface INote {
-  Author: string;
-  Date: string;
-  Note: string;
-}
-
 export enum MitigationProcessStates {
   NotStarted = 1,
   WorkInProgress = 2,
@@ -389,8 +378,8 @@ export class MitigationProcess extends DatabaseBase {
   public set Number(val: string) { this.Data['Number'] = val; }
   public get Progress(): number { return this.Data['Progress']; }
   public set Progress(val: number) { this.Data['Progress'] = val; }  
-  public get Tasks(): ITask[] { return this.Data['Tasks']; }
-  public set Tasks(val: ITask[]) { this.Data['Tasks'] = val; }
+  public get Tasks(): INote[] { return this.Data['Tasks']; }
+  public set Tasks(val: INote[]) { this.Data['Tasks'] = val; }
   public get Notes(): INote[] { return this.Data['Notes']; }
   public set Notes(val: INote[]) { this.Data['Notes'] = val; }
   public get MitigationProcessState(): MitigationProcessStates { return this.Data['MitigationProcessState']; }

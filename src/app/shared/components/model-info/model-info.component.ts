@@ -1,4 +1,3 @@
-import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, OnInit } from '@angular/core';
 import { IUserInfo, ProjectFile } from '../../../model/project-file';
 import { DataService, IGHCommitInfo, IGHFile } from '../../../util/data.service';
@@ -40,35 +39,5 @@ export class ModelInfoComponent implements OnInit {
       this.Project.Participants.splice(index, 1);
       if (this.selectedUser == user) this.selectedUser = null;
     }
-  }
-
-  public OnDeleteItem(item: any, selectedArray: any[]) {
-    const index = selectedArray.indexOf(item);
-    if (index >= 0) selectedArray.splice(index, 1);
-  }
-
-  public OnRenameItem(event, items: any[], arr: number, index: number, key: string) {
-    if (event.key === 'Enter' || event.type === 'focusout') {
-      items[index][key] = event.target['value'];
-      this.isEdtingArray[arr][index] = false;
-    }
-  }
-
-  public OnTaskKeyDown(event: KeyboardEvent) {
-    if (event.key == 'Enter') {
-      this.Project.Tasks.push({ Task: event.target['value'], IsDone: false });
-      event.target['value'] = '';
-    }
-  }
-
-  public OnNoteKeyDown(event: KeyboardEvent) {
-    if (event.key == 'Enter') {
-      this.Project.Notes.push({ Date: Date.now().toString(), Author: this.dataService.UserDisplayName, Note: event.target['value'] });
-      event.target['value'] = '';
-    }
-  }
-
-  public drop(event: CdkDragDrop<string[]>, selectedArray) {
-    moveItemInArray(selectedArray, event.previousIndex, event.currentIndex);
   }
 }

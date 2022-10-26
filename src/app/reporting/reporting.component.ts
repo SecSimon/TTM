@@ -324,7 +324,7 @@ export class ReportingComponent implements OnInit {
         if (process.MitigationProcessState) this.createParagraph(this.translate.instant('properties.Status') + ': ' + this.translate.instant(MitigationProcessStateUtil.ToString(process.MitigationProcessState)));
         if (process.Tasks?.length > 0) {
           this.createParagraph(this.translate.instant('general.Tasks'));
-          this.createUL(process.Tasks.map(x => (x.IsDone ? this.translate.instant('general.Done') : this.translate.instant('general.DoneNot')) + ': ' + x.Task));
+          this.createUL(process.Tasks.map(x => (x.IsChecked ? this.translate.instant('general.Done') : this.translate.instant('general.DoneNot')) + ': ' + x.Note));
         }
         if (process.Notes?.length > 0) {
           this.createParagraph(this.translate.instant('general.Notes'));

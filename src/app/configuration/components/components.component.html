@@ -65,7 +65,7 @@
             <div class="column1">
               <mat-list cdkDropList (cdkDropListDropped)="dropThreat($event, typeThreats)" class="prop-list reorder-list" [class.prop-list-light]="!theme.IsDarkMode" [class.prop-list-dark]="theme.IsDarkMode">
                 <div mat-subheader>{{selectedComponentType.Name}} {{ 'general.Threats' | translate }} <button mat-icon-button (click)="AddThreat()" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000" style="margin-left: 15px;"><mat-icon>add</mat-icon></button></div>
-                <mat-list-item *ngFor="let threat of typeThreats" (click)="selectedThreatRule = threat" cdkDrag
+                <mat-list-item *ngFor="let threat of typeThreats" (click)="selectedThreatRule = threat" cdkDrag (contextmenu)="OpenContextMenu($event, threat)"
                 [class.highlight-light]="selectedThreatRule === threat && !theme.IsDarkMode" [class.highlight-dark]="selectedThreatRule === threat && theme.IsDarkMode"
                 matTooltip="{{threat.Name}}" matTooltipShowDelay="1000">
                   <mat-icon mat-list-icon>chevron_right</mat-icon>
@@ -145,6 +145,17 @@
         <span>{{'nav-tree.moveUp' | translate}}</span>
       </button>
       <button mat-menu-item (click)="OnMoveDownProperty(item)">
+        <mat-icon>arrow_downward</mat-icon>
+        <span>{{'nav-tree.moveDown' | translate}}</span>
+      </button>
+    </ng-container>
+    <ng-container *ngIf="IsThreatRule(item)">
+      <span *ngIf="item" style="margin-left: 20px; margin-right: 20px;">{{item.Name}}</span> 
+      <button mat-menu-item (click)="OnMoveUpThreatRule(item)">
+        <mat-icon>arrow_upward</mat-icon>
+        <span>{{'nav-tree.moveUp' | translate}}</span>
+      </button>
+      <button mat-menu-item (click)="OnMoveDownThreatRule(item)">
         <mat-icon>arrow_downward</mat-icon>
         <span>{{'nav-tree.moveDown' | translate}}</span>
       </button>

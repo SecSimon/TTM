@@ -1,0 +1,39 @@
+<div cdkDropList class="reorder-list" (cdkDropListDropped)="drop($event)">
+  <div class="reorder-box" [style.color]="theme.IsDarkMode ? 'white' : 'black'" *ngFor="let item of notes; index as index" cdkDrag>
+    <ng-container *ngIf="!isEdtingArray[0][index]">
+      <mat-icon>chevron_right</mat-icon>
+      <mat-checkbox color="primary" [(ngModel)]="item.IsChecked" *ngIf="item.HasCheckbox" style="padding-right: 5px;"></mat-checkbox>
+      <span *ngIf="item.ShowTimestamp" style="padding-right: 5px;">{{item.Date | date:'medium'}} - {{item.Author}}: </span> 
+      {{item.Note}}
+      <button mat-icon-button *ngIf="canToggleCheckbox || canToggleTimestamp" style="width: 20px; height: 20px; line-height: 20px;" [matMenuTriggerFor]="moreMenu" [matMenuTriggerData]="{item: item}" matTooltip="{{'general.More' | translate}}" matTooltipShowDelay="1000">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <button mat-icon-button style="width: 20px; height: 20px; line-height: 20px;" (click)="isEdtingArray[0][index] = true" matTooltip="{{'general.Edit' | translate}}" matTooltipShowDelay="1000">
+        <mat-icon>edit</mat-icon>
+      </button>
+      <button mat-icon-button style="width: 20px; height: 20px; line-height: 20px;" (click)="OnDeleteItem(item)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </ng-container>
+    <input *ngIf="isEdtingArray[0][index]" [spellcheck]="dataService.HasSpellCheck" id="renameBox" type="text" style="width: -webkit-fill-available;" [ngModel]="item.Note" (keydown)="OnRenameItem($event, 0, index)" autofocus (focusout)="OnRenameItem($event, 0, index)" onfocus="this.select();"/>
+  </div>
+</div>
+<div style="padding: 5px 10px;">
+  <mat-icon>chevron_right</mat-icon><input matInput [spellcheck]="dataService.HasSpellCheck" style="width: calc(100% - 24px); vertical-align: super; font-size: 14px;" (keydown)="OnKeyDown($event)" placeholder="{{'pages.modeling.charscope.addDescription' | translate}}"/>
+</div>
+<mat-menu #moreMenu="matMenu">
+  <ng-template matMenuContent let-item="item">
+    <button mat-menu-item *ngIf="canToggleCheckbox">
+      <mat-slide-toggle color="primary" [(ngModel)]="item.HasCheckbox" (click)="$event.stopPropagation()">
+        {{'dialog.notes.hasCheckbox' | translate}}
+      </mat-slide-toggle>
+    </button>
+    <button mat-menu-item *ngIf="canToggleTimestamp">
+      <mat-slide-toggle color="primary" [(ngModel)]="item.ShowTimestamp" (click)="$event.stopPropagation()">
+        {{'dialog.notes.showTimestamp' | translate}}
+      </mat-slide-toggle>
+    </button>
+  </ng-template> 
+</mat-menu>
+
+

@@ -98,23 +98,7 @@
               <ng-container *ngIf="selectedArray === charScope.Assumptions">Identify assumptions and constraints. Examples: intended use, target security level, tolerable risk</ng-container>
             </mat-expansion-panel>
           </mat-accordion>
-          <div cdkDropList class="reorder-list" (cdkDropListDropped)="drop($event, selectedArray)">
-            <div class="reorder-box" [style.color]="theme.IsDarkMode ? 'white' : 'black'" *ngFor="let item of selectedArray; index as index" cdkDrag>
-              <ng-container *ngIf="!isEdtingArray[index]">
-                <mat-icon>chevron_right</mat-icon> {{item}}
-                <button mat-icon-button style="width: 20px; height: 20px; line-height: 20px;" (click)="isEdtingArray[index] = true" matTooltip="{{'general.Edit' | translate}}" matTooltipShowDelay="1000">
-                  <mat-icon>edit</mat-icon>
-                </button>
-                <button mat-icon-button style="width: 20px; height: 20px; line-height: 20px;" (click)="OnDeleteItem(item, selectedArray)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000">
-                  <mat-icon>delete</mat-icon>
-                </button>
-              </ng-container>
-              <input *ngIf="isEdtingArray[index]" [spellcheck]="dataService.HasSpellCheck" id="renameBox" type="text" style="width: -webkit-fill-available;" [ngModel]="item" (keydown)="OnRenameItem($event, selectedArray, index)" autofocus (focusout)="OnRenameItem($event, selectedArray, index)" onfocus="this.select();"/>
-            </div>
-          </div>
-          <div style="padding: 5px 10px;">
-            <mat-icon>chevron_right</mat-icon><input matInput [spellcheck]="dataService.HasSpellCheck" style="width: calc(100% - 24px); vertical-align: super; font-size: 14px;" (keydown)="OnListKeyDown($event, selectedArray)" placeholder="{{'pages.modeling.charscope.addDescription' | translate}}"/>
-          </div>
+          <app-notes [showTimestamp]="false" [hasCheckbox]="false" [strings]="selectedArray"></app-notes>
         </div>
       </ng-container>
     </div>

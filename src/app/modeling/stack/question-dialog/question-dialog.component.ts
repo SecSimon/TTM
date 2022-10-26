@@ -60,6 +60,12 @@ export class QuestionDialogComponent implements OnInit {
     });
   }
 
+  public OpenNotes(quest: ThreatQuestion) {
+    if (this.selectedComponent.NotesPerQuestion[quest.ID] == null) this.selectedComponent.NotesPerQuestion[quest.ID] = [];
+    const notes = this.selectedComponent.NotesPerQuestion[quest.ID];
+    this.dialog.OpenNotesDialog(notes, true, false, true, true);
+  }
+
   public GetUnsetThreats(comp: MyComponent): string {
     let cnt = Object.values(comp.ThreatQuestions).filter(x => x === null).length;
     if (cnt == 0 && !comp.UserCheckedElement) {
@@ -72,13 +78,20 @@ export class QuestionDialogComponent implements OnInit {
     return cnt.toString();
   }
 
+  public GetNotesCountOfQuestion(quest: ThreatQuestion): number {
+    if (this.selectedComponent.NotesPerQuestion[quest.ID]) {
+      return this.selectedComponent.NotesPerQuestion[quest.ID].length;
+    }
+    return 0;
+  }
+
   public GetAssociatedThreatOrigins(quest: ThreatQuestion): ThreatOrigin[] {
     let res: ThreatOrigin[] = [];
 
     if (quest.Property != null) {
       let rules = this.dataService.Config.GetThreatRules().filter(x => x.RuleType == RuleTypes.Component && x.ComponentRestriction.componentTypeID == this.selectedComponent.Type.ID);
       rules = rules.filter(x => x.ComponentRestriction.DetailRestrictions.some(y => y.PropertyRest.ID == quest.Property.ID));
-      res.push(...rules.map(x => x.ThreatOrigin));
+      res.push(...rules.filter(x => x.ThreatOrigin != null).map(x => x.ThreatOrigin));
     }
 
     return res;

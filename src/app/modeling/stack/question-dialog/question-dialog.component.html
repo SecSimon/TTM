@@ -4,9 +4,10 @@
     <mat-tab *ngFor="let comp of components">
       <ng-template mat-tab-label><span [matBadge]="GetUnsetThreats(comp)" matBadgeColor="warn" [matBadgeHidden]="comp.UserCheckedElement" matBadgePosition="below">{{comp.Name}}</span></ng-template>
       <ng-template matTabContent>
-        <mat-card *ngIf="comp.Description?.length>0" style="margin: 5px 0px;">
-          {{comp.Description}}
-        </mat-card>
+        <mat-form-field appearance="fill" style="width: 100%; margin: 5px 0px;">
+          <mat-label>{{'properties.Description' | translate}}</mat-label>
+          <textarea matInput type="text" [(ngModel)]="comp.Description"></textarea>
+        </mat-form-field>
         <table>
           <tr *ngFor="let quest of GetThreatQuestions(selectedComponent)">
             <td>
@@ -20,6 +21,11 @@
               <mat-button-toggle-group #group [value]="selectedComponent.ThreatQuestions[quest.ID]" (change)="OnQuestionAnswered($event, quest)">
                 <mat-button-toggle *ngFor="let opt of GetOptionKeys(quest.OptionType)" [value]="GetOptionValue(quest.OptionType, opt)">{{opt | translate}}</mat-button-toggle>
               </mat-button-toggle-group>
+            </td>
+            <td>
+              <button mat-icon-button matTooltip="{{'general.Notes' | translate}}" (click)="OpenNotes(quest)">
+                <mat-icon [matBadge]="GetNotesCountOfQuestion(quest)" matBadgeColor="warn" [matBadgeHidden]="GetNotesCountOfQuestion(quest) < 1" matBadgePosition="below">edit_note</mat-icon>
+              </button>
             </td>
           </tr>
         </table>

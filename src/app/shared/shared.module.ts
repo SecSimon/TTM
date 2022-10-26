@@ -63,9 +63,10 @@ import { NavTreeComponent } from './components/nav-tree/nav-tree.component';
 import { CvssEntryComponent } from './components/cvss-entry/cvss-entry.component';
 import { ProgressTrackerComponent } from './components/progress-tracker/progress-tracker.component';
 import { ModelInfoComponent } from './components/model-info/model-info.component';
+import { NotesComponent } from './components/notes/notes.component';
 
 @NgModule({
-  declarations: [PageNotFoundComponent, WebviewDirective, StatusBarComponent, SideNavComponent, SaveDialogComponent, PasswordDialogComponent, MessagesDialogComponent, TwoOptionsDialogComponent, CweEntryComponent, CapecEntryComponent, NavTreeComponent, CvssEntryComponent, ProgressTrackerComponent, ModelInfoComponent],
+  declarations: [PageNotFoundComponent, WebviewDirective, StatusBarComponent, SideNavComponent, SaveDialogComponent, PasswordDialogComponent, MessagesDialogComponent, TwoOptionsDialogComponent, CweEntryComponent, CapecEntryComponent, NavTreeComponent, CvssEntryComponent, ProgressTrackerComponent, ModelInfoComponent, NotesComponent],
   imports: [
     CommonModule, 
     RouterModule,
@@ -174,6 +175,7 @@ import { ModelInfoComponent } from './components/model-info/model-info.component
     CapecEntryComponent,
     CvssEntryComponent,
     NavTreeComponent,
+    NotesComponent,
     ModelInfoComponent
   ]
 })

@@ -127,7 +127,7 @@ export class NavTreeComponent implements OnInit {
 
   public OnNodeClick(node: INavigationNode, event) {
     event.stopPropagation();
-    if (!node.canSelect) return;
+    if (!node.canSelect || (node.isInactive && node.isInactive())) return;
 
     this.activeNode = node;
   }

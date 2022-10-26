@@ -1,6 +1,6 @@
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, EventEmitter, Input, OnInit, Optional, Output } from '@angular/core';
-import { INote, ITask, MitigationMapping, MitigationProcess, MitigationProcessStates, MitigationProcessStateUtil, MitigationStates } from '../../model/mitigations';
+import { MitigationMapping, MitigationProcess, MitigationProcessStates, MitigationProcessStateUtil, MitigationStates } from '../../model/mitigations';
 import { DataService } from '../../util/data.service';
 import { DialogService } from '../../util/dialog.service';
 import { ThemeService } from '../../util/theme.service';
@@ -71,36 +71,6 @@ export class MitigationProcessComponent implements OnInit {
 
   public formatLabel(value: number) {
     return value.toFixed(0) + '%';
-  }
-
-  public OnDeleteItem(item: any, selectedArray: any[]) {
-    const index = selectedArray.indexOf(item);
-    if (index >= 0) selectedArray.splice(index, 1);
-  }
-
-  public OnRenameItem(event, items: any[], arr: number, index: number, key: string) {
-    if (event.key === 'Enter' || event.type === 'focusout') {
-      items[index][key] = event.target['value'];
-      this.isEdtingArray[arr][index] = false;
-    }
-  }
-
-  public OnTaskKeyDown(event: KeyboardEvent) {
-    if (event.key == 'Enter') {
-      this.mitigationProcess.Tasks.push({ Task: event.target['value'], IsDone: false });
-      event.target['value'] = '';
-    }
-  }
-
-  public OnNoteKeyDown(event: KeyboardEvent) {
-    if (event.key == 'Enter') {
-      this.mitigationProcess.Notes.push({ Date: Date.now().toString(), Author: this.dataService.UserDisplayName, Note: event.target['value'] });
-      event.target['value'] = '';
-    }
-  }
-
-  public drop(event: CdkDragDrop<string[]>, selectedArray) {
-    moveItemInArray(selectedArray, event.previousIndex, event.currentIndex);
   }
 
   public GetMitigationProcessStates() {

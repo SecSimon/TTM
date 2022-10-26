@@ -127,6 +127,9 @@ export class MyComponent extends ViewElementBase {
 
   public get ThreatQuestions() { return this.Data['threatQuestions']; } // key: questionID, value: optionVal
 
+  public get NotesPerQuestion(): {} { return this.Data['notesPerQuestion']; }
+  public set NotesPerQuestion(val: {}) { this.Data['notesPerQuestion'] = val; }
+
   constructor(data: {}, type: MyComponentType, pf: ProjectFile, cf: ConfigFile) {
     super(data);
     this.project = pf;
@@ -140,6 +143,7 @@ export class MyComponent extends ViewElementBase {
     this.Type = type;
 
     if (!this.Data['threatQuestions']) this.Data['threatQuestions'] = {};
+    if (!this.Data['notesPerQuestion']) this.Data['notesPerQuestion'] = {};
 
     cf.GetThreatQuestions().filter(x => x.ComponentType.ID == type.ID).forEach(x => this.AddThreatQuestion(x));
   }

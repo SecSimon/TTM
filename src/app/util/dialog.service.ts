@@ -6,7 +6,7 @@ import { MyDataComponent } from '../configuration/mydata/mydata.component';
 import { ThreatOriginComponent } from '../configuration/threat-origin/threat-origin.component';
 import { ThreatRuleComponent } from '../configuration/threat-rule/threat-rule.component';
 import { MyData } from '../model/assets';
-import { DatabaseBase, DataReferencesUtil, ViewElementBase } from '../model/database';
+import { DatabaseBase, DataReferencesUtil, INote, ViewElementBase } from '../model/database';
 import { ThreatMapping, ThreatOrigin, ThreatRule } from '../model/threat-model';
 import { MitigationMappingComponent } from '../modeling/mitigation-mapping/mitigation-mapping.component';
 import { MitigationProcessComponent } from '../modeling/mitigation-process/mitigation-process.component';
@@ -20,9 +20,18 @@ import { Mitigation, MitigationMapping, MitigationProcess } from '../model/mitig
 import { MitigationComponent } from '../configuration/mitigation/mitigation.component';
 import { SuggestedThreatsDialogComponent } from '../modeling/diagram/suggested-threats-dialog/suggested-threats-dialog.component';
 import { DFDElement } from '../model/dfd-model';
+import { NotesComponent } from '../shared/components/notes/notes.component';
 
 export class MyBoolean {
   public Value: boolean;
+}
+
+export class NoteConfig {
+  public Notes: INote[];
+  public ShowTimestamp: boolean;
+  public HasCheckbox: boolean;
+  public CanToggleTimestamp: boolean;
+  public CanToggleCheckbox: boolean;
 }
 
 @Injectable({
@@ -261,6 +270,28 @@ export class DialogService {
       component: ProgressTrackerComponent
     };
     return this.OpenTwoOptionsDialog(data);
+  }
+
+  public OpenNotesDialog(notes: INote[], showTimestamp = false, hasCheckbox = false, canToggleTimestamp = false, canToggleCheckbox = false) {
+    let config = new NoteConfig();
+    config.Notes = notes;
+    config.HasCheckbox = hasCheckbox;
+    config.ShowTimestamp = showTimestamp;
+    config.CanToggleTimestamp = canToggleTimestamp;
+    config.CanToggleCheckbox = canToggleCheckbox;
+    let data: ITwoOptionDialogData = {
+      title: this.translate.instant('general.Notes'),
+      resultTrueText: this.translate.instant('general.Close'),
+      hasResultFalse: false,
+      resultFalseText: '',
+      resultTrueEnabled: () => true,
+      initalTrue: true,
+      component: NotesComponent,
+      componentInputData: [
+        { Key: NoteConfig, Value: config }
+      ]
+    };
+    return this.OpenTwoOptionsDialog(data, true, 800);
   }
 
   public OpenModelInfoDialog() {

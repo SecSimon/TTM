@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-ng build --configuration web-production --baseHref="https://www.simon-liebl.com/TTM/"
+ng build --configuration web-production --baseHref="https://www.simon-liebl.de/TTM/"
 echo "---
 permalink: /404.html
 ---

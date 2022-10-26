@@ -13,7 +13,7 @@ import { v4 as uuidv4 } from 'uuid';
 })
 export class FileUpdateService {
 
-  public static ProjectVersion = 3;
+  public static ProjectVersion = 4;
   public static ConfigVersion = 2;
 
   private configUpdates = [
@@ -22,7 +22,8 @@ export class FileUpdateService {
 
   private projectUpdates = [
     this.projectV2,
-    this.projectV3
+    this.projectV3,
+    this.projectV4
   ];
 
   constructor(private messageService: MessagesService, private translate: TranslateService) { }
@@ -91,6 +92,29 @@ export class FileUpdateService {
     });
     delete file.threatSources['Sources'];
     file.threatSources['sourceIDs'] = ids;
+  }
+
+  private projectV4(file: IProjectFile) {
+    let updateTask = (task) => {
+      task['Note'] = task['Task'];
+      delete task['Task'];
+      task['IsChecked'] = task['IsDone'];
+      delete task['IsDone'];
+      task['Author'] = '';
+      task['Date'] = '';
+      task['ShowTimestamp'] = false;
+      task['HasCheckbox'] = true;
+    };
+    if (file.Data['Tasks']) {
+      file.Data['Tasks'].forEach(task => updateTask(task));
+    }
+    if (file.mitigationProcesses) {
+      file.mitigationProcesses.forEach(proc => {
+        if (proc['Tasks']) {
+          proc['Tasks'].forEach(task => updateTask(task));
+        }
+      });
+    }
   }
 
   private configV2(file: IConfigFile) {

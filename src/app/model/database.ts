@@ -13,6 +13,15 @@ export interface IKeyValue {
   Value: any;
 }
 
+export interface INote {
+  Author: string;
+  Date: string;
+  ShowTimestamp: boolean;
+  HasCheckbox: boolean;
+  IsChecked: boolean;
+  Note: string;
+}
+
 export interface IDataChanged {
   ID: string;
   Type: DataChangedTypes;

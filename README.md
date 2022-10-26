@@ -6,7 +6,7 @@ A new threat modeling tool available as GitHub page and deskop application (soon
 
 ## How to use TTModeler
 
-TTModeler is hosted on [simon-liebl.com/TTM](https://www.simon-liebl.com/TTM) and uses GitHub as data storage.
+TTModeler is hosted on [simon-liebl.de/TTM](https://www.simon-liebl.de/TTM) and uses GitHub as data storage.
 
 Your projects can be stored in **private repositories** and can be additionally **password protected** for advanced data protection.
 
@@ -21,7 +21,7 @@ Fork the [data repository](https://github.com/SecSimon/TTM-data) by clicking on 
 Install the [ThingThreatModeler](https://github.com/apps/thingthreatmodeler) app (install button is only visible when you are logged in). Click on _Install_, select _Only selected repositories_, and select the repository that you created in the previous step. Click on _Install & Authorize_.
 
 ### Step 3: Log in to TTModeler using GitHub 
-Go to the [Login page](https://www.simon-liebl.com/TTM/login) and log in using your GitHub account. 
+Go to the [Login page](https://www.simon-liebl.de/TTM/login) and log in using your GitHub account. 
 
 ### Step 4: Explore the examples and start threat modelling
-Create your own projects on the [Home page](https://www.simon-liebl.com/TTM/home). Happy threat modeling!
+Create your own projects on the [Home page](https://www.simon-liebl.de/TTM/home). Happy threat modeling!
