@@ -1954,8 +1954,8 @@
     },
     {
       "ID": "75752ec0-7fa9-41a9-a06a-edcf890ca569",
-      "Name": "Trusted Computing Base",
-      "Description": "See section C and M of https://www.iotsecurityfoundation.org/wp-content/uploads/2019/12/Best-Practice-Guides-Release-2_Digitalv3.pdf\nand section 6.1 of https://www.gsma.com/iot/wp-content/uploads/2020/05/CLP.13-v2.2-GSMA-IoT-Security-Guidelines-for-Endpoint-Ecosystems.pdf",
+      "Name": "Secure Boot",
+      "Description": "See section C and M of https://www.iotsecurityfoundation.org/wp-content/uploads/2019/12/Best-Practice-Guides-Release-2_Digitalv3.pdf",
       "ComponentTypeID": 1,
       "IsActive": true,
       "Properties": [
@@ -1995,22 +1995,6 @@
           "DisplayName": "Has Boot Code Protection in RAM",
           "ID": "885834f4-b8b6-485b-8690-6ac525dbb59d",
           "Tooltip": "",
-          "HasGetter": false,
-          "Editable": true,
-          "Type": "Check Box"
-        },
-        {
-          "DisplayName": "Has Trusted Execution Environment",
-          "ID": "22e9ef37-20a4-4b6c-ba68-ecc90f1d152f",
-          "Tooltip": "Does the Trusted Computing Base utilize a Trusted Execution Environment for isolation of critical operations?",
-          "HasGetter": false,
-          "Editable": true,
-          "Type": "Check Box"
-        },
-        {
-          "DisplayName": "Isolates Cryptographic Operations",
-          "ID": "28c99516-8651-452e-86f7-ce00df632c8d",
-          "Tooltip": "Are cryptographic operations (encryption, message signing, key exchange, key storage) performed by the Trusted Computing Base?",
           "HasGetter": false,
           "Editable": true,
           "Type": "Check Box"
@@ -2134,14 +2118,6 @@
           "DisplayName": "Reuses Nonces",
           "ID": "f35ccff8-6497-4b28-8627-7f255bce0e02",
           "Tooltip": "",
-          "HasGetter": false,
-          "Editable": true,
-          "Type": "Check Box"
-        },
-        {
-          "DisplayName": "Implements PFS",
-          "ID": "6cce79b8-3df2-4eda-8892-e83b6a2ee603",
-          "Tooltip": "Is Perfect Forward Secrecy (PFS) implemented whenever possible/required?",
           "HasGetter": false,
           "Editable": true,
           "Type": "Check Box"
@@ -2981,8 +2957,8 @@
     },
     {
       "ID": "44fd3f80-7e55-41af-b452-283556dd1894",
-      "Name": "Privacy Considerations",
-      "Description": "",
+      "Name": "Privacy Impact Assessment",
+      "Description": "The PIA should address the following at minimum: identification of sensitive data stored on the device, mechanisms used to inform users of data collected; consent for data collection; processes for use and review of personal data before it is transferred, notice concerning the timing and frequency of data collection, and the ability for users to opt-in or out of data sharing.",
       "Properties": [
         {
           "DisplayName": "Has PIA",
@@ -2996,46 +2972,6 @@
           "DisplayName": "Has Regular PIA Update",
           "ID": "f3d756ae-7451-4738-986c-0e15d22cb2b2",
           "Tooltip": "Is the privacy impact assessment regularly updated (e.g. annually)?",
-          "HasGetter": false,
-          "Editable": true,
-          "Type": "Check Box"
-        },
-        {
-          "DisplayName": "Has Privacy Measures",
-          "ID": "2a4c8bb7-bd16-4eee-847f-25090eac2d7e",
-          "Tooltip": "Are appropriate technical and operational measures (e. g. data pseudoymisation, data minimisation) implemented?",
-          "HasGetter": false,
-          "Editable": true,
-          "Type": "Check Box"
-        },
-        {
-          "DisplayName": "Compliant with Law",
-          "ID": "1bd8c924-5f59-42db-a9b2-a4527c46adf2",
-          "Tooltip": "Does the system comply with all privacy laws that govern user control over their personal data?",
-          "HasGetter": false,
-          "Editable": true,
-          "Type": "Check Box"
-        },
-        {
-          "DisplayName": "Protects User Rights",
-          "ID": "e79dc2a3-1af9-4a37-b649-9db68eacfc9f",
-          "Tooltip": "Does the system implement appropriate technical and operational measures for the protection of users rights and freedoms (e. g. transparent information, right of access, right to erasure)?",
-          "HasGetter": false,
-          "Editable": true,
-          "Type": "Check Box"
-        },
-        {
-          "DisplayName": "Sufficient User Awareness",
-          "ID": "2dd7688c-eddf-4cfa-a496-8c1a46963c89",
-          "Tooltip": "Are users sufficiently aware what personal data is being exposed to the manufacturer, operator, and other partner organisations?",
-          "HasGetter": false,
-          "Editable": true,
-          "Type": "Check Box"
-        },
-        {
-          "DisplayName": "Has Opt-In Mechansim",
-          "ID": "d9b40dd2-e5eb-485d-9cf5-db2ac441c899",
-          "Tooltip": "Does the system implement an opt-int mechanism to get explicit user consent for personal data processing?",
           "HasGetter": false,
           "Editable": true,
           "Type": "Check Box"
@@ -3159,55 +3095,6 @@
       ],
       "ComponentTypeID": 2,
       "IsActive": true
-    },
-    {
-      "ID": "ea8af3ca-0055-4d82-88af-711b356aec74",
-      "Name": "Secure Development",
-      "Description": "",
-      "Properties": [
-        {
-          "DisplayName": "Has SDL Program",
-          "ID": "e1cdca4d-c2a2-48a1-be0e-93af41cd458c",
-          "Tooltip": "Is a Secure Development Plan (SDL) implemented (e.g. based on ISO/IEC 27034)?",
-          "HasGetter": false,
-          "Editable": true,
-          "Type": "Check Box"
-        },
-        {
-          "DisplayName": "Has Responsible Person For Reg. Compliance",
-          "ID": "9db73879-4ec7-46ae-a8d9-1b555aac6954",
-          "Tooltip": "Do you have a group and organization responsible for regulatory compliance of security, privacy and data protection, and safety? ",
-          "HasGetter": false,
-          "Editable": true,
-          "Type": "Check Box"
-        },
-        {
-          "DisplayName": "Has Responsible Person For Security Compliance",
-          "ID": "f3a7b4b7-2ff8-45e8-be0e-321f8d9304a1",
-          "Tooltip": "Do you have a group responsible for security compliance and quality control?",
-          "HasGetter": false,
-          "Editable": true,
-          "Type": "Check Box"
-        },
-        {
-          "DisplayName": "Has Responsible Person For Auditing",
-          "ID": "8fda48d4-746b-4915-b0d2-55c9b68fbd99",
-          "Tooltip": "Do you have a responsible group for auditing?",
-          "HasGetter": false,
-          "Editable": true,
-          "Type": "Check Box"
-        },
-        {
-          "DisplayName": "Includes Testing",
-          "ID": "e6f155e1-51e1-4297-80d9-a6a3beef3657",
-          "Tooltip": "Does your SDL program include internal functional and security testing of the system?",
-          "HasGetter": false,
-          "Editable": true,
-          "Type": "Check Box"
-        }
-      ],
-      "ComponentTypeID": 2,
-      "IsActive": true
     }
   ],
   "myComponentPTypeGroups": [
@@ -3216,7 +3103,6 @@
       "Name": "Design & Implementation",
       "Description": "",
       "myComponentTypeIDs": [
-        "ea8af3ca-0055-4d82-88af-711b356aec74",
         "0f33d280-4c59-4f4c-96ba-c3688a28b4ba",
         "f0f7230f-18e3-4074-8d24-99e71b76bddf",
         "44fd3f80-7e55-41af-b452-283556dd1894",
@@ -6571,7 +6457,7 @@
     },
     {
       "ID": "9b600522-8621-4f50-b71c-856efeb246cc",
-      "Name": "Missing immutable Root of Trust",
+      "Name": "Missing immutable Root Of Trust",
       "Description": "",
       "ChangesPerOption": {
         "general.Yes": {
@@ -6588,7 +6474,7 @@
       },
       "OptionType": 1,
       "componentTypeID": "75752ec0-7fa9-41a9-a06a-edcf890ca569",
-      "Question": "Does the device has a immutable Root of Trust in hardware?",
+      "Question": "Does the device has a immutable Root Of Trust in hardware?",
       "propertyID": "17b59f51-59d3-4a8f-9960-a04ce7e96be6"
     },
     {
@@ -8094,11 +7980,11 @@
       "ChangesPerOption": {
         "general.Yes": {
           "Active": true,
-          "Value": false
+          "Value": true
         },
         "general.No": {
           "Active": true,
-          "Value": true
+          "Value": false
         },
         "general.N/A": {
           "Active": false
@@ -8796,305 +8682,6 @@
       "componentTypeID": "8902950a-6c5e-426b-baa2-71794e74f720",
       "Question": "Are penetration tests regularly (at least annually) performed?",
       "propertyID": "d4cb3498-4689-49f2-9f37-8bd45e62a972"
-    },
-    {
-      "ID": "95c83fe6-0e68-4678-ab47-adb9e128ab28",
-      "Name": "Missing privacy measures",
-      "Description": "",
-      "ChangesPerOption": {
-        "general.Yes": {
-          "Active": true,
-          "Value": true
-        },
-        "general.No": {
-          "Active": true,
-          "Value": false
-        },
-        "general.N/A": {
-          "Active": true,
-          "Value": "undefined"
-        }
-      },
-      "OptionType": 1,
-      "componentTypeID": "44fd3f80-7e55-41af-b452-283556dd1894",
-      "Question": "Are appropriate technical and operational measures (e. g. data pseudoymisation, data minimisation) implemented?",
-      "propertyID": "2a4c8bb7-bd16-4eee-847f-25090eac2d7e"
-    },
-    {
-      "ID": "8d01ce56-3aa8-449d-935d-558d34f283ba",
-      "Name": "Privacy law compliance",
-      "Description": "",
-      "ChangesPerOption": {
-        "general.Yes": {
-          "Active": true,
-          "Value": true
-        },
-        "general.No": {
-          "Active": true,
-          "Value": false
-        },
-        "general.N/A": {
-          "Active": true,
-          "Value": "undefined"
-        }
-      },
-      "OptionType": 1,
-      "componentTypeID": "44fd3f80-7e55-41af-b452-283556dd1894",
-      "Question": "Does the system comply with all privacy laws that govern user control over their personal data?",
-      "propertyID": "1bd8c924-5f59-42db-a9b2-a4527c46adf2"
-    },
-    {
-      "ID": "2b64e6da-40c0-483c-82d9-e2018f174ab5",
-      "Name": "User rights and freedoms violation",
-      "Description": "",
-      "ChangesPerOption": {
-        "general.Yes": {
-          "Active": true,
-          "Value": true
-        },
-        "general.No": {
-          "Active": true,
-          "Value": false
-        },
-        "general.N/A": {
-          "Active": true,
-          "Value": "undefined"
-        }
-      },
-      "OptionType": 1,
-      "componentTypeID": "44fd3f80-7e55-41af-b452-283556dd1894",
-      "Question": "Does the system implement appropriate technical and operational measures for the protection of users rights and freedoms (e. g. transparent information, right of access, right to erasure)?",
-      "propertyID": "e79dc2a3-1af9-4a37-b649-9db68eacfc9f"
-    },
-    {
-      "ID": "a6980e98-7544-4b51-b91c-9297025dbd5a",
-      "Name": "Insufficient user awareness",
-      "Description": "",
-      "ChangesPerOption": {
-        "general.Yes": {
-          "Active": true,
-          "Value": true
-        },
-        "general.No": {
-          "Active": true,
-          "Value": false
-        },
-        "general.N/A": {
-          "Active": true,
-          "Value": "undefined"
-        }
-      },
-      "OptionType": 1,
-      "componentTypeID": "44fd3f80-7e55-41af-b452-283556dd1894",
-      "Question": "Are users sufficiently aware what personal data is being exposed to the manufacturer, operator, and other partner organisations?",
-      "propertyID": "2dd7688c-eddf-4cfa-a496-8c1a46963c89"
-    },
-    {
-      "ID": "93aaeb8f-1493-4904-ac3b-7f0046eb8416",
-      "Name": "Missing opt-in mechanism",
-      "Description": "",
-      "ChangesPerOption": {
-        "general.Yes": {
-          "Active": true,
-          "Value": true
-        },
-        "general.No": {
-          "Active": true,
-          "Value": false
-        },
-        "general.N/A": {
-          "Active": true,
-          "Value": "undefined"
-        }
-      },
-      "OptionType": 1,
-      "componentTypeID": "44fd3f80-7e55-41af-b452-283556dd1894",
-      "Question": "Does the system implement an opt-int mechanism to get explicit user consent for personal data processing?",
-      "propertyID": "d9b40dd2-e5eb-485d-9cf5-db2ac441c899"
-    },
-    {
-      "ID": "e24d7ef1-fe5f-49a9-a2da-ebff96c0e91d",
-      "Name": "Missing SDL program",
-      "Description": "",
-      "ChangesPerOption": {
-        "general.Yes": {
-          "Active": true,
-          "Value": true
-        },
-        "general.No": {
-          "Active": true,
-          "Value": false
-        },
-        "general.N/A": {
-          "Active": true,
-          "Value": "undefined"
-        }
-      },
-      "OptionType": 1,
-      "componentTypeID": "ea8af3ca-0055-4d82-88af-711b356aec74",
-      "Question": "Is a Secure Development Plan (SDL) implemented (e.g. based on ISO/IEC 27034)?",
-      "propertyID": "e1cdca4d-c2a2-48a1-be0e-93af41cd458c"
-    },
-    {
-      "ID": "0157632b-3385-48b4-b168-ce7fa7a54a6e",
-      "Name": "Missing responsibility for regulatory compliance",
-      "Description": "",
-      "ChangesPerOption": {
-        "general.Yes": {
-          "Active": true,
-          "Value": true
-        },
-        "general.No": {
-          "Active": true,
-          "Value": false
-        },
-        "general.N/A": {
-          "Active": true,
-          "Value": "undefined"
-        }
-      },
-      "OptionType": 1,
-      "componentTypeID": "ea8af3ca-0055-4d82-88af-711b356aec74",
-      "Question": "Do you have a group and organization responsible for regulatory compliance of security, privacy and data protection, and safety? ",
-      "propertyID": "9db73879-4ec7-46ae-a8d9-1b555aac6954"
-    },
-    {
-      "ID": "e7ff7061-d8ee-44b1-97e0-e1a0c33e0439",
-      "Name": "Missing responsibility for security compliance",
-      "Description": "",
-      "ChangesPerOption": {
-        "general.Yes": {
-          "Active": true,
-          "Value": true
-        },
-        "general.No": {
-          "Active": true,
-          "Value": false
-        },
-        "general.N/A": {
-          "Active": true,
-          "Value": "undefined"
-        }
-      },
-      "OptionType": 1,
-      "componentTypeID": "ea8af3ca-0055-4d82-88af-711b356aec74",
-      "Question": "Do you have a group responsible for security compliance and quality control?",
-      "propertyID": "f3a7b4b7-2ff8-45e8-be0e-321f8d9304a1"
-    },
-    {
-      "ID": "2fa7f875-077d-40c1-8a63-e3378eb27740",
-      "Name": "Missing responsibility for auditing",
-      "Description": "",
-      "ChangesPerOption": {
-        "general.Yes": {
-          "Active": true,
-          "Value": true
-        },
-        "general.No": {
-          "Active": true,
-          "Value": false
-        },
-        "general.N/A": {
-          "Active": true,
-          "Value": "undefined"
-        }
-      },
-      "OptionType": 1,
-      "componentTypeID": "ea8af3ca-0055-4d82-88af-711b356aec74",
-      "Question": "Do you have a responsible group for auditing?",
-      "propertyID": "8fda48d4-746b-4915-b0d2-55c9b68fbd99"
-    },
-    {
-      "ID": "3636d9df-25b9-4fe0-85bd-f89b9de5f3ab",
-      "Name": "Missing testing",
-      "Description": "",
-      "ChangesPerOption": {
-        "general.Yes": {
-          "Active": true,
-          "Value": true
-        },
-        "general.No": {
-          "Active": true,
-          "Value": false
-        },
-        "general.N/A": {
-          "Active": true,
-          "Value": "undefined"
-        }
-      },
-      "OptionType": 1,
-      "componentTypeID": "ea8af3ca-0055-4d82-88af-711b356aec74",
-      "Question": "Does your SDL program include internal functional and security testing of the system?",
-      "propertyID": "e6f155e1-51e1-4297-80d9-a6a3beef3657"
-    },
-    {
-      "ID": "ef2dfbad-5621-44e0-97b3-0a0519e30e3a",
-      "Name": "Missing trusted execution environment",
-      "Description": "",
-      "ChangesPerOption": {
-        "general.Yes": {
-          "Active": true,
-          "Value": true
-        },
-        "general.No": {
-          "Active": true,
-          "Value": false
-        },
-        "general.N/A": {
-          "Active": true,
-          "Value": "undefined"
-        }
-      },
-      "OptionType": 1,
-      "componentTypeID": "75752ec0-7fa9-41a9-a06a-edcf890ca569",
-      "Question": "Does the Trusted Computing Base utilize a Trusted Execution Environment for isolation of critical operations?",
-      "propertyID": "22e9ef37-20a4-4b6c-ba68-ecc90f1d152f"
-    },
-    {
-      "ID": "763bd11d-5e64-4a98-b7e6-acd696199b16",
-      "Name": "Missing isolation of cryptographic operations",
-      "Description": "",
-      "ChangesPerOption": {
-        "general.Yes": {
-          "Active": true,
-          "Value": true
-        },
-        "general.No": {
-          "Active": true,
-          "Value": false
-        },
-        "general.N/A": {
-          "Active": true,
-          "Value": "undefined"
-        }
-      },
-      "OptionType": 1,
-      "componentTypeID": "75752ec0-7fa9-41a9-a06a-edcf890ca569",
-      "Question": "Are cryptographic operations (encryption, message signing, key exchange, key storage) performed by the Trusted Computing Base?",
-      "propertyID": "28c99516-8651-452e-86f7-ce00df632c8d"
-    },
-    {
-      "ID": "9dcc369c-f1a3-4d46-801a-2897376d14ed",
-      "Name": "Decryption of recorded traffic",
-      "Description": "",
-      "ChangesPerOption": {
-        "general.Yes": {
-          "Active": true,
-          "Value": true
-        },
-        "general.No": {
-          "Active": true,
-          "Value": false
-        },
-        "general.N/A": {
-          "Active": true,
-          "Value": "undefined"
-        }
-      },
-      "OptionType": 1,
-      "componentTypeID": "838f741c-120e-4b73-951a-d55a11d36ca4",
-      "Question": "Is Perfect Forward Secrecy (PFS) implemented whenever possible/required?",
-      "propertyID": "6cce79b8-3df2-4eda-8892-e83b6a2ee603"
     }
   ],
   "threatRuleGroups": [
@@ -9285,20 +8872,7 @@
         "2d55c643-21db-426a-be29-d21f7f1965a4",
         "3c1166bd-b978-4361-9846-33cd050dd968",
         "42b3d570-e03c-440d-b7a4-87614c6b2e2c",
-        "d54bae32-33ff-4b3a-b583-07b53b4c947b",
-        "58d38f0f-82b4-4ecb-a95f-237adcfcb58c",
-        "cf9cef5a-3e4e-47cd-aa03-22522a1ce3e9",
-        "ae2e4063-13cd-414e-811d-3d114365f85f",
-        "db9dfe37-7599-4257-a425-e4948ffb8618",
-        "4c2aaafd-3248-4b30-b011-cddef8e75876",
-        "c68e523a-cba1-41b2-95ce-c8d634fd4396",
-        "a40575c4-b39f-4c9e-a4cb-3e15e3f27777",
-        "8825c214-9562-4a85-8538-a0530d2b79ee",
-        "ef631565-02d7-4f52-a80b-e615224409df",
-        "61c1d062-4c94-4af4-bd64-26a632462653",
-        "88d04fe9-ac62-4371-89d3-89471ac13027",
-        "ca3e9dda-cb0d-4f16-8b14-d0b11e4210cb",
-        "d5c0c703-75c1-42dd-a0d0-ca114eb7cdb4"
+        "d54bae32-33ff-4b3a-b583-07b53b4c947b"
       ]
     },
     {
@@ -11426,7 +11000,7 @@
     },
     {
       "ID": "1487298b-ff88-4e01-9a60-09b1eaf8a41f",
-      "Name": "Missing immutable Root of Trust",
+      "Name": "Missing immutable Root Of Trust",
       "Description": "",
       "IsActive": true,
       "RuleGenerationType": 1,
@@ -16145,7 +15719,7 @@
           }
         ]
       },
-      "Severity": 3
+      "Severity": 1
     },
     {
       "ID": "eaee9e9f-c3d7-42d7-9f8a-3d538cb9a17e",
@@ -16153,11 +15727,7 @@
       "Description": "",
       "IsActive": true,
       "RuleGenerationType": 1,
-      "Mapping": {
-        "ThreatCategoryIDs": [
-          "7bbfe5d3-8a91-4210-99ab-79f670715e61"
-        ]
-      },
+      "Mapping": {},
       "overridenRuleIDs": [],
       "RuleType": 3,
       "ComponentRestriction": {
@@ -16174,8 +15744,7 @@
             }
           }
         ]
-      },
-      "Severity": 1
+      }
     },
     {
       "ID": "03778e71-e9a1-4528-b1db-547990486b27",
@@ -16552,382 +16121,6 @@
         ]
       },
       "Severity": 2
-    },
-    {
-      "ID": "58d38f0f-82b4-4ecb-a95f-237adcfcb58c",
-      "Name": "Missing privacy measures",
-      "Description": "",
-      "IsActive": true,
-      "RuleGenerationType": 1,
-      "Mapping": {
-        "ThreatCategoryIDs": [
-          "180a9034-735c-44ca-a96a-693cb48ffaa7",
-          "1180824d-9f8a-4a4a-8398-3775c541a360",
-          "2521b219-3d43-4fd8-bf96-d658eea44d01",
-          "7bbfe5d3-8a91-4210-99ab-79f670715e61"
-        ]
-      },
-      "overridenRuleIDs": [],
-      "RuleType": 3,
-      "ComponentRestriction": {
-        "componentTypeID": "44fd3f80-7e55-41af-b452-283556dd1894",
-        "DetailRestrictions": [
-          {
-            "IsOR": true,
-            "Layer": 0,
-            "RestType": 1,
-            "PropertyRest": {
-              "ID": "2a4c8bb7-bd16-4eee-847f-25090eac2d7e",
-              "ComparisonType": "==",
-              "Value": false
-            }
-          }
-        ]
-      },
-      "Severity": 3
-    },
-    {
-      "ID": "cf9cef5a-3e4e-47cd-aa03-22522a1ce3e9",
-      "Name": "Privacy law compliance",
-      "Description": "",
-      "IsActive": true,
-      "RuleGenerationType": 1,
-      "Mapping": {
-        "ThreatCategoryIDs": [
-          "180a9034-735c-44ca-a96a-693cb48ffaa7",
-          "1180824d-9f8a-4a4a-8398-3775c541a360",
-          "2521b219-3d43-4fd8-bf96-d658eea44d01",
-          "7bbfe5d3-8a91-4210-99ab-79f670715e61"
-        ]
-      },
-      "overridenRuleIDs": [],
-      "RuleType": 3,
-      "ComponentRestriction": {
-        "componentTypeID": "44fd3f80-7e55-41af-b452-283556dd1894",
-        "DetailRestrictions": [
-          {
-            "IsOR": true,
-            "Layer": 0,
-            "RestType": 1,
-            "PropertyRest": {
-              "ID": "1bd8c924-5f59-42db-a9b2-a4527c46adf2",
-              "ComparisonType": "==",
-              "Value": false
-            }
-          }
-        ]
-      },
-      "Severity": 2
-    },
-    {
-      "ID": "ae2e4063-13cd-414e-811d-3d114365f85f",
-      "Name": "User rights and freedoms violation",
-      "Description": "",
-      "IsActive": true,
-      "RuleGenerationType": 1,
-      "Mapping": {
-        "ThreatCategoryIDs": [
-          "180a9034-735c-44ca-a96a-693cb48ffaa7",
-          "1180824d-9f8a-4a4a-8398-3775c541a360",
-          "2521b219-3d43-4fd8-bf96-d658eea44d01",
-          "7bbfe5d3-8a91-4210-99ab-79f670715e61"
-        ]
-      },
-      "overridenRuleIDs": [],
-      "RuleType": 3,
-      "ComponentRestriction": {
-        "componentTypeID": "44fd3f80-7e55-41af-b452-283556dd1894",
-        "DetailRestrictions": [
-          {
-            "IsOR": true,
-            "Layer": 0,
-            "RestType": 1,
-            "PropertyRest": {
-              "ID": "e79dc2a3-1af9-4a37-b649-9db68eacfc9f",
-              "ComparisonType": "==",
-              "Value": false
-            }
-          }
-        ]
-      },
-      "Severity": 2
-    },
-    {
-      "ID": "db9dfe37-7599-4257-a425-e4948ffb8618",
-      "Name": "Insufficient user awareness",
-      "Description": "",
-      "IsActive": true,
-      "RuleGenerationType": 1,
-      "Mapping": {
-        "ThreatCategoryIDs": [
-          "180a9034-735c-44ca-a96a-693cb48ffaa7",
-          "1180824d-9f8a-4a4a-8398-3775c541a360",
-          "aead4d1d-0f64-42b4-a512-cbbc979af3ca",
-          "7bbfe5d3-8a91-4210-99ab-79f670715e61"
-        ]
-      },
-      "overridenRuleIDs": [],
-      "RuleType": 3,
-      "ComponentRestriction": {
-        "componentTypeID": "44fd3f80-7e55-41af-b452-283556dd1894",
-        "DetailRestrictions": [
-          {
-            "IsOR": true,
-            "Layer": 0,
-            "RestType": 1,
-            "PropertyRest": {
-              "ID": "2dd7688c-eddf-4cfa-a496-8c1a46963c89",
-              "ComparisonType": "==",
-              "Value": false
-            }
-          }
-        ]
-      },
-      "Severity": 2
-    },
-    {
-      "ID": "4c2aaafd-3248-4b30-b011-cddef8e75876",
-      "Name": "Missing opt-in mechanism",
-      "Description": "",
-      "IsActive": true,
-      "RuleGenerationType": 1,
-      "Mapping": {
-        "ThreatCategoryIDs": [
-          "180a9034-735c-44ca-a96a-693cb48ffaa7",
-          "1180824d-9f8a-4a4a-8398-3775c541a360",
-          "2521b219-3d43-4fd8-bf96-d658eea44d01",
-          "7bbfe5d3-8a91-4210-99ab-79f670715e61"
-        ]
-      },
-      "overridenRuleIDs": [],
-      "RuleType": 3,
-      "ComponentRestriction": {
-        "componentTypeID": "44fd3f80-7e55-41af-b452-283556dd1894",
-        "DetailRestrictions": [
-          {
-            "IsOR": true,
-            "Layer": 0,
-            "RestType": 1,
-            "PropertyRest": {
-              "ID": "d9b40dd2-e5eb-485d-9cf5-db2ac441c899",
-              "ComparisonType": "==",
-              "Value": false
-            }
-          }
-        ]
-      },
-      "Severity": 2
-    },
-    {
-      "ID": "c68e523a-cba1-41b2-95ce-c8d634fd4396",
-      "Name": "Missing SDL program",
-      "Description": "",
-      "IsActive": true,
-      "RuleGenerationType": 1,
-      "Mapping": {},
-      "overridenRuleIDs": [],
-      "RuleType": 3,
-      "ComponentRestriction": {
-        "componentTypeID": "ea8af3ca-0055-4d82-88af-711b356aec74",
-        "DetailRestrictions": [
-          {
-            "IsOR": true,
-            "Layer": 0,
-            "RestType": 1,
-            "PropertyRest": {
-              "ID": "e1cdca4d-c2a2-48a1-be0e-93af41cd458c",
-              "ComparisonType": "==",
-              "Value": false
-            }
-          }
-        ]
-      },
-      "Severity": 2
-    },
-    {
-      "ID": "a40575c4-b39f-4c9e-a4cb-3e15e3f27777",
-      "Name": "Missing responsibility for regulatory compliance",
-      "Description": "",
-      "IsActive": true,
-      "RuleGenerationType": 1,
-      "Mapping": {},
-      "overridenRuleIDs": [],
-      "RuleType": 3,
-      "ComponentRestriction": {
-        "componentTypeID": "ea8af3ca-0055-4d82-88af-711b356aec74",
-        "DetailRestrictions": [
-          {
-            "IsOR": true,
-            "Layer": 0,
-            "RestType": 1,
-            "PropertyRest": {
-              "ID": "9db73879-4ec7-46ae-a8d9-1b555aac6954",
-              "ComparisonType": "==",
-              "Value": false
-            }
-          }
-        ]
-      },
-      "Severity": 1
-    },
-    {
-      "ID": "8825c214-9562-4a85-8538-a0530d2b79ee",
-      "Name": "Missing responsibility for security compliance",
-      "Description": "",
-      "IsActive": true,
-      "RuleGenerationType": 1,
-      "Mapping": {},
-      "overridenRuleIDs": [],
-      "RuleType": 3,
-      "ComponentRestriction": {
-        "componentTypeID": "ea8af3ca-0055-4d82-88af-711b356aec74",
-        "DetailRestrictions": [
-          {
-            "IsOR": true,
-            "Layer": 0,
-            "RestType": 1,
-            "PropertyRest": {
-              "ID": "f3a7b4b7-2ff8-45e8-be0e-321f8d9304a1",
-              "ComparisonType": "==",
-              "Value": false
-            }
-          }
-        ]
-      },
-      "Severity": 1
-    },
-    {
-      "ID": "ef631565-02d7-4f52-a80b-e615224409df",
-      "Name": "Missing responsibility for auditing",
-      "Description": "",
-      "IsActive": true,
-      "RuleGenerationType": 1,
-      "Mapping": {},
-      "overridenRuleIDs": [],
-      "RuleType": 3,
-      "ComponentRestriction": {
-        "componentTypeID": "ea8af3ca-0055-4d82-88af-711b356aec74",
-        "DetailRestrictions": [
-          {
-            "IsOR": true,
-            "Layer": 0,
-            "RestType": 1,
-            "PropertyRest": {
-              "ID": "8fda48d4-746b-4915-b0d2-55c9b68fbd99",
-              "ComparisonType": "==",
-              "Value": false
-            }
-          }
-        ]
-      },
-      "Severity": 1
-    },
-    {
-      "ID": "61c1d062-4c94-4af4-bd64-26a632462653",
-      "Name": "Missing testing",
-      "Description": "",
-      "IsActive": true,
-      "RuleGenerationType": 1,
-      "Mapping": {},
-      "overridenRuleIDs": [],
-      "RuleType": 3,
-      "ComponentRestriction": {
-        "componentTypeID": "ea8af3ca-0055-4d82-88af-711b356aec74",
-        "DetailRestrictions": [
-          {
-            "IsOR": true,
-            "Layer": 0,
-            "RestType": 1,
-            "PropertyRest": {
-              "ID": "e6f155e1-51e1-4297-80d9-a6a3beef3657",
-              "ComparisonType": "==",
-              "Value": false
-            }
-          }
-        ]
-      },
-      "Severity": 3
-    },
-    {
-      "ID": "ca3e9dda-cb0d-4f16-8b14-d0b11e4210cb",
-      "Name": "Missing trusted execution environment",
-      "Description": "",
-      "IsActive": true,
-      "RuleGenerationType": 1,
-      "Mapping": {},
-      "overridenRuleIDs": [],
-      "RuleType": 3,
-      "ComponentRestriction": {
-        "componentTypeID": "75752ec0-7fa9-41a9-a06a-edcf890ca569",
-        "DetailRestrictions": [
-          {
-            "IsOR": true,
-            "Layer": 0,
-            "RestType": 1,
-            "PropertyRest": {
-              "ID": "22e9ef37-20a4-4b6c-ba68-ecc90f1d152f",
-              "ComparisonType": "==",
-              "Value": false
-            }
-          }
-        ]
-      }
-    },
-    {
-      "ID": "88d04fe9-ac62-4371-89d3-89471ac13027",
-      "Name": "Missing isolation of cryptographic operations",
-      "Description": "",
-      "IsActive": true,
-      "RuleGenerationType": 1,
-      "Mapping": {},
-      "overridenRuleIDs": [],
-      "RuleType": 3,
-      "ComponentRestriction": {
-        "componentTypeID": "75752ec0-7fa9-41a9-a06a-edcf890ca569",
-        "DetailRestrictions": [
-          {
-            "IsOR": true,
-            "Layer": 0,
-            "RestType": 1,
-            "PropertyRest": {
-              "ID": "28c99516-8651-452e-86f7-ce00df632c8d",
-              "ComparisonType": "==",
-              "Value": false
-            }
-          }
-        ]
-      }
-    },
-    {
-      "ID": "d5c0c703-75c1-42dd-a0d0-ca114eb7cdb4",
-      "Name": "Decryption of recorded traffic",
-      "Description": "",
-      "IsActive": true,
-      "RuleGenerationType": 1,
-      "Mapping": {
-        "ThreatOriginID": "6bf04ffa-1f83-4637-a866-d02ff10d752b",
-        "ThreatCategoryIDs": [
-          "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf"
-        ]
-      },
-      "overridenRuleIDs": [],
-      "RuleType": 3,
-      "ComponentRestriction": {
-        "componentTypeID": "838f741c-120e-4b73-951a-d55a11d36ca4",
-        "DetailRestrictions": [
-          {
-            "IsOR": true,
-            "Layer": 0,
-            "RestType": 1,
-            "PropertyRest": {
-              "ID": "6cce79b8-3df2-4eda-8892-e83b6a2ee603",
-              "ComparisonType": "==",
-              "Value": false
-            }
-          }
-        ]
-      },
-      "Severity": 3
     }
   ],
   "mitigations": [
