@@ -630,7 +630,7 @@ export class DataService {
     let content = '';
     let name = '';
     if (isProject && this.Project) {
-      content = this.getFileContent(this.Project.ToJSON(), true, false);
+      content = this.getFileContent(this.Project.ToJSON(), true, this.SelectedGHProject.isEncrypted);
       if (this.SelectedGHProject) name = this.SelectedGHProject.name;
       else name = 'Project.ttmp';
     }
