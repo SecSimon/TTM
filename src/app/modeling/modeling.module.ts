@@ -10,7 +10,7 @@ import { StackComponent } from './stack/stack.component';
 import { PropertiesComponent } from './properties/properties.component';
 import { QuestionDialogComponent } from './stack/question-dialog/question-dialog.component';
 import { ThreatTableComponent } from './threat-table/threat-table.component';
-import { ThreatMappingComponent } from './threat-mapping/threat-mapping.component';
+import { AttackScenarioComponent } from './attack-scenario/attack-scenario.component';
 import { ConfigurationModule } from '../configuration/configuration.module';
 import { IssueTableComponent } from './issue-table/issue-table.component';
 import { DeviceAssetsComponent } from './device-assets/device-assets.component';
@@ -18,20 +18,20 @@ import { CharScopeComponent } from './analysis/char-scope/char-scope.component';
 import { ObjImpactComponent } from './analysis/obj-impact/obj-impact.component';
 import { ThreatSourcesComponent } from './analysis/threat-sources/threat-sources.component';
 import { ThreatIdentificationComponent } from './analysis/threat-identification/threat-identification.component';
-import { DeviceThreatComponent } from './analysis/device-threat/device-threat.component';
+import { SystemThreatComponent } from './analysis/system-threat/system-threat.component';
 import { ContainerTreeComponent } from './container-tree/container-tree.component';
 import { ChecklistComponent } from './checklist/checklist.component';
-import { MitigationTableComponent } from './mitigation-table/mitigation-table.component';
-import { MitigationMappingComponent } from './mitigation-mapping/mitigation-mapping.component';
+import { CountermeasureTableComponent } from './countermeasure-table/countermeasure-table.component';
+import { CountermeasureComponent } from './countermeasure/countermeasure.component';
 import { MitigationProcessComponent } from './mitigation-process/mitigation-process.component';
 import { SuggestedThreatsDialogComponent } from './diagram/suggested-threats-dialog/suggested-threats-dialog.component';;
 
 
 @NgModule({
   declarations: [ModelingComponent, DiagramComponent, StencilPaletteComponent, StackComponent, PropertiesComponent, QuestionDialogComponent, 
-    ThreatTableComponent, ThreatMappingComponent, IssueTableComponent, DeviceAssetsComponent, CharScopeComponent, ObjImpactComponent, 
-    ThreatSourcesComponent, ThreatIdentificationComponent, DeviceThreatComponent, ContainerTreeComponent, ChecklistComponent, MitigationTableComponent, 
-    MitigationMappingComponent, MitigationProcessComponent, SuggestedThreatsDialogComponent],
+    ThreatTableComponent, AttackScenarioComponent, IssueTableComponent, DeviceAssetsComponent, CharScopeComponent, ObjImpactComponent, 
+    ThreatSourcesComponent, ThreatIdentificationComponent, SystemThreatComponent, ContainerTreeComponent, ChecklistComponent, CountermeasureTableComponent, 
+    CountermeasureComponent, MitigationProcessComponent, SuggestedThreatsDialogComponent],
   imports: [
     CommonModule,
     SharedModule,
@@ -39,7 +39,7 @@ import { SuggestedThreatsDialogComponent } from './diagram/suggested-threats-dia
     ConfigurationModule
   ],
   exports: [
-    MitigationMappingComponent,
+    CountermeasureComponent,
     MitigationProcessComponent
   ]
 })

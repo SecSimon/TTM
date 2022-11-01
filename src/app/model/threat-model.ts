@@ -4,9 +4,9 @@ import { LowMediumHighNumber, LowMediumHighNumberUtil } from "./assets";
 import { MyComponent, MyComponentType } from "./component";
 import { ConfigFile } from "./config-file";
 import { DatabaseBase, DataReferenceTypes, IDataReferences, IKeyValue, IProperty, PropertyEditTypes, ViewElementBase } from "./database";
-import { DeviceThreat } from "./device-threat";
+import { SystemThreat } from "./system-threat";
 import { ElementTypeIDs, ElementTypeUtil, StencilThreatMnemonic, StencilType } from "./dfd-model";
-import { Mitigation, MitigationMapping } from "./mitigations";
+import { Control, Countermeasure } from "./mitigations";
 import { ProjectFile } from "./project-file";
 
 
@@ -72,7 +72,7 @@ export class ThreatCategory extends DatabaseBase {
   public FindReferences(pf: ProjectFile, cf: ConfigFile): IDataReferences[] {
     let res: IDataReferences[] = [];
 
-    // threat questions, threat origin, threat mapping, threat rule
+    // threat questions, threat origin, attack scenarios, threat rule
     cf.GetThreatOrigins().filter(x => x.ThreatCategories?.includes(this)).forEach(x => {
       res.push({ Type: DataReferenceTypes.RemoveThreatCategoryFromThreatOrigin, Param: x });
     });
@@ -82,8 +82,8 @@ export class ThreatCategory extends DatabaseBase {
     cf.GetStencilThreatMnemonics().filter(x => x.Letters.some(y => y.threatCategoryID == this.ID)).forEach(x => {
       res.push({ Type: DataReferenceTypes.RemoveThreatCategoryFromThreatMnemonic, Param: x });
     });
-    pf?.GetThreatMappings().filter(x => x.ThreatCategories?.includes(this)).forEach(x => {
-      res.push({ Type: DataReferenceTypes.RemoveThreatCategoryFromThreatMapping, Param: x });
+    pf?.GetAttackScenarios().filter(x => x.ThreatCategories?.includes(this)).forEach(x => {
+      res.push({ Type: DataReferenceTypes.RemoveThreatCategoryFromAttackScenario, Param: x });
     });
     return res;
   }
@@ -95,8 +95,8 @@ export class ThreatCategory extends DatabaseBase {
     if (group) group.RemoveThreatCategory(this);
 
     refs.forEach(ref => {
-      if (ref.Type == DataReferenceTypes.RemoveThreatCategoryFromThreatMapping) {
-        let cats = (ref.Param as ThreatMapping).Mapping.Threat.ThreatCategoryIDs;
+      if (ref.Type == DataReferenceTypes.RemoveThreatCategoryFromAttackScenario) {
+        let cats = (ref.Param as AttackScenario).Mapping.Threat.ThreatCategoryIDs;
         cats.splice(cats.indexOf(ref.Param.ID), 1);
       }
       else if (ref.Type == DataReferenceTypes.RemoveThreatCategoryFromThreatOrigin) {
@@ -357,11 +357,11 @@ export class ThreatOrigin extends DatabaseBase {
     cf.GetThreatRules().filter(x => x.ThreatOrigin?.ID == this.ID).forEach(x => {
       res.push({ Type: DataReferenceTypes.DeleteThreatRule, Param: x });
     });
-    cf.GetMitigations().filter(x => x.MitigatedThreatOrigins.some(x => x.ID == this.ID)).forEach(x => {
-      res.push({ Type: DataReferenceTypes.RemoveThreatOriginFromMitigation, Param: x });
+    cf.GetControls().filter(x => x.MitigatedThreatOrigins.some(x => x.ID == this.ID)).forEach(x => {
+      res.push({ Type: DataReferenceTypes.RemoveThreatOriginFromControl, Param: x });
     });
-    pf?.GetThreatMappings().filter(x => x.ThreatOrigin?.ID == this.ID).forEach(x => {
-      res.push( { Type: DataReferenceTypes.DeleteThreatMapping, Param: x });
+    pf?.GetAttackScenarios().filter(x => x.ThreatOrigin?.ID == this.ID).forEach(x => {
+      res.push( { Type: DataReferenceTypes.DeleteAttackScenario, Param: x });
     })
 
     return res;
@@ -377,11 +377,11 @@ export class ThreatOrigin extends DatabaseBase {
       if (ref.Type == DataReferenceTypes.DeleteThreatRule) {
         cf.DeleteThreatRule(ref.Param as ThreatRule);
       }
-      else if (ref.Type == DataReferenceTypes.RemoveThreatOriginFromMitigation) {
-        (ref.Param as Mitigation).MitigatedThreatOrigins = (ref.Param as Mitigation).MitigatedThreatOrigins.filter(x => x.ID != this.ID);
+      else if (ref.Type == DataReferenceTypes.RemoveThreatOriginFromControl) {
+        (ref.Param as Control).MitigatedThreatOrigins = (ref.Param as Control).MitigatedThreatOrigins.filter(x => x.ID != this.ID);
       }
-      else if (ref.Type == DataReferenceTypes.DeleteThreatMapping) {
-        pf.DeleteThreatMapping(ref.Param as ThreatMapping);
+      else if (ref.Type == DataReferenceTypes.DeleteAttackScenario) {
+        pf.DeleteAttackScenario(ref.Param as AttackScenario);
       }
     });
   }
@@ -538,9 +538,9 @@ export class ThreatQuestion extends DatabaseBase {
   public FindReferences(pf: ProjectFile, cf: ConfigFile): IDataReferences[] {
     let res: IDataReferences[] = [];
     
-    // threat mappings, components
-    pf?.GetThreatMappings().filter(x => x.ThreatQuestion?.ID == this.ID).forEach(x => {
-      res.push({ Type: DataReferenceTypes.DeleteThreatMapping, Param: x });
+    // attack scenarios, components
+    pf?.GetAttackScenarios().filter(x => x.ThreatQuestion?.ID == this.ID).forEach(x => {
+      res.push({ Type: DataReferenceTypes.DeleteAttackScenario, Param: x });
     });
     pf?.GetComponents().filter(x => Object.keys(x.ThreatQuestions).includes(this.ID)).forEach(x => {
       res.push({ Type: DataReferenceTypes.RemoveThreatQuestionFromComponent, Param: x });
@@ -553,8 +553,8 @@ export class ThreatQuestion extends DatabaseBase {
     let refs = this.FindReferences(pf, cf);
 
     refs.forEach(ref => {
-      if (ref.Type == DataReferenceTypes.DeleteThreatMapping) {
-        pf.DeleteThreatMapping(ref.Param as ThreatMapping);
+      if (ref.Type == DataReferenceTypes.DeleteAttackScenario) {
+        pf.DeleteAttackScenario(ref.Param as AttackScenario);
       }
       else if (ref.Type == DataReferenceTypes.RemoveThreatQuestionFromComponent) {
         (ref.Param as MyComponent).RemoveThreatQuestion(this);
@@ -998,9 +998,9 @@ export class ThreatRule extends DatabaseBase {
   public FindReferences(pf: ProjectFile, cf: ConfigFile): IDataReferences[] {
     let res: IDataReferences[] = [];
     
-    // threat mappings
-    pf?.GetThreatMappings().filter(x => x.ThreatRule?.ID == this.ID).forEach(x => {
-      res.push({ Type: DataReferenceTypes.DeleteThreatMapping, Param: x });
+    // attack scenarios
+    pf?.GetAttackScenarios().filter(x => x.ThreatRule?.ID == this.ID).forEach(x => {
+      res.push({ Type: DataReferenceTypes.DeleteAttackScenario, Param: x });
     });
 
     return res;
@@ -1013,8 +1013,8 @@ export class ThreatRule extends DatabaseBase {
     if (group) group.RemoveThreatRule(this);
 
     refs.forEach(ref => {
-      if (ref.Type == DataReferenceTypes.DeleteThreatMapping) {
-        pf.DeleteThreatMapping(ref.Param as ThreatMapping);
+      if (ref.Type == DataReferenceTypes.DeleteAttackScenario) {
+        pf.DeleteAttackScenario(ref.Param as AttackScenario);
       }
     });
   }
@@ -1099,7 +1099,7 @@ export class ThreatRuleGroup extends DatabaseBase {
   }
 }
 
-export interface IThreatMapping {
+export interface IAttackScenario {
   Threat: IThreatOriginCategoryMapping;
   RuleID: string; //ThreatRule
   QuestionID: string; //ThreatQuestion
@@ -1166,7 +1166,7 @@ export class RiskStrategyUtil {
 /**
  * Class for threats in project
  */
-export class ThreatMapping extends DatabaseBase {
+export class AttackScenario extends DatabaseBase {
   private project: ProjectFile;
   private config: ConfigFile;
 
@@ -1230,8 +1230,8 @@ export class ThreatMapping extends DatabaseBase {
     return res;
   }
   public set Targets(val: ViewElementBase[]) { this.Data['targetIDs'] = val.map(x => x.ID); }
-  public get Mapping(): IThreatMapping { return this.Data['Mapping']; }
-  public set Mapping(val: IThreatMapping) { this.Data['Mapping'] = val; }
+  public get Mapping(): IAttackScenario { return this.Data['Mapping']; }
+  public set Mapping(val: IAttackScenario) { this.Data['Mapping'] = val; }
   public get ThreatOrigin(): ThreatOrigin { return this.config.GetThreatOrigin(this.Mapping.Threat?.ThreatOriginID); }
   public set ThreatOrigin(val: ThreatOrigin) { 
     this.Mapping.Threat.ThreatOriginID = val.ID;
@@ -1245,22 +1245,22 @@ export class ThreatMapping extends DatabaseBase {
   public set ThreatRule(val: ThreatRule) { this.Mapping.RuleID = val.ID; }
   public get RuleStillApplies(): boolean { return this.Data['RuleStillApplies']; }
   public set RuleStillApplies(val: boolean) { this.Data['RuleStillApplies'] = val; }
-  public get DeviceThreats(): DeviceThreat[] { 
-    let res: DeviceThreat[] = [];
-    this.Data['deviceThreatIDs'].forEach(x => res.push(this.project.GetDeviceThreat(x)));
+  public get SystemThreats(): SystemThreat[] { 
+    let res: SystemThreat[] = [];
+    this.Data['systemThreatIDs'].forEach(x => res.push(this.project.GetSystemThreat(x)));
     return res;
   } 
-  public set DeviceThreats(val: DeviceThreat[]) { this.Data['deviceThreatIDs'] = val?.map(x => x.ID); }
+  public set SystemThreats(val: SystemThreat[]) { this.Data['systemThreatIDs'] = val?.map(x => x.ID); }
 
   constructor(data, pf: ProjectFile, cf: ConfigFile) {
     super(data);
     this.project = pf;
     this.config = cf;
 
-    if (!this.Data['Mapping']) this.Data['Mapping'] = {} as IThreatMapping;
+    if (!this.Data['Mapping']) this.Data['Mapping'] = {} as IAttackScenario;
     if (!this.Data['targetIDs']) this.Data['targetIDs'] = [];
     if (!this.Data['ThreatState']) this.ThreatState = ThreatStates.NotSet;
-    if (!this.Data['deviceThreatIDs']) this.Data['deviceThreatIDs'] = [];
+    if (!this.Data['systemThreatIDs']) this.Data['systemThreatIDs'] = [];
   }
 
   public SetMapping(threatOriginID: string, categorieIDs: string[], target: ViewElementBase, elements: ViewElementBase[], rule: ThreatRule, question: ThreatQuestion) {
@@ -1279,7 +1279,7 @@ export class ThreatMapping extends DatabaseBase {
   public FindReferences(pf: ProjectFile, cf: ConfigFile): IDataReferences[] {
     let res: IDataReferences[] = [];
 
-    pf?.GetMitigationMappings().filter(x => x.ThreatMappings.includes(this)).forEach(x => res.push({ Type: DataReferenceTypes.RemoveThreatMappingFromMitigationMapping, Param: x }));
+    pf?.GetCountermeasures().filter(x => x.AttackScenarios.includes(this)).forEach(x => res.push({ Type: DataReferenceTypes.RemoveAttackScenarioFromCountermeasure, Param: x }));
     return res;
   }
 
@@ -1289,13 +1289,13 @@ export class ThreatMapping extends DatabaseBase {
     let refs = this.FindReferences(pf, cf);
 
     refs.forEach(ref => {
-      if (ref.Type == DataReferenceTypes.RemoveThreatMappingFromMitigationMapping) {
-        (ref.Param as MitigationMapping).RemoveThreatMapping(this.ID);
+      if (ref.Type == DataReferenceTypes.RemoveAttackScenarioFromCountermeasure) {
+        (ref.Param as Countermeasure).RemoveAttackScenario(this.ID);
       }
     });
   }
 
-  public static FromJSON(data, pf: ProjectFile, cf: ConfigFile): ThreatMapping {
-    return new ThreatMapping(data, pf, cf);
+  public static FromJSON(data, pf: ProjectFile, cf: ConfigFile): AttackScenario {
+    return new AttackScenario(data, pf, cf);
   }
 }

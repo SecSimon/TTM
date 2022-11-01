@@ -36,7 +36,7 @@ export class SuggestedThreatsDialogComponent implements OnInit {
   private hasThreatBuffer = {};
   public HasThreat(letter: IElementTypeThreat) {
     if (this.hasThreatBuffer[letter.Name] == null) {
-      this.hasThreatBuffer[letter.Name] = this.dataService.Project.GetThreatMappings().filter(x => x.Target == this.element).filter(x => x.ThreatCategories.includes(this.dataService.Config.GetThreatCategory(letter.threatCategoryID))).length > 0;
+      this.hasThreatBuffer[letter.Name] = this.dataService.Project.GetAttackScenarios().filter(x => x.Target == this.element).filter(x => x.ThreatCategories.includes(this.dataService.Config.GetThreatCategory(letter.threatCategoryID))).length > 0;
     }
     return this.hasThreatBuffer[letter.Name];
   }

@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import { NodeTypes } from '../modeling/modeling.component';
 
 export interface ITTMStage {
@@ -9,6 +10,7 @@ export interface ITTMStage {
 }
 
 export interface ITTMStep {
+  number: number;
   name: string;
   activities: ITTMActivity[];
   link?: string;
@@ -24,81 +26,94 @@ export interface ITTMActivity {
   providedIn: 'root'
 })
 export class TTMService {
+  private stages: ITTMStage[];
 
-  public Stages: ITTMStage[] = [];
+  public get Stages(): ITTMStage[] {
+    if (!this.stages) this.initialize();
 
-  constructor() {
+    return this.stages;
+  }
+
+  constructor(private translate: TranslateService) {
+  }
+
+  private initialize() {
+    if (Object.keys(this.translate.translations).length == 0) return;
     let stage1: ITTMStage = {
       name: 'Analyze',
       desc: 'What are we working on?',
       icon: 'create',
       steps: [
         {
+          number: 1,
           name: 'Device Characterization & Scope Defintion',
           link: 'modeling?tab=' + NodeTypes.CharScope,
           activities: [
             {
-              name: 'Characterise the device',
-              desc: 'Define and describe sector, function, function, application, requirements, criticiality, location and environment, connectivity and target market.'
+              name: this.translate.instant('ttm.1.1.n'),
+              desc: this.translate.instant('ttm.1.1.d')
             },
             {
-              name: 'Identify the requirements',
-              desc: 'Identify requirements in terms of standards, laws, policies, guidelines, and best practices for safety, security, privacy, and compliance.'
+              name: this.translate.instant('ttm.1.2.n'),
+              desc: this.translate.instant('ttm.1.2.d')
             },
             {
-              name: 'Define the scope',
-              desc: 'Identify the people involved.\nDetermine the budget for this process.\nDefine the time frame.\nDefine the expected output.\nIdentify assumptions and constraints.'
+              name: this.translate.instant('ttm.1.3.n'),
+              desc: this.translate.instant('ttm.1.3.d')
             }
           ]
         },
         {
+          number: 2,
           name: 'Business Objectives and Impact Definition',
           link: 'modeling?tab=' + NodeTypes.ObjImpact,
           activities: [
             {
-              name: 'Define the device, business, and brand goals',
-              desc: ''
+              name: this.translate.instant('ttm.2.1.n'),
+              desc: this.translate.instant('ttm.2.1.d')
             },
             {
-              name: 'Identify the potential business impact',
-              desc: ''
+              name: this.translate.instant('ttm.2.2.n'),
+              desc: this.translate.instant('ttm.2.2.d')
             }
           ]
         },
         {
+          number: 3,
           name: 'Device Interaction Analysis',
           activities: [
             {
-              name: 'Identify actors and external systems',
-              desc: 'Examples: user, service technician, owner, cloud service, controller ',
+              name: this.translate.instant('ttm.3.1.n'),
+              desc: this.translate.instant('ttm.3.1.d'),
               link: 'modeling?tab=' + NodeTypes.Context,
             },
             {
-              name: 'Create a system context diagram',
-              desc: 'Include the device, actors, and external systems.\nSpecify the used interface.',
+              name: this.translate.instant('ttm.3.2.n'),
+              desc: this.translate.instant('ttm.3.2.d'),
             },
             {
-              name: ' Create a use case diagram',
-              desc: 'List all use cases and actors.\nMap the actors to the use cases',
+              name: this.translate.instant('ttm.3.3.n'),
+              desc: this.translate.instant('ttm.3.3.d'),
               link: 'modeling?tab=' + NodeTypes.UseCase,
             },
             {
-              name: "Identify/Define the actors' privileges",
-              desc: 'If not already defined, follow the security principle least privilege to set them',
+              name: this.translate.instant('ttm.3.4.n'),
+              desc: this.translate.instant('ttm.3.4.d'),
             }
           ]
         },
         {
+          number: 4,
           name: 'Asset Identification',
           activities: [
             {
-              name: 'Identify all valuable assets by considering all actors',
-              desc: '',
+              name: this.translate.instant('ttm.4.1.n'),
+              desc: this.translate.instant('ttm.4.1.d'),
               link: 'modeling?tab=' + NodeTypes.Assets
             },
             {
-              name: 'Classify data using a data classification standard',
-              desc: 'Use your preferred standard. Examples: NIST SP 800-53, ISO 27001, GDPR'
+              name: this.translate.instant('ttm.4.2.n'),
+              desc: this.translate.instant('ttm.4.2.d'),
             }
           ]
         }
@@ -110,90 +125,97 @@ export class TTMService {
       icon: 'architecture',
       steps: [
         {
+          number: 5,
           name: 'Threat and Threat Source Identification',
           activities: [
             {
-              name: 'Identify threat sources and describe their motive',
-              desc: '',
+              name: this.translate.instant('ttm.5.1.n'),
+              desc: this.translate.instant('ttm.5.1.d'),
               link: 'modeling?tab=' + NodeTypes.ThreatSources
             },
             {
-              name: 'Identify threat (categories) and their consequences',
-              desc: '',
-              link: 'modeling?tab=' + NodeTypes.DeviceThreats
+              name: this.translate.instant('ttm.5.2.n'),
+              desc: this.translate.instant('ttm.5.2.d'),
+              link: 'modeling?tab=' + NodeTypes.SystemThreats
             },
             {
-              name: 'Collect known attack techniques and common weaknesses',
-              desc: 'Collect available libraries (e.g. CWE, CAPEC), attack trees, and guidelines -> extend the configuration file'
+              name: this.translate.instant('ttm.5.3.n'),
+              desc: this.translate.instant('ttm.5.3.d'),
+              link: 'configuration'
             }
           ]
         },
         {
+          number: 6,
           name: 'Hardware Threat Modeling',
           link: 'modeling?tab=' + NodeTypes.Hardware,
           activities: [
             {
-              name: 'Create a hardware model',
-              desc: ''
+              name: this.translate.instant('ttm.6.1.n'),
+              desc: this.translate.instant('ttm.6.1.d'),
             },
             {
-              name: 'Analyse attacks and weaknesses',
-              desc: 'Elements, such as ASICs, pre-provisioned processors, and data stores, are prone to supply chain attacks.\nPhysical attacks are mainly conducted on these elements, e.g. side-channel analysis, fault injection, dumping the firmware.\nSensors may threaten privacy.\nActuators may threaten safety.\nInterfaces may allow the extraction of data, injection of commands, and causing a denial of service among others.'
+              name: this.translate.instant('ttm.6.2.n'),
+              desc: this.translate.instant('ttm.6.2.d'),
             }
           ]
         },
         {
+          number: 7,
           name: 'Software Threat Modeling',
           link: 'modeling?tab=' + NodeTypes.Software,
           activities: [
             {
-              name: 'List all software components of the device including third-party software',
-              desc: 'When applicable, combine the diagram with the hardware model, for example, for cryptography or secure boot'
+              name: this.translate.instant('ttm.7.1.n'),
+              desc: this.translate.instant('ttm.7.1.d'),
             },
             {
-              name: 'Analyse attacks and weaknesses',
-              desc: ''
+              name: this.translate.instant('ttm.7.2.n'),
+              desc: this.translate.instant('ttm.7.2.d'),
             }
           ]
         },
         {
+          number: 8,
           name: 'Use Case Threat Modeling',
           link: 'modeling?tab=' + NodeTypes.Dataflow,
           activities: [
             {
-              name: 'Created a DFD for each use case identified in stage 1',
-              desc: 'The uses cases should include all physical links modelled in the hardware model.\nIdentify and list security-relevant properties for each element.\nCombine the diagram with the hardware and software models.'
+              name: this.translate.instant('ttm.8.1.n'),
+              desc: this.translate.instant('ttm.8.1.d'),
             },
             {
-              name: 'Analyse attacks and weaknesses',
-              desc: 'Sensors may threaten privacy, actuators may threaten safety.'
+              name: this.translate.instant('ttm.8.2.n'),
+              desc: this.translate.instant('ttm.8.2.d'),
             }
           ]
         },
         {
+          number: 9,
           name: 'Process Threat Modeling',
           link: 'modeling?tab=' + NodeTypes.Process,
           activities: [
             {
-              name: 'Identify security-relevant processes and requirements',
-              desc: ''
+              name: this.translate.instant('ttm.9.1.n'),
+              desc: this.translate.instant('ttm.9.1.d'),
             },
             {
-              name: 'Analyse threats and weaknesses in the identified processes',
-              desc: ''
+              name: this.translate.instant('ttm.9.2.n'),
+              desc: this.translate.instant('ttm.9.2.d'),
             }
           ]
         },
         {
+          number: 10,
           name: 'Vulnerability Review & Penetration Testing',
           activities: [
             {
-              name: 'Check the hardware and software components against public vulnerability databases',
-              desc: ''
+              name: this.translate.instant('ttm.10.1.n'),
+              desc: this.translate.instant('ttm.10.1.d'),
             },
             {
-              name: 'Conduct a penetration test on the device',
-              desc: ''
+              name: this.translate.instant('ttm.10.2.n'),
+              desc: this.translate.instant('ttm.10.2.d'),
             }
           ]
         }
@@ -205,35 +227,37 @@ export class TTMService {
       icon: 'security',
       steps: [
         {
+          number: 11,
           name: 'Risk Assessment',
           link: 'dashboard',
           activities: [
             {
-              name: 'Assess all found attack vectors and weaknesses by a severity score',
-              desc: ''
+              name: this.translate.instant('ttm.11.1.n'),
+              desc: this.translate.instant('ttm.11.1.d'),
             },
             {
-              name: 'Determine the risk',
-              desc: 'This tool calculates the risk using severity and likelihood '
+              name: this.translate.instant('ttm.11.2.n'),
+              desc: this.translate.instant('ttm.11.2.d'),
             }
           ]
         },
         {
+          number: 12,
           name: 'Countermeasure Defintion',
           activities: [
             {
-              name: 'Identify threats that exceed a tolerable risk score',
-              link: 'dashboard',
-              desc: ''
+              name: this.translate.instant('ttm.12.1.n'),
+              desc: this.translate.instant('ttm.12.1.d'),
+              link: 'dashboard'
             },
             {
-              name: 'Define countermeasures to for the risk (mitigate, avoid, transfer)',
+              name: this.translate.instant('ttm.12.2.n'),
+              desc: this.translate.instant('ttm.12.2.d'),
               link: 'mitigation',
-              desc: ''
             },
             {
-              name: 'Calculate the residual risk score',
-              desc: ''
+              name: this.translate.instant('ttm.12.3.n'),
+              desc: this.translate.instant('ttm.12.3.d'),
             }
           ]
         }
@@ -245,29 +269,30 @@ export class TTMService {
       icon: 'fact_check',
       steps: [
         {
+          number: 13,
           name: 'Validation & Documentation',
           activities: [
             {
-              name: 'Validate the implemented countermeasures for their effectiveness',
-              desc: 'Develop test cases, list assumptions'
+              name: this.translate.instant('ttm.13.1.n'),
+              desc: this.translate.instant('ttm.13.1.d'),
             },
             {
-              name: 'Compare the device model with the reality',
-              desc: 'Evaluate all previous steps for their correctness'
+              name: this.translate.instant('ttm.13.2.n'),
+              desc: this.translate.instant('ttm.13.2.d'),
             },
             {
-              name: 'Document all activities and their results in such a way that they can be understood by external persons who were not involved in the process',
-              desc: ''
+              name: this.translate.instant('ttm.13.3.n'),
+              desc: this.translate.instant('ttm.13.3.d'),
             },
             {
-              name: 'Communicate the results to all involved parties',
-              desc: ''
+              name: this.translate.instant('ttm.13.4.n'),
+              desc: this.translate.instant('ttm.13.4.d'),
             }
           ]
         }
       ]
     };
 
-    this.Stages = [stage1, stage2, stage3, stage4];
+    this.stages = [stage1, stage2, stage3, stage4];
   }
 }

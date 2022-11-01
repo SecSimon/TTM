@@ -183,7 +183,7 @@ export class StencilPaletteComponent implements OnInit {
 
   private addContextElementReferences(type: ContextElementTypes): IContextRef[] {
     let res: IContextRef[] = [];
-    this.dataService.Project.GetContextElements().filter(x => !(x instanceof ContextElementRef || x instanceof SystemContextContainerRef) && x.GetProperty('Type') == type && this.dataService.Project.FindDiagramOfElement(x.ID)?.ID != this.selectedNode?.data?.ID).forEach(ele => {
+    this.dataService.Project.GetContextElements().filter(x => !(x instanceof ContextElementRef || x instanceof SystemContextContainerRef) && x.Type == type && this.dataService.Project.FindDiagramOfElement(x.ID)?.ID != this.selectedNode?.data?.ID).forEach(ele => {
       res.push({ elementID: ele.ID, elementType: type, name: ele.Name });
     });
 

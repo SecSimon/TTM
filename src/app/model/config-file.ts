@@ -7,7 +7,7 @@ import { ThreatCategory, ThreatCategoryGroup, ThreatQuestion, ThreatOrigin, Thre
 import defaultConfig from "../../assets/default-config-file.json";
 import { AssetGroup, LowMediumHighNumber, MyData } from "./assets";
 import { ProjectFile } from "./project-file";
-import { Mitigation, MitigationGroup } from "./mitigations";
+import { Control, ControlGroup } from "./mitigations";
 import { ChecklistType, RequirementType } from "./checklist";
 import { FileUpdateService } from "../util/file-update.service";
 import { ThreatActor } from "./threat-source";
@@ -33,8 +33,8 @@ export interface IConfigFile extends IDatabaseBase {
   threatRuleGroups: {}[];
   threatRules: {}[];
 
-  mitigationGroups: {}[];
-  mitigations: {}[];
+  controlGroups: {}[];
+  controls: {}[];
 
   requirementTypes: {}[];
   checklistTypes: {}[];
@@ -62,8 +62,8 @@ export class ConfigFile extends DatabaseBase {
   private threatRuleGroups: ThreatRuleGroup[] = [];
   private threatRuleMap = new Map<string, ThreatRule>();
 
-  private mitigationGroups: MitigationGroup[] = [];
-  private mitigationMap = new Map<string, Mitigation>();
+  private controlGroups: ControlGroup[] = [];
+  private controlMap = new Map<string, Control>();
 
   private requirementTypes: RequirementType[] = [];
   private checklistTypes: ChecklistType[] = [];
@@ -78,7 +78,7 @@ export class ConfigFile extends DatabaseBase {
   public get DFDThreatRuleGroups(): ThreatRuleGroup { return this.GetThreatRuleGroup(this.Data['DFDthreatRuleGroupsID']); }
   public get StencilThreatRuleGroups(): ThreatRuleGroup { return this.GetThreatRuleGroup(this.Data['stencilThreatRuleGroupsID']); }
   public get ComponentThreatRuleGroups(): ThreatRuleGroup { return this.GetThreatRuleGroup(this.Data['componentThreatRuleGroupsID']); }
-  public get MitigationLibrary(): MitigationGroup { return this.GetMitigationGroup(this.Data['mitigationLibraryID']); }
+  public get ControlLibrary(): ControlGroup { return this.GetControlGroup(this.Data['controlLibraryID']); }
 
   public GetAssetGroups(): AssetGroup[] { return this.assetGroups; }
   public GetMyDatas(): MyData[] { return this.myData; }
@@ -106,8 +106,8 @@ export class ConfigFile extends DatabaseBase {
   public GetThreatRuleGroups(): ThreatRuleGroup[] { return this.threatRuleGroups; }
   public GetThreatRules(): ThreatRule[] { return Array.from(this.threatRuleMap, ([k, v]) => v); }
 
-  public GetMitigationGroups(): MitigationGroup[] { return this.mitigationGroups; }
-  public GetMitigations(): Mitigation[] { return Array.from(this.mitigationMap, ([k, v]) => v); }
+  public GetControlGroups(): ControlGroup[] { return this.controlGroups; }
+  public GetControls(): Control[] { return Array.from(this.controlMap, ([k, v]) => v); }
   public GetRequirementTypes(): RequirementType[] { return this.requirementTypes; }
   public GetChecklistTypes(): ChecklistType[] { return this.checklistTypes; }
 
@@ -149,10 +149,10 @@ export class ConfigFile extends DatabaseBase {
       this.Data['assetGroupID'] = ag.ID; 
     }
 
-    if (!this.Data['mitigationLibraryID']) {
-      let lib = this.CreateMitigationGroup(null);
-      lib.Name = 'Mitigations';
-      this.Data['mitigationLibraryID'] = lib.ID;
+    if (!this.Data['controlLibraryID']) {
+      let lib = this.CreateControlGroup(null);
+      lib.Name = 'Controls';
+      this.Data['controlLibraryID'] = lib.ID;
     }
   }
 
@@ -561,55 +561,55 @@ export class ConfigFile extends DatabaseBase {
     this.moveItemInMap<ThreatRule>('threatRuleMap', prevIndex, currIndex);
   }
 
-  public GetMitigation(ID: string) {
-    return this.mitigationMap.get(ID);
+  public GetControl(ID: string) {
+    return this.controlMap.get(ID);
   }
 
-  public CreateMitigation(group: MitigationGroup): Mitigation {
-    let res = new Mitigation({}, this);
-    if (group) group.AddMitigation(res);
-    this.mitigationMap.set(res.ID, res);
-    res.Name = StringExtension.FindUniqueName('Mitigation', this.GetMitigations().map(x => x.Name));
+  public CreateControl(group: ControlGroup): Control {
+    let res = new Control({}, this);
+    if (group) group.AddControl(res);
+    this.controlMap.set(res.ID, res);
+    res.Name = StringExtension.FindUniqueName('Control', this.GetControls().map(x => x.Name));
     return res;
   }
 
-  public DeleteMitigation(m: Mitigation): boolean {
-    if (this.mitigationMap.has(m.ID)) {
+  public DeleteControl(m: Control): boolean {
+    if (this.controlMap.has(m.ID)) {
       m.OnDelete(this.ProjectFile, this);
-      this.mitigationMap.delete(m.ID);
+      this.controlMap.delete(m.ID);
       return true;
     }
     return false;
   }
 
-  public FindGroupOfMitigation(mit: Mitigation): MitigationGroup {
-    return this.mitigationGroups.find(x => x.Mitigations.some(y => y.ID == mit.ID));
+  public FindGroupOfControl(mit: Control): ControlGroup {
+    return this.controlGroups.find(x => x.Controls.some(y => y.ID == mit.ID));
   }
 
-  public GetMitigationGroup(ID: string) {
-    return this.mitigationGroups.find(x => x.ID == ID);
+  public GetControlGroup(ID: string) {
+    return this.controlGroups.find(x => x.ID == ID);
   }
 
-  public CreateMitigationGroup(parentGroup: MitigationGroup): MitigationGroup {
-    let res = new MitigationGroup({}, this);
-    this.mitigationGroups.push(res);
-    res.Name = StringExtension.FindUniqueName('Mitigation Group', this.mitigationGroups.map(x => x.Name));
-    if (parentGroup != null) parentGroup.AddMitigationGroup(res);
+  public CreateControlGroup(parentGroup: ControlGroup): ControlGroup {
+    let res = new ControlGroup({}, this);
+    this.controlGroups.push(res);
+    res.Name = StringExtension.FindUniqueName('Control Group', this.controlGroups.map(x => x.Name));
+    if (parentGroup != null) parentGroup.AddControlGroup(res);
     return res;
   }
 
-  public DeleteMitigationGroup(group: MitigationGroup) {
-    const index = this.mitigationGroups.indexOf(group);
+  public DeleteControlGroup(group: ControlGroup) {
+    const index = this.controlGroups.indexOf(group);
     if (index >= 0) {
       group.OnDelete(this.ProjectFile, this);
-      this.mitigationGroups.splice(index, 1);
+      this.controlGroups.splice(index, 1);
     }
     return index >= 0;
   }
 
-  public FindGroupOfMitigationGroup(mit: MitigationGroup): MitigationGroup {
-    if (this.MitigationLibrary.SubGroups.includes(mit)) return this.MitigationLibrary;
-    return this.mitigationGroups.find(x => x.SubGroups.some(y => y.ID == mit.ID));
+  public FindGroupOfControlGroup(mit: ControlGroup): ControlGroup {
+    if (this.ControlLibrary.SubGroups.includes(mit)) return this.ControlLibrary;
+    return this.controlGroups.find(x => x.SubGroups.some(y => y.ID == mit.ID));
   }
 
   public GetRequirementType(ID: string) {
@@ -690,8 +690,8 @@ export class ConfigFile extends DatabaseBase {
       threatRuleGroups: [],
       threatRules: [],
 
-      mitigations: [],
-      mitigationGroups: [],
+      controls: [],
+      controlGroups: [],
 
       requirementTypes: [],
       checklistTypes: []
@@ -715,8 +715,8 @@ export class ConfigFile extends DatabaseBase {
     this.threatQuestionMap.forEach(x => res.threatQuestions.push(x.ToJSON()));
     this.threatRuleGroups.forEach(x => res.threatRuleGroups.push(x.ToJSON()));
     this.threatRuleMap.forEach(x => res.threatRules.push(x.ToJSON()));
-    this.mitigationGroups.forEach(x=> res.mitigationGroups.push(x.ToJSON()));
-    this.mitigationMap.forEach(x => res.mitigations.push(x.ToJSON()));
+    this.controlGroups.forEach(x=> res.controlGroups.push(x.ToJSON()));
+    this.controlMap.forEach(x => res.controls.push(x.ToJSON()));
     this.requirementTypes.forEach(x => res.requirementTypes.push(x.ToJSON()));
     this.checklistTypes.forEach(x => res.checklistTypes.push(x.ToJSON()));
 
@@ -744,8 +744,8 @@ export class ConfigFile extends DatabaseBase {
     val.threatQuestions.forEach(x => res.threatQuestionMap.set(x['ID'], ThreatQuestion.FromJSON(x, res)));
     val.threatRuleGroups.forEach(x => res.threatRuleGroups.push(ThreatRuleGroup.FromJSON(x, res)));
     val.threatRules.forEach(x => res.threatRuleMap.set(x['ID'], ThreatRule.FromJSON(x, res)));
-    val.mitigationGroups?.forEach(x => res.mitigationGroups.push(MitigationGroup.FromJSON(x, res)));
-    val.mitigations?.forEach(x => res.mitigationMap.set(x['ID'], Mitigation.FromJSON(x, res)));
+    val.controlGroups?.forEach(x => res.controlGroups.push(ControlGroup.FromJSON(x, res)));
+    val.controls?.forEach(x => res.controlMap.set(x['ID'], Control.FromJSON(x, res)));
     val.requirementTypes?.forEach(x => res.requirementTypes.push(RequirementType.FromJSON(x, res)));
     val.checklistTypes?.forEach(x => res.checklistTypes.push(ChecklistType.FromJSON(x, res)));
 

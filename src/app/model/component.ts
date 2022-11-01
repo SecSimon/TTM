@@ -123,7 +123,10 @@ export class MyComponent extends ViewElementBase {
   public set Type(type: MyComponentType) { 
     this.Data['typeID'] = type.ID; 
     this.setTypeProperties(type);
+    this.TypeID = type.ComponentTypeID;
   }
+  public get TypeID(): MyComponentTypeIDs { return this.Data['TypeID']; }
+  public set TypeID(val: MyComponentTypeIDs) { this.Data['TypeID'] = val; }
 
   public get ThreatQuestions() { return this.Data['threatQuestions']; } // key: questionID, value: optionVal
 
@@ -174,7 +177,7 @@ export class MyComponent extends ViewElementBase {
   public static FromJSON(data, pf: ProjectFile, cf: ConfigFile): MyComponent {
     let type = cf.GetMyComponentType(data['typeID']);
     if (type == null) {
-      type = cf.CreateMyComponentType(cf.GetMyComponentTypeGroups(MyComponentTypeIDs.Software)[0]);
+      type = cf.CreateMyComponentType(cf.GetMyComponentTypeGroups(data['TypeID'])[0]);
       type.Name = data['Name'] = data['Name'] +  ' - ERROR - Missing type';
     }
     return new MyComponent(data, type, pf, cf);

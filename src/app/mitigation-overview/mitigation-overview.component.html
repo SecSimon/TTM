@@ -12,8 +12,8 @@
         <as-split-area [size]="GetSplitSize(1, 1, $any('*'))" [order]=2 [class.bg-color-light3]="!theme.IsDarkMode" [class.bg-color-dark3]="theme.IsDarkMode">
           <div style="margin: 10px;">
             <h2 *ngIf="selectedNode">{{selectedNode.name()}}</h2>
-            <app-mitigation-process style="height: 100%;" [mitigationProcess]="selectedNode.data" *ngIf="IsProcess()" (mitigationMappingsChange)="OnMappingProcessChange()"></app-mitigation-process>
-            <app-mitigation-mapping style="height: 100%;" [mitigationMapping]="selectedNode.data" *ngIf="IsMapping()" (mitigationProcessChange)="OnMappingProcessChange()"></app-mitigation-mapping>
+            <app-mitigation-process style="height: 100%;" [mitigationProcess]="selectedNode.data" *ngIf="IsProcess()" (countermeasuresChange)="OnMappingProcessChange()"></app-mitigation-process>
+            <app-countermeasure style="height: 100%;" [countermeasure]="selectedNode.data" *ngIf="IsMapping()" (mitigationProcessChange)="OnMappingProcessChange()"></app-countermeasure>
             <ng-container *ngIf="selectedNode && selectedNode.data == null">
               <table>
                 <ng-container *ngFor="let procNode of selectedNode.children">

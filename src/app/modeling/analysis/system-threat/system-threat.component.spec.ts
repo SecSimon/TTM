@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { DeviceThreatComponent } from './device-threat.component';
+import { SystemThreatComponent } from './system-threat.component';
 
-describe('DeviceThreatComponent', () => {
-  let component: DeviceThreatComponent;
-  let fixture: ComponentFixture<DeviceThreatComponent>;
+describe('SystemThreatComponent', () => {
+  let component: SystemThreatComponent;
+  let fixture: ComponentFixture<SystemThreatComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ DeviceThreatComponent ]
+      declarations: [ SystemThreatComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(DeviceThreatComponent);
+    fixture = TestBed.createComponent(SystemThreatComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

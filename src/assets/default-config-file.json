@@ -1,15 +1,15 @@
 {
   "Data": {
     "ID": "3bf9addd-53b8-4d01-9971-7128326f856d",
-    "Name": "MyDefaultConfig.ttmc",
+    "Name": "Default Configuration",
     "Description": "",
-    "Version": 2,
+    "Version": 3,
     "threatLibraryID": "e17870ae-2c37-435c-a284-8df90ff7a5f0",
     "DFDthreatRuleGroupsID": "1d995fc2-d7a5-4f46-ae16-954b8603b7fe",
     "assetGroupID": "58e45260-36fa-43d7-ac37-198dcce12952",
-    "mitigationLibraryID": "6dd5db7a-e54f-4e6f-858a-33449024cf88",
     "stencilThreatRuleGroupsID": "dc027a7a-9824-4b6a-befb-cc68270f2ecb",
-    "componentThreatRuleGroupsID": "b02f311c-0bb2-4057-9dde-6225ebbf4e1b"
+    "componentThreatRuleGroupsID": "b02f311c-0bb2-4057-9dde-6225ebbf4e1b",
+    "controlLibraryID": "6dd5db7a-e54f-4e6f-858a-33449024cf88"
   },
   "assetGroups": [
     {
@@ -1494,6 +1494,14 @@
       "IsDefault": false,
       "Properties": [],
       "ElementTypeID": 11
+    },
+    {
+      "ID": "6f4e4f07-79e0-4f16-b447-dbc325b42e91",
+      "Name": "Cloud Service",
+      "Description": "",
+      "IsDefault": false,
+      "Properties": [],
+      "ElementTypeID": 31
     }
   ],
   "stencilTypeTemplates": [
@@ -2859,9 +2867,34 @@
     },
     {
       "ID": "cdcdd88c-7ec2-4b18-8d72-bcb0e402ca5d",
-      "Name": "Update Policy",
+      "Name": "Update and Patch Management",
       "Description": "",
-      "Properties": [],
+      "Properties": [
+        {
+          "DisplayName": "Has End of Support Date",
+          "ID": "ec622fb4-b851-4c4f-94dc-d5f5b1a6f85d",
+          "Tooltip": "Is there a publicly available date for the end of support?",
+          "HasGetter": false,
+          "Editable": true,
+          "Type": "Check Box"
+        },
+        {
+          "DisplayName": "Has Update Interval Information",
+          "ID": "53ceef04-26a6-46a6-834d-bb9c0df2a24d",
+          "Tooltip": "Is a rough update interval publicly available for customers?",
+          "HasGetter": false,
+          "Editable": true,
+          "Type": "Check Box"
+        },
+        {
+          "DisplayName": "Has Update Notification Process",
+          "ID": "7da73f3c-b3f6-4d35-ae19-c60ed655b14c",
+          "Tooltip": "If updates are not applied automatically: is there a process for notifying customers about a new update?",
+          "HasGetter": false,
+          "Editable": true,
+          "Type": "Check Box"
+        }
+      ],
       "ComponentTypeID": 2,
       "IsActive": true
     },
@@ -2877,48 +2910,16 @@
           "HasGetter": false,
           "Editable": true,
           "Type": "Check Box"
+        },
+        {
+          "DisplayName": "Has External Audits",
+          "ID": "5f7c116c-e2a5-49af-bfd6-9c38541b6a77",
+          "Tooltip": "Are audits regularly performed by external institutes?",
+          "HasGetter": false,
+          "Editable": true,
+          "Type": "Check Box"
         }
       ],
-      "ComponentTypeID": 2,
-      "IsActive": true
-    },
-    {
-      "ID": "0f33d280-4c59-4f4c-96ba-c3688a28b4ba",
-      "Name": "Secure Coding Standards",
-      "Description": "",
-      "Properties": [],
-      "ComponentTypeID": 2,
-      "IsActive": true
-    },
-    {
-      "ID": "dab1370c-408e-45a0-9552-bae85d15b0fe",
-      "Name": "Security Requirements for External Components",
-      "Description": "",
-      "Properties": [],
-      "ComponentTypeID": 2,
-      "IsActive": true
-    },
-    {
-      "ID": "4ba356ca-b581-4dab-a0cf-b401f4422ee0",
-      "Name": "Private Key Handling",
-      "Description": "",
-      "Properties": [],
-      "ComponentTypeID": 2,
-      "IsActive": true
-    },
-    {
-      "ID": "f0f7230f-18e3-4074-8d24-99e71b76bddf",
-      "Name": "Defense-in-Depth Concept",
-      "Description": "",
-      "Properties": [],
-      "ComponentTypeID": 2,
-      "IsActive": true
-    },
-    {
-      "ID": "60915dd6-ce8f-4c7a-ace9-0fd2eef08094",
-      "Name": "Patch Policy",
-      "Description": "",
-      "Properties": [],
       "ComponentTypeID": 2,
       "IsActive": true
     },
@@ -3204,6 +3205,30 @@
           "HasGetter": false,
           "Editable": true,
           "Type": "Check Box"
+        },
+        {
+          "DisplayName": "Has Employee Training",
+          "ID": "976c15a1-9170-4a2b-a41c-f1dfb4688b1e",
+          "Tooltip": "Is there a holistic security training and awareness program for employees?",
+          "HasGetter": false,
+          "Editable": true,
+          "Type": "Check Box"
+        },
+        {
+          "DisplayName": "Has Regular Employee Training",
+          "ID": "f2e2201c-bd33-4dbd-a8ca-1f3a6d16eb9f",
+          "Tooltip": "Is there a continuous, regular and frequently security training for employees? ",
+          "HasGetter": false,
+          "Editable": true,
+          "Type": "Check Box"
+        },
+        {
+          "DisplayName": "Has Secure Coding Guidelines",
+          "ID": "60fadd09-661b-494a-bcac-f0a652172a50",
+          "Tooltip": "Are secure coding guidelines implemented?",
+          "HasGetter": false,
+          "Editable": true,
+          "Type": "Check Box"
         }
       ],
       "ComponentTypeID": 2,
@@ -3217,8 +3242,6 @@
       "Description": "",
       "myComponentTypeIDs": [
         "ea8af3ca-0055-4d82-88af-711b356aec74",
-        "0f33d280-4c59-4f4c-96ba-c3688a28b4ba",
-        "f0f7230f-18e3-4074-8d24-99e71b76bddf",
         "44fd3f80-7e55-41af-b452-283556dd1894",
         "be1f1524-fd62-4957-a08d-844b070dbb00",
         "2c884e0a-ab3c-43f7-95c7-f4a320e8bbe1"
@@ -3230,8 +3253,6 @@
       "Name": "Security Management",
       "Description": "",
       "myComponentTypeIDs": [
-        "dab1370c-408e-45a0-9552-bae85d15b0fe",
-        "4ba356ca-b581-4dab-a0cf-b401f4422ee0",
         "23a8870f-e7f4-4e07-80be-8cb890f509e8",
         "34f3948e-4d7f-4f0b-a86b-e649c427bc8e"
       ],
@@ -3242,8 +3263,7 @@
       "Name": "Update Management",
       "Description": "",
       "myComponentTypeIDs": [
-        "cdcdd88c-7ec2-4b18-8d72-bcb0e402ca5d",
-        "60915dd6-ce8f-4c7a-ace9-0fd2eef08094"
+        "cdcdd88c-7ec2-4b18-8d72-bcb0e402ca5d"
       ],
       "ComponentTypeID": 2
     },
@@ -9095,6 +9115,167 @@
       "componentTypeID": "838f741c-120e-4b73-951a-d55a11d36ca4",
       "Question": "Is Perfect Forward Secrecy (PFS) implemented whenever possible/required?",
       "propertyID": "6cce79b8-3df2-4eda-8892-e83b6a2ee603"
+    },
+    {
+      "ID": "631e6457-1f3d-48e8-b9bb-3a0adfe1f0df",
+      "Name": "No external audit",
+      "Description": "",
+      "ChangesPerOption": {
+        "general.Yes": {
+          "Active": true,
+          "Value": true
+        },
+        "general.No": {
+          "Active": true,
+          "Value": false
+        },
+        "general.N/A": {
+          "Active": true,
+          "Value": "undefined"
+        }
+      },
+      "OptionType": 1,
+      "componentTypeID": "8902950a-6c5e-426b-baa2-71794e74f720",
+      "Question": "Are audits regularly performed by external institutes?",
+      "propertyID": "5f7c116c-e2a5-49af-bfd6-9c38541b6a77"
+    },
+    {
+      "ID": "b1270172-52a3-4da4-84bf-ce87f1d3fb69",
+      "Name": "Missing employee training and awareness",
+      "Description": "",
+      "ChangesPerOption": {
+        "general.Yes": {
+          "Active": true,
+          "Value": true
+        },
+        "general.No": {
+          "Active": true,
+          "Value": false
+        },
+        "general.N/A": {
+          "Active": true,
+          "Value": "undefined"
+        }
+      },
+      "OptionType": 1,
+      "componentTypeID": "ea8af3ca-0055-4d82-88af-711b356aec74",
+      "Question": "Is there a holistic security training and awareness program for employees?",
+      "propertyID": "976c15a1-9170-4a2b-a41c-f1dfb4688b1e"
+    },
+    {
+      "ID": "36c1ec42-a9cc-4599-9222-c640986517bc",
+      "Name": "No regular employee training",
+      "Description": "",
+      "ChangesPerOption": {
+        "general.Yes": {
+          "Active": true,
+          "Value": true
+        },
+        "general.No": {
+          "Active": true,
+          "Value": false
+        },
+        "general.N/A": {
+          "Active": true,
+          "Value": "undefined"
+        }
+      },
+      "OptionType": 1,
+      "componentTypeID": "ea8af3ca-0055-4d82-88af-711b356aec74",
+      "Question": "Is there a continuous, regular and frequently security training for employees? ",
+      "propertyID": "f2e2201c-bd33-4dbd-a8ca-1f3a6d16eb9f"
+    },
+    {
+      "ID": "13f28c81-41ca-4a71-9ee3-5e4dfc0957ca",
+      "Name": "No secure coding guidelines",
+      "Description": "Secure coding practices include, for example, input validation, output encoding, session management, and database security.",
+      "ChangesPerOption": {
+        "general.Yes": {
+          "Active": true,
+          "Value": true
+        },
+        "general.No": {
+          "Active": true,
+          "Value": false
+        },
+        "general.N/A": {
+          "Active": true,
+          "Value": "undefined"
+        }
+      },
+      "OptionType": 1,
+      "componentTypeID": "ea8af3ca-0055-4d82-88af-711b356aec74",
+      "Question": "Are secure coding guidelines implemented?",
+      "propertyID": "60fadd09-661b-494a-bcac-f0a652172a50"
+    },
+    {
+      "ID": "f9e03fa2-45ec-468c-9e9d-0737ab21437e",
+      "Name": "Missing end of support date",
+      "Description": "",
+      "ChangesPerOption": {
+        "general.Yes": {
+          "Active": true,
+          "Value": true
+        },
+        "general.No": {
+          "Active": true,
+          "Value": false
+        },
+        "general.N/A": {
+          "Active": true,
+          "Value": "undefined"
+        }
+      },
+      "OptionType": 1,
+      "componentTypeID": "cdcdd88c-7ec2-4b18-8d72-bcb0e402ca5d",
+      "Question": "Is there a publicly available date for the end of support?",
+      "propertyID": "ec622fb4-b851-4c4f-94dc-d5f5b1a6f85d"
+    },
+    {
+      "ID": "3943ab74-ba91-4ea5-a512-955b63b04f1f",
+      "Name": "Missing update interval information",
+      "Description": "",
+      "ChangesPerOption": {
+        "general.Yes": {
+          "Active": true,
+          "Value": true
+        },
+        "general.No": {
+          "Active": true,
+          "Value": false
+        },
+        "general.N/A": {
+          "Active": true,
+          "Value": "undefined"
+        }
+      },
+      "OptionType": 1,
+      "componentTypeID": "cdcdd88c-7ec2-4b18-8d72-bcb0e402ca5d",
+      "Question": "Is a rough update interval publicly available for customers?",
+      "propertyID": "53ceef04-26a6-46a6-834d-bb9c0df2a24d"
+    },
+    {
+      "ID": "327654e1-de90-4d85-aed0-76c8725763ee",
+      "Name": "Missing update notification",
+      "Description": "",
+      "ChangesPerOption": {
+        "general.Yes": {
+          "Active": true,
+          "Value": true
+        },
+        "general.No": {
+          "Active": true,
+          "Value": false
+        },
+        "general.N/A": {
+          "Active": true,
+          "Value": "undefined"
+        }
+      },
+      "OptionType": 1,
+      "componentTypeID": "cdcdd88c-7ec2-4b18-8d72-bcb0e402ca5d",
+      "Question": "If updates are not applied automatically: is there a process for notifying customers about a new update?",
+      "propertyID": "7da73f3c-b3f6-4d35-ae19-c60ed655b14c"
     }
   ],
   "threatRuleGroups": [
@@ -9173,7 +9354,8 @@
         "2b0c94a0-f2c7-4068-86e4-2d5f7ed3fe94",
         "2c32278f-ea97-4aa1-8e85-982f76dee1b9",
         "a777fa41-a13f-4225-af47-e4458a0c8f9e",
-        "ab670c99-4f5c-41c7-974c-a6704df1661b"
+        "ab670c99-4f5c-41c7-974c-a6704df1661b",
+        "d406176c-9381-4f8c-aecc-b6d7ba56c7da"
       ]
     },
     {
@@ -9298,7 +9480,14 @@
         "61c1d062-4c94-4af4-bd64-26a632462653",
         "88d04fe9-ac62-4371-89d3-89471ac13027",
         "ca3e9dda-cb0d-4f16-8b14-d0b11e4210cb",
-        "d5c0c703-75c1-42dd-a0d0-ca114eb7cdb4"
+        "d5c0c703-75c1-42dd-a0d0-ca114eb7cdb4",
+        "9c362082-55b7-4c48-ac28-e381f5f38a2d",
+        "b634e0fe-6f3f-4c75-9df4-98f589d3a3f0",
+        "a05007e9-ca76-4584-a7be-47cf4a9625c4",
+        "f424f4d3-b3c2-4718-8c5f-ec9b3b6eef74",
+        "1a54b8f3-ecd6-4704-9f6c-e05b7e948548",
+        "105910c0-a5b5-4496-a2f7-99f11422e4b0",
+        "8f8d0183-5a29-451a-bb84-df061c0728d4"
       ]
     },
     {
@@ -9482,10 +9671,20 @@
       "DFDRestriction": {
         "NodeTypes": [
           {
-            "TypeIDs": []
+            "TypeIDs": [
+              "e0b99432-98a6-4e32-86d7-ca5f58897cc2",
+              "c7598413-4382-43e9-9904-fd9d877eb7a9",
+              "02b39924-b8f2-44da-a2bc-be1bd2450f68",
+              "04be7cf6-00dd-4aa8-b90b-e9bf105e39e7"
+            ]
           },
           {
-            "TypeIDs": []
+            "TypeIDs": [
+              "e0b99432-98a6-4e32-86d7-ca5f58897cc2",
+              "c7598413-4382-43e9-9904-fd9d877eb7a9",
+              "02b39924-b8f2-44da-a2bc-be1bd2450f68",
+              "04be7cf6-00dd-4aa8-b90b-e9bf105e39e7"
+            ]
           }
         ],
         "NodeRestrictions": [
@@ -9548,7 +9747,8 @@
             }
           }
         ],
-        "Target": -1
+        "Target": -1,
+        "AppliesReverse": true
       },
       "RuleGenerationType": 1,
       "overridenRuleIDs": [],
@@ -10498,14 +10698,24 @@
       "overridenRuleIDs": [],
       "RuleType": 2,
       "DFDRestriction": {
-        "AppliesReverse": false,
+        "AppliesReverse": true,
         "Target": -1,
         "NodeTypes": [
           {
-            "TypeIDs": []
+            "TypeIDs": [
+              "e0b99432-98a6-4e32-86d7-ca5f58897cc2",
+              "c7598413-4382-43e9-9904-fd9d877eb7a9",
+              "02b39924-b8f2-44da-a2bc-be1bd2450f68",
+              "04be7cf6-00dd-4aa8-b90b-e9bf105e39e7"
+            ]
           },
           {
-            "TypeIDs": []
+            "TypeIDs": [
+              "e0b99432-98a6-4e32-86d7-ca5f58897cc2",
+              "c7598413-4382-43e9-9904-fd9d877eb7a9",
+              "02b39924-b8f2-44da-a2bc-be1bd2450f68",
+              "04be7cf6-00dd-4aa8-b90b-e9bf105e39e7"
+            ]
           }
         ],
         "NodeRestrictions": [
@@ -10555,14 +10765,24 @@
       "overridenRuleIDs": [],
       "RuleType": 2,
       "DFDRestriction": {
-        "AppliesReverse": false,
+        "AppliesReverse": true,
         "Target": -1,
         "NodeTypes": [
           {
-            "TypeIDs": []
+            "TypeIDs": [
+              "e0b99432-98a6-4e32-86d7-ca5f58897cc2",
+              "c7598413-4382-43e9-9904-fd9d877eb7a9",
+              "02b39924-b8f2-44da-a2bc-be1bd2450f68",
+              "04be7cf6-00dd-4aa8-b90b-e9bf105e39e7"
+            ]
           },
           {
-            "TypeIDs": []
+            "TypeIDs": [
+              "e0b99432-98a6-4e32-86d7-ca5f58897cc2",
+              "c7598413-4382-43e9-9904-fd9d877eb7a9",
+              "02b39924-b8f2-44da-a2bc-be1bd2450f68",
+              "04be7cf6-00dd-4aa8-b90b-e9bf105e39e7"
+            ]
           }
         ],
         "NodeRestrictions": [
@@ -16928,9 +17148,210 @@
         ]
       },
       "Severity": 3
+    },
+    {
+      "ID": "9c362082-55b7-4c48-ac28-e381f5f38a2d",
+      "Name": "No external audit",
+      "Description": "",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {},
+      "overridenRuleIDs": [],
+      "RuleType": 3,
+      "ComponentRestriction": {
+        "componentTypeID": "8902950a-6c5e-426b-baa2-71794e74f720",
+        "DetailRestrictions": [
+          {
+            "IsOR": true,
+            "Layer": 0,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "5f7c116c-e2a5-49af-bfd6-9c38541b6a77",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          }
+        ]
+      },
+      "Severity": 1
+    },
+    {
+      "ID": "b634e0fe-6f3f-4c75-9df4-98f589d3a3f0",
+      "Name": "Missing employee training and awareness",
+      "Description": "",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {},
+      "overridenRuleIDs": [],
+      "RuleType": 3,
+      "ComponentRestriction": {
+        "componentTypeID": "ea8af3ca-0055-4d82-88af-711b356aec74",
+        "DetailRestrictions": [
+          {
+            "IsOR": true,
+            "Layer": 0,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "976c15a1-9170-4a2b-a41c-f1dfb4688b1e",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          }
+        ]
+      },
+      "Severity": 2
+    },
+    {
+      "ID": "a05007e9-ca76-4584-a7be-47cf4a9625c4",
+      "Name": "No regular employee training",
+      "Description": "",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {},
+      "overridenRuleIDs": [],
+      "RuleType": 3,
+      "ComponentRestriction": {
+        "componentTypeID": "ea8af3ca-0055-4d82-88af-711b356aec74",
+        "DetailRestrictions": [
+          {
+            "IsOR": true,
+            "Layer": 0,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "f2e2201c-bd33-4dbd-a8ca-1f3a6d16eb9f",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          }
+        ]
+      },
+      "Severity": 2
+    },
+    {
+      "ID": "f424f4d3-b3c2-4718-8c5f-ec9b3b6eef74",
+      "Name": "No secure coding guidelines",
+      "Description": "",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {},
+      "overridenRuleIDs": [],
+      "RuleType": 3,
+      "ComponentRestriction": {
+        "componentTypeID": "ea8af3ca-0055-4d82-88af-711b356aec74",
+        "DetailRestrictions": [
+          {
+            "IsOR": true,
+            "Layer": 0,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "60fadd09-661b-494a-bcac-f0a652172a50",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          }
+        ]
+      }
+    },
+    {
+      "ID": "1a54b8f3-ecd6-4704-9f6c-e05b7e948548",
+      "Name": "Missing end of support date",
+      "Description": "",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {},
+      "overridenRuleIDs": [],
+      "RuleType": 3,
+      "ComponentRestriction": {
+        "componentTypeID": "cdcdd88c-7ec2-4b18-8d72-bcb0e402ca5d",
+        "DetailRestrictions": [
+          {
+            "IsOR": true,
+            "Layer": 0,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "ec622fb4-b851-4c4f-94dc-d5f5b1a6f85d",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          }
+        ]
+      },
+      "Severity": 2
+    },
+    {
+      "ID": "105910c0-a5b5-4496-a2f7-99f11422e4b0",
+      "Name": "Missing update interval information",
+      "Description": "",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {},
+      "overridenRuleIDs": [],
+      "RuleType": 3,
+      "ComponentRestriction": {
+        "componentTypeID": "cdcdd88c-7ec2-4b18-8d72-bcb0e402ca5d",
+        "DetailRestrictions": [
+          {
+            "IsOR": true,
+            "Layer": 0,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "53ceef04-26a6-46a6-834d-bb9c0df2a24d",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          }
+        ]
+      },
+      "Severity": 1
+    },
+    {
+      "ID": "8f8d0183-5a29-451a-bb84-df061c0728d4",
+      "Name": "Missing update notification",
+      "Description": "",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {},
+      "overridenRuleIDs": [],
+      "RuleType": 3,
+      "ComponentRestriction": {
+        "componentTypeID": "cdcdd88c-7ec2-4b18-8d72-bcb0e402ca5d",
+        "DetailRestrictions": [
+          {
+            "IsOR": true,
+            "Layer": 0,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "7da73f3c-b3f6-4d35-ae19-c60ed655b14c",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          }
+        ]
+      },
+      "Severity": 3
+    },
+    {
+      "ID": "d406176c-9381-4f8c-aecc-b6d7ba56c7da",
+      "Name": "Full-scale outage",
+      "Description": "A full-scale outage may cause the solution to be unavailable for its users. This may be caused by natural events but also by a malicious actor.",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatOriginID": "8f9a24d4-e962-4136-b0ec-8e9f797a6f62",
+        "ThreatCategoryIDs": [
+          "b869918c-0b47-45c3-8fab-0b698043aa66"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 1,
+      "StencilRestriction": {
+        "stencilTypeID": "6f4e4f07-79e0-4f16-b447-dbc325b42e91",
+        "DetailRestrictions": []
+      },
+      "Severity": 2
     }
   ],
-  "mitigations": [
+  "controls": [
     {
       "ID": "99636fb9-9a42-48b5-8368-a935a11dc943",
       "Name": "Disable debug access",
@@ -17471,12 +17892,12 @@
       ]
     }
   ],
-  "mitigationGroups": [
+  "controlGroups": [
     {
       "ID": "6dd5db7a-e54f-4e6f-858a-33449024cf88",
-      "Name": "Mitigations",
+      "Name": "Controls",
       "Description": "",
-      "mitigationGroupIDs": [
+      "controlGroupIDs": [
         "c324cdd7-8c3e-4d10-a91e-202a725430df",
         "4df9ab6b-eb2f-4fc7-8bd7-8b6c2d03e922",
         "627ed2f3-d2af-4f25-925b-2e93a9578a93",
@@ -17484,14 +17905,14 @@
         "10c43f72-7e1c-4055-b8e8-321d17a0109e",
         "3103fa1a-00eb-4361-864d-7f129333db08"
       ],
-      "mitigationIDs": []
+      "controlIDs": []
     },
     {
       "ID": "c324cdd7-8c3e-4d10-a91e-202a725430df",
       "Name": "Physical Security",
       "Description": "https://www.iotsecurityfoundation.org/wp-content/uploads/2019/12/Best-Practice-Guides-Release-2_Digitalv3.pdf",
-      "mitigationGroupIDs": [],
-      "mitigationIDs": [
+      "controlGroupIDs": [],
+      "controlIDs": [
         "99636fb9-9a42-48b5-8368-a935a11dc943",
         "8febb6ed-da70-44ff-8d95-cf9a30d6b0ec"
       ]
@@ -17500,8 +17921,8 @@
       "ID": "4df9ab6b-eb2f-4fc7-8bd7-8b6c2d03e922",
       "Name": "Firmware Security",
       "Description": "",
-      "mitigationGroupIDs": [],
-      "mitigationIDs": [
+      "controlGroupIDs": [],
+      "controlIDs": [
         "c943341c-b65c-4801-8d8e-d83d047ac0b7",
         "9ed45808-7ffa-412a-ab29-84c0e738c8da"
       ]
@@ -17510,8 +17931,8 @@
       "ID": "627ed2f3-d2af-4f25-925b-2e93a9578a93",
       "Name": "Network Security",
       "Description": "",
-      "mitigationGroupIDs": [],
-      "mitigationIDs": [
+      "controlGroupIDs": [],
+      "controlIDs": [
         "ea061d92-c31b-4644-8f5f-5093f513dd9d",
         "113386c4-73e2-4e37-a390-83c3ef939633",
         "6986a3d3-c10f-4ffb-a348-fafe9c8c9150",
@@ -17522,8 +17943,8 @@
       "ID": "b6aceef6-08e1-4b2f-83a7-32c2bc736962",
       "Name": "Application Security",
       "Description": "",
-      "mitigationGroupIDs": [],
-      "mitigationIDs": [
+      "controlGroupIDs": [],
+      "controlIDs": [
         "8827b03b-475a-474f-baa1-7de740e244ba",
         "a5beea3e-c1e2-40ef-9056-8540c7f5557d",
         "a23f9f78-27a6-4a21-8c48-29a2afd48830"
@@ -17533,8 +17954,8 @@
       "ID": "10c43f72-7e1c-4055-b8e8-321d17a0109e",
       "Name": "Cryptography Mitigations",
       "Description": "",
-      "mitigationGroupIDs": [],
-      "mitigationIDs": [
+      "controlGroupIDs": [],
+      "controlIDs": [
         "af734914-6fe1-4ace-8895-a004472c9d13",
         "34eb5948-314a-4a99-a782-c5ed7d26df01",
         "51afbfbf-f5f5-40f7-908f-5db63ed5e1ca",
@@ -17545,8 +17966,8 @@
       "ID": "3103fa1a-00eb-4361-864d-7f129333db08",
       "Name": "Recovery",
       "Description": "",
-      "mitigationGroupIDs": [],
-      "mitigationIDs": [
+      "controlGroupIDs": [],
+      "controlIDs": [
         "6149966a-4422-4b32-ac28-88a2ded07354"
       ]
     }

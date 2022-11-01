@@ -84,10 +84,10 @@
             <mat-tab>
               <ng-template mat-tab-label>
                 <mat-icon class="tab-icon">security</mat-icon>
-                {{'general.Mitigations' | translate}}
+                {{'general.Controls' | translate}}
               </ng-template>
               <ng-template matTabContent>
-                <app-mitigations [selectedNode]="selectedNode" (nodeTreeChanged)="SetNavTreeData($event)"></app-mitigations>
+                <app-controls [selectedNode]="selectedNode" (nodeTreeChanged)="SetNavTreeData($event)"></app-controls>
               </ng-template>
             </mat-tab>
 

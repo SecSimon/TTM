@@ -5,7 +5,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MyComponentStack } from '../../model/component';
 import { ViewElementBase } from '../../model/database';
 import { Diagram } from '../../model/diagram';
-import { MitigationMapping, MitigationProcess, MitigationStates, MitigationStateUtil } from '../../model/mitigations';
+import { Countermeasure, MitigationProcess, MitigationStates, MitigationStateUtil } from '../../model/mitigations';
 import { MappingStates } from '../../model/threat-model';
 import { INavigationNode } from '../../shared/components/nav-tree/nav-tree.component';
 import { DataService } from '../../util/data.service';
@@ -14,47 +14,47 @@ import { MitigationEngineService } from '../../util/mitigation-engine.service';
 import { ThemeService } from '../../util/theme.service';
 
 @Component({
-  selector: 'app-mitigation-table',
-  templateUrl: './mitigation-table.component.html',
-  styleUrls: ['./mitigation-table.component.scss']
+  selector: 'app-countermeasure-table',
+  templateUrl: './countermeasure-table.component.html',
+  styleUrls: ['./countermeasure-table.component.scss']
 })
-export class MitigationTableComponent implements OnInit {
+export class CountermeasureTableComponent implements OnInit {
   private changesCounter = 0;
-  private isCalculatingMitigations = false;
+  private isCalculatingCountermeasures = false;
   private _selectedNode: INavigationNode;
   private _selectedObject: ViewElementBase;
-  private _mitigationMappings: MitigationMapping[] = [];
-  private _selectedMitigations: MitigationMapping[] = [];
+  private _countermeasures: Countermeasure[] = [];
+  private _selectedCountermeasures: Countermeasure[] = [];
 
   public displayedColumns = [];
-  public dataSourceActive: MatTableDataSource<MitigationMapping>;
-  public dataSourceNA: MatTableDataSource<MitigationMapping>;
-  public autoRefreshMitigations = true;
-  public get refreshingMitigations(): boolean {
-    return this.changesCounter > 0 || this.isCalculatingMitigations;
+  public dataSourceActive: MatTableDataSource<Countermeasure>;
+  public dataSourceNA: MatTableDataSource<Countermeasure>;
+  public autoRefreshCountermeasures = true;
+  public get refreshingCountermeasures(): boolean {
+    return this.changesCounter > 0 || this.isCalculatingCountermeasures;
   }
 
   public menuTopLeftPosition =  {x: '0', y: '0'};
   @ViewChild(MatMenuTrigger) public matMenuTrigger: MatMenuTrigger; 
   
-  public get MitigationMappings(): MitigationMapping[] { return this._mitigationMappings; }
-  public set MitigationMappings(val: MitigationMapping[]) {
-    this._mitigationMappings = val;
-    let mySort = (data: MitigationMapping, sortHeaderId: string) => {
+  public get Countermeasures(): Countermeasure[] { return this._countermeasures; }
+  public set Countermeasures(val: Countermeasure[]) {
+    this._countermeasures = val;
+    let mySort = (data: Countermeasure, sortHeaderId: string) => {
       if (sortHeaderId == 'name') return data.Name;
       if (sortHeaderId == 'number') return Number(data.Number);
       if (sortHeaderId == 'state') return data.MappingState; 
       if (sortHeaderId == 'type') return data.IsGenerated ? 1 : 0; 
-      if (sortHeaderId == 'mitigation') return data.Mitigation.Name;
+      if (sortHeaderId == 'control') return data.Control?.Name;
       if (sortHeaderId == 'origins') return this.GetThreatOrigins(data);
       if (sortHeaderId == 'status') return data.MappingState;  
       if (sortHeaderId == 'targets') return this.GetTargets(data);
       console.error('Missing sorting header'); 
     };
-    let myFilter = (data: MitigationMapping, filter: string) => {
+    let myFilter = (data: Countermeasure, filter: string) => {
       let search = filter.trim().toLowerCase();
       let res = data.Name.toLowerCase().indexOf(search);
-      if (res == -1) res = data.Mitigation.Name.toLowerCase().indexOf(search);
+      if (res == -1) res = data.Control.Name.toLowerCase().indexOf(search);
       if (res == -1) res = this.GetThreatOrigins(data).toLowerCase().indexOf(search);
       if (res == -1) res = this.GetTargets(data).toLowerCase().indexOf(search);
       return res != -1;
@@ -72,37 +72,37 @@ export class MitigationTableComponent implements OnInit {
 
     if (this.sort) this.sort.sortChange.emit(this.sort);
   }
-  public get selectedMitigations(): MitigationMapping[] { return this._selectedMitigations; }
-  public set selectedMitigations(val: MitigationMapping[]) {
-    if (val.length == this._selectedMitigations.length) {
-      if (val.every(x => this._selectedMitigations.some(y => y.ID == x.ID))) return;
+  public get selectedCountermeasures(): Countermeasure[] { return this._selectedCountermeasures; }
+  public set selectedCountermeasures(val: Countermeasure[]) {
+    if (val.length == this._selectedCountermeasures.length) {
+      if (val.every(x => this._selectedCountermeasures.some(y => y.ID == x.ID))) return;
     }
-    this._selectedMitigations = val;
+    this._selectedCountermeasures = val;
   } 
 
   public get selectedNode(): INavigationNode { return this._selectedNode; }
   @Input() public set selectedNode(val: INavigationNode) {
     this._selectedNode = val;
-    this.displayedColumns = ['state', 'number', 'type', 'name', 'mitigation', 'origins', 'targets', 'progress', 'status'];
-    this.RefreshMitigations();
+    this.displayedColumns = ['state', 'number', 'type', 'name', 'control', 'origins', 'targets', 'progress', 'status'];
+    this.RefreshCountermeasures();
   }
   @Input() public set selectedObject(val: ViewElementBase) {
     if (val && this._selectedObject?.ID == val.ID) return;
     this._selectedObject = val;
-    this.selectedMitigations = this.MitigationMappings.filter(x => x.Targets.includes(val));
+    this.selectedCountermeasures = this.Countermeasures.filter(x => x.Targets.includes(val));
   }
   @Output() public selectedObjectChanged = new EventEmitter<ViewElementBase>();
 
-  @Output() public mitigationCountChanged = new EventEmitter<number>();
+  @Output() public countermeasureCountChanged = new EventEmitter<number>();
   
   @ViewChild(MatSort) sort: MatSort;
 
   constructor(public theme: ThemeService, public dataService: DataService, private mitigationEngine: MitigationEngineService, private dialog: DialogService) { 
     let onDataChanged = () => {
-      if (this.autoRefreshMitigations) {
+      if (this.autoRefreshCountermeasures) {
         if (this.changesCounter == 0) {
           setTimeout(() => {
-            this.isCalculatingMitigations = true;
+            this.isCalculatingCountermeasures = true;
             this.changesCounter++;
           }, 10);
         }
@@ -110,15 +110,15 @@ export class MitigationTableComponent implements OnInit {
         setTimeout(() => {
           this.changesCounter--;
           if (this.changesCounter == 0) {
-            this.RefreshMitigations();
+            this.RefreshCountermeasures();
           }
         }, 500);
       }
     };
     if (this.dataService.Project) {
       setTimeout(() => {
-        this.dataService.Project?.MitigationMappingsChanged.subscribe(x => onDataChanged());
-        this.dataService.Project?.ThreatMappingsChanged.subscribe(x => onDataChanged());
+        this.dataService.Project?.CountermeasuresChanged.subscribe(x => onDataChanged());
+        this.dataService.Project?.AttackScenariosChanged.subscribe(x => onDataChanged());
       }, 1000);
     }
   }
@@ -126,25 +126,25 @@ export class MitigationTableComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  public RefreshMitigations() {
+  public RefreshCountermeasures() {
     setTimeout(() => {
-      this.MitigationMappings = [];
+      this.Countermeasures = [];
     if (this._selectedNode?.data) {
       if (this._selectedNode?.data instanceof Diagram) {
-        this.MitigationMappings = this.mitigationEngine.GenerateDiagramMitigations(this._selectedNode.data);
+        this.Countermeasures = this.mitigationEngine.GenerateDiagramMitigations(this._selectedNode.data);
       }
       else if (this._selectedNode?.data instanceof MyComponentStack) {
-        this.MitigationMappings = this.mitigationEngine.GenerateStackMitigations(this._selectedNode.data);
+        this.Countermeasures = this.mitigationEngine.GenerateStackMitigations(this._selectedNode.data);
       }
     }
 
-    this.mitigationCountChanged.emit(this.MitigationMappings.length);
+    this.countermeasureCountChanged.emit(this.Countermeasures.length);
     
-    this.isCalculatingMitigations = false;
+    this.isCalculatingCountermeasures = false;
     }, 10);
   }
 
-  public OnMappingDblClick(entry: MitigationMapping, event) {
+  public OnMappingDblClick(entry: Countermeasure, event) {
     if (event && event.target && this.displayedColumns[event.target.cellIndex] == 'progress' && entry.MitigationProcess) {
       this.ViewMitigationProcess(entry);
     }
@@ -152,7 +152,7 @@ export class MitigationTableComponent implements OnInit {
       let elements: ViewElementBase[] = null;
       if (this.selectedNode.data instanceof Diagram) elements = this.selectedNode.data.Elements.GetChildrenFlat();
       else if (this.selectedNode.data instanceof MyComponentStack) elements = this.selectedNode.data.GetChildrenFlat();
-      this.dialog.OpenMitigationMappingDialog(entry, false, elements);
+      this.dialog.OpenCountermeasureDialog(entry, false, elements);
     }
   }
 
@@ -162,31 +162,31 @@ export class MitigationTableComponent implements OnInit {
     this.dataSourceNA.filter = filterValue.trim().toLowerCase();
   }
 
-  public IsMitigationSelected(mit) {
-    return this.selectedMitigations.includes(mit);
+  public IsCountermeasureSelected(mit) {
+    return this.selectedCountermeasures.includes(mit);
   }
 
-  public IsMitigationRemoved(mit: MitigationMapping) {
+  public IsCountermeasureRemoved(mit: Countermeasure) {
     return mit.MappingState == MappingStates.Removed;
   }
 
-  public IsMitigationNotApplying(mit: MitigationMapping) {
+  public IsCountermeasureNotApplying(mit: Countermeasure) {
     return mit.MitigationState == MitigationStates.NotApplicable;
   }
 
-  public SelectMitigation(mit: MitigationMapping) {
-    this.selectedMitigations = [mit];
+  public SelectCountermeasure(mit: Countermeasure) {
+    this.selectedCountermeasures = [mit];
 
     if (mit.Targets?.length > 0) this.selectedObjectChanged.emit(mit.Targets[0]);
   }
 
-  public OnDeleteMapping(entry: MitigationMapping) {
-    this.dataService.Project.DeleteMitigationMapping(entry);
-    this.RefreshMitigations();
+  public OnDeleteMapping(entry: Countermeasure) {
+    this.dataService.Project.DeleteCountermeasure(entry);
+    this.RefreshCountermeasures();
   }
 
   public ResetNumbers() {
-    const maps = this.dataService.Project.GetMitigationMappings().sort((a, b) => {
+    const maps = this.dataService.Project.GetCountermeasures().sort((a, b) => {
       return Number(a.Number) - Number(b.Number);
     });
 
@@ -195,11 +195,11 @@ export class MitigationTableComponent implements OnInit {
     }
   }
 
-  public ViewMitigationProcess(entry: MitigationMapping) {
+  public ViewMitigationProcess(entry: Countermeasure) {
     this.dialog.OpenMitigationProcessDialog(entry.MitigationProcess, false);
   }
 
-  public AddMitigationProcess(entry: MitigationMapping) {
+  public AddMitigationProcess(entry: Countermeasure) {
     let proc = this.dataService.Project.CreateMitigationProcess();
     entry.MitigationProcess = proc;
     this.dialog.OpenMitigationProcessDialog(proc, true).subscribe(res => {
@@ -209,15 +209,15 @@ export class MitigationTableComponent implements OnInit {
     });
   }
 
-  public GetPossibleMitigationProcesses(entry: MitigationMapping) {
+  public GetPossibleMitigationProcesses(entry: Countermeasure) {
     return this.dataService.Project.GetMitigationProcesses().filter(x => x != entry.MitigationProcess);
   }
 
-  public AddExistingMitigationProcess(entry: MitigationMapping, proc: MitigationProcess) {
+  public AddExistingMitigationProcess(entry: Countermeasure, proc: MitigationProcess) {
     entry.MitigationProcess = proc;
   }
 
-  public OpenContextMenu(event, entry: MitigationMapping) {
+  public OpenContextMenu(event, entry: Countermeasure) {
     event.preventDefault();
 
     this.menuTopLeftPosition.x = event.clientX + 'px'; 
@@ -227,27 +227,27 @@ export class MitigationTableComponent implements OnInit {
     this.matMenuTrigger.openMenu(); 
   }
 
-  public GetStateIcon(entry: MitigationMapping) {
+  public GetStateIcon(entry: Countermeasure) {
     if (entry.MappingState == MappingStates.New) return 'add';
     if (entry.MappingState == MappingStates.Removed) return 'remove';
     return '';
   }
 
-  public GetCreationTypeIcon(entry: MitigationMapping) {
+  public GetCreationTypeIcon(entry: Countermeasure) {
     if (entry.IsGenerated) return 'settings_suggest';
     else return 'handyman';
   }
 
-  public GetCreationTypeIconTooltip(entry: MitigationMapping) {
+  public GetCreationTypeIconTooltip(entry: Countermeasure) {
     if (entry.IsGenerated) return 'general.Generated';
     else return 'general.Manual';
   }
 
-  public GetThreatOrigins(entry: MitigationMapping) {
+  public GetThreatOrigins(entry: Countermeasure) {
     return entry.ThreatOrigins.map(x => x.GetProperty('Name')).join(', ');
   }
 
-  public GetTargets(entry: MitigationMapping) {
+  public GetTargets(entry: Countermeasure) {
     return entry.Targets.filter(x => x).map(x => x.GetProperty('Name')).join(', ');
   }
 

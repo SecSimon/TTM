@@ -4,13 +4,13 @@
   border-color: currentColor;
 }
 
-.selected-mitigation {
+.selected-countermeasure {
   td {
     @extend .primary-color;
   }
 }
 
-.removed-mitigation {
+.removed-countermeasure {
   opacity: 0.3;
 }
 

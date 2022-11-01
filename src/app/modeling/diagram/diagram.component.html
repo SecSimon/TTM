@@ -6,7 +6,7 @@
     <button mat-button class="toolBtn" [class.toolBtn-Selected]="Dia.MouseMode == 'pan'" (click)="Dia.SetPan()" matTooltip="{{'pages.modeling.diagram.pan' | translate}}" matTooltipShowDelay="1000">
       <mat-icon>pan_tool</mat-icon>
     </button>
-    <button mat-button class="toolBtn" [class.toolBtn-Selected]="Dia.MouseMode == 'move'" (click)="Dia.SetMove()" matTooltip="{{'pages.modeling.diagram.move' | translate}}" matTooltipShowDelay="1000">
+    <button mat-button class="toolBtn" [disabled]="true" [class.toolBtn-Selected]="Dia.MouseMode == 'move'" (click)="Dia.SetMove()" matTooltip="{{'pages.modeling.diagram.move' | translate}}" matTooltipShowDelay="1000">
       <mat-icon>highlight_alt</mat-icon>
     </button>
     <button mat-button class="toolBtn" [class.toolBtn-Selected]="Dia.ShowGrid" (click)="Dia.ShowGrid = !Dia.ShowGrid" matTooltip="{{'pages.modeling.diagram.showGrid' | translate}}" matTooltipShowDelay="1000">
@@ -99,7 +99,7 @@
     <button mat-button class="toolBtn" [disabled]="!selectedElement" (click)="Dia.AddThreat()" matTooltip="{{'pages.modeling.diagram.addThreat' | translate}}" matTooltipShowDelay="1000">
       <mat-icon>flash_on</mat-icon>
     </button>
-    <button mat-button class="toolBtn" [disabled]="!selectedElement" (click)="Dia.AddMitigation()" matTooltip="{{'pages.modeling.diagram.addMitigation' | translate}}" matTooltipShowDelay="1000">
+    <button mat-button class="toolBtn" [disabled]="!selectedElement" (click)="Dia.AddCountermeasure()" matTooltip="{{'pages.modeling.diagram.addCountermeasure' | translate}}" matTooltipShowDelay="1000">
       <mat-icon>security</mat-icon>
     </button>
     <button mat-button class="toolBtn" color="accent" [disabled]="!Dia.IsCreatingFlow" (click)="Dia.CancelCreateFlow()" matTooltip="{{'pages.modeling.diagram.cancelCreateFlow' | translate}}" matTooltipShowDelay="1000" *ngIf="Dia.Diagram.DiagramType != 'HW'">
@@ -154,9 +154,9 @@
           <mat-icon>flash_on</mat-icon>
           <span>{{'pages.modeling.diagram.addThreat' | translate}}</span>
         </button>
-        <button mat-menu-item (click)="Dia.AddMitigation()">
+        <button mat-menu-item (click)="Dia.AddCountermeasure()">
           <mat-icon>security</mat-icon>
-          <span>{{'pages.modeling.diagram.addMitigation' | translate}}</span>
+          <span>{{'pages.modeling.diagram.addCountermeasure' | translate}}</span>
         </button>
         <button mat-menu-item (click)="Dia.SendToBack()">
           <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" version="1.1">

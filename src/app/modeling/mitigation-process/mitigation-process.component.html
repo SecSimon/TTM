@@ -11,9 +11,9 @@
   </mat-form-field>
   <br/>
   <mat-form-field appearance="fill" class="property-form-field">
-    <mat-label>{{'properties.MitigationMappings' | translate}}</mat-label>
-    <mat-select [(value)]="mitigationProcess.MitigationMappings" multiple (selectionChange)="mitigationMappingsChange.emit()" matTooltip="{{GetMitigationMappingsName(mitigationProcess.MitigationMappings)}}" matTooltipShowDelay="1000">
-      <mat-option *ngFor="let map of GetMitigationMappings()" [value]="map">{{map.Name}}</mat-option>
+    <mat-label>{{'properties.Countermeasures' | translate}}</mat-label>
+    <mat-select [(value)]="mitigationProcess.Countermeasures" multiple (selectionChange)="countermeasuresChange.emit()" matTooltip="{{GetCountermeasuresName(mitigationProcess.Countermeasures)}}" matTooltipShowDelay="1000">
+      <mat-option *ngFor="let map of GetCountermeasures()" [value]="map">{{map.Name}}</mat-option>
     </mat-select>
   </mat-form-field>
   <mat-icon style="margin-left: 10px;" matTooltip="{{'general.Progress' | translate}}" matTooltipShowDelay="1000">north_east</mat-icon>
@@ -31,10 +31,10 @@
     <app-notes [showTimestamp]="true" [hasCheckbox]="false" [canToggleCheckbox]="true" [notes]="mitigationProcess.Notes"></app-notes>
   </div>
   <mat-accordion class="expansion-panel-headers-align" style="pointer-events: initial;">
-    <mat-expansion-panel *ngFor="let map of mitigationProcess.MitigationMappings">
+    <mat-expansion-panel *ngFor="let map of mitigationProcess.Countermeasures">
       <mat-expansion-panel-header>
         <mat-panel-title>
-          {{'general.MitigationMappingInfo' | translate}}
+          {{'general.CountermeasureInfo' | translate}}
         </mat-panel-title>
         <mat-panel-description>
           {{map.Name}}
@@ -42,7 +42,7 @@
         </mat-panel-description>
       </mat-expansion-panel-header>
       <ng-template matExpansionPanelContent>
-        <app-mitigation-mapping [mitigationMapping]="map"></app-mitigation-mapping>
+        <app-countermeasure [countermeasure]="map"></app-countermeasure>
       </ng-template>
     </mat-expansion-panel>
   </mat-accordion>

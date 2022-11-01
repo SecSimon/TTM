@@ -19,7 +19,7 @@
   </div>
 </div>
 <div style="padding: 5px 10px;">
-  <mat-icon>chevron_right</mat-icon><input matInput [spellcheck]="dataService.HasSpellCheck" style="width: calc(100% - 24px); vertical-align: super; font-size: 14px;" (keydown)="OnKeyDown($event)" placeholder="{{'pages.modeling.charscope.addDescription' | translate}}"/>
+  <mat-icon>chevron_right</mat-icon><input matInput #newNote [spellcheck]="dataService.HasSpellCheck" style="width: calc(100% - 24px); vertical-align: super; font-size: 14px;" (keydown)="OnKeyDown($event)" placeholder="{{'pages.modeling.charscope.addDescription' | translate}}"/>
 </div>
 <mat-menu #moreMenu="matMenu">
   <ng-template matMenuContent let-item="item">

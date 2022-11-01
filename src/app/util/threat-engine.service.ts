@@ -4,7 +4,7 @@ import { DatabaseBase, ViewElementBase } from '../model/database';
 import { DataFlow, DFDContainerRef, DFDElement, DFDElementRef, ElementTypeIDs, IElementTypeThreat } from '../model/dfd-model';
 import { CtxDiagram, Diagram, DiagramTypes, HWDFDiagram } from '../model/diagram';
 import { FlowArrowPositions } from '../model/system-context';
-import { IPropertyRestriction, MappingStates, ThreatMapping, RuleTypes, ITypeIDs, IDetailRestriction, RestrictionTypes, ThreatRule, RuleGenerationTypes, PropertyComparisonTypes, ThreatQuestion, ThreatStates } from '../model/threat-model';
+import { IPropertyRestriction, MappingStates, AttackScenario, RuleTypes, ITypeIDs, IDetailRestriction, RestrictionTypes, ThreatRule, RuleGenerationTypes, PropertyComparisonTypes, ThreatQuestion, ThreatStates } from '../model/threat-model';
 import { DataService } from './data.service';
 import { DialogService } from './dialog.service';
 
@@ -23,27 +23,27 @@ export class ThreatEngineService {
    * Generate threats for all diagrams and MyComponent stacks
    * @returns all threats
    */
-  public GenerateAllThreats(): ThreatMapping[] {
+  public GenerateAllThreats(): AttackScenario[] {
     let pf = this.dataService.Project;
     pf.GetDiagrams().forEach(x => this.GenerateDiagramThreats(x));
     pf.GetStacks().forEach(x => this.GenerateStackThreats(x));
-    return pf.GetThreatMappings();
+    return pf.GetAttackScenarios();
   }
 
   /**
    * Generate threats for given diagram
    * @param diagram the diagram
-   * @returns list of threat mappings belonging to the given diagram
+   * @returns list of attack scenarios belonging to the given diagram
    */
-  public GenerateDiagramThreats(diagram: Diagram): ThreatMapping[] {
+  public GenerateDiagramThreats(diagram: Diagram): AttackScenario[] {
     if (!diagram.Elements) return [];
     let pf = this.dataService.Project;
   
     //console.log('gen threats');
-    pf.GetThreatMappings().filter(x => x.ViewID == diagram.ID && !x.IsGenerated).forEach(x => x.MappingState = MappingStates.Stable);
-    let mappingsBefore = pf.GetThreatMappings().filter(x => x.ViewID == diagram.ID && x.IsGenerated); // current threats
+    pf.GetAttackScenarios().filter(x => x.ViewID == diagram.ID && !x.IsGenerated).forEach(x => x.MappingState = MappingStates.Stable);
+    let mappingsBefore = pf.GetAttackScenarios().filter(x => x.ViewID == diagram.ID && x.IsGenerated); // current threats
     mappingsBefore.forEach(x => x.RuleStillApplies = true);
-    mappingsBefore.filter(x => x.MappingState == MappingStates.Removed).forEach(x => pf.DeleteThreatMapping(x)); // delete threats that are marked to remove
+    mappingsBefore.filter(x => x.MappingState == MappingStates.Removed).forEach(x => pf.DeleteAttackScenario(x)); // delete threats that are marked to remove
     mappingsBefore = mappingsBefore.filter(x => x.MappingState != MappingStates.Removed); // update current threats
 
     let checkElements = (ruleType: RuleTypes, elements: DFDElement[]) => {
@@ -58,7 +58,7 @@ export class ThreatEngineService {
               mappingsBefore.splice(mappingsBefore.findIndex(x => x.ID == existing.ID), 1); // remove from list as this mapping still applies
             }
             else {
-              const map = pf.CreateThreatMapping(diagram.ID, true);
+              const map = pf.CreateAttackScenario(diagram.ID, true);
               map.SetMapping(rule.ThreatOrigin?.ID, rule.ThreatCategories.map(x => x.ID), m.target, m.elements, rule, null);
             }
           });
@@ -80,7 +80,7 @@ export class ThreatEngineService {
             mappingsBefore.splice(mappingsBefore.findIndex(x => x.ID == existing.ID), 1); // remove from list as this mapping still applies
           }
           else {
-            let map = pf.CreateThreatMapping(diagram.ID, true);
+            let map = pf.CreateAttackScenario(diagram.ID, true);
             map.SetMapping(rule.ThreatOrigin?.ID, rule.ThreatCategories.map(x => x.ID), appliedElements.length == 1 ? appliedElements[0] : null, appliedElements, rule, null);
             // if (ruleType == RuleTypes.DFD) {
             //   // todo
@@ -104,20 +104,20 @@ export class ThreatEngineService {
       if (x.ThreatState == ThreatStates.NotSet) x.MappingState = MappingStates.Removed; // mark all mappings that does not apply anymore as to remove
       else x.RuleStillApplies = false;
     });
-    return pf.GetThreatMappings().filter(x => x.ViewID == diagram.ID);
+    return pf.GetAttackScenarios().filter(x => x.ViewID == diagram.ID);
   }
 
   /**
    * Generate threats for given component stack
    * @param stack the component stack
-   * @returns list of threat mappings belonging to the given stack
+   * @returns list of attack scenarios belonging to the given stack
    */
-  public GenerateStackThreats(stack: MyComponentStack): ThreatMapping[] {
+  public GenerateStackThreats(stack: MyComponentStack): AttackScenario[] {
     let pf = this.dataService.Project;
 
-    pf.GetThreatMappings().filter(x => x.ViewID == stack.ID && !x.IsGenerated).forEach(x => x.MappingState = MappingStates.Stable);
-    let mappingsBefore = pf.GetThreatMappings().filter(x => x.ViewID == stack.ID && x.IsGenerated); // current threats
-    mappingsBefore.filter(x => x.MappingState == MappingStates.Removed).forEach(x => pf.DeleteThreatMapping(x)); // delete threats that are marked to remove
+    pf.GetAttackScenarios().filter(x => x.ViewID == stack.ID && !x.IsGenerated).forEach(x => x.MappingState = MappingStates.Stable);
+    let mappingsBefore = pf.GetAttackScenarios().filter(x => x.ViewID == stack.ID && x.IsGenerated); // current threats
+    mappingsBefore.filter(x => x.MappingState == MappingStates.Removed).forEach(x => pf.DeleteAttackScenario(x)); // delete threats that are marked to remove
     mappingsBefore = mappingsBefore.filter(x => x.MappingState != MappingStates.Removed); // update current threats
 
     let checkComponents = (components: MyComponent[]) => {
@@ -132,7 +132,7 @@ export class ThreatEngineService {
               mappingsBefore.splice(mappingsBefore.findIndex(x => x.ID == existing.ID), 1); // remove from list as this mapping still applies
             }
             else {
-              const map = pf.CreateThreatMapping(stack.ID, true);
+              const map = pf.CreateAttackScenario(stack.ID, true);
               let quest: ThreatQuestion = null;
               if (rule.ComponentRestriction.DetailRestrictions.length == 1) {
                 quest = pf.Config.GetThreatQuestions().find(y => y.ComponentType.ID == component.Type.ID && y.Property.ID == rule.ComponentRestriction.DetailRestrictions[0].PropertyRest.ID);
@@ -150,13 +150,13 @@ export class ThreatEngineService {
       if (x.ThreatState == ThreatStates.NotSet) x.MappingState = MappingStates.Removed; // mark all mappings that does not apply anymore as to remove
       else x.RuleStillApplies = false;
     });
-    return pf.GetThreatMappings().filter(x => x.ViewID == stack.ID);
+    return pf.GetAttackScenarios().filter(x => x.ViewID == stack.ID);
   }
 
   public AddMnemonicThreat(element: DFDElement, letter: IElementTypeThreat) {
     if (element) {
       let dia = this.dataService.Project.FindDiagramOfElement(element.ID);
-      let map = this.dataService.Project.CreateThreatMapping(dia.ID, false);
+      let map = this.dataService.Project.CreateAttackScenario(dia.ID, false);
       map.SetMapping('', [], element, [], null, null);
       map.IsGenerated = false;
       map.Name = letter.Name;
@@ -164,10 +164,10 @@ export class ThreatEngineService {
       if (letter.threatCategoryID) {
         map.ThreatCategories = [this.dataService.Config.GetThreatCategory(letter.threatCategoryID)];
       }
-      const dialogRef = this.dialog.OpenThreatMappingDialog(map, true);
+      const dialogRef = this.dialog.OpenAttackScenarioDialog(map, true);
       dialogRef.subscribe(result => {
         if (!result) {
-          this.dataService.Project.DeleteThreatMapping(map);
+          this.dataService.Project.DeleteAttackScenario(map);
         }
       });
       return dialogRef;
@@ -381,10 +381,10 @@ export class ThreatEngineService {
    * @param rule matching rule
    * @param target matching element
    * @param targets matching elements
-   * @returns ThreatMapping if a mapping for this rule on this element has already been created 
+   * @returns AttackScenario if a mapping for this rule on this element has already been created 
    */
-  private checkForExistingMapping(rule: ThreatRule, target: ViewElementBase, targets: ViewElementBase[]): ThreatMapping {
-    return this.dataService.Project.GetThreatMappings().find(x => {
+  private checkForExistingMapping(rule: ThreatRule, target: ViewElementBase, targets: ViewElementBase[]): AttackScenario {
+    return this.dataService.Project.GetAttackScenarios().find(x => {
       let res = x.ThreatOrigin?.ID == rule.ThreatOrigin?.ID && x.ThreatRule?.ID == rule.ID && x.Target?.ID == target?.ID;
       // if (rule.RuleType == RuleTypes.DFD && rule.RuleGenerationType == RuleGenerationTypes.EachElement) {
       //   res = res && x.Targets.length == 3 && x.Targets[0].ID == (target as DataFlow).Sender.ID && x.Targets[1].ID == (target as DataFlow).ID && x.Targets[2].ID == (target as DataFlow).Receiver.ID;

@@ -1,26 +1,26 @@
-<div *ngIf="mitigation" [class.disable]="!canEdit">
+<div *ngIf="control" [class.disable]="!canEdit">
   <mat-form-field appearance="fill" class="property-form-field" *ngIf="canEditName">
     <mat-label>{{ 'properties.Name' | translate }}</mat-label>
-    <input matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="mitigation.Name"/>
-    <button *ngIf="mitigation.Name" matSuffix mat-icon-button (click)="mitigation.Name=''" matTooltip="{{'general.Clear' | translate}}" matTooltipShowDelay="1000">
+    <input matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="control.Name"/>
+    <button *ngIf="control.Name" matSuffix mat-icon-button (click)="control.Name=''" matTooltip="{{'general.Clear' | translate}}" matTooltipShowDelay="1000">
       <mat-icon>close</mat-icon>
     </button>
   </mat-form-field>
   <mat-form-field appearance="fill" style="width: 100%;">
     <mat-label>{{ 'properties.Description' | translate }}</mat-label>
-    <textarea matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="mitigation.Description"></textarea>
+    <textarea matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="control.Description"></textarea>
   </mat-form-field>
   <mat-form-field appearance="fill" class="property-form-field" *ngIf="canEditGroup">
     <mat-label>{{'general.Group' | translate}}</mat-label>
-    <mat-select [value]="GetMitigationGroup()" (selectionChange)="OnMitigationGroupChanged($event)" matTooltip="{{GetMitigationGroup()?.Name}}" matTooltipShowDelay="1000">
-      <mat-option *ngFor="let group of GetMitigationGroups()" [value]="group">
+    <mat-select [value]="GetControlGroup()" (selectionChange)="OnControlGroupChanged($event)" matTooltip="{{GetControlGroup()?.Name}}" matTooltipShowDelay="1000">
+      <mat-option *ngFor="let group of GetControlGroups()" [value]="group">
         {{group.Name}}
       </mat-option>
     </mat-select>
   </mat-form-field>
   <mat-form-field appearance="fill" style="width: 100%;">
     <mat-label>{{'properties.MitigatedThreatOrigins' | translate}}</mat-label>
-    <mat-select [(value)]="mitigation.MitigatedThreatOrigins" multiple>
+    <mat-select [(value)]="control.MitigatedThreatOrigins" multiple>
       <mat-optgroup *ngFor="let group of GetAvailableThreatOriginGroups()" [label]="group.Name">
         <mat-option *ngFor="let threat of group.ThreatOrigins" [value]="threat">
           {{threat.Name}}
@@ -30,7 +30,7 @@
   </mat-form-field>
   <mat-form-field appearance="fill" style="width: 100%;">
     <mat-label>{{'properties.MitigatedThreatRules' | translate}}</mat-label>
-    <mat-select [(value)]="mitigation.MitigatedThreatRules" multiple>
+    <mat-select [(value)]="control.MitigatedThreatRules" multiple>
       <mat-optgroup *ngFor="let group of GetAvailableThreatRuleGroups()" [label]="group.Name">
         <mat-option *ngFor="let threat of group.ThreatRules" [value]="threat">
           {{threat.Name}}
@@ -40,9 +40,9 @@
   </mat-form-field>
   <div class="row">
     <div class="column1">
-      <mat-list cdkDropList (cdkDropListDropped)="drop($event, mitigation.MitigationTips)" class="prop-list reorder-list" [class.prop-list-light]="!theme.IsDarkMode" [class.prop-list-dark]="theme.IsDarkMode">
-        <div mat-subheader>{{mitigation.Name}} {{ 'general.Tips' | translate }} <button mat-icon-button (click)="AddTip()" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000" style="margin-left: 15px;"><mat-icon>add</mat-icon></button></div>
-        <mat-list-item *ngFor="let tip of mitigation.MitigationTips" (click)="selectedMitigationTip = tip" cdkDrag
+      <mat-list cdkDropList (cdkDropListDropped)="drop($event, control.MitigationTips)" class="prop-list reorder-list" [class.prop-list-light]="!theme.IsDarkMode" [class.prop-list-dark]="theme.IsDarkMode">
+        <div mat-subheader>{{control.Name}} {{ 'general.Tips' | translate }} <button mat-icon-button (click)="AddTip()" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000" style="margin-left: 15px;"><mat-icon>add</mat-icon></button></div>
+        <mat-list-item *ngFor="let tip of control.MitigationTips" (click)="selectedMitigationTip = tip" cdkDrag
         [class.highlight-light]="selectedMitigationTip === tip && !theme.IsDarkMode" [class.highlight-dark]="selectedMitigationTip === tip && theme.IsDarkMode"
         matTooltip="{{tip.Name}}" matTooltipShowDelay="1000">
           <mat-icon mat-list-icon>chevron_right</mat-icon>
@@ -67,11 +67,11 @@
         </mat-form-field>
         <table style="margin-top: 10px;">
           <tr>
-            <td style="text-align: center;" ><strong>{{'pages.config.mitigation.mitigation' | translate}}</strong></td>
+            <td style="text-align: center;" ><strong>{{'pages.config.control.control' | translate}}</strong></td>
             <td style="padding: 0 3px 0 3px;" *ngFor="let lc of GetLifeCycles()">{{GetLifeCycleName(lc) | translate}}</td>
           </tr>
           <tr>
-            <td style="text-align: center;" ><strong>{{'pages.config.mitigation.during' | translate}}</strong></td>
+            <td style="text-align: center;" ><strong>{{'pages.config.control.during' | translate}}</strong></td>
             <td style="text-align: center;" *ngFor="let lc of GetLifeCycles()"><mat-checkbox color="primary" [checked]="ContainsLifeCycle(lc)" (change)="SetLifeCycle(lc, $event)"></mat-checkbox></td>
           </tr>
         </table>
@@ -80,7 +80,7 @@
   </div>
   <br/>
   <mat-accordion class="expansion-panel-headers-align" style="pointer-events: initial;">
-    <mat-expansion-panel *ngFor="let threat of mitigation.MitigatedThreatOrigins">
+    <mat-expansion-panel *ngFor="let threat of control.MitigatedThreatOrigins">
       <mat-expansion-panel-header>
         <mat-panel-title>
           {{'properties.MitigatedThreatOrigin' | translate}}
@@ -94,7 +94,7 @@
         <app-threat-origin [canEdit]="false" [threatOrigin]="threat"></app-threat-origin>
       </ng-template>
     </mat-expansion-panel>
-    <mat-expansion-panel *ngFor="let threat of mitigation.MitigatedThreatRules">
+    <mat-expansion-panel *ngFor="let threat of control.MitigatedThreatRules">
       <mat-expansion-panel-header>
         <mat-panel-title>
           {{'properties.MitigatedThreatRule' | translate}}

@@ -1,7 +1,7 @@
 import { ConfigFile } from "./config-file";
 import { DatabaseBase, DataReferenceTypes, IDataReferences, INote, ViewElementBase } from "./database";
 import { ProjectFile } from "./project-file";
-import { LifeCycle, MappingStates, ThreatMapping, ThreatOrigin, ThreatRule } from "./threat-model";
+import { LifeCycle, MappingStates, AttackScenario, ThreatOrigin, ThreatRule } from "./threat-model";
 
 export interface IMitigationTip {
   Name: string;
@@ -9,7 +9,7 @@ export interface IMitigationTip {
   LifeCycles: LifeCycle[];
 }
 
-export class Mitigation extends DatabaseBase {
+export class Control extends DatabaseBase {
   private config: ConfigFile;
 
   public get MitigatedThreatOrigins(): ThreatOrigin[] { 
@@ -72,40 +72,40 @@ export class Mitigation extends DatabaseBase {
   public FindReferences(pf: ProjectFile, cf: ConfigFile): IDataReferences[] {
     let res: IDataReferences[] = [];
 
-    pf?.GetMitigationMappings().filter(x => x.Mitigation == this).forEach(x => res.push({ Type: DataReferenceTypes.DeleteMitigationMapping, Param: x }));
+    pf?.GetCountermeasures().filter(x => x.Control == this).forEach(x => res.push({ Type: DataReferenceTypes.DeleteCountermeasure, Param: x }));
 
     return res;
   }
 
   public OnDelete(pf: ProjectFile, cf: ConfigFile) {
-    let group = cf.FindGroupOfMitigation(this);
-    if (group) group.RemoveMitigation(this);
+    let group = cf.FindGroupOfControl(this);
+    if (group) group.RemoveControl(this);
 
     let refs = this.FindReferences(pf, cf);
 
     refs.forEach(ref => {
-      if (ref.Type == DataReferenceTypes.DeleteMitigationMapping) {
-        pf.DeleteMitigationMapping(ref.Param as MitigationMapping);
+      if (ref.Type == DataReferenceTypes.DeleteCountermeasure) {
+        pf.DeleteCountermeasure(ref.Param as Countermeasure);
       }
     });
   }
 
-  public static FromJSON(data, cf: ConfigFile): Mitigation {
-    return new Mitigation(data, cf);
+  public static FromJSON(data, cf: ConfigFile): Control {
+    return new Control(data, cf);
   }
 }
 
-export class MitigationGroup extends DatabaseBase {
+export class ControlGroup extends DatabaseBase {
   private config: ConfigFile;
 
-  public get SubGroups(): MitigationGroup[] { 
+  public get SubGroups(): ControlGroup[] { 
     let res = [];
-    this.Data['mitigationGroupIDs'].forEach(id => res.push(this.config.GetMitigationGroup(id)));
+    this.Data['controlGroupIDs'].forEach(id => res.push(this.config.GetControlGroup(id)));
     return res;
   }
-  public get Mitigations(): Mitigation[] { 
+  public get Controls(): Control[] { 
     let res = [];
-    this.Data['mitigationIDs'].forEach(id => res.push(this.config.GetMitigation(id)));
+    this.Data['controlIDs'].forEach(id => res.push(this.config.GetControl(id)));
     return res;
   }
 
@@ -113,35 +113,35 @@ export class MitigationGroup extends DatabaseBase {
     super(data);
     this.config = cf;
 
-    if (!this.Data['mitigationGroupIDs']) { this.Data['mitigationGroupIDs'] = []; }
-    if (!this.Data['mitigationIDs']) { this.Data['mitigationIDs'] = []; }
+    if (!this.Data['controlGroupIDs']) { this.Data['controlGroupIDs'] = []; }
+    if (!this.Data['controlIDs']) { this.Data['controlIDs'] = []; }
   }
 
-  public AddMitigationGroup(group: MitigationGroup) {
-    if (!this.SubGroups.includes(group)) this.Data['mitigationGroupIDs'].push(group.ID);
+  public AddControlGroup(group: ControlGroup) {
+    if (!this.SubGroups.includes(group)) this.Data['controlGroupIDs'].push(group.ID);
   }
 
-  public RemoveMitigationGroup(mit: MitigationGroup) {
+  public RemoveControlGroup(mit: ControlGroup) {
     if (this.SubGroups.includes(mit)) {
-      this.Data['mitigationGroupIDs'].splice(this.Data['mitigationGroupIDs'].indexOf(mit.ID), 1);
+      this.Data['controlGroupIDs'].splice(this.Data['controlGroupIDs'].indexOf(mit.ID), 1);
     }
   }
 
-  public AddMitigation(mit: Mitigation) {
-    if (!this.Mitigations.includes(mit)) this.Data['mitigationIDs'].push(mit.ID);
+  public AddControl(mit: Control) {
+    if (!this.Controls.includes(mit)) this.Data['controlIDs'].push(mit.ID);
   }
 
-  public RemoveMitigation(mit: Mitigation) {
-    if (this.Mitigations.includes(mit)) {
-      this.Data['mitigationIDs'].splice(this.Data['mitigationIDs'].indexOf(mit.ID), 1);
+  public RemoveControl(mit: Control) {
+    if (this.Controls.includes(mit)) {
+      this.Data['controlIDs'].splice(this.Data['controlIDs'].indexOf(mit.ID), 1);
     }
   }
 
   public FindReferences(pf: ProjectFile, cf: ConfigFile): IDataReferences[] {
     let res: IDataReferences[] = [];
 
-    this.SubGroups.forEach(x => res.push({ Type: DataReferenceTypes.DeleteMitigationGroup, Param: x }));
-    this.Mitigations.forEach(x => res.push({ Type: DataReferenceTypes.DeleteMitigation, Param: x }));
+    this.SubGroups.forEach(x => res.push({ Type: DataReferenceTypes.DeleteControlGroup, Param: x }));
+    this.Controls.forEach(x => res.push({ Type: DataReferenceTypes.DeleteControl, Param: x }));
 
     return res;
   }
@@ -150,19 +150,19 @@ export class MitigationGroup extends DatabaseBase {
     let refs = this.FindReferences(pf, cf);
 
     refs.forEach(ref => {
-      if (ref.Type == DataReferenceTypes.DeleteMitigation) {
-        cf.DeleteMitigation(ref.Param as Mitigation);
+      if (ref.Type == DataReferenceTypes.DeleteControl) {
+        cf.DeleteControl(ref.Param as Control);
       }
-      else if (ref.Type == DataReferenceTypes.DeleteMitigationGroup) {
-        cf.DeleteMitigationGroup(ref.Param as MitigationGroup);
+      else if (ref.Type == DataReferenceTypes.DeleteControlGroup) {
+        cf.DeleteControlGroup(ref.Param as ControlGroup);
       }
     });
 
-    cf.FindGroupOfMitigationGroup(this).RemoveMitigationGroup(this);
+    cf.FindGroupOfControlGroup(this).RemoveControlGroup(this);
   }
 
-  public static FromJSON(data, cf: ConfigFile): MitigationGroup {
-    return new MitigationGroup(data, cf);
+  public static FromJSON(data, cf: ConfigFile): ControlGroup {
+    return new ControlGroup(data, cf);
   }
 }
 
@@ -172,12 +172,12 @@ export enum MitigationStates {
   Rejected = 3,
   NeedsInvestigation = 4,
   MitigationStarted = 5,
-  Mitigated = 6
+  Implemented = 6
 }
 
 export class MitigationStateUtil {
   public static GetMitigationStates(): MitigationStates[] {
-    return [MitigationStates.NotSet, MitigationStates.NotApplicable, MitigationStates.Rejected, MitigationStates.NeedsInvestigation, MitigationStates.MitigationStarted, MitigationStates.Mitigated];
+    return [MitigationStates.NotSet, MitigationStates.NotApplicable, MitigationStates.Rejected, MitigationStates.NeedsInvestigation, MitigationStates.MitigationStarted, MitigationStates.Implemented];
   }
 
   public static ToString(state: MitigationStates): string {
@@ -186,8 +186,8 @@ export class MitigationStateUtil {
       case MitigationStates.NotApplicable: return 'properties.mitigationstate.NotApplicable';
       case MitigationStates.Rejected: return 'properties.mitigationstate.Rejected';
       case MitigationStates.NeedsInvestigation: return 'properties.mitigationstate.NeedsInvestigation';
-      case MitigationStates.MitigationStarted: return 'properties.mitigationstate.MitigationStarted';
-      case MitigationStates.Mitigated: return 'properties.mitigationstate.Mitigated';
+      case MitigationStates.MitigationStarted: return 'properties.mitigationstate.ImplementationStarted';
+      case MitigationStates.Implemented: return 'properties.mitigationstate.Implemented';
       default:
         console.error('Missing State in MitigationStateUtil.ToString()', state)
         return 'Undefined';
@@ -198,7 +198,7 @@ export class MitigationStateUtil {
 /**
  * Class for mitigations in project
  */
-export class MitigationMapping extends DatabaseBase {
+export class Countermeasure extends DatabaseBase {
   private project: ProjectFile;
   private config: ConfigFile;
 
@@ -206,7 +206,7 @@ export class MitigationMapping extends DatabaseBase {
     if (this.Data['Name'] != null) return this.Data['Name']; 
 
     let res = '';
-    if (this.Mitigation) res += this.Mitigation.Name + ' for ';
+    if (this.Control) res += this.Control.Name + ' for ';
     if (this.Targets) res += this.Targets.filter(x => x).map(x => x.GetProperty('Name')).join(', ');
     return res;
   }
@@ -228,8 +228,8 @@ export class MitigationMapping extends DatabaseBase {
   public get RuleStillApplies(): boolean { return this.Data['RuleStillApplies']; }
   public set RuleStillApplies(val: boolean) { this.Data['RuleStillApplies'] = val; }
 
-  public get Mitigation(): Mitigation { return this.config.GetMitigation(this.Data['mitigationID']); }
-  public set Mitigation(val: Mitigation) { this.Data['mitigationID'] = val?.ID; }
+  public get Control(): Control { return this.config.GetControl(this.Data['controlID']); }
+  public set Control(val: Control) { this.Data['controlID'] = val?.ID; }
   // public get Target(): ViewElementBase {
   //   let target: any = this.project.GetDFDElement(this.Data['targetID']);
   //   if (!target) target = this.project.GetComponent(this.Data['targetID']);
@@ -256,18 +256,18 @@ export class MitigationMapping extends DatabaseBase {
     return res;
   }
   public set Targets(val: ViewElementBase[]) { this.Data['targetIDs'] = val.map(x => x.ID); }
-  public get ThreatMappings(): ThreatMapping[] {
-    let res: ThreatMapping[] = [];
-    this.Data['threatMappingIDs'].forEach(x => res.push(this.project.GetThreatMapping(x)));
+  public get AttackScenarios(): AttackScenario[] {
+    let res: AttackScenario[] = [];
+    this.Data['attackScenarioIDs'].forEach(x => res.push(this.project.GetAttackScenario(x)));
     return res;
   }
-  public set ThreatMappings(val: ThreatMapping[]) { this.Data['threatMappingIDs'] = val?.map(x => x.ID); }
+  public set AttackScenarios(val: AttackScenario[]) { this.Data['attackScenarioIDs'] = val?.map(x => x.ID); }
 
   public get MitigationProcess(): MitigationProcess { return this.project.GetMitigationProcess(this.Data['mitigationProcessID']); }
   public set MitigationProcess(val: MitigationProcess) { this.Data['mitigationProcessID'] = val?.ID; }
 
   public get ThreatOrigins(): ThreatOrigin[] {
-    return this.ThreatMappings?.map(x => x?.ThreatOrigin).filter(x => x).filter((value, index, self) => self.indexOf(value) === index);
+    return this.AttackScenarios?.map(x => x?.ThreatOrigin).filter(x => x).filter((value, index, self) => self.indexOf(value) === index);
   }
 
   constructor(data, pf: ProjectFile, cf: ConfigFile) {
@@ -275,30 +275,30 @@ export class MitigationMapping extends DatabaseBase {
     this.project = pf;
     this.config = cf;
 
-    if (!this.Data['threatMappingIDs']) this.Data['threatMappingIDs'] = [];
+    if (!this.Data['attackScenarioIDs']) this.Data['attackScenarioIDs'] = [];
     if (!this.Data['MitigationState']) this.MitigationState = MitigationStates.NotSet;
   }
 
-  public SetMapping(mitigation: Mitigation, targets: ViewElementBase[], mappings: ThreatMapping[]) {
+  public SetMapping(control: Control, targets: ViewElementBase[], mappings: AttackScenario[]) {
     this.MappingState = MappingStates.New;
-    this.Mitigation = mitigation;
+    this.Control = control;
     this.Targets = targets;
-    this.ThreatMappings = mappings;
+    this.AttackScenarios = mappings;
     this.Name = null;
     this.IsGenerated = true;
     this.RuleStillApplies = true;
   }
 
-  public AddThreatMapping(map: ThreatMapping) {
-    if (!this.ThreatMappings.includes(map)) {
-      this.Data['threatMappingIDs'].push(map.ID);
+  public AddAttackScenario(map: AttackScenario) {
+    if (!this.AttackScenarios.includes(map)) {
+      this.Data['attackScenarioIDs'].push(map.ID);
     }
   }
 
-  public RemoveThreatMapping(mapID: string) {
-    const index = this.Data['threatMappingIDs'].indexOf(mapID); 
+  public RemoveAttackScenario(mapID: string) {
+    const index = this.Data['attackScenarioIDs'].indexOf(mapID); 
     if (index >= 0) {
-      this.Data['threatMappingIDs'].splice(index, 1);
+      this.Data['attackScenarioIDs'].splice(index, 1);
     }
   }
 
@@ -316,10 +316,10 @@ export class MitigationMapping extends DatabaseBase {
   }
 
   public CleanUpReferences() {
-    let mappings = this.ThreatMappings;
+    let mappings = this.AttackScenarios;
     for (let i = mappings.length-1; i >= 0; i--) {
       if (mappings[i] == null) {
-        this.Data['threatMappingIDs'].splice(i, 1);
+        this.Data['attackScenarioIDs'].splice(i, 1);
       }
     }
     let targets = this.Targets;
@@ -339,8 +339,8 @@ export class MitigationMapping extends DatabaseBase {
     this.MappingState = MappingStates.Removed;
   }
 
-  public static FromJSON(data, pf: ProjectFile, cf: ConfigFile): MitigationMapping {
-    return new MitigationMapping(data, pf, cf);
+  public static FromJSON(data, pf: ProjectFile, cf: ConfigFile): Countermeasure {
+    return new Countermeasure(data, pf, cf);
   }
 }
 
@@ -384,11 +384,11 @@ export class MitigationProcess extends DatabaseBase {
   public set Notes(val: INote[]) { this.Data['Notes'] = val; }
   public get MitigationProcessState(): MitigationProcessStates { return this.Data['MitigationProcessState']; }
   public set MitigationProcessState(val: MitigationProcessStates) { this.Data['MitigationProcessState'] = val; }
-  public get MitigationMappings(): MitigationMapping[] { 
-    return this.project.GetMitigationMappings().filter(x => x.MitigationProcess == this);
+  public get Countermeasures(): Countermeasure[] { 
+    return this.project.GetCountermeasures().filter(x => x.MitigationProcess == this);
   }
-  public set MitigationMappings(val: MitigationMapping[]) { 
-    this.MitigationMappings.filter(x => !val.includes(x)).forEach(x => x.MitigationProcess = null);
+  public set Countermeasures(val: Countermeasure[]) { 
+    this.Countermeasures.filter(x => !val.includes(x)).forEach(x => x.MitigationProcess = null);
     val.forEach(x => x.MitigationProcess = this);
   }
 
@@ -405,15 +405,15 @@ export class MitigationProcess extends DatabaseBase {
 
   public FindReferences(pf: ProjectFile, cf: ConfigFile): IDataReferences[] {
     let refs: IDataReferences[] = [];
-    this.MitigationMappings.forEach(x => refs.push({ Type: DataReferenceTypes.RemoveMitigationProcessFromMitigationMapping, Param: x }));
+    this.Countermeasures.forEach(x => refs.push({ Type: DataReferenceTypes.RemoveMitigationProcessFromCountermeasure, Param: x }));
     return refs;
   }
 
   public OnDelete(pf: ProjectFile, cf: ConfigFile) {
     let refs = this.FindReferences(pf, cf);
     refs.forEach(ref => {
-      if (ref.Type == DataReferenceTypes.RemoveMitigationProcessFromMitigationMapping) {
-        (ref.Param as MitigationMapping).MitigationProcess = null;
+      if (ref.Type == DataReferenceTypes.RemoveMitigationProcessFromCountermeasure) {
+        (ref.Param as Countermeasure).MitigationProcess = null;
       }
     })
   }

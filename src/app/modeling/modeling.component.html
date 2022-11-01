@@ -53,15 +53,15 @@
               <mat-tab-group class="bottomTabGroup">
                 <mat-tab>
                   <ng-template mat-tab-label>
-                    <span [matBadge]="currentThreatCount" [matBadgeHidden]="currentThreatCount == 0" matBadgeSize="small" matBadgePosition="below" matBadgeOverlap="false">{{'general.Threats' | translate}}</span>
+                    <span [matBadge]="currentThreatCount" [matBadgeHidden]="currentThreatCount == 0" matBadgeSize="small" matBadgePosition="below" matBadgeOverlap="false">{{'general.AttackScenarios' | translate}}</span>
                   </ng-template>
                   <app-threat-table [selectedNode]="selectedNode" [selectedObject]="selectedObject" (selectedObjectChanged)="selectedObject = $event" (threatCountChanged)="currentThreatCount = $event"></app-threat-table>
                 </mat-tab>
                 <mat-tab>
                   <ng-template mat-tab-label>
-                    <span [matBadge]="currentMitigationCount" [matBadgeHidden]="currentMitigationCount == 0" matBadgeSize="small" matBadgePosition="below" matBadgeOverlap="false">{{'general.Mitigations' | translate}}</span>
+                    <span [matBadge]="currentCountermeasureCount" [matBadgeHidden]="currentCountermeasureCount == 0" matBadgeSize="small" matBadgePosition="below" matBadgeOverlap="false">{{'general.Countermeasures' | translate}}</span>
                   </ng-template>
-                  <app-mitigation-table [selectedNode]="selectedNode" [selectedObject]="selectedObject" (selectedObjectChanged)="selectedObject = $event" (mitigationCountChanged)="currentMitigationCount = $event"></app-mitigation-table>
+                  <app-countermeasure-table [selectedNode]="selectedNode" [selectedObject]="selectedObject" (selectedObjectChanged)="selectedObject = $event" (countermeasureCountChanged)="currentCountermeasureCount = $event"></app-countermeasure-table>
                 </mat-tab>
                 <mat-tab>
                   <ng-template mat-tab-label>

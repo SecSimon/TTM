@@ -1,5 +1,5 @@
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { Component, Input, OnInit, Optional } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, Optional, ViewChild } from '@angular/core';
 import { INote } from '../../../model/database';
 import { DataService } from '../../../util/data.service';
 import { NoteConfig } from '../../../util/dialog.service';
@@ -36,6 +36,8 @@ export class NotesComponent implements OnInit {
 
   public isEdtingArray: boolean[][] = [[], []];
 
+  @ViewChild('newNote') newNote!: ElementRef;
+
   constructor(@Optional() cfg: NoteConfig, public theme: ThemeService, public dataService: DataService) {
     if (cfg) {
       this.showTimestamp = cfg.ShowTimestamp;
@@ -47,6 +49,12 @@ export class NotesComponent implements OnInit {
   }
 
   ngOnInit(): void {
+  }
+
+  ngOnDestroy(): void {
+    if (this.newNote.nativeElement.value.length > 0) {
+      this.addNote(this.newNote.nativeElement.value);
+    }
   }
 
   public OnDeleteItem(item: any) {
@@ -67,13 +75,7 @@ export class NotesComponent implements OnInit {
 
   public OnKeyDown(event: KeyboardEvent) {
     if (event.key == 'Enter') {
-      this.notes.push({
-        Date: Date.now().toString(), Author: this.dataService.UserDisplayName, Note: event.target['value'],
-        ShowTimestamp: this.showTimestamp,
-        HasCheckbox: this.hasCheckbox,
-        IsChecked: false
-      });
-      this.strings.push(event.target['value']);
+      this.addNote(event.target['value']);
       event.target['value'] = '';
     }
   }
@@ -81,5 +83,15 @@ export class NotesComponent implements OnInit {
   public drop(event: CdkDragDrop<string[]>) {
     moveItemInArray(this.notes, event.previousIndex, event.currentIndex);
     moveItemInArray(this.strings, event.previousIndex, event.currentIndex);
+  }
+
+  private addNote(val: string) {
+    this.notes.push({
+      Date: Date.now().toString(), Author: this.dataService.UserDisplayName, Note: val,
+      ShowTimestamp: this.showTimestamp,
+      HasCheckbox: this.hasCheckbox,
+      IsChecked: false
+    });
+    this.strings.push(val);
   }
 }

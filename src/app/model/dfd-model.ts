@@ -6,7 +6,7 @@ import { ConfigFile } from './config-file';
 import { DatabaseBase, DataReferenceTypes, IContainer, IDataReferences, IElementType, IKeyValue, IProperty, PropertyEditTypes, ViewElementBase } from './database';
 import { ProjectFile } from './project-file';
 import { FlowArrowPositions, FlowLineTypes, FlowTypes, ICanvasFlow } from './system-context';
-import { RuleTypes, ThreatCategory, ThreatMapping, ThreatRule } from './threat-model';
+import { RuleTypes, ThreatCategory, AttackScenario, ThreatRule } from './threat-model';
 
 export enum ElementTypeIDs {
   None = 0,
@@ -347,7 +347,7 @@ export abstract class DFDElement extends ViewElementBase implements IElementType
         if (df.ReceiverInterface?.ID == this.ID) df.ReceiverInterface = null;
       }
       else if (x.Type == DataReferenceTypes.DeleteDataFlow) pf.DeleteDDFElement(x.Param as DataFlow);
-      else if (x.Type == DataReferenceTypes.DeleteThreatMapping) pf.DeleteThreatMapping(x.Param as ThreatMapping);
+      else if (x.Type == DataReferenceTypes.DeleteAttackScenario) pf.DeleteAttackScenario(x.Param as AttackScenario);
     });
   }
 

@@ -129,6 +129,7 @@ enum CTypes {
   DeviceInterface = 'DEV-IF',
 
   SystemUseCase = 'SYSUC',
+  SystemExternalEntity = 'SYSEE',
 
   Annotation = 'Annotation',
   ElementBorder = 'ElementBorder',
@@ -224,6 +225,7 @@ export abstract class CanvasBase {
     if (arrStr) arr = JSON.parse(arrStr);
     if (arr && arr[this.Diagram.DiagramType]) return Number(arr[this.Diagram.DiagramType]);
     if (this.Diagram.DiagramType == DiagramTypes.Context) return FlowArrowPositions.Both;
+    else if (this.Diagram.DiagramType == DiagramTypes.UseCase) return FlowArrowPositions.End;
     return FlowArrowPositions.Initiator;
   }
   public set FlowArrowPosition(val: FlowArrowPositions) {
@@ -390,25 +392,25 @@ export abstract class CanvasBase {
 
   public AddThreat() {
     if (this.SelectedElement) {
-      let map = this.dataService.Project.CreateThreatMapping(this.Diagram.ID, false);
+      let map = this.dataService.Project.CreateAttackScenario(this.Diagram.ID, false);
       map.SetMapping('', [], this.SelectedElement, [this.SelectedElement], null, null);
       map.IsGenerated = false;
-      this.dialog.OpenThreatMappingDialog(map, true).subscribe(result => {
+      this.dialog.OpenAttackScenarioDialog(map, true).subscribe(result => {
         if (!result) {
-          this.dataService.Project.DeleteThreatMapping(map);
+          this.dataService.Project.DeleteAttackScenario(map);
         }
       });
     }
   }
 
-  public AddMitigation() {
+  public AddCountermeasure() {
     if (this.SelectedElement) {
-      let map = this.dataService.Project.CreateMitigationMapping(this.Diagram.ID);
+      let map = this.dataService.Project.CreateCountermeasure(this.Diagram.ID);
       map.SetMapping(null, [this.SelectedElement], []);
       map.IsGenerated = false;
-      this.dialog.OpenMitigationMappingDialog(map, true, this.Diagram.Elements.GetChildrenFlat()).subscribe(result => {
+      this.dialog.OpenCountermeasureDialog(map, true, this.Diagram.Elements.GetChildrenFlat()).subscribe(result => {
         if (!result) {
-          this.dataService.Project.DeleteMitigationMapping(map);
+          this.dataService.Project.DeleteCountermeasure(map);
         }
       });
     }
@@ -436,16 +438,22 @@ export abstract class CanvasBase {
     }
   }
 
-  public OnResized(event: ResizedEvent, container) {
+  public OnResized(event: ResizedEvent, container, adjustScrollbar = true) {
     this.initializeCanvas(container);
     if (this.Canvas) {
       const size = this.getCanvasSize();
       this.CanvasScreenWidth = event.newRect.width;
       this.CanvasScreenHeight = event.newRect.height - 5;
-      const newWid = event.newRect.width > size[2] ? event.newRect.width : size[2];
-      const newHei = event.newRect.height > size[3] ? event.newRect.height : size[3];
-      this.Canvas.setWidth(newWid);
-      this.Canvas.setHeight(newHei-5);
+      if (adjustScrollbar) {
+        const newWid = event.newRect.width > size[2] ? event.newRect.width : size[2];
+        const newHei = event.newRect.height > size[3] ? event.newRect.height : size[3];
+        this.Canvas.setWidth(newWid);
+        this.Canvas.setHeight(newHei-5);
+      }
+      else {
+        this.Canvas.setWidth(event.newRect.width);
+        this.Canvas.setHeight(event.newRect.height-5);
+      }
       this.Canvas.renderAll();
     }
   }
@@ -607,6 +615,7 @@ export abstract class CanvasBase {
     cc.appendChild(cElement);
     this.Canvas = new fabric.Canvas(cElement);
     this.Canvas.selection = false;
+    this.Canvas.selectionFullyContained = true;
     this.Canvas.targetFindTolerance = 2;
 
     this.Canvas.setWidth(cc.clientWidth);
@@ -1015,28 +1024,32 @@ export abstract class CanvasBase {
         this.arrowVisibilityStore();
         this.mouseMovingState = MouseMovingStates.Moving;
       }
-      this.Canvas.getObjects().forEach(x => this.onMovingObject(x));
+      
+      this.Canvas.getObjects().forEach(x => this.onMovingObject(x, true));
       return;
     }
 
-    this.onMovingObject(opt.target);
+    this.onMovingObject(opt.target, true);
   }
 
-  private onMovingObject(movingObj) {
+  private onMovingObject(movingObj, isSelection = false) {
     this.blockCheckingIntersection = true;
-    if (['p0', 'p1', 'p2'].includes(movingObj[CProps.name])) this.dfOnPointMoving(movingObj);
-    else if (movingObj[CProps.myType] == CTypes.TextPosPoint) this.textOnMovingPoint(movingObj);
-    else if (movingObj[CProps.t0ID]) this.textOnMovingText(movingObj);
-    if (movingObj[CProps.ID]) {
-      let snap = (x) => {
-        return Math.round(x / CanvasBase.GridSize * 4) % 4 == 0;
+    if (!isSelection) {
+      if (['p0', 'p1', 'p2'].includes(movingObj[CProps.name])) this.dfOnPointMoving(movingObj);
+      else if (movingObj[CProps.myType] == CTypes.TextPosPoint) this.textOnMovingPoint(movingObj);
+      else if (movingObj[CProps.t0ID]) this.textOnMovingText(movingObj);
+      if (movingObj[CProps.ID]) {
+        let snap = (x) => {
+          return Math.round(x / CanvasBase.GridSize * 4) % 4 == 0;
+        }
+  
+        if (snap(movingObj.left)) movingObj.set('left', Math.round(movingObj.left / CanvasBase.GridSize) * CanvasBase.GridSize);
+        if (snap(movingObj.top)) movingObj.set('top', Math.round(movingObj.top / CanvasBase.GridSize) * CanvasBase.GridSize);
+        movingObj.setCoords();
       }
-
-      if (snap(movingObj.left)) movingObj.set('left', Math.round(movingObj.left / CanvasBase.GridSize) * CanvasBase.GridSize);
-      if (snap(movingObj.top)) movingObj.set('top', Math.round(movingObj.top / CanvasBase.GridSize) * CanvasBase.GridSize);
-      movingObj.setCoords();
     }
-    if (movingObj[CProps.dfs]) {
+
+    if (isSelection && movingObj[CProps.dfs]) {
       movingObj[CProps.dfs].forEach(dfID => {
         const dfObj = this.getCanvasElementByCanvasID(dfID);
         let isEnd = dfObj[CProps.fe2] == movingObj[CProps.canvasID];
@@ -1045,13 +1058,18 @@ export abstract class CanvasBase {
         let endPoint = this.getCanvasElementByCanvasID(dfObj[p]);
         endPoint.left = start[0];
         endPoint.top = start[1];
+        let groupX = 0, groupY = 0;
+        if (movingObj.group) {
+          groupX = movingObj.group.left + movingObj.group.width/2;
+          groupY = movingObj.group.top + movingObj.group.height/2;
+        }
         if (isEnd) {
-          dfObj.path[1][3] = start[0];
-          dfObj.path[1][4] = start[1];
+          dfObj.path[1][3] = groupX + start[0];
+          dfObj.path[1][4] = groupY + start[1];
         }
         else {
-          dfObj.path[0][1] = start[0];
-          dfObj.path[0][2] = start[1];
+          dfObj.path[0][1] = groupX + start[0];
+          dfObj.path[0][2] = groupY + start[1];
         }
 
         if (dfObj[CProps.bendFlow] == false) {
@@ -1082,15 +1100,15 @@ export abstract class CanvasBase {
         this.Canvas.requestRenderAll();
       });
     }
-    if (movingObj['left'] < 0) {
-      movingObj['left'] = 0;
-      this.Canvas.requestRenderAll();
-    }
-    if (movingObj['top'] < 0) {
-      movingObj['top'] = 0;
-      this.Canvas.requestRenderAll();
-    }
-    if (movingObj[CProps.myType] != CTypes.GridLine) {
+    if (!isSelection && movingObj[CProps.myType] != CTypes.GridLine) {
+      if (movingObj['left'] < 0) {
+        movingObj['left'] = 0;
+        this.Canvas.requestRenderAll();
+      }
+      if (movingObj['top'] < 0) {
+        movingObj['top'] = 0;
+        this.Canvas.requestRenderAll();
+      }
       if (movingObj['left'] + movingObj['width'] > this.xMax && movingObj['left'] + movingObj['width'] > this.Canvas['width']) {
         this.Canvas.setWidth(movingObj['left'] + movingObj['width']);
         this.Canvas.requestRenderAll();
@@ -1746,10 +1764,10 @@ export abstract class CanvasBase {
       'top': -hg / 2 + 5
     });
 
-    if (etxt) etxt.set({
-      'left': 0,
-      'top': -8
-    });
+    // if (etxt) etxt.set({
+    //   'left': 0,
+    //   'top': -8
+    // });
 
     let fas = g._objects.filter(x => x[CProps.fa] != null);
     let r = 6.5;
@@ -2035,6 +2053,7 @@ export class HWDFCanvas extends CanvasBase {
       const copy = this.createElement({ stencilRef: { name: '', stencilID: src.GetProperty('Type').ID } }, srcObj.left +  srcObj.width + 10, srcObj.top);
       copy.CopyFrom(src.Data);
       copy.Name = StringExtension.FindUniqueName(src.GetProperty('Type').Name, this.getViewBaseElements().map(x => x.Name));
+      this.copyID = null;
     }
   }
 
@@ -2547,9 +2566,10 @@ export class CtxCanvas extends CanvasBase {
     const src = this.getViewBaseElement(this.copyID) as ContextElement;
     const srcObj = this.getCanvasElementByID(this.copyID);
     if (src) {
-      const copy = this.createElement({ contextRef: { name: ContextElementTypeUtil.ToString(src.GetProperty('Type')) } }, srcObj.left +  srcObj.width + 10, srcObj.top);
+      const copy = this.createElement({ contextRef: { name: ContextElementTypeUtil.ToString(src.Type) } }, srcObj.left +  srcObj.width + 10, srcObj.top);
       copy.CopyFrom(src.Data);
-      copy.Name = StringExtension.FindUniqueName(ContextElementTypeUtil.ToString(src.GetProperty('Type')), this.getViewBaseElements().map(x => x.Name));
+      copy.Name = StringExtension.FindUniqueName(ContextElementTypeUtil.ToString(src.Type), this.getViewBaseElements().map(x => x.Name));
+      this.copyID = null;
     }
   }
 
@@ -2678,7 +2698,7 @@ export class CtxCanvas extends CanvasBase {
     }
 
     element.NameChanged.subscribe(x => this.changeObjectName(element.ID));
-    element.TypeChanged.subscribe(x => this.changeObjectType(element.ID, ContextElementTypeUtil.ToString(element.GetProperty('Type'))));
+    element.TypeChanged.subscribe(x => this.changeObjectType(element.ID, ContextElementTypeUtil.ToString(element.Type)));
 
     this.Diagram.Elements.AddChild(element);
     this.Canvas.add(visElement);
@@ -2699,6 +2719,8 @@ export class CtxCanvas extends CanvasBase {
       case CTypes.SystemUseCase: obj.on('scaling', (e) => this.onScaleUseCase(e));
         break;
       case CTypes.DeviceInterface: obj.on('scaling', (e) => this.onScaleInterface(e));
+        break;
+      case CTypes.SystemExternalEntity: obj.on('scaling', (e) => this.onScaleExternalEntity(e));
         break;
       case CTypes.TrustArea: obj.on('scaling', (e) => this.onScaleTrustArea(e));
         break;
@@ -3334,7 +3356,7 @@ export class CtxCanvas extends CanvasBase {
       hasControls: true,
       lockRotation: true, lockScalingX: false, lockScalingY: false,
       hasBorders: false, subTargetCheck: true,
-      ID: element.ID, canvasID: uuidv4()
+      ID: element.ID, canvasID: uuidv4(), myType: CTypes.SystemExternalEntity
     });
 
     g.on('scaling', (e) => this.onScaleExternalEntity(e));

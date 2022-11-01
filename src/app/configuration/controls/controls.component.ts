@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { Mitigation, MitigationGroup } from '../../model/mitigations';
+import { Control, ControlGroup } from '../../model/mitigations';
 import { NavTreeBase } from '../../shared/components/nav-tree/nav-tree-base';
 import { INavigationNode } from '../../shared/components/nav-tree/nav-tree.component';
 import { DataService } from '../../util/data.service';
@@ -8,14 +8,14 @@ import { DialogService } from '../../util/dialog.service';
 import { ThemeService } from '../../util/theme.service';
 
 @Component({
-  selector: 'app-mitigations',
-  templateUrl: './mitigations.component.html',
-  styleUrls: ['./mitigations.component.scss']
+  selector: 'app-controls',
+  templateUrl: './controls.component.html',
+  styleUrls: ['./controls.component.scss']
 })
-export class MitigationsComponent extends NavTreeBase implements OnInit {
+export class ControlsComponent extends NavTreeBase implements OnInit {
 
-  public get selectedMitigationGroup(): MitigationGroup { return (this.selectedNode?.data instanceof MitigationGroup ? this.selectedNode.data : null); }
-  public get selectedMitigation(): Mitigation { return (this.selectedNode?.data instanceof Mitigation ? this.selectedNode.data : null); }
+  public get selectedControlGroup(): ControlGroup { return (this.selectedNode?.data instanceof ControlGroup ? this.selectedNode.data : null); }
+  public get selectedControl(): Control { return (this.selectedNode?.data instanceof Control ? this.selectedNode.data : null); }
 
   constructor(public theme: ThemeService, public dataService: DataService, private dialog: DialogService, private translate: TranslateService) { 
     super();
@@ -32,7 +32,7 @@ export class MitigationsComponent extends NavTreeBase implements OnInit {
     const prevNodes = this.Nodes;
     this.Nodes = [];
 
-    let createRule = (mit: Mitigation, group: MitigationGroup, groupNode: INavigationNode, groupNodes: INavigationNode[]): INavigationNode => {
+    let createRule = (mit: Control, group: ControlGroup, groupNode: INavigationNode, groupNodes: INavigationNode[]): INavigationNode => {
       let node: INavigationNode = {
         name: () => mit.Name,
         canSelect: true,
@@ -43,7 +43,7 @@ export class MitigationsComponent extends NavTreeBase implements OnInit {
         onDelete: () => { 
           this.dialog.OpenDeleteObjectDialog(mit).subscribe(res => {
             if (res) {
-              this.dataService.Config.DeleteMitigation(mit);
+              this.dataService.Config.DeleteControl(mit);
               if (this.selectedNode == node) this.selectedNode = null;
               this.createNodes();
             }
@@ -51,17 +51,17 @@ export class MitigationsComponent extends NavTreeBase implements OnInit {
         },
         canDuplicate: true,
         onDuplicate: () => {
-          let cp = this.dataService.Config.CreateMitigation(group);
+          let cp = this.dataService.Config.CreateControl(group);
           cp.CopyFrom(mit.Data);
           cp.Name = cp.Name + '-Copy';
-          this.dataService.Config.GetMitigationGroups().find(x => x.Mitigations.includes(mit)).AddMitigation(cp);
+          this.dataService.Config.GetControlGroups().find(x => x.Controls.includes(mit)).AddControl(cp);
           this.createNodes();
           this.selectedNode = this.FindNodeOfObject(cp);
           this.selectedNode.isRenaming = true;
         },
         canMoveUpDown: true,
         onMoveUp: () => {
-          let arr = group.Data['mitigationIDs'];
+          let arr = group.Data['controlIDs'];
           if (arr.findIndex(x => x == mit.ID) != 0) {
             let idx = arr.findIndex(x => x == mit.ID);
             arr.splice(idx, 0, arr.splice(idx-1, 1)[0]);
@@ -69,7 +69,7 @@ export class MitigationsComponent extends NavTreeBase implements OnInit {
           }
         },
         onMoveDown: () => {
-          let arr = group.Data['mitigationIDs'];
+          let arr = group.Data['controlIDs'];
           if (arr.findIndex(x => x == mit.ID) != arr.length-1) {
             let idx = arr.findIndex(x => x == mit.ID);
             arr.splice(idx, 0, arr.splice(idx+1, 1)[0]);
@@ -81,7 +81,7 @@ export class MitigationsComponent extends NavTreeBase implements OnInit {
           return groupNodes.filter(x => x != groupNode);
         },
         onMoveToGroup: (newGroup: INavigationNode) => {
-          let arrName = 'mitigationIDs';
+          let arrName = 'controlIDs';
           group.Data[arrName].splice(group.Data[arrName].indexOf(mit.ID), 1);
           newGroup.data.Data[arrName].push(mit.ID);
           this.createNodes();
@@ -90,17 +90,17 @@ export class MitigationsComponent extends NavTreeBase implements OnInit {
       return node;
     };
 
-    let createGroup = (group: MitigationGroup, parentGroup: MitigationGroup, parentGroupNode: INavigationNode, groupNodes: INavigationNode[]): INavigationNode => {
+    let createGroup = (group: ControlGroup, parentGroup: ControlGroup, parentGroupNode: INavigationNode, groupNodes: INavigationNode[]): INavigationNode => {
       let g: INavigationNode = {
         name: () => group.Name,
         canSelect: true,
         data: group,
         canAdd: true,
-        addOptions: [this.translate.instant('general.Group'), this.translate.instant('general.Mitigation')],
+        addOptions: [this.translate.instant('general.Group'), this.translate.instant('general.Control')],
         onAdd: (val: string) => {
           let newObj = null;
-          if (val == this.translate.instant('general.Group')) { newObj = this.dataService.Config.CreateMitigationGroup(group); }
-          else { newObj = this.dataService.Config.CreateMitigation(group); }
+          if (val == this.translate.instant('general.Group')) { newObj = this.dataService.Config.CreateControlGroup(group); }
+          else { newObj = this.dataService.Config.CreateControl(group); }
 
           this.createNodes();
           setTimeout(() => {
@@ -114,7 +114,7 @@ export class MitigationsComponent extends NavTreeBase implements OnInit {
         onDelete: () => { 
           this.dialog.OpenDeleteObjectDialog(group).subscribe(res => {
             if (res) {
-              this.dataService.Config.DeleteMitigationGroup(group); 
+              this.dataService.Config.DeleteControlGroup(group); 
               if (this.selectedNode == g) this.selectedNode = null;
               this.createNodes();
             }
@@ -123,7 +123,7 @@ export class MitigationsComponent extends NavTreeBase implements OnInit {
         children: [],
         canMoveUpDown: true,
         onMoveUp: () => {
-          let arr = parentGroup.Data['mitigationGroupIDs'];
+          let arr = parentGroup.Data['controlGroupIDs'];
           if (arr.findIndex(x => x == group.ID) != 0) {
             let idx = arr.findIndex(x => x == group.ID);
             arr.splice(idx, 0, arr.splice(idx-1, 1)[0]);
@@ -131,7 +131,7 @@ export class MitigationsComponent extends NavTreeBase implements OnInit {
           }
         },
         onMoveDown: () => {
-          let arr = parentGroup.Data['mitigationGroupIDs'];
+          let arr = parentGroup.Data['controlGroupIDs'];
           if (arr.findIndex(x => x == group.ID) != arr.length-1) {
             let idx = arr.findIndex(x => x == group.ID);
             arr.splice(idx, 0, arr.splice(idx+1, 1)[0]);
@@ -143,7 +143,7 @@ export class MitigationsComponent extends NavTreeBase implements OnInit {
           return groupNodes.filter(x => x != g && x != parentGroupNode);
         },
         onMoveToGroup: (newGroup: INavigationNode) => {
-          let arrName = 'mitigationGroupIDs';
+          let arrName = 'controlGroupIDs';
           parentGroup.Data[arrName].splice(parentGroup.Data[arrName].indexOf(group.ID), 1);
           newGroup.data.Data[arrName].push(group.ID);
           this.createNodes();
@@ -155,14 +155,14 @@ export class MitigationsComponent extends NavTreeBase implements OnInit {
         g.children.push(subGroup);
       });
 
-      group.Mitigations.forEach(x => g.children.push(createRule(x, group, g, groupNodes)));
+      group.Controls.forEach(x => g.children.push(createRule(x, group, g, groupNodes)));
       
       groupNodes.push(g);
       return g;
     };
 
     let groupNodes = [];
-    let root = createGroup(this.dataService.Config.MitigationLibrary, null, null, groupNodes);
+    let root = createGroup(this.dataService.Config.ControlLibrary, null, null, groupNodes);
     root.icon = 'security'; 
     root.canSelect = false;
     root.canDelete = false;

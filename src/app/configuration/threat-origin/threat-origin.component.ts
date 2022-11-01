@@ -1,7 +1,7 @@
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, Input, OnInit, Optional } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { Mitigation } from '../../model/mitigations';
+import { Control } from '../../model/mitigations';
 import { LifeCycle, LifeCycleUtil, RestrictionUtil, ThreatCategoryGroup, ThreatOrigin, ThreatOriginGroup, ThreatOriginTypes, ThreatOriginTypesUtil, ThreatQuestion, ThreatRule, ThreatSeverities, ThreatSeverityUtil } from '../../model/threat-model';
 import { DataService } from '../../util/data.service';
 import { MyBoolean } from '../../util/dialog.service';
@@ -18,12 +18,12 @@ export class ThreatOriginComponent implements OnInit {
   public get threatOrigin(): ThreatOrigin { return this._threatOrigin; }
   @Input() public set threatOrigin(val: ThreatOrigin) { 
     this._threatOrigin = val;
-    this.selectedMitigation = null;
+    this.selectedControl = null;
   }
   @Input() public canEdit: boolean = true;
   public isShownInDialog: boolean = false;
 
-  public selectedMitigation: Mitigation;
+  public selectedControl: Control;
 
   constructor(@Optional() origin: ThreatOrigin, @Optional() canEdit: MyBoolean, public theme: ThemeService, public dataService: DataService, private translate: TranslateService) { 
     if (origin) {
@@ -88,32 +88,32 @@ export class ThreatOriginComponent implements OnInit {
     return RestrictionUtil.ToString(rule, this.dataService, this.translate);
   }
 
-  public GetPossibleMitigations() {
-    return this.dataService.Config.GetMitigations().filter(x => !x.MitigatedThreatOrigins.includes(this.threatOrigin));
+  public GetPossibleControls() {
+    return this.dataService.Config.GetControls().filter(x => !x.MitigatedThreatOrigins.includes(this.threatOrigin));
   }
 
-  public AddExistingMitigation(mit: Mitigation) {
+  public AddExistingControl(mit: Control) {
     mit.AddMitigatedThreatOrigin(this.threatOrigin);
   }
 
-  public AddMitigation() {
-    let mit = this.dataService.Config.CreateMitigation(this.dataService.Config.MitigationLibrary);
+  public AddControl() {
+    let mit = this.dataService.Config.CreateControl(this.dataService.Config.ControlLibrary);
     mit.AddMitigatedThreatOrigin(this.threatOrigin);
-    this.selectedMitigation = mit;
+    this.selectedControl = mit;
   }
 
-  public RemoveMitigation(mit: Mitigation) {
+  public RemoveControl(mit: Control) {
     mit.RemoveMitigatedThreatOrigin(this.threatOrigin);
-    if (mit == this.selectedMitigation) this.selectedMitigation = null;
+    if (mit == this.selectedControl) this.selectedControl = null;
   }
 
-  public DeleteMitigation(mit: Mitigation) {
-    this.dataService.Config.DeleteMitigation(mit);
-    if (mit == this.selectedMitigation) this.selectedMitigation = null;
+  public DeleteControl(mit: Control) {
+    this.dataService.Config.DeleteControl(mit);
+    if (mit == this.selectedControl) this.selectedControl = null;
   }
 
-  public GetMitigations(): Mitigation[] {
-    return this.dataService.Config.GetMitigations().filter(x => x.MitigatedThreatOrigins.includes(this.threatOrigin));
+  public GetControls(): Control[] {
+    return this.dataService.Config.GetControls().filter(x => x.MitigatedThreatOrigins.includes(this.threatOrigin));
   }
 
   public OnGroupChanged(event) {
@@ -125,9 +125,9 @@ export class ThreatOriginComponent implements OnInit {
     group.AddThreatOrigin(this.threatOrigin);
   }
 
-  public dropMitigation(event: CdkDragDrop<string[]>, selectedArray) {
-    const prev = this.dataService.Config.GetMitigations().indexOf(selectedArray[event.previousIndex]);
-    const curr = this.dataService.Config.GetMitigations().indexOf(selectedArray[event.currentIndex]);
-    moveItemInArray(this.dataService.Config.GetMitigations(), prev, curr);
+  public dropControl(event: CdkDragDrop<string[]>, selectedArray) {
+    const prev = this.dataService.Config.GetControls().indexOf(selectedArray[event.previousIndex]);
+    const curr = this.dataService.Config.GetControls().indexOf(selectedArray[event.currentIndex]);
+    moveItemInArray(this.dataService.Config.GetControls(), prev, curr);
   }
 }

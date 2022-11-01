@@ -4,7 +4,7 @@ import { DatabaseBase, IDataReferences } from "./database";
 import { ProjectFile } from "./project-file";
 import { ImpactCategories, ThreatCategory } from "./threat-model";
 
-export class DeviceThreat extends DatabaseBase {
+export class SystemThreat extends DatabaseBase {
   private project: ProjectFile;
   private config: ConfigFile;
 
@@ -51,7 +51,7 @@ export class DeviceThreat extends DatabaseBase {
   public OnDelete(pf: ProjectFile, cf: ConfigFile) {
   }
 
-  public static FromJSON(data, pf: ProjectFile, cf: ConfigFile): DeviceThreat {
-    return new DeviceThreat(data, pf, cf);
+  public static FromJSON(data, pf: ProjectFile, cf: ConfigFile): SystemThreat {
+    return new SystemThreat(data, pf, cf);
   }
 }

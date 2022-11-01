@@ -1,16 +1,16 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { LowMediumHighNumberUtil, LowMediumHighNumber } from '../../../model/assets';
-import { DeviceThreat } from '../../../model/device-threat';
-import { ImpactCategories, ImpactCategoryUtil, ThreatCategory } from '../../../model/threat-model';
+import { SystemThreat } from '../../../model/system-threat';
+import { ImpactCategories, ImpactCategoryUtil } from '../../../model/threat-model';
 import { DataService } from '../../../util/data.service';
 
 @Component({
-  selector: 'app-device-threat',
-  templateUrl: './device-threat.component.html',
-  styleUrls: ['./device-threat.component.scss']
+  selector: 'app-system-threat',
+  templateUrl: './system-threat.component.html',
+  styleUrls: ['./system-threat.component.scss']
 })
-export class DeviceThreatComponent implements OnInit {
-  @Input() public deviceThreat: DeviceThreat;
+export class SystemThreatComponent implements OnInit {
+  @Input() public systemThreat: SystemThreat;
   @Input() public showThreatCat = false;
 
   constructor(public dataService: DataService) { }

@@ -11,7 +11,7 @@
     </mat-expansion-panel-header>
 
     <div *ngFor="let step of stage.steps; index as index">
-      {{index+1}}. {{step.name}}
+      {{step.number}}. {{step.name}}
       <button mat-button class="toolBtn" *ngIf="step.link" (click)="NavigateTo(step.link)" matTooltip="{{'general.openInNew' | translate}}" matTooltipShowDelay="1000">
         <mat-icon>open_in_new</mat-icon>
       </button>

@@ -151,9 +151,7 @@
                   </mat-panel-description>
                 </mat-expansion-panel-header>
 
-                <ol>
-                  <li *ngFor="let step of stage.steps">{{step.name}}</li>
-                </ol>
+                <p *ngFor="let step of stage.steps">{{step.number}}. {{step.name}}</p>
                 <mat-action-row>
                   <button mat-button color="primary" (click)="PrevProcessStep()">{{'tour.prev' | translate}}</button>
                   <button mat-button color="primary" (click)="NextProcessStep()" *ngIf="!isLast">{{'tour.next' | translate}}</button>

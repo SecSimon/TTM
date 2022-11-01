@@ -118,7 +118,7 @@ export class AppComponent {
       this.projectStr = JSON.stringify(project.ToJSON());
       this.projectID = project.ID;
       this.createDiffer(project.GetDFDElements(), null, project.DFDElementsChanged);
-      this.createDiffer(project.GetThreatMappings(), null, project.ThreatMappingsChanged);
+      this.createDiffer(project.GetAttackScenarios(), null, project.AttackScenariosChanged);
       this.createDiffer(project.GetComponents(), null, project.MyComponentsChanged);
       this.createDiffer(project.GetComponents(), 'threatQuestions');
       this.createDiffer(project.GetDevices(), null, null);

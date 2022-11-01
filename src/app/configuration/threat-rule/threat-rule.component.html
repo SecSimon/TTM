@@ -446,30 +446,30 @@
     </div>
     <div class="row" style="margin-top: 10px;">
       <div class="column1">
-        <mat-list cdkDropList (cdkDropListDropped)="dropMitigation($event, GetMitigations())" class="prop-list reorder-list" [class.prop-list-light]="!theme.IsDarkMode" [class.prop-list-dark]="theme.IsDarkMode">
-          <div mat-subheader>{{ 'general.Mitigations' | translate }} 
+        <mat-list cdkDropList (cdkDropListDropped)="dropControl($event, GetControls())" class="prop-list reorder-list" [class.prop-list-light]="!theme.IsDarkMode" [class.prop-list-dark]="theme.IsDarkMode">
+          <div mat-subheader>{{ 'general.Controls' | translate }} 
             <button mat-icon-button style="margin-left: 15px;" [matMenuTriggerFor]="addMenu" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000"><mat-icon>add</mat-icon></button>
             <mat-menu #addMenu="matMenu">
-              <button mat-menu-item (click)="AddMitigation()">{{'general.New' | translate}}</button>
+              <button mat-menu-item (click)="AddControl()">{{'general.New' | translate}}</button>
               <button mat-menu-item [matMenuTriggerFor]="existing">{{'general.Existing' | translate}}</button>
             </mat-menu>
             <mat-menu #existing="matMenu">
-              <button mat-menu-item *ngFor="let mit of GetPossibleMitigations()" (click)="AddExistingMitigation(mit)">{{mit.Name}}</button>
+              <button mat-menu-item *ngFor="let mit of GetPossibleControls()" (click)="AddExistingControl(mit)">{{mit.Name}}</button>
             </mat-menu>
           </div>
-          <mat-list-item *ngFor="let mit of GetMitigations()" (click)="selectedMitigation = mit" cdkDrag
-            [class.highlight-light]="selectedMitigation === mit && !theme.IsDarkMode" [class.highlight-dark]="selectedMitigation === mit && theme.IsDarkMode"
+          <mat-list-item *ngFor="let mit of GetControls()" (click)="selectedControl = mit" cdkDrag
+            [class.highlight-light]="selectedControl === mit && !theme.IsDarkMode" [class.highlight-dark]="selectedControl === mit && theme.IsDarkMode"
             matTooltip="{{mit.Name}}" matTooltipShowDelay="1000">
             <mat-icon mat-list-icon>chevron_right</mat-icon>
             <div mat-line style="pointer-events: initial;">{{mit.Name | translate}}</div>
-            <button mat-icon-button style="margin-left: auto; margin-right: 0px;" (click)="RemoveMitigation(mit)" matTooltip="{{'general.Remove' | translate}}" matTooltipShowDelay="1000"><mat-icon>remove</mat-icon></button>
-            <button mat-icon-button style="margin-left: auto;" (click)="DeleteMitigation(mit)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000"><mat-icon>delete</mat-icon></button>
+            <button mat-icon-button style="margin-left: auto; margin-right: 0px;" (click)="RemoveControl(mit)" matTooltip="{{'general.Remove' | translate}}" matTooltipShowDelay="1000"><mat-icon>remove</mat-icon></button>
+            <button mat-icon-button style="margin-left: auto;" (click)="DeleteControl(mit)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000"><mat-icon>delete</mat-icon></button>
           </mat-list-item>
-          <ng-container *ngIf="GetOriginMitigations()?.length > 0">
+          <ng-container *ngIf="GetOriginControls()?.length > 0">
             <mat-divider></mat-divider>
-            <div mat-subheader>{{threatRule.ThreatOrigin.Name}} {{ 'general.Mitigations' | translate }}</div>
-            <mat-list-item *ngFor="let mit of GetOriginMitigations()" (click)="selectedMitigation = mit"
-              [class.highlight-light]="selectedMitigation === mit && !theme.IsDarkMode" [class.highlight-dark]="selectedMitigation === mit && theme.IsDarkMode"
+            <div mat-subheader>{{threatRule.ThreatOrigin.Name}} {{ 'general.Controls' | translate }}</div>
+            <mat-list-item *ngFor="let mit of GetOriginControls()" (click)="selectedControl = mit"
+              [class.highlight-light]="selectedControl === mit && !theme.IsDarkMode" [class.highlight-dark]="selectedControl === mit && theme.IsDarkMode"
               matTooltip="{{mit.Name}}" matTooltipShowDelay="1000">
               <mat-icon mat-list-icon>security</mat-icon>
               <div mat-line style="pointer-events: initial;">{{mit.Name | translate}}</div>
@@ -478,8 +478,8 @@
         </mat-list>
       </div>
       <div class="column2">
-        <div style="margin: 10px 0 10px 10px;" *ngIf="selectedMitigation">
-          <app-mitigation [mitigation]="selectedMitigation" [canEdit]="false" [canEditName]="true" [canEditGroup]="true"></app-mitigation>
+        <div style="margin: 10px 0 10px 10px;" *ngIf="selectedControl">
+          <app-control [control]="selectedControl" [canEdit]="false" [canEditName]="true" [canEditGroup]="true"></app-control>
         </div>
       </div>
     </div>

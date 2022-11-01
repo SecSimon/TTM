@@ -1,7 +1,7 @@
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, Input, OnInit, Optional } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { IMitigationTip, Mitigation } from '../../model/mitigations';
+import { IMitigationTip, Control } from '../../model/mitigations';
 import { LifeCycle, LifeCycleUtil, RuleTypes, ThreatOriginGroup, ThreatRuleGroup } from '../../model/threat-model';
 import { INavigationNode } from '../../shared/components/nav-tree/nav-tree.component';
 import { DataService } from '../../util/data.service';
@@ -10,17 +10,17 @@ import { StringExtension } from '../../util/string-extension';
 import { ThemeService } from '../../util/theme.service';
 
 @Component({
-  selector: 'app-mitigation',
-  templateUrl: './mitigation.component.html',
-  styleUrls: ['./mitigation.component.scss']
+  selector: 'app-control',
+  templateUrl: './control.component.html',
+  styleUrls: ['./control.component.scss']
 })
-export class MitigationComponent implements OnInit {
-  private _mitigation: Mitigation;
+export class ControlComponent implements OnInit {
+  private _control: Control;
 
   @Input() public node: INavigationNode;
-  public get mitigation(): Mitigation { return this._mitigation; }
-  @Input() public set mitigation(val: Mitigation) { 
-    this._mitigation = val;
+  public get control(): Control { return this._control; }
+  @Input() public set control(val: Control) { 
+    this._control = val;
     this.threatOriginGroups = null;
     this.selectedMitigationTip = null;
   }
@@ -30,9 +30,9 @@ export class MitigationComponent implements OnInit {
 
   public selectedMitigationTip: IMitigationTip;
 
-  constructor(@Optional() mitigation: Mitigation, public theme: ThemeService, public dataService: DataService, private dialog: DialogService, private translate: TranslateService) { 
-    if (mitigation) {
-      this.mitigation = mitigation;
+  constructor(@Optional() control: Control, public theme: ThemeService, public dataService: DataService, private dialog: DialogService, private translate: TranslateService) { 
+    if (control) {
+      this.control = control;
       this.canEdit = false;
     }
   }
@@ -76,31 +76,31 @@ export class MitigationComponent implements OnInit {
     return this.threatRuleGroups;
   }
 
-  public GetMitigationGroups() {
-    return this.dataService.Config.GetMitigationGroups();
+  public GetControlGroups() {
+    return this.dataService.Config.GetControlGroups();
   }
 
-  public GetMitigationGroup() {
-    return this.dataService.Config.FindGroupOfMitigation(this.mitigation);
+  public GetControlGroup() {
+    return this.dataService.Config.FindGroupOfControl(this.control);
   }
 
-  public OnMitigationGroupChanged(event) {
-    let curr = this.dataService.Config.FindGroupOfMitigation(this.mitigation);
+  public OnControlGroupChanged(event) {
+    let curr = this.dataService.Config.FindGroupOfControl(this.control);
     if (curr) {
-      curr.RemoveMitigation(this.mitigation);
+      curr.RemoveControl(this.control);
     }
-    event.value.AddMitigation(this.mitigation);
+    event.value.AddControl(this.control);
   }
 
   public AddTip() {
-    this.mitigation.MitigationTips.push({ Name: StringExtension.FindUniqueName('Tip', this.mitigation.MitigationTips.map(x => x.Name)), Description: '', LifeCycles: [] });
-    this.selectedMitigationTip = this.mitigation.MitigationTips[this.mitigation.MitigationTips.length-1];
+    this.control.MitigationTips.push({ Name: StringExtension.FindUniqueName('Tip', this.control.MitigationTips.map(x => x.Name)), Description: '', LifeCycles: [] });
+    this.selectedMitigationTip = this.control.MitigationTips[this.control.MitigationTips.length-1];
   }
 
   public DeleteTip(tip: IMitigationTip) {
-    const index = this.mitigation.MitigationTips.indexOf(tip);
+    const index = this.control.MitigationTips.indexOf(tip);
     if (index >= 0) {
-      this.mitigation.MitigationTips.splice(index, 1);
+      this.control.MitigationTips.splice(index, 1);
       if (tip == this.selectedMitigationTip) this.selectedMitigationTip = null;
     }
   }  

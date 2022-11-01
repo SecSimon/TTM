@@ -8,12 +8,12 @@ import { DatabaseBase, DataChangedTypes, IDatabaseBase, IDataChanged, IDataRefer
 import { DFDContainerRef, DFDElement, DFDElementRef } from "./dfd-model";
 import { CtxDiagram, Diagram, DiagramTypes, HWDFDiagram } from "./diagram";
 import { ObjImpact } from "./obj-impact";
-import { DeviceThreat } from "./device-threat";
-import { ThreatCategory, ThreatMapping } from "./threat-model";
+import { SystemThreat } from "./system-threat";
+import { ThreatCategory, AttackScenario } from "./threat-model";
 import { ThreatActor, ThreatSources } from "./threat-source";
 import { ContextElement, ContextElementRef, ContextElementTypes, Device, MobileApp, SystemContext, SystemContextContainerRef } from "./system-context";
 import { Checklist, ChecklistType } from "./checklist";
-import { MitigationMapping, MitigationProcess } from "./mitigations";
+import { Countermeasure, MitigationProcess } from "./mitigations";
 import { FileUpdateService } from "../util/file-update.service";
 
 export interface IProjectFile extends IDatabaseBase {
@@ -25,7 +25,7 @@ export interface IProjectFile extends IDatabaseBase {
   myData: {}[];
   threatActors: {}[];
   threatSources: {};
-  deviceThreats: {}[];
+  systemThreats: {}[];
 
   contextElements: {}[];
   dfdElements: {}[];
@@ -33,8 +33,8 @@ export interface IProjectFile extends IDatabaseBase {
   stacks: {}[];
   components: {}[];
 
-  threatMappings: {}[];
-  mitigationMappings: {}[]
+  attackScenarios: {}[];
+  countermeasures: {}[]
   mitigationProcesses: {}[];
 
   checklists: {}[];
@@ -56,10 +56,12 @@ export class ProjectFile extends DatabaseBase {
   private sysContext: SystemContext;
   
   private assetGroups: AssetGroup[] = [];
+  private get projectAssetGroupId(): string { return this.Data['projectAssetGroupId']; }
+
   private myData: MyData[] = [];
   private threatActors: ThreatActor[] = [];
   private threatSources: ThreatSources;
-  private deviceThreats: DeviceThreat[] = [];
+  private systemThreats: SystemThreat[] = [];
 
   private contextElementMap = new Map<string, ContextElement>();
   private dfdElementMap = new Map<string, DFDElement>();
@@ -67,8 +69,8 @@ export class ProjectFile extends DatabaseBase {
   private stacks: MyComponentStack[] = [];
   private componentMap = new Map<string, MyComponent>();
   
-  private threatMappingMap = new Map<string, ThreatMapping>();
-  private mitigationMappingMap = new Map<string, MitigationMapping>();
+  private attackScenarioMap = new Map<string, AttackScenario>();
+  private countermeasureMap = new Map<string, Countermeasure>();
   private mitigationProcesses: MitigationProcess[] = [];
 
   private checklists: Checklist[] = [];
@@ -101,10 +103,11 @@ export class ProjectFile extends DatabaseBase {
   public GetSysContext(): SystemContext { return this.sysContext; }
 
   public GetAssetGroups(): AssetGroup[] { return this.assetGroups; }
+  public GetProjectAssetGroup(): AssetGroup { return this.GetAssetGroups().find(x => x.ID == this.projectAssetGroupId); }
   public GetMyDatas(): MyData[] { return this.myData; }
   public GetThreatActors(): ThreatActor[] { return this.threatActors; }
   public GetThreatSources(): ThreatSources { return this.threatSources; }
-  public GetDeviceThreats(): DeviceThreat[] { return this.deviceThreats; }
+  public GetSystemThreats(): SystemThreat[] { return this.systemThreats; }
   
   public GetContextElements(): ContextElement[] { return Array.from(this.contextElementMap, ([k, v]) => v); }
   public GetDFDElements(): DFDElement[] { return Array.from(this.dfdElementMap, ([k, v]) => v); }
@@ -115,8 +118,8 @@ export class ProjectFile extends DatabaseBase {
   public GetDFDiagrams(): Diagram[] { return this.diagrams.filter(x => x.DiagramType == DiagramTypes.DataFlow); }
   public GetComponents(): MyComponent[] { return Array.from(this.componentMap, ([k, v]) => v); }
 
-  public GetThreatMappings(): ThreatMapping[] { return Array.from(this.threatMappingMap, ([k, v]) => v); }
-  public GetMitigationMappings(): MitigationMapping[] { return Array.from(this.mitigationMappingMap, ([k, v]) => v); }
+  public GetAttackScenarios(): AttackScenario[] { return Array.from(this.attackScenarioMap, ([k, v]) => v); }
+  public GetCountermeasures(): Countermeasure[] { return Array.from(this.countermeasureMap, ([k, v]) => v); }
   public GetMitigationProcesses(): MitigationProcess[] { return this.mitigationProcesses; }
 
   public GetChecklists(): Checklist[] { return this.checklists; }
@@ -128,8 +131,8 @@ export class ProjectFile extends DatabaseBase {
   public ContextElementsChanged = new EventEmitter<IDataChanged>();
   public DFDElementsChanged = new EventEmitter<IDataChanged>();
   public MyComponentsChanged = new EventEmitter<IDataChanged>();
-  public ThreatMappingsChanged = new EventEmitter<IDataChanged>();
-  public MitigationMappingsChanged = new EventEmitter<IDataChanged>();
+  public AttackScenariosChanged = new EventEmitter<IDataChanged>();
+  public CountermeasuresChanged = new EventEmitter<IDataChanged>();
   public MitigationProcessesChanged = new EventEmitter<IDataChanged>();
 
   constructor(data: {}, cf: ConfigFile) {
@@ -141,6 +144,11 @@ export class ProjectFile extends DatabaseBase {
     if (!this.Data['Tasks']) this.Data['Tasks'] = [];
     if (!this.Data['Notes']) this.Data['Notes'] = [];
     this.config = cf;
+
+    if (!this.projectAssetGroupId) {
+      let newGroup = this.InitializeNewAssetGroup(cf);
+      this.Data['projectAssetGroupId'] = newGroup.ID;
+    }
   }
 
   public InitializeNewProject() {
@@ -215,6 +223,32 @@ export class ProjectFile extends DatabaseBase {
     return index >= 0;
   }
 
+  public InitializeNewAssetGroup(cf: ConfigFile): AssetGroup {
+    let copyMyData = (copySource: MyData, parent: AssetGroup): MyData => {
+      let d = this.CreateMyData(parent);
+      d.CopyFrom(copySource.Data);
+      return d;
+    };
+
+    let copyGroup = (copySource: AssetGroup, parent: AssetGroup): AssetGroup => {
+      let g = this.CreateAssetGroup(parent);
+      g.CopyFrom(copySource.Data);
+      g.Data['assetGroupIDs'] = [];
+      copySource.SubGroups.forEach(copySubGroup => {
+        let sg = copyGroup(copySubGroup, g);
+        g.AddAssetGroup(sg);
+      });
+      g.Data['associatedDataIDs'] = [];
+      copySource.AssociatedData.forEach(copyA => {
+        let a = copyMyData(copyA, g);
+        g.AddMyData(a);
+      });
+      return g;
+    };
+
+    return copyGroup(cf.AssetGroups, null);
+  }
+
   public GetMyData(ID: string) {
     return this.myData.find(x => x.ID == ID);
   }
@@ -257,23 +291,23 @@ export class ProjectFile extends DatabaseBase {
     return index >= 0;
   }
 
-  public GetDeviceThreat(ID: string) {
-    return this.deviceThreats.find(x => x.ID == ID);
+  public GetSystemThreat(ID: string) {
+    return this.systemThreats.find(x => x.ID == ID);
   }
 
-  public CreateDeviceThreat(cat: ThreatCategory): DeviceThreat {
-    let res = new DeviceThreat({}, this, this.Config);
-    res.Name = StringExtension.FindUniqueName(cat ? cat.Name : 'Threat', this.GetDeviceThreats().map(x => x.Name));
+  public CreateSystemThreat(cat: ThreatCategory): SystemThreat {
+    let res = new SystemThreat({}, this, this.Config);
+    res.Name = StringExtension.FindUniqueName(cat ? cat.Name : 'Threat', this.GetSystemThreats().map(x => x.Name));
     res.ThreatCategory = cat;
-    this.deviceThreats.push(res);
+    this.systemThreats.push(res);
     return res;
   }
 
-  public DeleteDeviceThreat(dt: DeviceThreat): boolean {
-    const index = this.deviceThreats.indexOf(dt);
+  public DeleteSystemThreat(dt: SystemThreat): boolean {
+    const index = this.systemThreats.indexOf(dt);
     if (index >= 0) {
       dt.OnDelete(this, this.config);
-      this.deviceThreats.splice(index, 1);
+      this.systemThreats.splice(index, 1);
     }
     return index >= 0;
   }
@@ -390,58 +424,56 @@ export class ProjectFile extends DatabaseBase {
     return index >= 0;
   }
 
-  public GetThreatMapping(ID: string) {
-    return this.threatMappingMap.get(ID);
+  public GetAttackScenario(ID: string) {
+    return this.attackScenarioMap.get(ID);
   }
 
-  public CreateThreatMapping(viewID: string, isGenerated: boolean) {
-    let map = new ThreatMapping({}, this, this.Config);
-    map.IsGenerated = isGenerated;
-    if (this.GetThreatMappings().length == 0) map.Number = '1';
-    else map.Number = (Math.max(...this.GetThreatMappings().map(x => Number(x.Number)))+1).toString();
-    //map.Number = StringExtension.FindUniqueName('', this.threatMappings.map(x => x.Number));
-    map.ViewID = viewID;
-    this.threatMappingMap.set(map.ID, map);
-    this.ThreatMappingsChanged.emit({ ID: map.ID, Type: DataChangedTypes.Added });
-    return map;
+  public CreateAttackScenario(viewID: string, isGenerated: boolean) {
+    let as = new AttackScenario({}, this, this.Config);
+    as.IsGenerated = isGenerated;
+    if (this.GetAttackScenarios().length == 0) as.Number = '1';
+    else as.Number = (Math.max(...this.GetAttackScenarios().map(x => Number(x.Number)))+1).toString();
+    as.ViewID = viewID;
+    this.attackScenarioMap.set(as.ID, as);
+    this.AttackScenariosChanged.emit({ ID: as.ID, Type: DataChangedTypes.Added });
+    return as;
   }
 
-  public DeleteThreatMapping(map: ThreatMapping) {
-    if (this.threatMappingMap.has(map.ID)) {
+  public DeleteAttackScenario(map: AttackScenario) {
+    if (this.attackScenarioMap.has(map.ID)) {
       map.OnDelete(this, this.config);
-      this.threatMappingMap.delete(map.ID);
-      this.ThreatMappingsChanged.emit({ ID: map.ID, Type: DataChangedTypes.Removed });
+      this.attackScenarioMap.delete(map.ID);
+      this.AttackScenariosChanged.emit({ ID: map.ID, Type: DataChangedTypes.Removed });
       return true;
     }
     return false;
   }
 
-  public CleanUpGeneratedThreatMappings() {
-    this.threatMappingMap.forEach(x => {
-      if (x.IsGenerated) this.threatMappingMap.delete(x.ID);
+  public CleanUpGeneratedAttackScenarios() {
+    this.attackScenarioMap.forEach(x => {
+      if (x.IsGenerated) this.attackScenarioMap.delete(x.ID);
     });
   }
 
-  public GetMitigationMapping(ID: string) {
-    return this.mitigationMappingMap.get(ID);
+  public GetCountermeasure(ID: string) {
+    return this.countermeasureMap.get(ID);
   }
 
-  public CreateMitigationMapping(viewID: string) {
-    let map = new MitigationMapping({}, this, this.Config);
-    if (this.GetMitigationMappings().length == 0) map.Number = '1';
-    else map.Number = (Math.max(...this.GetMitigationMappings().map(x => Number(x.Number)))+1).toString();
-    //map.Number = StringExtension.FindUniqueName('', this.threatMappings.map(x => x.Number));
+  public CreateCountermeasure(viewID: string) {
+    let map = new Countermeasure({}, this, this.Config);
+    if (this.GetCountermeasures().length == 0) map.Number = '1';
+    else map.Number = (Math.max(...this.GetCountermeasures().map(x => Number(x.Number)))+1).toString();
     map.ViewID = viewID;
-    this.mitigationMappingMap.set(map.ID, map);
-    this.MitigationMappingsChanged.emit({ ID: map.ID, Type: DataChangedTypes.Added });
+    this.countermeasureMap.set(map.ID, map);
+    this.CountermeasuresChanged.emit({ ID: map.ID, Type: DataChangedTypes.Added });
     return map;
   }
 
-  public DeleteMitigationMapping(map: MitigationMapping) {
-    if (this.mitigationMappingMap.has(map.ID)) {
+  public DeleteCountermeasure(map: Countermeasure) {
+    if (this.countermeasureMap.has(map.ID)) {
       map.OnDelete(this, this.config);
-      this.mitigationMappingMap.delete(map.ID);
-      this.MitigationMappingsChanged.emit({ ID: map.ID, Type: DataChangedTypes.Removed });
+      this.countermeasureMap.delete(map.ID);
+      this.CountermeasuresChanged.emit({ ID: map.ID, Type: DataChangedTypes.Removed });
       return true;
     }
     return false;
@@ -516,14 +548,14 @@ export class ProjectFile extends DatabaseBase {
       myData: [],
       threatActors: [],
       threatSources: this.threatSources.ToJSON(),
-      deviceThreats: [],
+      systemThreats: [],
       contextElements: [],
       dfdElements: [],
       diagrams: [],
       stacks: [],
       components: [],
-      threatMappings: [],
-      mitigationMappings: [],
+      attackScenarios: [],
+      countermeasures: [],
       mitigationProcesses: [],
       checklists: [],
       config: this.Config.ToJSON()
@@ -532,15 +564,15 @@ export class ProjectFile extends DatabaseBase {
     this.assetGroups.forEach(x => res.assetGroups.push(x.ToJSON()));
     this.myData.forEach(x => res.myData.push(x.ToJSON()));
     this.threatActors.forEach(x => res.threatActors.push(x.ToJSON()));
-    this.deviceThreats.forEach(x => res.deviceThreats.push(x.ToJSON()));
+    this.systemThreats.forEach(x => res.systemThreats.push(x.ToJSON()));
 
     this.contextElementMap.forEach(x => res.contextElements.push(x.ToJSON()));
     this.dfdElementMap.forEach(x => res.dfdElements.push(x.ToJSON()));
     this.diagrams.forEach(x => res.diagrams.push(x.ToJSON()));
     this.stacks.forEach(x => res.stacks.push(x.ToJSON()));
     this.componentMap.forEach(x => res.components.push(x.ToJSON()));
-    this.threatMappingMap.forEach(x => res.threatMappings.push(x.ToJSON()));
-    this.mitigationMappingMap.forEach(x => res.mitigationMappings.push(x.ToJSON()));
+    this.attackScenarioMap.forEach(x => res.attackScenarios.push(x.ToJSON()));
+    this.countermeasureMap.forEach(x => res.countermeasures.push(x.ToJSON()));
     this.mitigationProcesses.forEach(x => res.mitigationProcesses.push(x.ToJSON()));
 
     this.checklists.forEach(x => res.checklists.push(x.ToJSON()));
@@ -564,12 +596,12 @@ export class ProjectFile extends DatabaseBase {
 
     val.threatActors?.forEach(x => res.threatActors.push(ThreatActor.FromJSON(x, cf)));
     if (val.threatSources) res.threatSources = ThreatSources.FromJSON(val.threatSources, res, cf);
-    val.deviceThreats?.forEach(x => res.deviceThreats.push(DeviceThreat.FromJSON(x, res, cf)));
+    val.systemThreats?.forEach(x => res.systemThreats.push(SystemThreat.FromJSON(x, res, cf)));
 
     val.components.forEach(x => res.componentMap.set(x['ID'], MyComponent.FromJSON(x, res, cf)));
     val.stacks.forEach(x => res.stacks.push(MyComponentStack.FromJSON(x, res, cf)));
-    val.threatMappings?.forEach(x => res.threatMappingMap.set(x['ID'], ThreatMapping.FromJSON(x, res, cf)));
-    val.mitigationMappings?.forEach(x => res.mitigationMappingMap.set(x['ID'], MitigationMapping.FromJSON(x, res, cf)));
+    val.attackScenarios?.forEach(x => res.attackScenarioMap.set(x['ID'], AttackScenario.FromJSON(x, res, cf)));
+    val.countermeasures?.forEach(x => res.countermeasureMap.set(x['ID'], Countermeasure.FromJSON(x, res, cf)));
     val.mitigationProcesses?.forEach(x => res.mitigationProcesses.push(MitigationProcess.FromJSON(x, res, cf)));
 
     val.checklists?.forEach(x => res.checklists.push(Checklist.FromJSON(x, res, cf)));

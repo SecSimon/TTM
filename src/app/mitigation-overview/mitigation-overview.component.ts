@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { INote } from '../model/database';
-import { MitigationMapping, MitigationProcess, MitigationProcessStates, MitigationProcessStateUtil, MitigationStates, MitigationStateUtil } from '../model/mitigations';
+import { Countermeasure, MitigationProcess, MitigationProcessStates, MitigationProcessStateUtil, MitigationStates, MitigationStateUtil } from '../model/mitigations';
 import { NavTreeBase } from '../shared/components/nav-tree/nav-tree-base';
 import { INavigationNode } from '../shared/components/nav-tree/nav-tree.component';
 import { SideNavBase } from '../shared/components/side-nav/side-nav-base';
@@ -47,7 +47,7 @@ export class MitigationOverviewComponent extends SideNavBase implements OnInit {
   }
 
   public IsMapping() {
-    return this.selectedNode?.data instanceof MitigationMapping;
+    return this.selectedNode?.data instanceof Countermeasure;
   }
 
   public OnMappingProcessChange() {
@@ -93,7 +93,7 @@ export class MitigationOverviewComponent extends SideNavBase implements OnInit {
     this.nodes = [];
     let pf = this.dataService.Project;
 
-    let createMapping = (map: MitigationMapping, groupNode: INavigationNode): INavigationNode => {
+    let createMapping = (map: Countermeasure, groupNode: INavigationNode): INavigationNode => {
       let node: INavigationNode = {
         name: () => map.Name,
         canSelect: true,
@@ -104,7 +104,7 @@ export class MitigationOverviewComponent extends SideNavBase implements OnInit {
         onDelete: () => { 
           this.dialog.OpenDeleteObjectDialog(map).subscribe(res => {
             if (res) {
-              pf.DeleteMitigationMapping(map);
+              pf.DeleteCountermeasure(map);
               if (this.selectedNode == node) this.selectedNode = null;
               this.createNodes();
             }
@@ -168,7 +168,7 @@ export class MitigationOverviewComponent extends SideNavBase implements OnInit {
         children: []
       };
 
-      pf.GetMitigationMappings().filter(x => x.MitigationProcess == proc).forEach(x => node.children.push(createMapping(x, node)));
+      pf.GetCountermeasures().filter(x => x.MitigationProcess == proc).forEach(x => node.children.push(createMapping(x, node)));
 
       return node;
     };
@@ -188,11 +188,11 @@ export class MitigationOverviewComponent extends SideNavBase implements OnInit {
     };
 
     let na: INavigationNode = {
-      name: () => this.translate.instant('pages.modeling.mitigationoverview.NotAssignedMappings'),
+      name: () => this.translate.instant('pages.modeling.mitigationoverview.NotAssignedCountermeasures'),
       canSelect: false,
       children: []
     };
-    pf.GetMitigationMappings().filter(x => x.MitigationProcess == null).forEach(x => na.children.push(createMapping(x, na)));
+    pf.GetCountermeasures().filter(x => x.MitigationProcess == null).forEach(x => na.children.push(createMapping(x, na)));
     if (na.children.length > 0) root.children.push(na);
 
     pf.GetMitigationProcesses().forEach(x => root.children.push(createProcess(x, root)));

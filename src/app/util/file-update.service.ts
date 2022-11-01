@@ -13,24 +13,26 @@ import { v4 as uuidv4 } from 'uuid';
 })
 export class FileUpdateService {
 
-  public static ProjectVersion = 4;
-  public static ConfigVersion = 2;
+  public static ProjectVersion = 5;
+  public static ConfigVersion = 3;
 
   private configUpdates = [
-    this.configV2
+    this.configV2,
+    this.configV3
   ];
 
   private projectUpdates = [
     this.projectV2,
     this.projectV3,
-    this.projectV4
+    this.projectV4,
+    this.projectV5
   ];
 
   constructor(private messageService: MessagesService, private translate: TranslateService) { }
 
   public UpdateProjectFile(file: IProjectFile): boolean {
     let res = this.UpdateConfigFile(file.config as IConfigFile);
-    res = res || this.updateFile(file, false);
+    if (res) res = this.updateFile(file, false);
     return res;
   }
 
@@ -66,7 +68,7 @@ export class FileUpdateService {
   }
 
   private projectV2(file: IProjectFile) {
-    file.deviceThreats.forEach(cat => {
+    file.systemThreats.forEach(cat => {
       const secGoalNames: string[] = [
         'Confidentiality', 'Integrity', 'Availability',
         'Authorization', 'Authenticity', 'Non-repudiation',
@@ -117,6 +119,38 @@ export class FileUpdateService {
     }
   }
 
+  private projectV5(file: IProjectFile) {
+    if (file['threatMappings']) {
+      FileUpdateService.renameKey(file, 'threatMappings', 'attackScenarios');
+
+      file['attackScenarios'].forEach(x => {
+        if (x['deviceThreatIDs']) {
+          FileUpdateService.renameKey(file, 'deviceThreatIDs', 'systemThreatIDs');
+        }
+      });
+    }
+    if (file['deviceThreats']) {
+      FileUpdateService.renameKey(file, 'deviceThreats', 'systemThreats');
+    }
+
+    if (file['mitigationMappings']) {
+      FileUpdateService.renameKey(file, 'mitigationMappings', 'countermeasures');
+    }
+    if (file['countermeasures']) {
+      file['countermeasures'].forEach(x => {
+        if (x['threatMappingIDs']) {
+          FileUpdateService.renameKey(file, 'threatMappingIDs', 'attackScenarioIDs');
+        }
+      })
+    }
+
+    if (file['countermeasures']) {
+      file['countermeasures'].forEach(x => {
+        FileUpdateService.renameKey(x, 'mitigationID', 'controlID');
+      })
+    }
+  }
+
   private configV2(file: IConfigFile) {
     file.threatOrigins.forEach(origin => {
       let res = [];
@@ -145,5 +179,26 @@ export class FileUpdateService {
       }
       cat['ImpactCats'] = res;
     });
+  }
+
+  private configV3(file: IConfigFile) {
+    if (file['Data']['mitigationLibraryID']) {
+      FileUpdateService.renameKey(file['Data'], 'mitigationLibraryID', 'controlLibraryID');
+    }
+    if (file['mitigations']) {
+      FileUpdateService.renameKey(file, 'mitigations', 'controls');
+    }
+    if (file['mitigationGroups']) {
+      FileUpdateService.renameKey(file, 'mitigationGroups', 'controlGroups');
+      file['controlGroups'].forEach(x => {
+        FileUpdateService.renameKey(x, 'mitigationGroupIDs', 'controlGroupIDs');
+        FileUpdateService.renameKey(x, 'mitigationIDs', 'controlIDs');
+      });
+    }
+  }
+
+  private static renameKey(obj: {}, oldKey: string, newKey: string) {
+    obj[newKey] = obj[oldKey];
+    delete obj[oldKey];
   }
 }

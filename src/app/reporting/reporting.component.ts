@@ -19,10 +19,10 @@ import { NodeTypes } from '../modeling/modeling.component';
 import { ResizedEvent } from 'angular-resize-event';
 import { DeviceAssetsComponent } from '../modeling/device-assets/device-assets.component';
 import { StackComponent } from '../modeling/stack/stack.component';
-import { LowMediumHighNumberUtil } from '../model/assets';
-import { ImpactCategoryUtil, RiskStrategyUtil, ThreatMapping, ThreatSeverityUtil } from '../model/threat-model';
+import { AssetGroup, LowMediumHighNumberUtil } from '../model/assets';
+import { ImpactCategoryUtil, RiskStrategyUtil, AttackScenario, ThreatSeverityUtil } from '../model/threat-model';
 import { DatabaseBase } from '../model/database';
-import { MitigationMapping, MitigationProcessStateUtil, MitigationStateUtil } from '../model/mitigations';
+import { Countermeasure, MitigationProcessStateUtil, MitigationStateUtil } from '../model/mitigations';
 import { ResultsChartComponent } from '../dashboard/results-chart/results-chart.component';
 import { ResultsAnalysisComponent } from '../dashboard/results-analysis/results-analysis.component';
 
@@ -97,11 +97,11 @@ export class ReportingComponent implements OnInit {
       this.createHeading(this.translate.instant('report.ExecutiveSummary'));
       this.createParagraph(this.translate.instant('report.SUC') + ': ' + [...this.Project.GetDevices(), ...this.Project.GetMobileApps()].map(x => x.Name).join(', '));
       this.createParagraph(this.translate.instant('report.IdentifiedSystemThreats') + ': ');
-      this.createUL(this.Project.GetDeviceThreats().map(x => x.Name));
+      this.createUL(this.Project.GetSystemThreats().map(x => x.Name));
 
       this.createParagraph('');
       // charts / tables
-      let charts = [ResultsAnalysisComponent.CreateThreatSummaryDiagram, ResultsAnalysisComponent.CreateMitigationSummaryDiagram, ResultsAnalysisComponent.CreateThreatPerLifecycleDiagram, ResultsAnalysisComponent.CreateThreatPerTypeDiagram];
+      let charts = [ResultsAnalysisComponent.CreateThreatSummaryDiagram, ResultsAnalysisComponent.CreateCountermeasureSummaryDiagram, ResultsAnalysisComponent.CreateThreatPerLifecycleDiagram, ResultsAnalysisComponent.CreateThreatPerTypeDiagram];
       for (let i = 0; i < charts.length; i++) {
         const diaData = charts[i](this.Project, this.translate, false, false, 600, 400);
         if (this.ShowCharts) {
@@ -158,12 +158,15 @@ export class ReportingComponent implements OnInit {
 
       // asset identification
       this.createSubHeading(this.ttmService.Stages[0].steps[3].name);
-      let assets = [...this.Project.GetDevices(), ...this.Project.GetMobileApps()];
+      let assets: [string, AssetGroup][] = [['Assets', this.Project.GetProjectAssetGroup()]];
+      this.Project.GetDevices().forEach(x => assets.push([x.Name, x.AssetGroup]));
+      this.Project.GetMobileApps().forEach(x => assets.push([x.Name, x.AssetGroup]));
+      assets = assets.filter(x => x[1] != null);
       for (let i = 0; i < assets.length; i++) {
-        if (assets[i].AssetGroup.IsActive) {
-          this.createSubSubHeading(assets[i].Name);
+        if (assets[i][1].IsActive) {
+          this.createSubSubHeading(assets[i][0]);
           const assetComp = this.viewContainerRef.createComponent(DeviceAssetsComponent);
-          assetComp.instance.assetGroup = assets[i].AssetGroup;
+          assetComp.instance.assetGroup = assets[i][1];
           assetComp.instance.hideButtons = true;
           assetComp.instance.elRef.nativeElement.style.color = 'black';
           await new Promise<void>(resolve => setTimeout(() => {
@@ -199,7 +202,7 @@ export class ReportingComponent implements OnInit {
 
       // device threats
       this.createSubHeading(this.translate.instant('general.SystemThreats'));
-      this.Project.GetDeviceThreats().forEach(threat => {
+      this.Project.GetSystemThreats().forEach(threat => {
         this.createSubSubHeading(threat.Name);
         if (threat.ThreatCategory) this.createParagraph(this.translate.instant('general.ThreatCategory') + ': ' + threat.ThreatCategory.Name);
         if (threat.Description?.length > 0) this.createParagraph(this.translate.instant('properties.consequencesImpact') + ': ' + threat.Description);
@@ -280,9 +283,9 @@ export class ReportingComponent implements OnInit {
       this.Project.GetMobileApps().forEach(x => views.push(...[x.SoftwareStack, x.ProcessStack]));
       this.Project.GetDFDiagrams().forEach(x => views.push(x));
 
-      let threats: [string, ThreatMapping[]][] = [];
+      let threats: [string, AttackScenario[]][] = [];
       views.forEach(view => {
-        threats.push([view.Name, this.Project.GetThreatMappings().filter(x => x.ViewID == view.ID)]);
+        threats.push([view.Name, this.Project.GetAttackScenarios().filter(x => x.ViewID == view.ID)]);
       });
       
       threats.forEach(x => {
@@ -290,7 +293,7 @@ export class ReportingComponent implements OnInit {
           this.createSubSubHeading(x[0]);
           x[1].forEach(threat => {
             this.createBoldParagraph(threat.Name);
-            if (threat.DeviceThreats?.length > 0) this.createParagraph(this.translate.instant('general.SystemThreats') + ': ' + threat.DeviceThreats.map(x => x.Name).join(', '));
+            if (threat.SystemThreats?.length > 0) this.createParagraph(this.translate.instant('general.SystemThreats') + ': ' + threat.SystemThreats.map(x => x.Name).join(', '));
             if (threat.Severity) this.createParagraph(this.translate.instant('properties.Severity') + ': ' + this.translate.instant(ThreatSeverityUtil.ToString(threat.Severity)));
             if (threat.Likelihood) this.createParagraph(this.translate.instant('general.Likelihood') + ': ' + this.translate.instant(LowMediumHighNumberUtil.ToString(threat.Likelihood)));
             if (threat.Risk) this.createParagraph(this.translate.instant('properties.Risk') + ': ' + this.translate.instant(LowMediumHighNumberUtil.ToString(threat.Risk)));
@@ -300,14 +303,14 @@ export class ReportingComponent implements OnInit {
         }
       });
 
-      let mitigations: [string, MitigationMapping[]][] = [];
+      let measures: [string, Countermeasure[]][] = [];
       views.forEach(view => {
-        mitigations.push([view.Name, this.Project.GetMitigationMappings().filter(x => x.ViewID == view.ID)]);
+        measures.push([view.Name, this.Project.GetCountermeasures().filter(x => x.ViewID == view.ID)]);
       });
 
-      // mitigation
+      // countermeasures
       this.createSubHeading(this.ttmService.Stages[2].steps[1].name);
-      mitigations.forEach(x => {
+      measures.forEach(x => {
         if (x[1].length > 0) {
           this.createSubSubHeading(x[0]);
           x[1].forEach(mit => {
@@ -706,6 +709,7 @@ export class ReportingComponent implements OnInit {
   private createHtmlDiagram(image: string) {
     const img = document.createElement('img');
     img.src = image;
+    img.style.maxWidth = this.docWidth.toString() + 'px';
     return img;
   }
 
@@ -724,7 +728,7 @@ export class ReportingComponent implements OnInit {
     const size = this.Dia.FitToCanvas(width);
     event = new ResizedEvent(new DOMRectReadOnly(0, 0, width, size[1]+10), null);
     div.style.height = size[1].toString() + 'px';
-    this.Dia.OnResized(event, div);
+    this.Dia.OnResized(event, div, false);
 
     return [this.Dia.GetImage(), width, size[1]];
   }

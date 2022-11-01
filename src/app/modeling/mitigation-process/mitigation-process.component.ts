@@ -1,6 +1,6 @@
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, EventEmitter, Input, OnInit, Optional, Output } from '@angular/core';
-import { MitigationMapping, MitigationProcess, MitigationProcessStates, MitigationProcessStateUtil, MitigationStates } from '../../model/mitigations';
+import { Countermeasure, MitigationProcess, MitigationProcessStates, MitigationProcessStateUtil, MitigationStates } from '../../model/mitigations';
 import { DataService } from '../../util/data.service';
 import { DialogService } from '../../util/dialog.service';
 import { ThemeService } from '../../util/theme.service';
@@ -22,7 +22,7 @@ export class MitigationProcessComponent implements OnInit {
     this._mitigationProcess = val;
   }
 
-  @Output() public mitigationMappingsChange = new EventEmitter();
+  @Output() public countermeasuresChange = new EventEmitter();
 
   constructor(@Optional() mapping: MitigationProcess, public theme: ThemeService, public dataService: DataService, private dialog: DialogService) {
     this.mitigationProcess = mapping;
@@ -34,14 +34,14 @@ export class MitigationProcessComponent implements OnInit {
   public OnStateChange(val: MitigationProcessStates) {
     if (val == MitigationProcessStates.WorkInProgress) {
       if (this.mitigationProcess.Progress == 0) this.mitigationProcess.Progress = 5;
-      this.mitigationProcess.MitigationMappings.forEach(x => {
-        if ([MitigationStates.NotSet, MitigationStates.Mitigated].includes(x.MitigationState)) x.MitigationState = MitigationStates.MitigationStarted;
+      this.mitigationProcess.Countermeasures.forEach(x => {
+        if ([MitigationStates.NotSet, MitigationStates.Implemented].includes(x.MitigationState)) x.MitigationState = MitigationStates.MitigationStarted;
       });
     }
     else if (val == MitigationProcessStates.Completed) {
       this.mitigationProcess.Progress = 100;
-      this.mitigationProcess.MitigationMappings.forEach(x => {
-        if (x.MitigationState == MitigationStates.MitigationStarted) x.MitigationState = MitigationStates.Mitigated;
+      this.mitigationProcess.Countermeasures.forEach(x => {
+        if (x.MitigationState == MitigationStates.MitigationStarted) x.MitigationState = MitigationStates.Implemented;
       });
     }
   }
@@ -49,23 +49,23 @@ export class MitigationProcessComponent implements OnInit {
   public OnProgressChange(val: number) {
     if (val == 100) {
       this.mitigationProcess.MitigationProcessState = MitigationProcessStates.Completed;
-      this.mitigationProcess.MitigationMappings.forEach(x => {
-        if (x.MitigationState == MitigationStates.MitigationStarted) x.MitigationState = MitigationStates.Mitigated;
+      this.mitigationProcess.Countermeasures.forEach(x => {
+        if (x.MitigationState == MitigationStates.MitigationStarted) x.MitigationState = MitigationStates.Implemented;
       });
     }
     else if (val > 0) {
       this.mitigationProcess.MitigationProcessState = MitigationProcessStates.WorkInProgress;
-      this.mitigationProcess.MitigationMappings.forEach(x => {
-        if ([MitigationStates.NotSet, MitigationStates.Mitigated].includes(x.MitigationState)) x.MitigationState = MitigationStates.MitigationStarted;
+      this.mitigationProcess.Countermeasures.forEach(x => {
+        if ([MitigationStates.NotSet, MitigationStates.Implemented].includes(x.MitigationState)) x.MitigationState = MitigationStates.MitigationStarted;
       });
     }
   }
 
-  public GetMitigationMappings() {
-    return this.dataService.Project.GetMitigationMappings();
+  public GetCountermeasures() {
+    return this.dataService.Project.GetCountermeasures();
   }
 
-  public GetMitigationMappingsName(val: MitigationMapping[]) {
+  public GetCountermeasuresName(val: Countermeasure[]) {
     return val?.map(x => x.Name).join(', ');
   }
 

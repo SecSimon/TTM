@@ -16,15 +16,15 @@ import { ThreatQuestionComponent } from './threat-question/threat-question.compo
 import { AssetsComponent } from './assets/assets.component';
 import { MyDataComponent } from './mydata/mydata.component';
 import { ThreatCategoryComponent } from './threat-category/threat-category.component';
-import { MitigationsComponent } from './mitigations/mitigations.component';
-import { MitigationComponent } from './mitigation/mitigation.component';
+import { ControlsComponent } from './controls/controls.component';
+import { ControlComponent } from './control/control.component';
 import { ChecklistsComponent } from './checklists/checklists.component';
 import { ThreatSourcesComponent } from './threat-sources/threat-sources.component';
 import { ThreatActorComponent } from './threat-actor/threat-actor.component';
 import { WarningDialogComponent } from './warning-dialog/warning-dialog.component';
 
 @NgModule({
-  declarations: [ConfigurationComponent, StencilsComponent, ThreatCategoriesComponent, ComponentsComponent, ThreatLibraryComponent, RulesComponent, ThreatRuleComponent, ThreatOriginComponent, ThreatQuestionComponent, AssetsComponent, MyDataComponent, ThreatCategoryComponent, MitigationsComponent, MitigationComponent, ChecklistsComponent, ThreatSourcesComponent, ThreatActorComponent, WarningDialogComponent],
+  declarations: [ConfigurationComponent, StencilsComponent, ThreatCategoriesComponent, ComponentsComponent, ThreatLibraryComponent, RulesComponent, ThreatRuleComponent, ThreatOriginComponent, ThreatQuestionComponent, AssetsComponent, MyDataComponent, ThreatCategoryComponent, ControlsComponent, ControlComponent, ChecklistsComponent, ThreatSourcesComponent, ThreatActorComponent, WarningDialogComponent],
   imports: [
     CommonModule,
     SharedModule,
@@ -38,7 +38,7 @@ import { WarningDialogComponent } from './warning-dialog/warning-dialog.componen
     AssetsComponent,
     ThreatCategoryComponent,
     MyDataComponent,
-    MitigationComponent
+    ControlComponent
   ]
 })
 export class ConfigurationModule { }

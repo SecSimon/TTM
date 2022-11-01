@@ -4,9 +4,9 @@ import { Subscription } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 import { DataService } from '../util/data.service';
 import { ConfigFile } from './config-file';
-import { MitigationMapping } from './mitigations';
+import { Countermeasure } from './mitigations';
 import { ProjectFile } from './project-file';
-import { ThreatMapping } from './threat-model';
+import { AttackScenario } from './threat-model';
 
 export interface IKeyValue {
   Key: string|any;
@@ -82,7 +82,7 @@ export enum DataReferenceTypes {
   RemovePhysicalElementReference,
   DeleteDataFlow,
   RemoveInterfaceReference,
-  DeleteThreatMapping,
+  DeleteAttackScenario,
 
   // Context References
   DeleteContextFlow,
@@ -106,10 +106,10 @@ export enum DataReferenceTypes {
   // Threat Model
   RemoveThreatCategoryFromThreatOrigin,
   RemoveThreatCategoryFromThreatRule,
-  RemoveThreatCategoryFromThreatMapping,
+  RemoveThreatCategoryFromAttackScenario,
   RemoveThreatCategoryFromThreatMnemonic,
   RemoveThreatQuestionFromComponent,
-  RemoveThreatOriginFromMitigation,
+  RemoveThreatOriginFromControl,
 
   // Device
   DeleteDiagram,
@@ -118,12 +118,12 @@ export enum DataReferenceTypes {
   DeleteAssetGroup,
 
   // Mitigation
-  DeleteMitigation,
-  DeleteMitigationGroup,
-  DeleteMitigationMapping,
-  RemoveElementFromMitigationMapping,
-  RemoveThreatMappingFromMitigationMapping,
-  RemoveMitigationProcessFromMitigationMapping,
+  DeleteControl,
+  DeleteControlGroup,
+  DeleteCountermeasure,
+  RemoveElementFromCountermeasure,
+  RemoveAttackScenarioFromCountermeasure,
+  RemoveMitigationProcessFromCountermeasure,
 
   // Checklist
   DeleteRequirementType,
@@ -280,16 +280,16 @@ export abstract class ViewElementBase extends DatabaseBase {
 
   public FindReferences(pf: ProjectFile, cf: ConfigFile): IDataReferences[] {
     let refs: IDataReferences[] = [];
-    pf?.GetThreatMappings().filter(x => x.Target == this || x.Targets?.includes(this)).forEach(x => refs.push({ Type: DataReferenceTypes.DeleteThreatMapping, Param: x }));
-    pf?.GetMitigationMappings().filter(x => x.Targets.includes(this)).forEach(x => refs.push({ Type: DataReferenceTypes.RemoveElementFromMitigationMapping, Param: x }));
+    pf?.GetAttackScenarios().filter(x => x.Target == this || x.Targets?.includes(this)).forEach(x => refs.push({ Type: DataReferenceTypes.DeleteAttackScenario, Param: x }));
+    pf?.GetCountermeasures().filter(x => x.Targets.includes(this)).forEach(x => refs.push({ Type: DataReferenceTypes.RemoveElementFromCountermeasure, Param: x }));
     return refs;
   }
 
   public OnDelete(pf: ProjectFile, cf: ConfigFile) {
     let refs = this.FindReferences(pf, cf);
     refs.forEach(x => {
-      if (x.Type == DataReferenceTypes.DeleteThreatMapping) pf.DeleteThreatMapping(x.Param as ThreatMapping);
-      else if (x.Type == DataReferenceTypes.RemoveElementFromMitigationMapping) (x.Param as MitigationMapping).RemoveTarget(this.ID);
+      if (x.Type == DataReferenceTypes.DeleteAttackScenario) pf.DeleteAttackScenario(x.Param as AttackScenario);
+      else if (x.Type == DataReferenceTypes.RemoveElementFromCountermeasure) (x.Param as Countermeasure).RemoveTarget(this.ID);
     });
   }
 }

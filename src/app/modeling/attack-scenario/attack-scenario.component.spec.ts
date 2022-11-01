@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MitigationComponent } from './mitigation.component';
+import { AttackScenarioComponent } from './attack-scenario.component';
 
-describe('MitigationComponent', () => {
-  let component: MitigationComponent;
-  let fixture: ComponentFixture<MitigationComponent>;
+describe('AttackScenarioComponent', () => {
+  let component: AttackScenarioComponent;
+  let fixture: ComponentFixture<AttackScenarioComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ MitigationComponent ]
+      declarations: [ AttackScenarioComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(MitigationComponent);
+    fixture = TestBed.createComponent(AttackScenarioComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

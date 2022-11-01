@@ -1,19 +1,19 @@
-<div *ngIf="threatMapping" [class.disable]="!canEdit">
+<div *ngIf="attackScenario" [class.disable]="!canEdit">
   <mat-form-field appearance="fill" class="property-form-field">
     <mat-label>{{ 'properties.Name' | translate }}</mat-label>
-    <input matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="threatMapping.Name" matTooltip="{{threatMapping.Name}}" matTooltipShowDelay="1000"/>
+    <input matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="attackScenario.Name" matTooltip="{{attackScenario.Name}}" matTooltipShowDelay="1000"/>
   </mat-form-field>
   <mat-form-field appearance="fill" class="property-form-field" style="margin-left: 10px;">
     <mat-label>{{'properties.Status' | translate}}</mat-label>
-    <mat-select [(value)]="threatMapping.ThreatState" matTooltip="{{GetThreatStateName(threatMapping.ThreatState) | translate}}" matTooltipShowDelay="1000">
+    <mat-select [(value)]="attackScenario.ThreatState" matTooltip="{{GetThreatStateName(attackScenario.ThreatState) | translate}}" matTooltipShowDelay="1000">
       <mat-option *ngFor="let state of GetThreatStates()" [value]="state">{{GetThreatStateName(state) | translate}}</mat-option>
     </mat-select>
   </mat-form-field>
-  <mat-icon color="warn" *ngIf="!threatMapping.RuleStillApplies" style="margin-left: 5px;" matTooltip="{{'pages.modeling.threatmapping.ruleNotApplyingAnymore' | translate}}">sync_problem</mat-icon>
+  <mat-icon color="warn" *ngIf="!attackScenario.RuleStillApplies" style="margin-left: 5px;" matTooltip="{{'pages.modeling.attackscenario.ruleNotApplyingAnymore' | translate}}">sync_problem</mat-icon>
   <br/>
   <mat-form-field appearance="fill" class="property-form-field">
     <mat-label>{{'general.Threat' | translate}}</mat-label>
-    <mat-select [(value)]="threatMapping.ThreatOrigin" matTooltip="{{threatMapping.ThreatOrigin?.Name}}" matTooltipShowDelay="1000">
+    <mat-select [(value)]="attackScenario.ThreatOrigin" matTooltip="{{attackScenario.ThreatOrigin?.Name}}" matTooltipShowDelay="1000">
       <mat-option>{{'properties.selectNone' | translate}}</mat-option>
       <mat-optgroup *ngFor="let group of GetThreatOriginGroups()" [label]="group.Name">
         <mat-option *ngFor="let threat of group.ThreatOrigins" [value]="threat">
@@ -28,7 +28,7 @@
   <br/>
   <mat-form-field appearance="fill" class="property-form-field disable">
     <mat-label>{{ 'general.Target' | translate }}</mat-label>
-    <input matInput [spellcheck]="dataService.HasSpellCheck" [value]="threatMapping.Target?.Name" matTooltip="{{threatMapping.Target?.GetProperty('Name')}}" matTooltipShowDelay="1000"/>
+    <input matInput [spellcheck]="dataService.HasSpellCheck" [value]="attackScenario.Target?.Name" matTooltip="{{attackScenario.Target?.GetProperty('Name')}}" matTooltipShowDelay="1000"/>
   </mat-form-field>
   <mat-form-field appearance="fill" class="disable" style="margin-left: 10px; width: calc(100% - 300px - 10px)">
     <mat-label>{{ 'general.Targets' | translate }}</mat-label>
@@ -36,7 +36,7 @@
   </mat-form-field>
   <mat-form-field appearance="fill" style="width: 100%;">
     <mat-label>{{'general.ThreatCategories' | translate}}</mat-label>
-      <mat-select [(value)]="threatMapping.ThreatCategories" multiple>
+      <mat-select [(value)]="attackScenario.ThreatCategories" multiple>
         <mat-optgroup *ngFor="let group of GetThreatCategoryGroups()" [label]="group.Name">
           <mat-option *ngFor="let cat of group.ThreatCategories" [value]="cat" matTooltip="{{cat.Description}}" matTooltipShowDelay="1000">
             {{cat.Name}}
@@ -45,10 +45,10 @@
       </mat-select>
   </mat-form-field>
   <mat-form-field appearance="fill" style="width: 100%;">
-    <mat-label>{{'general.DeviceThreats' | translate}}</mat-label>
-      <mat-select [(value)]="threatMapping.DeviceThreats" multiple>
-        <mat-optgroup *ngFor="let group of GetDeviceThreatGroups()" label="{{group.name | translate}}">
-          <mat-option *ngFor="let threat of group.DeviceThreats" [value]="threat" matTooltip="{{threat.Description}}" matTooltipShowDelay="1000">
+    <mat-label>{{'general.SystemThreats' | translate}}</mat-label>
+      <mat-select [(value)]="attackScenario.SystemThreats" multiple>
+        <mat-optgroup *ngFor="let group of GetSystemThreatGroups()" label="{{group.name | translate}}">
+          <mat-option *ngFor="let threat of group.SystemThreats" [value]="threat" matTooltip="{{threat.Description}}" matTooltipShowDelay="1000">
             {{threat.Name}}
           </mat-option>
         </mat-optgroup>
@@ -56,87 +56,87 @@
   </mat-form-field>
   <mat-form-field appearance="fill" style="width: 150px;">
     <mat-label>{{ 'properties.Severity' | translate }}</mat-label>
-    <mat-select [(value)]="threatMapping.Severity" (selectionChange)="CalculateRisk()">
+    <mat-select [(value)]="attackScenario.Severity" (selectionChange)="CalculateRisk()">
       <mat-option>{{'properties.selectNone' | translate}}</mat-option>
       <mat-option *ngFor="let type of GetSeverityTypes()" [value]="type">{{GetSeverityTypeName(type) | translate}}</mat-option>
     </mat-select>
   </mat-form-field>
   <mat-form-field appearance="fill" style="width: 150px; margin-left: 10px;">
     <mat-label>{{ 'general.Likelihood' | translate }}</mat-label>
-    <mat-select [(value)]="threatMapping.Likelihood" (selectionChange)="CalculateRisk()">
+    <mat-select [(value)]="attackScenario.Likelihood" (selectionChange)="CalculateRisk()">
       <mat-option>{{'properties.selectNone' | translate}}</mat-option>
       <mat-option *ngFor="let type of GetLMHValues()" [value]="type">{{GetLMHName(type) | translate}}</mat-option>
     </mat-select>
   </mat-form-field>
   <mat-form-field appearance="fill" style="width: 150px; margin-left: 10px;">
     <mat-label>{{ 'properties.Risk' | translate }}</mat-label>
-    <mat-select [(value)]="threatMapping.Risk">
+    <mat-select [(value)]="attackScenario.Risk">
       <mat-option>{{'properties.selectNone' | translate}}</mat-option>
       <mat-option *ngFor="let type of GetLMHValues()" [value]="type">{{GetLMHName(type) | translate}}</mat-option>
     </mat-select>
   </mat-form-field>
   <mat-form-field appearance="fill" style="width: 150px; margin-left: 10px;">
     <mat-label>{{ 'properties.RiskStrategy' | translate }}</mat-label>
-    <mat-select [(value)]="threatMapping.RiskStrategy">
+    <mat-select [(value)]="attackScenario.RiskStrategy">
       <mat-option>{{'properties.selectNone' | translate}}</mat-option>
       <mat-option *ngFor="let type of GetRiskStrategies()" [value]="type">{{GetRiskStrategyName(type) | translate}}</mat-option>
     </mat-select>
   </mat-form-field>
   <mat-form-field appearance="fill" style="width: 100%;">
     <mat-label>{{ 'properties.RiskStrategyReason' | translate }}</mat-label>
-    <textarea matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="threatMapping.RiskStrategyReason"></textarea>
+    <textarea matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="attackScenario.RiskStrategyReason"></textarea>
   </mat-form-field>
   <mat-form-field appearance="fill" style="width: 100%;">
     <mat-label>{{ 'properties.Description' | translate }}</mat-label>
-    <textarea matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="threatMapping.Description"></textarea>
+    <textarea matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="attackScenario.Description"></textarea>
   </mat-form-field>
   <mat-accordion class="expansion-panel-headers-align" style="pointer-events: initial;">
-    <mat-expansion-panel *ngIf="threatMapping.ThreatOrigin">
+    <mat-expansion-panel *ngIf="attackScenario.ThreatOrigin">
       <mat-expansion-panel-header>
         <mat-panel-title>
           {{'general.ThreatInfo' | translate}}
         </mat-panel-title>
         <mat-panel-description>
-          {{threatMapping.ThreatOrigin.Name}}
+          {{attackScenario.ThreatOrigin.Name}}
           <mat-icon>info</mat-icon>
         </mat-panel-description>
       </mat-expansion-panel-header>
       <ng-template matExpansionPanelContent>
-        <app-threat-origin [canEdit]="false" [threatOrigin]="threatMapping.ThreatOrigin"></app-threat-origin>
+        <app-threat-origin [canEdit]="false" [threatOrigin]="attackScenario.ThreatOrigin"></app-threat-origin>
       </ng-template>
     </mat-expansion-panel>
-    <mat-expansion-panel *ngIf="threatMapping.ThreatQuestion">
+    <mat-expansion-panel *ngIf="attackScenario.ThreatQuestion">
       <mat-expansion-panel-header>
         <mat-panel-title>
           {{'general.Question' | translate}}
         </mat-panel-title>
         <mat-panel-description>
-          {{threatMapping.ThreatQuestion.Name}}
+          {{attackScenario.ThreatQuestion.Name}}
           <mat-icon>info</mat-icon>
         </mat-panel-description>
       </mat-expansion-panel-header>
       <ng-template matExpansionPanelContent>
-        <app-threat-question [canEdit]="false" [threatQuestion]="threatMapping.ThreatQuestion"></app-threat-question>
+        <app-threat-question [canEdit]="false" [threatQuestion]="attackScenario.ThreatQuestion"></app-threat-question>
       </ng-template>
     </mat-expansion-panel>
-    <mat-expansion-panel *ngIf="threatMapping.ThreatRule">
+    <mat-expansion-panel *ngIf="attackScenario.ThreatRule">
       <mat-expansion-panel-header>
         <mat-panel-title>
           {{'general.Rule' | translate}}
         </mat-panel-title>
         <mat-panel-description>
-          {{threatMapping.ThreatRule.Name}}
+          {{attackScenario.ThreatRule.Name}}
           <mat-icon>info</mat-icon>
         </mat-panel-description>
       </mat-expansion-panel-header>
       <ng-template matExpansionPanelContent>
-        <app-threat-rule [canEdit]="false" [threatRule]="threatMapping.ThreatRule"></app-threat-rule>
+        <app-threat-rule [canEdit]="false" [threatRule]="attackScenario.ThreatRule"></app-threat-rule>
       </ng-template>
     </mat-expansion-panel>
-    <mat-expansion-panel *ngFor="let map of mitigationMappings">
+    <mat-expansion-panel *ngFor="let map of countermeasures">
       <mat-expansion-panel-header>
         <mat-panel-title>
-          {{'general.Mitigation' | translate}}
+          {{'general.Countermeasure' | translate}}
         </mat-panel-title>
         <mat-panel-description>
           {{map.Name}}
@@ -144,7 +144,7 @@
         </mat-panel-description>
       </mat-expansion-panel-header>
       <ng-template matExpansionPanelContent>
-        <app-mitigation-mapping [canEdit]="false" [mitigationMapping]="map"></app-mitigation-mapping>
+        <app-countermeasure [canEdit]="false" [countermeasure]="map"></app-countermeasure>
       </ng-template>
     </mat-expansion-panel>
   </mat-accordion>

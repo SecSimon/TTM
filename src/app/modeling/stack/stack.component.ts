@@ -91,26 +91,26 @@ export class StackComponent implements OnInit {
   public AddThreat(item: MyComponent) {
     if (!item) item = this.selectedComponent;
     if (item) {
-      let map = this.dataService.Project.CreateThreatMapping(this.stack.ID, false);
+      let map = this.dataService.Project.CreateAttackScenario(this.stack.ID, false);
       map.SetMapping('', [], item, [item], null, null);
       map.IsGenerated = false;
-      this.dialogService.OpenThreatMappingDialog(map, true).subscribe(result => {
+      this.dialogService.OpenAttackScenarioDialog(map, true).subscribe(result => {
         if (!result) {
-          this.dataService.Project.DeleteThreatMapping(map);
+          this.dataService.Project.DeleteAttackScenario(map);
         }
       });
     }
   }
 
-  public AddMitigation(item: MyComponent) {
+  public AddCountermeasure(item: MyComponent) {
     if (!item) item = this.selectedComponent;
     if (item) {
-      let map = this.dataService.Project.CreateMitigationMapping(this.stack.ID);
+      let map = this.dataService.Project.CreateCountermeasure(this.stack.ID);
       map.SetMapping(null, [item], []);
       map.IsGenerated = false;
-      this.dialogService.OpenMitigationMappingDialog(map, true, this.stack.GetChildrenFlat()).subscribe(result => {
+      this.dialogService.OpenCountermeasureDialog(map, true, this.stack.GetChildrenFlat()).subscribe(result => {
         if (!result) {
-          this.dataService.Project.DeleteMitigationMapping(map);
+          this.dataService.Project.DeleteCountermeasure(map);
         }
       });
     }

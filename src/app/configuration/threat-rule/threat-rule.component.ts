@@ -4,8 +4,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { LowMediumHighNumberUtil, LowMediumHighNumber } from '../../model/assets';
 import { MyComponentType } from '../../model/component';
 import { IProperty, PropertyEditTypes } from '../../model/database';
-import { DataFlow, ElementTypeIDs, ElementTypeUtil, Protocol, StencilType } from '../../model/dfd-model';
-import { Mitigation } from '../../model/mitigations';
+import { ElementTypeIDs, ElementTypeUtil, Protocol, StencilType } from '../../model/dfd-model';
+import { Control } from '../../model/mitigations';
 import { RestrictionUtil, IDetailRestriction, IPropertyRestriction, RestrictionTypes, RestrictionTypesUtil, RuleTypes, ThreatCategoryGroup, ThreatOriginGroup, ThreatRule, RuleGenerationTypsUtil as RuleGenerationTypesUtil, RuleGenerationTypes, ThreatOrigin, PropertyComparisonTypes, ThreatRuleGroup, ThreatSeverities, ThreatSeverityUtil } from '../../model/threat-model';
 import { INavigationNode } from '../../shared/components/nav-tree/nav-tree.component';
 import { DataService } from '../../util/data.service';
@@ -34,7 +34,7 @@ export class ThreatRuleComponent implements OnInit {
     this.phyPropertyGroups = {};
     this.interfacePropertyGroups = null;
     this.threatRuleGroups = {};
-    this.selectedMitigation = null;
+    this.selectedControl = null;
   }
   @Input() public canEdit: boolean = true;
   @Input() public canEditName: boolean = false;
@@ -53,7 +53,7 @@ export class ThreatRuleComponent implements OnInit {
   
   public selectedRestriction: IPropertyRestriction;
 
-  public selectedMitigation: Mitigation;
+  public selectedControl: Control;
 
   constructor(@Optional() rule: ThreatRule, public theme: ThemeService, public dataService: DataService, private dialog: DialogService, private translate: TranslateService) { 
     if (rule) {
@@ -443,47 +443,47 @@ export class ThreatRuleComponent implements OnInit {
     return RestrictionTypesUtil.ToString(rt);
   }
 
-  public GetMitigations(): Mitigation[] {
-    return this.dataService.Config.GetMitigations().filter(x => x.MitigatedThreatRules.includes(this.threatRule));
+  public GetControls(): Control[] {
+    return this.dataService.Config.GetControls().filter(x => x.MitigatedThreatRules.includes(this.threatRule));
   }
 
-  public GetOriginMitigations(): Mitigation[] {
+  public GetOriginControls(): Control[] {
     if (this.threatRule.ThreatOrigin) {
-      return this.dataService.Config.GetMitigations().filter(x => x.MitigatedThreatOrigins.includes(this.threatRule.ThreatOrigin));
+      return this.dataService.Config.GetControls().filter(x => x.MitigatedThreatOrigins.includes(this.threatRule.ThreatOrigin));
     }
     return null;
   }
 
-  public GetPossibleMitigations() {
-    let res = this.dataService.Config.GetMitigations().filter(x => !x.MitigatedThreatRules.includes(this.threatRule));
+  public GetPossibleControls() {
+    let res = this.dataService.Config.GetControls().filter(x => !x.MitigatedThreatRules.includes(this.threatRule));
     if (this.threatRule.ThreatOrigin) res = res.filter(x => !x.MitigatedThreatOrigins.includes(this.threatRule.ThreatOrigin));
     return res;
   }
 
-  public AddExistingMitigation(mit: Mitigation) {
+  public AddExistingControl(mit: Control) {
     mit.AddMitigatedThreatRule(this.threatRule);
   }
 
-  public AddMitigation() {
-    let mit = this.dataService.Config.CreateMitigation(this.dataService.Config.MitigationLibrary);
+  public AddControl() {
+    let mit = this.dataService.Config.CreateControl(this.dataService.Config.ControlLibrary);
     mit.AddMitigatedThreatRule(this.threatRule);
-    this.selectedMitigation = mit;
+    this.selectedControl = mit;
   }
 
-  public RemoveMitigation(mit: Mitigation) {
+  public RemoveControl(mit: Control) {
     mit.RemoveMitigatedThreatRule(this.threatRule);
-    if (mit == this.selectedMitigation) this.selectedMitigation = null;
+    if (mit == this.selectedControl) this.selectedControl = null;
   }
 
-  public DeleteMitigation(mit: Mitigation) {
-    this.dataService.Config.DeleteMitigation(mit);
-    if (mit == this.selectedMitigation) this.selectedMitigation = null;
+  public DeleteControl(mit: Control) {
+    this.dataService.Config.DeleteControl(mit);
+    if (mit == this.selectedControl) this.selectedControl = null;
   }  
   
-  public dropMitigation(event: CdkDragDrop<string[]>, selectedArray) {
-    const prev = this.dataService.Config.GetMitigations().indexOf(selectedArray[event.previousIndex]);
-    const curr = this.dataService.Config.GetMitigations().indexOf(selectedArray[event.currentIndex]);
-    moveItemInArray(this.dataService.Config.GetMitigations(), prev, curr);
+  public dropControl(event: CdkDragDrop<string[]>, selectedArray) {
+    const prev = this.dataService.Config.GetControls().indexOf(selectedArray[event.previousIndex]);
+    const curr = this.dataService.Config.GetControls().indexOf(selectedArray[event.currentIndex]);
+    moveItemInArray(this.dataService.Config.GetControls(), prev, curr);
   }
 
   public GetSeverityTypes() {

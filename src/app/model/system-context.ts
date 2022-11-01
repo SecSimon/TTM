@@ -6,9 +6,9 @@ import { MyComponentStack, MyComponentTypeIDs } from "./component";
 import { ConfigFile } from "./config-file";
 import { DatabaseBase, IDataReferences, ViewElementBase, PropertyEditTypes, DataReferenceTypes, IContainer, IElementType } from "./database";
 import { CtxDiagram, Diagram, DiagramTypes, HWDFDiagram } from "./diagram";
-import { MitigationMapping } from "./mitigations";
+import { Countermeasure } from "./mitigations";
 import { ProjectFile } from "./project-file";
-import { ThreatMapping } from "./threat-model";
+import { AttackScenario } from "./threat-model";
 
 export class SystemContext extends DatabaseBase {
   private project: ProjectFile;
@@ -253,30 +253,8 @@ export class Device extends ContextElement {
   constructor(data: {}, pf: ProjectFile, cf: ConfigFile) {
     super(data, ContextElementTypes.Device, pf, cf);
 
-    if (!this.AssetGroup) {
-      let copyMyData = (copySource: MyData, parent: AssetGroup): MyData => {
-        let d = this.project.CreateMyData(parent);
-        d.CopyFrom(copySource.Data);
-        return d;
-      };
-
-      let copyGroup = (copySource: AssetGroup, parent: AssetGroup): AssetGroup => {
-        let g = this.project.CreateAssetGroup(parent);
-        g.CopyFrom(copySource.Data);
-        g.Data['assetGroupIDs'] = [];
-        copySource.SubGroups.forEach(copySubGroup => {
-          let sg = copyGroup(copySubGroup, g);
-          g.AddAssetGroup(sg);
-        });
-        g.Data['associatedDataIDs'] = [];
-        copySource.AssociatedData.forEach(copyA => {
-          let a = copyMyData(copyA, g);
-          g.AddMyData(a);
-        });
-        return g;
-      };
-
-      let root = copyGroup(cf.AssetGroups, null);
+    if (!this.Data['assetGroupID']) {
+      let root = pf.InitializeNewAssetGroup(cf);
       this.Data['assetGroupID'] = root.ID;
     }
 
@@ -316,28 +294,28 @@ export class Device extends ContextElement {
     }
   }
 
-  public GetThreatMappings(): ThreatMapping[] {
-    let res: ThreatMapping[] = [];
+  public GetAttackScenarios(): AttackScenario[] {
+    let res: AttackScenario[] = [];
 
-    this.project.GetThreatMappings().filter(x => x.ViewID == this.project.GetSysContext().ContextDiagram.ID).filter(x => x.Targets.includes(this)).forEach(x => res.push(x));
+    this.project.GetAttackScenarios().filter(x => x.ViewID == this.project.GetSysContext().ContextDiagram.ID).filter(x => x.Targets.includes(this)).forEach(x => res.push(x));
     let ucRef = this.project.GetContextElementRefs().filter(x => x.Ref.ID == this.ID).find(x => this.project.FindDiagramOfElement(x.ID)?.ID == this.project.GetSysContext().UseCaseDiagram.ID);
-    if (ucRef) this.project.GetThreatMappings().filter(x => x.ViewID == this.project.GetSysContext().UseCaseDiagram.ID).filter(x => x.Targets.includes(ucRef)).forEach(x => res.push(x));
-    if (this.HardwareDiagram) res.push(...this.project.GetThreatMappings().filter(x => x.ViewID == this.HardwareDiagram.ID));
-    if (this.SoftwareStack) res.push(...this.project.GetThreatMappings().filter(x => x.ViewID == this.SoftwareStack.ID));
-    if (this.ProcessStack) res.push(...this.project.GetThreatMappings().filter(x => x.ViewID == this.ProcessStack.ID));
+    if (ucRef) this.project.GetAttackScenarios().filter(x => x.ViewID == this.project.GetSysContext().UseCaseDiagram.ID).filter(x => x.Targets.includes(ucRef)).forEach(x => res.push(x));
+    if (this.HardwareDiagram) res.push(...this.project.GetAttackScenarios().filter(x => x.ViewID == this.HardwareDiagram.ID));
+    if (this.SoftwareStack) res.push(...this.project.GetAttackScenarios().filter(x => x.ViewID == this.SoftwareStack.ID));
+    if (this.ProcessStack) res.push(...this.project.GetAttackScenarios().filter(x => x.ViewID == this.ProcessStack.ID));
 
     return res;
   }
 
-  public GetMitigationMappings(): MitigationMapping[] {
-    let res: MitigationMapping[] = [];
+  public GetCountermeasures(): Countermeasure[] {
+    let res: Countermeasure[] = [];
 
-    this.project.GetMitigationMappings().filter(x => x.ViewID == this.project.GetSysContext().ContextDiagram.ID).filter(x => x.Targets.includes(this)).forEach(x => res.push(x));
+    this.project.GetCountermeasures().filter(x => x.ViewID == this.project.GetSysContext().ContextDiagram.ID).filter(x => x.Targets.includes(this)).forEach(x => res.push(x));
     let ucRef = this.project.GetContextElementRefs().filter(x => x.Ref.ID == this.ID).find(x => this.project.FindDiagramOfElement(x.ID)?.ID == this.project.GetSysContext().UseCaseDiagram.ID);
-    if (ucRef) this.project.GetMitigationMappings().filter(x => x.ViewID == this.project.GetSysContext().UseCaseDiagram.ID).filter(x => x.Targets.includes(ucRef)).forEach(x => res.push(x));
-    if (this.HardwareDiagram) res.push(...this.project.GetMitigationMappings().filter(x => x.ViewID == this.HardwareDiagram.ID));
-    if (this.SoftwareStack) res.push(...this.project.GetMitigationMappings().filter(x => x.ViewID == this.SoftwareStack.ID));
-    if (this.ProcessStack) res.push(...this.project.GetMitigationMappings().filter(x => x.ViewID == this.ProcessStack.ID));
+    if (ucRef) this.project.GetCountermeasures().filter(x => x.ViewID == this.project.GetSysContext().UseCaseDiagram.ID).filter(x => x.Targets.includes(ucRef)).forEach(x => res.push(x));
+    if (this.HardwareDiagram) res.push(...this.project.GetCountermeasures().filter(x => x.ViewID == this.HardwareDiagram.ID));
+    if (this.SoftwareStack) res.push(...this.project.GetCountermeasures().filter(x => x.ViewID == this.SoftwareStack.ID));
+    if (this.ProcessStack) res.push(...this.project.GetCountermeasures().filter(x => x.ViewID == this.ProcessStack.ID));
 
     return res;
   }
@@ -722,30 +700,8 @@ export class MobileApp extends ContextElement {
   constructor(data: {}, pf: ProjectFile, cf: ConfigFile) {
     super(data, ContextElementTypes.MobileApp, pf, cf);
 
-    if (!this.AssetGroup) {
-      let copyMyData = (copySource: MyData, parent: AssetGroup): MyData => {
-        let d = this.project.CreateMyData(parent);
-        d.CopyFrom(copySource.Data);
-        return d;
-      };
-
-      let copyGroup = (copySource: AssetGroup, parent: AssetGroup): AssetGroup => {
-        let g = this.project.CreateAssetGroup(parent);
-        g.CopyFrom(copySource.Data);
-        g.Data['assetGroupIDs'] = [];
-        copySource.SubGroups.forEach(copySubGroup => {
-          let sg = copyGroup(copySubGroup, g);
-          g.AddAssetGroup(sg);
-        });
-        g.Data['associatedDataIDs'] = [];
-        copySource.AssociatedData.forEach(copyA => {
-          let a = copyMyData(copyA, g);
-          g.AddMyData(a);
-        });
-        return g;
-      };
-
-      let root = copyGroup(cf.AssetGroups, null);
+    if (!this.Data['assetGroupID']) {
+      let root = pf.InitializeNewAssetGroup(cf);
       this.Data['assetGroupID'] = root.ID;
     }
 
@@ -781,26 +737,26 @@ export class MobileApp extends ContextElement {
     }
   }
 
-  public GetThreatMappings(): ThreatMapping[] {
-    let res: ThreatMapping[] = [];
+  public GetAttackScenarios(): AttackScenario[] {
+    let res: AttackScenario[] = [];
 
-    this.project.GetThreatMappings().filter(x => x.ViewID == this.project.GetSysContext().ContextDiagram.ID).filter(x => x.Targets.includes(this)).forEach(x => res.push(x));
+    this.project.GetAttackScenarios().filter(x => x.ViewID == this.project.GetSysContext().ContextDiagram.ID).filter(x => x.Targets.includes(this)).forEach(x => res.push(x));
     let ucRef = this.project.GetContextElementRefs().filter(x => x.Ref.ID == this.ID).find(x => this.project.FindDiagramOfElement(x.ID)?.ID == this.project.GetSysContext().UseCaseDiagram.ID);
-    if (ucRef) this.project.GetThreatMappings().filter(x => x.ViewID == this.project.GetSysContext().UseCaseDiagram.ID).filter(x => x.Targets.includes(ucRef)).forEach(x => res.push(x));
-    if (this.SoftwareStack) res.push(...this.project.GetThreatMappings().filter(x => x.ViewID == this.SoftwareStack.ID));
-    if (this.ProcessStack) res.push(...this.project.GetThreatMappings().filter(x => x.ViewID == this.ProcessStack.ID));
+    if (ucRef) this.project.GetAttackScenarios().filter(x => x.ViewID == this.project.GetSysContext().UseCaseDiagram.ID).filter(x => x.Targets.includes(ucRef)).forEach(x => res.push(x));
+    if (this.SoftwareStack) res.push(...this.project.GetAttackScenarios().filter(x => x.ViewID == this.SoftwareStack.ID));
+    if (this.ProcessStack) res.push(...this.project.GetAttackScenarios().filter(x => x.ViewID == this.ProcessStack.ID));
 
     return res;
   }
 
-  public GetMitigationMappings(): MitigationMapping[] {
-    let res: MitigationMapping[] = [];
+  public GetCountermeasures(): Countermeasure[] {
+    let res: Countermeasure[] = [];
 
-    this.project.GetMitigationMappings().filter(x => x.ViewID == this.project.GetSysContext().ContextDiagram.ID).filter(x => x.Targets.includes(this)).forEach(x => res.push(x));
+    this.project.GetCountermeasures().filter(x => x.ViewID == this.project.GetSysContext().ContextDiagram.ID).filter(x => x.Targets.includes(this)).forEach(x => res.push(x));
     let ucRef = this.project.GetContextElementRefs().filter(x => x.Ref.ID == this.ID).find(x => this.project.FindDiagramOfElement(x.ID)?.ID == this.project.GetSysContext().UseCaseDiagram.ID);
-    if (ucRef) this.project.GetMitigationMappings().filter(x => x.ViewID == this.project.GetSysContext().UseCaseDiagram.ID).filter(x => x.Targets.includes(ucRef)).forEach(x => res.push(x));
-    if (this.SoftwareStack) res.push(...this.project.GetMitigationMappings().filter(x => x.ViewID == this.SoftwareStack.ID));
-    if (this.ProcessStack) res.push(...this.project.GetMitigationMappings().filter(x => x.ViewID == this.ProcessStack.ID));
+    if (ucRef) this.project.GetCountermeasures().filter(x => x.ViewID == this.project.GetSysContext().UseCaseDiagram.ID).filter(x => x.Targets.includes(ucRef)).forEach(x => res.push(x));
+    if (this.SoftwareStack) res.push(...this.project.GetCountermeasures().filter(x => x.ViewID == this.SoftwareStack.ID));
+    if (this.ProcessStack) res.push(...this.project.GetCountermeasures().filter(x => x.ViewID == this.ProcessStack.ID));
 
     return res;
   }
@@ -844,11 +800,6 @@ export class SystemExternalEntity extends ContextElement {
 
   constructor(data: {}, pf: ProjectFile, cf: ConfigFile) {
     super(data, ContextElementTypes.ExternalEntity, pf, cf);
-  }
-
-  protected initProperties(): void {
-    super.initProperties();
-    this.GetProperties().find(x => x.ID == 'Name').Type = PropertyEditTypes.TextBox;
   }
 }
 

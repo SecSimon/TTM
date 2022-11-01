@@ -18,9 +18,9 @@
         <div mat-subheader style="padding-bottom: 0px;">{{ 'general.Threats' | translate }} <button mat-icon-button (click)="AddThreat()" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000" style="margin-left: 15px;"><mat-icon>add</mat-icon></button></div>
         <as-split-area style="margin-bottom: 10px;" [size]="GetSplitSize(2, 0, 200)" [order]=1 [class.splitter-light2]="!theme.IsDarkMode" [class.splitter-dark2]="theme.IsDarkMode">
           <div style="padding: 10px;">
-            <mat-list cdkDropList (cdkDropListDropped)="drop($event, deviceThreats)" class="prop-list reorder-list">
+            <mat-list cdkDropList (cdkDropListDropped)="drop($event, systemThreats)" class="prop-list reorder-list">
               <div style="overflow: auto;">
-                <mat-list-item *ngFor="let dt of deviceThreats" (click)="selectedThreat = dt" cdkDrag
+                <mat-list-item *ngFor="let dt of systemThreats" (click)="selectedThreat = dt" cdkDrag
                 [class.highlight-light]="selectedThreat === dt && !theme.IsDarkMode" [class.highlight-dark]="selectedThreat === dt && theme.IsDarkMode"
                 matTooltip="{{dt.Name}}" matTooltipShowDelay="1000">
                   <mat-icon mat-list-icon>chevron_right</mat-icon>
@@ -34,7 +34,7 @@
         </as-split-area>
         <as-split-area [size]="GetSplitSize(2, 1, $any('*'))" [order]=2 [class.bg-color-light3]="!theme.IsDarkMode" [class.bg-color-dark3]="theme.IsDarkMode">
           <div *ngIf="selectedThreat" style="padding: 10px">
-            <app-device-threat [deviceThreat]="selectedThreat"></app-device-threat>
+            <app-system-threat [systemThreat]="selectedThreat"></app-system-threat>
           </div>
         </as-split-area>
       </as-split>

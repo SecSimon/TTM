@@ -1,7 +1,7 @@
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { AssetGroup, LowMediumHighNumber, LowMediumHighNumberUtil, MyData } from '../../../model/assets';
-import { DeviceThreat } from '../../../model/device-threat';
+import { SystemThreat } from '../../../model/system-threat';
 import { Device, MobileApp } from '../../../model/system-context';
 import { ThreatCategory, ThreatCategoryGroup } from '../../../model/threat-model';
 import { NavTreeBase } from '../../../shared/components/nav-tree/nav-tree-base';
@@ -22,10 +22,10 @@ export class ThreatIdentificationComponent implements OnInit {
   private _selectedCategoryNode;
   private _selectedThreat = null;
 
-  public get deviceThreats(): DeviceThreat[] { return this.dataService.Project.GetDeviceThreats(); }
+  public get systemThreats(): SystemThreat[] { return this.dataService.Project.GetSystemThreats(); }
 
-  public get selectedThreat(): DeviceThreat { return this._selectedThreat; }
-  public set selectedThreat(val: DeviceThreat) {
+  public get selectedThreat(): SystemThreat { return this._selectedThreat; }
+  public set selectedThreat(val: SystemThreat) {
     this._selectedThreat = val;
     if (val && val.ThreatCategory) {
       this.selectedCategoryNode = NavTreeBase.FlattenNodes(this.categoryNodes).find(x => x.data == val.ThreatCategory);
@@ -84,13 +84,13 @@ export class ThreatIdentificationComponent implements OnInit {
     }, 10);
   }
 
-  public DeleteThreat(dt: DeviceThreat) {
-    this.dataService.Project.DeleteDeviceThreat(dt);
+  public DeleteThreat(dt: SystemThreat) {
+    this.dataService.Project.DeleteSystemThreat(dt);
     if (this.selectedThreat == dt) this.selectedThreat = null;
   }
 
   public AddThreat() {
-    let dt = this.dataService.Project.CreateDeviceThreat(this.selectedCategory);
+    let dt = this.dataService.Project.CreateSystemThreat(this.selectedCategory);
     this.selectedThreat = dt;
   }
 
@@ -107,9 +107,9 @@ export class ThreatIdentificationComponent implements OnInit {
   }
 
   public dropWrapper(event: CdkDragDrop<string[]>, selectedArray) {
-    const prev = this.deviceThreats.indexOf(selectedArray[event.previousIndex]);
-    const curr = this.deviceThreats.indexOf(selectedArray[event.currentIndex]);
-    moveItemInArray(this.deviceThreats, prev, curr);
+    const prev = this.systemThreats.indexOf(selectedArray[event.previousIndex]);
+    const curr = this.systemThreats.indexOf(selectedArray[event.currentIndex]);
+    moveItemInArray(this.systemThreats, prev, curr);
   }
 
   public GetSplitSize(splitter: number, gutter: number, defaultSize: number) {
@@ -174,7 +174,15 @@ export class ThreatIdentificationComponent implements OnInit {
 
     
     let groupNodes = [];
-    file.GetDevices().forEach(dev => {
+    if (file.GetProjectAssetGroup()) {
+      let root = createGroup(file.GetProjectAssetGroup(), groupNodes);
+      root.canSelect = root.canCheck = false;
+      root.icon = AssetGroup.Icon;
+      root.iconAlignLeft = false;
+      root.name = () => { return 'Assets'; }
+      this.assetNodes.push(root);
+    }
+    file.GetDevices().filter(x => x.AssetGroup != null).forEach(dev => {
       let root = createGroup(dev.AssetGroup, groupNodes);
       root.canSelect = root.canCheck = false;
       root.icon = Device.Icon;
@@ -183,7 +191,7 @@ export class ThreatIdentificationComponent implements OnInit {
       this.assetNodes.push(root);
     });
 
-    file.GetMobileApps().forEach(app => {
+    file.GetMobileApps().filter(x => x.AssetGroup != null).forEach(app => {
       let root = createGroup(app.AssetGroup, groupNodes);
       root.icon = MobileApp.Icon;
       root.iconAlignLeft = false;

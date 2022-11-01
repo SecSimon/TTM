@@ -47,7 +47,7 @@ export class ContainerTreeComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.dataService.Project.ThreatMappingsChanged.subscribe(x => this.threatMap = new Map<string, number>());
+    this.dataService.Project.AttackScenariosChanged.subscribe(x => this.threatMap = new Map<string, number>());
     this.RefreshTree();
   }
 
@@ -67,7 +67,7 @@ export class ContainerTreeComponent implements OnInit {
   public GetNodeThreats(node: ViewElementBase): number {
     if (this.threatMap.has(node.ID)) return this.threatMap.get(node.ID);
 
-    const count = this.dataService.Project.GetThreatMappings().filter(x => x.Target == node || (x.Targets?.includes(node))).length;
+    const count = this.dataService.Project.GetAttackScenarios().filter(x => x.Target == node || (x.Targets?.includes(node))).length;
     this.threatMap.set(node.ID, count);
     return count;
   }

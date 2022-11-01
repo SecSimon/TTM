@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MitigationMappingComponent } from './mitigation-mapping.component';
+import { CountermeasureComponent } from './countermeasure.component';
 
-describe('MitigationMappingComponent', () => {
-  let component: MitigationMappingComponent;
-  let fixture: ComponentFixture<MitigationMappingComponent>;
+describe('CountermeasureComponent', () => {
+  let component: CountermeasureComponent;
+  let fixture: ComponentFixture<CountermeasureComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ MitigationMappingComponent ]
+      declarations: [ CountermeasureComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(MitigationMappingComponent);
+    fixture = TestBed.createComponent(CountermeasureComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

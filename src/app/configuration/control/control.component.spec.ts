@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ThreatMappingComponent } from './threat-mapping.component';
+import { ControlComponent } from './control.component';
 
-describe('ThreatMappingComponent', () => {
-  let component: ThreatMappingComponent;
-  let fixture: ComponentFixture<ThreatMappingComponent>;
+describe('ControlComponent', () => {
+  let component: ControlComponent;
+  let fixture: ComponentFixture<ControlComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ThreatMappingComponent ]
+      declarations: [ ControlComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ThreatMappingComponent);
+    fixture = TestBed.createComponent(ControlComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

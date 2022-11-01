@@ -7,17 +7,17 @@ import { ThreatOriginComponent } from '../configuration/threat-origin/threat-ori
 import { ThreatRuleComponent } from '../configuration/threat-rule/threat-rule.component';
 import { MyData } from '../model/assets';
 import { DatabaseBase, DataReferencesUtil, INote, ViewElementBase } from '../model/database';
-import { ThreatMapping, ThreatOrigin, ThreatRule } from '../model/threat-model';
-import { MitigationMappingComponent } from '../modeling/mitigation-mapping/mitigation-mapping.component';
+import { AttackScenario, ThreatOrigin, ThreatRule } from '../model/threat-model';
+import { CountermeasureComponent } from '../modeling/countermeasure/countermeasure.component';
 import { MitigationProcessComponent } from '../modeling/mitigation-process/mitigation-process.component';
-import { ThreatMappingComponent } from '../modeling/threat-mapping/threat-mapping.component';
+import { AttackScenarioComponent } from '../modeling/attack-scenario/attack-scenario.component';
 import { ProgressTrackerComponent } from '../shared/components/progress-tracker/progress-tracker.component';
 import { ModelInfoComponent } from '../shared/components/model-info/model-info.component';
 
 import { ITwoOptionDialogData, TwoOptionsDialogComponent } from '../shared/components/two-options-dialog/two-options-dialog.component';
 import { DataService } from './data.service';
-import { Mitigation, MitigationMapping, MitigationProcess } from '../model/mitigations';
-import { MitigationComponent } from '../configuration/mitigation/mitigation.component';
+import { Control, Countermeasure, MitigationProcess } from '../model/mitigations';
+import { ControlComponent } from '../configuration/control/control.component';
 import { SuggestedThreatsDialogComponent } from '../modeling/diagram/suggested-threats-dialog/suggested-threats-dialog.component';
 import { DFDElement } from '../model/dfd-model';
 import { NotesComponent } from '../shared/components/notes/notes.component';
@@ -96,9 +96,9 @@ export class DialogService {
     return this.OpenTwoOptionsDialog(data);
   }
 
-  public OpenThreatMappingDialog(mapping: ThreatMapping, isNew: boolean) {
+  public OpenAttackScenarioDialog(mapping: AttackScenario, isNew: boolean) {
     let data: ITwoOptionDialogData = {
-      title: this.translate.instant('pages.modeling.threatmapping.dialogTitle'),
+      title: this.translate.instant('pages.modeling.attackscenario.dialogTitle'),
       resultTrueText: isNew ? this.translate.instant('general.Add') : this.translate.instant('general.Close'),
       hasResultFalse: isNew,
       resultFalseText: this.translate.instant('general.Cancel'),
@@ -106,9 +106,9 @@ export class DialogService {
         return !isNew || mapping.ThreatOrigin != null || mapping.ThreatCategories.length > 0;
       },
       initalTrue: false,
-      component: ThreatMappingComponent,
+      component: AttackScenarioComponent,
       componentInputData: [
-        { Key: ThreatMapping, Value: mapping }
+        { Key: AttackScenario, Value: mapping }
       ]
     };
     return this.OpenTwoOptionsDialog(data);
@@ -185,21 +185,21 @@ export class DialogService {
     return this.OpenTwoOptionsDialog(data);
   }
 
-  public OpenMitigationMappingDialog(mapping: MitigationMapping, isNew: boolean, elements: ViewElementBase[]) {
+  public OpenCountermeasureDialog(mapping: Countermeasure, isNew: boolean, elements: ViewElementBase[]) {
     let isNewWrapper = new MyBoolean();
     isNewWrapper.Value = isNew;
     let data: ITwoOptionDialogData = {
-      title: this.translate.instant('pages.modeling.mitigationmapping.dialogTitle'),
+      title: this.translate.instant('pages.modeling.countermeasure.dialogTitle'),
       resultTrueText: isNew ? this.translate.instant('general.Add') : this.translate.instant('general.Close'),
       hasResultFalse: isNew,
       resultFalseText: this.translate.instant('general.Cancel'),
       resultTrueEnabled: () => {
-        return !isNew || mapping.Mitigation != null || mapping.Targets.length > 0;
+        return !isNew || mapping.Control != null || mapping.Targets.length > 0;
       },
       initalTrue: false,
-      component: MitigationMappingComponent,
+      component: CountermeasureComponent,
       componentInputData: [
-        { Key: MitigationMapping, Value: mapping },
+        { Key: Countermeasure, Value: mapping },
         { Key: MyBoolean, Value: isNewWrapper },
         { Key: Array, Value: elements }
       ]
@@ -207,19 +207,19 @@ export class DialogService {
     return this.OpenTwoOptionsDialog(data);
   }
 
-  public OpenAddMitigationDialog(mit: Mitigation) {
+  public OpenAddControlDialog(mit: Control) {
     let data: ITwoOptionDialogData = {
-      title: this.translate.instant('pages.config.mitigation.dialogTitle'),
+      title: this.translate.instant('pages.config.control.dialogTitle'),
       resultTrueText: this.translate.instant('general.Add'),
       hasResultFalse: true,
       resultFalseText: this.translate.instant('general.Cancel'),
       resultTrueEnabled: () => {
-        return mit.Name?.length > 0 && this.dataService.Config.FindGroupOfMitigation(mit) != null;
+        return mit.Name?.length > 0 && this.dataService.Config.FindGroupOfControl(mit) != null;
       },
       initalTrue: false,
-      component: MitigationComponent,
+      component: ControlComponent,
       componentInputData: [
-        { Key: Mitigation, Value: mit }
+        { Key: Control, Value: mit }
       ]
     };
     return this.OpenTwoOptionsDialog(data);

@@ -4,8 +4,8 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { TranslateService } from '@ngx-translate/core';
 import { DiagramTypes } from '../../model/diagram';
-import { MitigationMapping, MitigationStates, MitigationStateUtil } from '../../model/mitigations';
-import { ThreatMapping, ThreatStates, MappingStates, ThreatSeverityUtil, LifeCycleUtil, ThreatStateUtil, ThreatSeverities } from '../../model/threat-model';
+import { Countermeasure, MitigationStates, MitigationStateUtil } from '../../model/mitigations';
+import { AttackScenario, ThreatStates, MappingStates, ThreatSeverityUtil, LifeCycleUtil, ThreatStateUtil, ThreatSeverities } from '../../model/threat-model';
 import { DataService } from '../../util/data.service';
 import { DialogService } from '../../util/dialog.service';
 import { LocalStorageService, LocStorageKeys } from '../../util/local-storage.service';
@@ -49,10 +49,10 @@ export interface IStackedSeries {
 export class ResultsAnalysisComponent implements AfterViewInit {
   private updateDiagramsDelayCounter = 0;
   public get isUpdatingDiagrams(): boolean { return this.updateDiagramsDelayCounter > 0; }
-  private _threatMappings: ThreatMapping[] = [];
-  private _selectedThreats: ThreatMapping[] = [];
-  private _mitigationMappings: MitigationMapping[] = [];
-  private _selectedMitigations: MitigationMapping[] = [];
+  private _attackScenarios: AttackScenario[] = [];
+  private _selectedThreats: AttackScenario[] = [];
+  private _countermeasures: Countermeasure[] = [];
+  private _selectedCountermeasures: Countermeasure[] = [];
 
   public menuTopLeftPosition =  {x: '0', y: '0'};
   public get isBlueColorScheme(): boolean {
@@ -64,19 +64,19 @@ export class ResultsAnalysisComponent implements AfterViewInit {
   }
   @ViewChild(MatMenuTrigger) public matMenuTrigger: MatMenuTrigger; 
   @ViewChild('threattable') sortThreats: MatSort;
-  @ViewChild('mitigationtable') sortMitigations: MatSort;
+  @ViewChild('countermeasuretable') sortCountermeasures: MatSort;
 
   public diagrams: IDiagramData[] = [];
 
   public displayedThreatColumns = ['number', 'name', 'elements', 'view', 'severity', 'risk', 'status'];
-  public dataSourceThreats: MatTableDataSource<ThreatMapping>;
-  public displayedMitigationColumns = ['number', 'name', 'targets', 'view', 'progress', 'status'];
-  public dataSourceMitigations: MatTableDataSource<MitigationMapping>;
+  public dataSourceThreats: MatTableDataSource<AttackScenario>;
+  public displayedCountermeasureColumns = ['number', 'name', 'targets', 'view', 'progress', 'status'];
+  public dataSourceCountermeasures: MatTableDataSource<Countermeasure>;
 
-  public get ThreatMappings(): ThreatMapping[] { return this._threatMappings; }
-  public set ThreatMappings(val: ThreatMapping[]) {
-    this._threatMappings = val;
-    let mySort = (data: ThreatMapping, sortHeaderId: string) => {
+  public get AttackScenarios(): AttackScenario[] { return this._attackScenarios; }
+  public set AttackScenarios(val: AttackScenario[]) {
+    this._attackScenarios = val;
+    let mySort = (data: AttackScenario, sortHeaderId: string) => {
       if (sortHeaderId == 'number') return Number(data.Number);
       if (sortHeaderId == 'name') return data.Name;
       if (sortHeaderId == 'elements') return this.GetTargets(data);
@@ -86,7 +86,7 @@ export class ResultsAnalysisComponent implements AfterViewInit {
       if (sortHeaderId == 'status') return data.ThreatState; 
       console.error('Missing sorting header', sortHeaderId); 
     };
-    let myFilter = (data: ThreatMapping, filter: string) => {
+    let myFilter = (data: AttackScenario, filter: string) => {
       let search = filter.trim().toLowerCase();
       let res = data.Name.toLowerCase().indexOf(search);
       if (res == -1) res = data.ThreatOrigin.Name.toLowerCase().indexOf(search);
@@ -101,22 +101,22 @@ export class ResultsAnalysisComponent implements AfterViewInit {
 
     if (this.sortThreats) this.sortThreats.sortChange.emit(this.sortThreats);
   }
-  public get selectedThreats(): ThreatMapping[] { return this._selectedThreats; }
-  public set selectedThreats(val: ThreatMapping[]) {
+  public get selectedThreats(): AttackScenario[] { return this._selectedThreats; }
+  public set selectedThreats(val: AttackScenario[]) {
     if (val.length == this._selectedThreats.length) {
       if (val.every(x => this._selectedThreats.some(y => y.ID == x.ID))) return;
     }
     this._selectedThreats = val;
 
     if (val.length == 1) {
-      this.selectedMitigations = this.MitigationMappings.filter(x => x.ThreatMappings.includes(val[0]));
+      this.selectedCountermeasures = this.Countermeasures.filter(x => x.AttackScenarios.includes(val[0]));
     }
   }
 
-  public get MitigationMappings(): MitigationMapping[] { return this._mitigationMappings; }
-  public set MitigationMappings(val: MitigationMapping[]) {
-    this._mitigationMappings = val;
-    let mySort = (data: MitigationMapping, sortHeaderId: string) => {
+  public get Countermeasures(): Countermeasure[] { return this._countermeasures; }
+  public set Countermeasures(val: Countermeasure[]) {
+    this._countermeasures = val;
+    let mySort = (data: Countermeasure, sortHeaderId: string) => {
       if (sortHeaderId == 'number') return Number(data.Number);
       if (sortHeaderId == 'name') return data.Name;
       if (sortHeaderId == 'targets') return this.GetTargets(data);
@@ -124,30 +124,30 @@ export class ResultsAnalysisComponent implements AfterViewInit {
       if (sortHeaderId == 'status') return data.MitigationState; 
       console.error('Missing sorting header', sortHeaderId); 
     };
-    let myFilter = (data: MitigationMapping, filter: string) => {
+    let myFilter = (data: Countermeasure, filter: string) => {
       let search = filter.trim().toLowerCase();
       let res = data.Name.toLowerCase().indexOf(search);
-      if (res == -1) res = data.Mitigation.Name.toLowerCase().indexOf(search);
+      if (res == -1) res = data.Control.Name.toLowerCase().indexOf(search);
       if (res == -1) res = this.GetTargets(data).toLowerCase().indexOf(search);
       return res != -1;
     };
 
-    this.dataSourceMitigations = new MatTableDataSource(val.filter(x => x.MitigationState != MitigationStates.NotApplicable));
-    this.dataSourceMitigations.sort = this.sortMitigations;
-    this.dataSourceMitigations.sortingDataAccessor = mySort;
-    this.dataSourceMitigations.filterPredicate = myFilter;
+    this.dataSourceCountermeasures = new MatTableDataSource(val.filter(x => x.MitigationState != MitigationStates.NotApplicable));
+    this.dataSourceCountermeasures.sort = this.sortCountermeasures;
+    this.dataSourceCountermeasures.sortingDataAccessor = mySort;
+    this.dataSourceCountermeasures.filterPredicate = myFilter;
 
-    if (this.sortMitigations) this.sortMitigations.sortChange.emit(this.sortMitigations);
+    if (this.sortCountermeasures) this.sortCountermeasures.sortChange.emit(this.sortCountermeasures);
   }
-  public get selectedMitigations(): MitigationMapping[] { return this._selectedMitigations; }
-  public set selectedMitigations(val: MitigationMapping[]) {
-    if (val.length == this._selectedMitigations.length) {
-      if (val.every(x => this._selectedMitigations.some(y => y.ID == x.ID))) return;
+  public get selectedCountermeasures(): Countermeasure[] { return this._selectedCountermeasures; }
+  public set selectedCountermeasures(val: Countermeasure[]) {
+    if (val.length == this._selectedCountermeasures.length) {
+      if (val.every(x => this._selectedCountermeasures.some(y => y.ID == x.ID))) return;
     }
-    this._selectedMitigations = val;
+    this._selectedCountermeasures = val;
 
     if (val.length == 1) {
-      this.selectedThreats = this.ThreatMappings.filter(x => val[0].ThreatMappings.includes(x));
+      this.selectedThreats = this.AttackScenarios.filter(x => val[0].AttackScenarios.includes(x));
     }
   }
 
@@ -156,8 +156,8 @@ export class ResultsAnalysisComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     let setData = () => {
       setTimeout(() => {
-        this.ThreatMappings = this.dataService.Project.GetThreatMappings().filter(x => x.MappingState != MappingStates.Removed && x.ThreatState != ThreatStates.NotApplicable);
-        this.MitigationMappings = this.dataService.Project.GetMitigationMappings().filter(x => x.MappingState != MappingStates.Removed && x.MitigationState != MitigationStates.NotApplicable);
+        this.AttackScenarios = this.dataService.Project.GetAttackScenarios().filter(x => x.MappingState != MappingStates.Removed && x.ThreatState != ThreatStates.NotApplicable);
+        this.Countermeasures = this.dataService.Project.GetCountermeasures().filter(x => x.MappingState != MappingStates.Removed && x.MitigationState != MitigationStates.NotApplicable);
       
         this.UpdateDiagrams();
       }, 10);
@@ -179,7 +179,7 @@ export class ResultsAnalysisComponent implements AfterViewInit {
     let wid = (document.getElementById('diagramContainer').clientWidth - 20 - 3*10) / 4;
 
     let dia1 = ResultsAnalysisComponent.CreateThreatSummaryDiagram(this.dataService.Project, this.translate, this.theme.IsDarkMode, this.isBlueColorScheme, wid, hei);
-    let dia2 = ResultsAnalysisComponent.CreateMitigationSummaryDiagram(this.dataService.Project, this.translate, this.theme.IsDarkMode, this.isBlueColorScheme, wid, hei);
+    let dia2 = ResultsAnalysisComponent.CreateCountermeasureSummaryDiagram(this.dataService.Project, this.translate, this.theme.IsDarkMode, this.isBlueColorScheme, wid, hei);
     let dia3 = ResultsAnalysisComponent.CreateThreatPerLifecycleDiagram(this.dataService.Project, this.translate, this.theme.IsDarkMode, this.isBlueColorScheme, wid, hei);
     let dia4 = ResultsAnalysisComponent.CreateThreatPerTypeDiagram(this.dataService.Project, this.translate, this.theme.IsDarkMode, this.isBlueColorScheme, wid, hei);
 
@@ -196,10 +196,10 @@ export class ResultsAnalysisComponent implements AfterViewInit {
 
   public static CreateThreatSummaryDiagram(pf: ProjectFile, translate: TranslateService, isDarkmode: boolean, isBlueColorScheme: boolean, wid, hei): IDiagramData {
     let diagramValues: IStackedSeries[] = [];
-    let allThreatMappings = pf.GetThreatMappings();
-    let getSeries = (mappings: ThreatMapping[]): ISerie[] => {
+    let allAttackScnearios = pf.GetAttackScenarios();
+    let getSeries = (mappings: AttackScenario[]): ISerie[] => {
       let res: ISerie[] = [];
-      allThreatMappings = allThreatMappings.filter(x => !mappings.includes(x));
+      allAttackScnearios = allAttackScnearios.filter(x => !mappings.includes(x));
       res.push({ name: translate.instant('properties.threatstate.NotSet'), value: mappings.filter(x => !ThreatSeverityUtil.GetTypes().includes(x.Severity)).length });
       ThreatSeverityUtil.GetTypes().forEach(sev => {
         res.push({ name: translate.instant(ThreatSeverityUtil.ToString(sev)), value: mappings.filter(x => x.Severity == sev).length });
@@ -210,29 +210,29 @@ export class ResultsAnalysisComponent implements AfterViewInit {
     pf.GetDevices().forEach(dev => {
       let data: IStackedSeries = {
         name: dev.GetProperty('Name'),
-        series: getSeries(dev.GetThreatMappings())
+        series: getSeries(dev.GetAttackScenarios())
       };
       diagramValues.push(data);
     });
     pf.GetMobileApps().forEach(app => {
       let data: IStackedSeries = {
         name: app.GetProperty('Name'),
-        series: getSeries(app.GetThreatMappings())
+        series: getSeries(app.GetAttackScenarios())
       };
       diagramValues.push(data);
     });
     pf.GetDiagrams().filter(x => x.DiagramType == DiagramTypes.DataFlow).forEach(dfd => {
       let data: IStackedSeries = {
         name: dfd.GetProperty('Name'),
-        series: getSeries(pf.GetThreatMappings().filter(x => x.ViewID == dfd.ID))
+        series: getSeries(pf.GetAttackScenarios().filter(x => x.ViewID == dfd.ID))
       };
       diagramValues.push(data);
     });
 
-    if (allThreatMappings.length > 0) {
+    if (allAttackScnearios.length > 0) {
       let data: IStackedSeries = {
         name: translate.instant('general.Other'),
-        series: getSeries(allThreatMappings)
+        series: getSeries(allAttackScnearios)
       };
       diagramValues.push(data);
     }
@@ -247,12 +247,12 @@ export class ResultsAnalysisComponent implements AfterViewInit {
     return dia;
   }
 
-  public static CreateMitigationSummaryDiagram(pf: ProjectFile, translate: TranslateService, isDarkmode: boolean, isBlueColorScheme: boolean, wid, hei): IDiagramData {
+  public static CreateCountermeasureSummaryDiagram(pf: ProjectFile, translate: TranslateService, isDarkmode: boolean, isBlueColorScheme: boolean, wid, hei): IDiagramData {
     let diagramValues: IStackedSeries[] = [];
-    let allMitigationMappings = pf.GetMitigationMappings();
-    let getSeries = (mappings: MitigationMapping[]): ISerie[] => {
+    let allCountermeasures = pf.GetCountermeasures();
+    let getSeries = (mappings: Countermeasure[]): ISerie[] => {
       let res: ISerie[] = [];
-      allMitigationMappings = allMitigationMappings.filter(x => !mappings.includes(x));
+      allCountermeasures = allCountermeasures.filter(x => !mappings.includes(x));
       MitigationStateUtil.GetMitigationStates().filter(x => x != MitigationStates.NotApplicable).forEach(state => {
         res.push({ name: translate.instant(MitigationStateUtil.ToString(state)), value: mappings.filter(x => x.MitigationState == state).length });
       });
@@ -262,29 +262,29 @@ export class ResultsAnalysisComponent implements AfterViewInit {
     pf.GetDevices().forEach(dev => {
       let data: IStackedSeries = {
         name: dev.GetProperty('Name'),
-        series: getSeries(dev.GetMitigationMappings())
+        series: getSeries(dev.GetCountermeasures())
       };
       diagramValues.push(data);
     });
     pf.GetMobileApps().forEach(app => {
       let data: IStackedSeries = {
         name: app.GetProperty('Name'),
-        series: getSeries(app.GetMitigationMappings())
+        series: getSeries(app.GetCountermeasures())
       };
       diagramValues.push(data);
     });
     pf.GetDiagrams().filter(x => x.DiagramType == DiagramTypes.DataFlow).forEach(dfd => {
       let data: IStackedSeries = {
         name: dfd.GetProperty('Name'),
-        series: getSeries(pf.GetMitigationMappings().filter(x => x.ViewID == dfd.ID))
+        series: getSeries(pf.GetCountermeasures().filter(x => x.ViewID == dfd.ID))
       };
       diagramValues.push(data);
     });
 
-    if (allMitigationMappings.length > 0) {
+    if (allCountermeasures.length > 0) {
       let data: IStackedSeries = {
         name: translate.instant('general.Other'),
-        series: getSeries(allMitigationMappings)
+        series: getSeries(allCountermeasures)
       };
       diagramValues.push(data);
     }
@@ -293,18 +293,18 @@ export class ResultsAnalysisComponent implements AfterViewInit {
       results: diagramValues,
       view: [wid, hei],
       scheme: isBlueColorScheme ? 'air' : { domain: [DiaColors.DarkRed, ResultsAnalysisComponent.getNeutral(isDarkmode), DiaColors.Red, DiaColors.Yellow, DiaColors.Green] },
-      xAxisLabel: translate.instant('pages.dashboard.MitigationSummary'),
-      yAxisLabel: translate.instant('pages.dashboard.NumberOfMitigations')
+      xAxisLabel: translate.instant('pages.dashboard.CountermeasureSummary'),
+      yAxisLabel: translate.instant('pages.dashboard.NumberOfCountermeasures')
     };
     return dia;
   }
 
   public static CreateThreatPerLifecycleDiagram(pf: ProjectFile, translate: TranslateService, isDarkmode: boolean, isBlueColorScheme: boolean, wid, hei): IDiagramData {
     let diagramValues: IStackedSeries[] = [];
-    let allThreatMappings = pf.GetThreatMappings();
-    let getSeries = (mappings: ThreatMapping[]): ISerie[] => {
+    let allAttackScenarios = pf.GetAttackScenarios();
+    let getSeries = (mappings: AttackScenario[]): ISerie[] => {
       let res: ISerie[] = [];
-      allThreatMappings = allThreatMappings.filter(x => !mappings.includes(x));
+      allAttackScenarios = allAttackScenarios.filter(x => !mappings.includes(x));
       res.push({ name: translate.instant('properties.threatstate.NotSet'), value: mappings.filter(x => !ThreatSeverityUtil.GetTypes().includes(x.Severity)).length });
       ThreatSeverityUtil.GetTypes().forEach(sev => {
         res.push({ name: translate.instant(ThreatSeverityUtil.ToString(sev)), value: mappings.filter(x => x.Severity == sev).length });
@@ -313,8 +313,8 @@ export class ResultsAnalysisComponent implements AfterViewInit {
     };
 
     LifeCycleUtil.GetKeys().forEach(lc => {
-      let mappings = allThreatMappings.filter(x => x.ThreatOrigin?.ThreatExploited.includes(lc));
-      allThreatMappings = allThreatMappings.filter(x => !mappings.includes(x));
+      let mappings = allAttackScenarios.filter(x => x.ThreatOrigin?.ThreatExploited.includes(lc));
+      allAttackScenarios = allAttackScenarios.filter(x => !mappings.includes(x));
       let data: IStackedSeries = {
         name: translate.instant(LifeCycleUtil.ToString(lc)),
         series: getSeries(mappings)
@@ -322,10 +322,10 @@ export class ResultsAnalysisComponent implements AfterViewInit {
       diagramValues.push(data);
     });
 
-    if (allThreatMappings.length > 0) {
+    if (allAttackScenarios.length > 0) {
       let data: IStackedSeries = {
         name: translate.instant('general.Other'),
-        series: getSeries(allThreatMappings)
+        series: getSeries(allAttackScenarios)
       };
       diagramValues.push(data);
     }
@@ -342,10 +342,10 @@ export class ResultsAnalysisComponent implements AfterViewInit {
 
   public static CreateThreatPerTypeDiagram(pf: ProjectFile, translate: TranslateService, isDarkmode: boolean, isBlueColorScheme: boolean, wid, hei): IDiagramData {
     let diagramValues: IStackedSeries[] = [];
-    let allThreatMappings = pf.GetThreatMappings();
-    let getSeries = (mappings: ThreatMapping[]): ISerie[] => {
+    let allAttackScenarios = pf.GetAttackScenarios();
+    let getSeries = (mappings: AttackScenario[]): ISerie[] => {
       let res: ISerie[] = [];
-      allThreatMappings = allThreatMappings.filter(x => !mappings.includes(x));
+      allAttackScenarios = allAttackScenarios.filter(x => !mappings.includes(x));
       res.push({ name: translate.instant('properties.threatstate.NotSet'), value: mappings.filter(x => !ThreatSeverityUtil.GetTypes().includes(x.Severity)).length });
       ThreatSeverityUtil.GetTypes().forEach(sev => {
         res.push({ name: translate.instant(ThreatSeverityUtil.ToString(sev)), value: mappings.filter(x => x.Severity == sev).length });
@@ -356,35 +356,35 @@ export class ResultsAnalysisComponent implements AfterViewInit {
     let hwViewIDs = pf.GetDevices().map(x => x.HardwareDiagram).filter(x => x).map(x => x.ID);
     let data: IStackedSeries = {
       name: translate.instant('general.Hardware'),
-      series: getSeries(allThreatMappings.filter(x => hwViewIDs.includes(x.ViewID)))
+      series: getSeries(allAttackScenarios.filter(x => hwViewIDs.includes(x.ViewID)))
     };
     diagramValues.push(data);
     let swViewIDs = pf.GetDevices().map(x => x.SoftwareStack).filter(x => x).map(x => x.ID);
     swViewIDs.push(...pf.GetMobileApps().map(x => x.SoftwareStack).filter(x => x).map(x => x.ID));
     data = {
       name: translate.instant('general.Software'),
-      series: getSeries(allThreatMappings.filter(x => swViewIDs.includes(x.ViewID)))
+      series: getSeries(allAttackScenarios.filter(x => swViewIDs.includes(x.ViewID)))
     };
     diagramValues.push(data);
     let pViewIDs = pf.GetDevices().map(x => x.ProcessStack).filter(x => x).map(x => x.ID);
     pViewIDs.push(...pf.GetMobileApps().map(x => x.ProcessStack).filter(x => x).map(x => x.ID));
     data = {
       name: translate.instant('general.Process'),
-      series: getSeries(allThreatMappings.filter(x => pViewIDs.includes(x.ViewID)))
+      series: getSeries(allAttackScenarios.filter(x => pViewIDs.includes(x.ViewID)))
     };
     diagramValues.push(data);
 
     let dfdViewIDs = pf.GetDiagrams().filter(x => x.DiagramType == DiagramTypes.DataFlow).map(x => x.ID);
     data = {
       name: translate.instant('general.DataFlow'),
-      series: getSeries(allThreatMappings.filter(x => dfdViewIDs.includes(x.ViewID)))
+      series: getSeries(allAttackScenarios.filter(x => dfdViewIDs.includes(x.ViewID)))
     };
     diagramValues.push(data);
 
-    if (allThreatMappings.length > 0) {
+    if (allAttackScenarios.length > 0) {
       let data: IStackedSeries = {
         name: translate.instant('general.Other'),
-        series: getSeries(allThreatMappings)
+        series: getSeries(allAttackScenarios)
       };
       diagramValues.push(data);
     }
@@ -416,13 +416,13 @@ export class ResultsAnalysisComponent implements AfterViewInit {
   }
 
   public OnMappingDblClick(entry, event = null) {
-    if (entry instanceof ThreatMapping) this.dialog.OpenThreatMappingDialog(entry, false);
-    else if (entry instanceof MitigationMapping) {
-      if (event && event.target && this.displayedMitigationColumns[event.target.cellIndex] == 'progress' && entry.MitigationProcess) {
+    if (entry instanceof AttackScenario) this.dialog.OpenAttackScenarioDialog(entry, false);
+    else if (entry instanceof Countermeasure) {
+      if (event && event.target && this.displayedCountermeasureColumns[event.target.cellIndex] == 'progress' && entry.MitigationProcess) {
         this.dialog.OpenMitigationProcessDialog(entry.MitigationProcess, false);
       }
       else {
-        this.dialog.OpenMitigationMappingDialog(entry, false, []);
+        this.dialog.OpenCountermeasureDialog(entry, false, []);
       }
     }
   }
@@ -432,9 +432,9 @@ export class ResultsAnalysisComponent implements AfterViewInit {
     this.dataSourceThreats.filter = filterValue.trim().toLowerCase();
   }
 
-  public ApplyMitigationFilter(event: Event) {
+  public ApplyCountermeasureFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSourceMitigations.filter = filterValue.trim().toLowerCase();
+    this.dataSourceCountermeasures.filter = filterValue.trim().toLowerCase();
   }
 
   public IsThreatSelected(threat) {
@@ -447,12 +447,12 @@ export class ResultsAnalysisComponent implements AfterViewInit {
     //if (threat.Target) this.selectedObjectChanged.emit(threat.Target);
   }
 
-  public IsMitigationSelected(mit) {
-    return this.selectedMitigations.includes(mit);
+  public IsCountermeasureSelected(mit) {
+    return this.selectedCountermeasures.includes(mit);
   }
 
-  public SelectMitigation(mit) {
-    this.selectedMitigations = [mit];
+  public SelectCountermeasure(mit) {
+    this.selectedCountermeasures = [mit];
   }
 
   public GetViewName(entry) {
@@ -509,8 +509,8 @@ export class ResultsAnalysisComponent implements AfterViewInit {
 
   public ResetNumbers(item) {
     let maps: any[] = [];
-    if (item instanceof ThreatMapping) maps = this.dataService.Project.GetThreatMappings();
-    else if (item instanceof MitigationMapping) maps = this.dataService.Project.GetMitigationMappings();
+    if (item instanceof AttackScenario) maps = this.dataService.Project.GetAttackScenarios();
+    else if (item instanceof Countermeasure) maps = this.dataService.Project.GetCountermeasures();
 
     maps.sort((a, b) => {
       return Number(a.Number) - Number(b.Number);

@@ -29,7 +29,7 @@ export enum NodeTypes {
   UseCase = 'use-case',
   Assets = 'asset',
   ThreatSources = 'threat-sources',
-  DeviceThreats = 'device-threats',
+  SystemThreats = 'system-threats',
   Hardware = 'hardware',
   Software = 'software',
   Process = 'process',
@@ -91,7 +91,7 @@ export class ModelingComponent extends SideNavBase implements OnInit {
   public hasBottomTabGroup: boolean = true;
 
   public currentThreatCount: number = 0;
-  public currentMitigationCount: number = 0;
+  public currentCountermeasureCount: number = 0;
   public currentIssueCount: number = 0;
 
   @ViewChild('elementview') elementView: ContainerTreeComponent;
@@ -202,7 +202,7 @@ export class ModelingComponent extends SideNavBase implements OnInit {
   }
 
   public IsThreatIdentification(node: INavigationNode) {
-    return node?.dataType == NodeTypes.DeviceThreats;
+    return node?.dataType == NodeTypes.SystemThreats;
   }
 
   public IsAssetGroup(node: INavigationNode) {
@@ -308,15 +308,22 @@ export class ModelingComponent extends SideNavBase implements OnInit {
         canRename: true,
         onRename: (val: string) => { dev.Name = val; },
         canAdd: true,
-        addOptions: this.dataService.Config.GetChecklistTypes().map(x => 'Checklist: ' + x.Name),
         onAdd: (val: string) => {
-          let type = this.dataService.Config.GetChecklistTypes().find(x => x.Name == val.replace('Checklist: ', ''));
-          if (type) {
-            let newObj = this.dataService.Project.CreateChecklist(dev, type);
+          if (val == 'Assets') {
+            let ag = pf.InitializeNewAssetGroup(pf.Config);
+            dev.Data['assetGroupID'] = ag.ID;
             this.createNodes();
-            const newNode = NavTreeBase.FindNodeOfObject(newObj, this.nodes);
-            this.selectedNode = newNode;
-            newNode.isRenaming = true;
+            this.selectedNode = NavTreeBase.FindNodeOfObject(ag, this.nodes);
+          }
+          else {
+            let type = this.dataService.Config.GetChecklistTypes().find(x => x.Name == val.replace('Checklist: ', ''));
+            if (type) {
+              let newObj = this.dataService.Project.CreateChecklist(dev, type);
+              this.createNodes();
+              const newNode = NavTreeBase.FindNodeOfObject(newObj, this.nodes);
+              this.selectedNode = newNode;
+              newNode.isRenaming = true;
+            }
           }
         },
         canDelete: true,
@@ -352,7 +359,8 @@ export class ModelingComponent extends SideNavBase implements OnInit {
             this.dataService.Project.MoveItemInContextElements(arr.findIndex(x => x.ID == dev.ID), newIdx);
             parentGroupNode.children.splice(idxType, 0, parentGroupNode.children.splice(idxType+1, 1)[0]);
           } 
-        }
+        },
+        children: []
       };
 
       let assets: INavigationNode = {
@@ -362,9 +370,20 @@ export class ModelingComponent extends SideNavBase implements OnInit {
         canSelect: true,
         data: dev.AssetGroup,
         dataType: NodeTypes.Assets,
-        canRename: false,
-        canDelete: false,
-        canDuplicate: false
+        canDelete: true,
+        onDelete: () => {
+          let ag = dev.AssetGroup;
+          this.dialog.OpenDeleteObjectDialog(ag).subscribe(res => {
+            if (res) {
+              let agn = NavTreeBase.FindNodeOfObject(ag, this.nodes);
+              this.dataService.Project.DeleteAssetGroup(ag);
+              if (this.selectedNode == agn) this.selectedNode = null;
+              let tab = this.tabs.find(x => x.nav.data.ID == ag.ID);
+              if (tab) this.RemoveTab(tab);
+              this.createNodes();
+            }
+          });
+        }
       };
 
       let hw: INavigationNode = {
@@ -403,7 +422,11 @@ export class ModelingComponent extends SideNavBase implements OnInit {
         canDuplicate: false
       };
 
-      node.children = [assets, hw, sw, p];
+      node.addOptions = [];
+      if (assets.data == null) node.addOptions.push('Assets');
+      node.addOptions.push(...this.dataService.Config.GetChecklistTypes().map(x => 'Checklist: ' + x.Name));
+      if (assets.data) node.children = [assets];
+      node.children.push(...[hw, sw, p]);
 
       dev.Checklists.forEach(x => node.children.push(createChecklist(x)));
 
@@ -418,15 +441,22 @@ export class ModelingComponent extends SideNavBase implements OnInit {
         canRename: true,
         onRename: (val: string) => { app.Name = val; },
         canAdd: true,
-        addOptions: this.dataService.Config.GetChecklistTypes().map(x => 'Checklist: ' + x.Name),
         onAdd: (val: string) => {
-          let type = this.dataService.Config.GetChecklistTypes().find(x => x.Name == val.replace('Checklist: ', ''));
-          if (type) {
-            let newObj = this.dataService.Project.CreateChecklist(app, type);
+          if (val == 'Assets') {
+            let ag = pf.InitializeNewAssetGroup(pf.Config);
+            app.Data['assetGroupID'] = ag.ID;
             this.createNodes();
-            const newNode = NavTreeBase.FindNodeOfObject(newObj, this.nodes);
-            this.selectedNode = newNode;
-            newNode.isRenaming = true;
+            this.selectedNode = NavTreeBase.FindNodeOfObject(ag, this.nodes);
+          }
+          else {
+            let type = this.dataService.Config.GetChecklistTypes().find(x => x.Name == val.replace('Checklist: ', ''));
+            if (type) {
+              let newObj = this.dataService.Project.CreateChecklist(app, type);
+              this.createNodes();
+              const newNode = NavTreeBase.FindNodeOfObject(newObj, this.nodes);
+              this.selectedNode = newNode;
+              newNode.isRenaming = true;
+            }
           }
         },
         canDelete: true,
@@ -462,7 +492,8 @@ export class ModelingComponent extends SideNavBase implements OnInit {
             this.dataService.Project.MoveItemInContextElements(arr.findIndex(x => x.ID == app.ID), newIdx);
             parentGroupNode.children.splice(idxType, 0, parentGroupNode.children.splice(idxType+1, 1)[0]);
           } 
-        }
+        },
+        children: []
       };
 
       let assets: INavigationNode = {
@@ -472,9 +503,20 @@ export class ModelingComponent extends SideNavBase implements OnInit {
         canSelect: true,
         data: app.AssetGroup,
         dataType: NodeTypes.Assets,
-        canRename: false,
-        canDelete: false,
-        canDuplicate: false
+        canDelete: true,
+        onDelete: () => {
+          let ag = app.AssetGroup;
+          this.dialog.OpenDeleteObjectDialog(ag).subscribe(res => {
+            if (res) {
+              let agn = NavTreeBase.FindNodeOfObject(ag, this.nodes);
+              this.dataService.Project.DeleteAssetGroup(ag);
+              if (this.selectedNode == agn) this.selectedNode = null;
+              let tab = this.tabs.find(x => x.nav.data.ID == ag.ID);
+              if (tab) this.RemoveTab(tab);
+              this.createNodes();
+            }
+          });
+        }
       };
 
       let sw: INavigationNode = {
@@ -501,7 +543,11 @@ export class ModelingComponent extends SideNavBase implements OnInit {
         canDuplicate: false
       };
 
-      node.children = [assets, sw, p];
+      node.addOptions = [];
+      if (assets.data == null) node.addOptions.push('Assets');
+      node.addOptions.push(...this.dataService.Config.GetChecklistTypes().map(x => 'Checklist: ' + x.Name));
+      if (assets.data) node.children = [assets];
+      node.children.push(...[sw, p]);
 
       app.Checklists.forEach(x => node.children.push(createChecklist(x)));
 
@@ -602,7 +648,29 @@ export class ModelingComponent extends SideNavBase implements OnInit {
           icon: 'explore',
           data: pf.GetSysContext()?.UseCaseDiagram,
           dataType: NodeTypes.UseCase
-        },        
+        },  
+        {
+          name: () => 'Assets',
+          canSelect: true,
+          iconAlignLeft: true,
+          icon: AssetGroup.Icon,
+          data: pf.GetProjectAssetGroup(),
+          dataType: NodeTypes.Assets,
+          canDelete: true,
+          onDelete: () => {
+            let ag = pf.GetProjectAssetGroup();
+            this.dialog.OpenDeleteObjectDialog(ag).subscribe(res => {
+              if (res) {
+                let agn = NavTreeBase.FindNodeOfObject(ag, this.nodes);
+                this.dataService.Project.DeleteAssetGroup(ag);
+                if (this.selectedNode == agn) this.selectedNode = null;
+                let tab = this.tabs.find(x => x.nav.data.ID == ag.ID);
+                if (tab) this.RemoveTab(tab);
+                this.createNodes();
+              }
+            });
+          }
+        },       
         {
           name: () => 'Threat Sources',
           canSelect: true,
@@ -616,10 +684,22 @@ export class ModelingComponent extends SideNavBase implements OnInit {
           canSelect: true,
           iconAlignLeft: true,
           icon: 'flash_on',
-          dataType: NodeTypes.DeviceThreats
+          dataType: NodeTypes.SystemThreats
         }
       ]
     };
+    let assetIndex = analysis.children.findIndex(x => x.dataType == NodeTypes.Assets);
+    if (analysis.children[assetIndex].data == null) {
+      analysis.children.splice(assetIndex, 1);
+      analysis.canAdd = true;
+      analysis.addOptions = ['Assets'];
+      analysis.onAdd = () => {
+        let ag = pf.InitializeNewAssetGroup(pf.Config);
+        pf.Data['projectAssetGroupId'] = ag.ID;
+        this.createNodes();
+        this.selectedNode = NavTreeBase.FindNodeOfObject(ag, this.nodes);
+      }
+    }
 
     let devices: INavigationNode = {
       name: () => 'Devices',
