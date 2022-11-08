@@ -26,7 +26,7 @@
       </ng-container>
       <ng-container matColumnDef="type">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> </th>
-        <td mat-cell *matCellDef="let entry"> <mat-icon matTooltip="{{GetCreationTypeIconTooltip(entry) | translate}}">{{GetCreationTypeIcon(entry)}}</mat-icon> </td>
+        <td mat-cell *matCellDef="let entry"> <mat-icon [matBadge]="'!'" matBadgeColor="warn" [matBadgeHidden]="entry.RuleStillApplies" matBadgeSize="small" matBadgePosition="below" matTooltip="{{GetCreationTypeIconTooltip(entry) | translate}}">{{GetCreationTypeIcon(entry)}}</mat-icon> </td>
       </ng-container>
       <ng-container matColumnDef="origin">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'general.Threat' | translate}} </th>

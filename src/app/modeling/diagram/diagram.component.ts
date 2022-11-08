@@ -68,6 +68,7 @@ enum CProps {
   strokeDashArray = 'strokeDashArray',
   visible = 'visible',
   perPixelTargetFind = 'perPixelTargetFind',
+  targetFindTolerance = 'targetFindTolerance',
 
   p0ID = 'p0ID',
   p1ID = 'p1ID',
@@ -1025,31 +1026,29 @@ export abstract class CanvasBase {
         this.mouseMovingState = MouseMovingStates.Moving;
       }
       
-      this.Canvas.getObjects().forEach(x => this.onMovingObject(x, true));
+      this.Canvas.getObjects().forEach(x => this.onMovingObject(x));
       return;
     }
 
-    this.onMovingObject(opt.target, true);
+    this.onMovingObject(opt.target);
   }
 
-  private onMovingObject(movingObj, isSelection = false) {
+  private onMovingObject(movingObj) {
     this.blockCheckingIntersection = true;
-    if (!isSelection) {
-      if (['p0', 'p1', 'p2'].includes(movingObj[CProps.name])) this.dfOnPointMoving(movingObj);
-      else if (movingObj[CProps.myType] == CTypes.TextPosPoint) this.textOnMovingPoint(movingObj);
-      else if (movingObj[CProps.t0ID]) this.textOnMovingText(movingObj);
-      if (movingObj[CProps.ID]) {
-        let snap = (x) => {
-          return Math.round(x / CanvasBase.GridSize * 4) % 4 == 0;
-        }
-  
-        if (snap(movingObj.left)) movingObj.set('left', Math.round(movingObj.left / CanvasBase.GridSize) * CanvasBase.GridSize);
-        if (snap(movingObj.top)) movingObj.set('top', Math.round(movingObj.top / CanvasBase.GridSize) * CanvasBase.GridSize);
-        movingObj.setCoords();
+    if (['p0', 'p1', 'p2'].includes(movingObj[CProps.name])) this.dfOnPointMoving(movingObj);
+    else if (movingObj[CProps.myType] == CTypes.TextPosPoint) this.textOnMovingPoint(movingObj);
+    else if (movingObj[CProps.t0ID]) this.textOnMovingText(movingObj);
+    if (movingObj[CProps.ID]) {
+      let snap = (x) => {
+        return Math.round(x / CanvasBase.GridSize * 4) % 4 == 0;
       }
+
+      if (snap(movingObj.left)) movingObj.set('left', Math.round(movingObj.left / CanvasBase.GridSize) * CanvasBase.GridSize);
+      if (snap(movingObj.top)) movingObj.set('top', Math.round(movingObj.top / CanvasBase.GridSize) * CanvasBase.GridSize);
+      movingObj.setCoords();
     }
 
-    if (isSelection && movingObj[CProps.dfs]) {
+    if (movingObj[CProps.dfs]) {
       movingObj[CProps.dfs].forEach(dfID => {
         const dfObj = this.getCanvasElementByCanvasID(dfID);
         let isEnd = dfObj[CProps.fe2] == movingObj[CProps.canvasID];
@@ -1100,7 +1099,7 @@ export abstract class CanvasBase {
         this.Canvas.requestRenderAll();
       });
     }
-    if (!isSelection && movingObj[CProps.myType] != CTypes.GridLine) {
+    if (movingObj[CProps.myType] != CTypes.GridLine) {
       if (movingObj['left'] < 0) {
         movingObj['left'] = 0;
         this.Canvas.requestRenderAll();
@@ -1472,7 +1471,7 @@ export abstract class CanvasBase {
       left: x + xCorr + xTO, top: y + yCorr + yTO,
       textAlign: 'center', charSpacing: -50,
       path: new fabric.Path(path, { strokeWidth: 1, visible: false }), pathSide: side, pathStartOffset: 0,
-      fontSize: 16, fill: this.StrokeColor, canvasID: uuidv4(), selectable: true,
+      fontSize: 16, fill: this.StrokeColor, canvasID: uuidv4(), selectable: true, perPixelTargetFind: true, targetFindTolerance: 4,
       hasBorders: false, lockMovementX: true, lockMovementY: true, lockScalingX: true, lockScalingY: true, transparentCorners: true, cornerColor: 'transparent', myType: CTypes.ElementName
     });
 

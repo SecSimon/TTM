@@ -224,13 +224,11 @@ export class DataService {
   }
 
   public LogOut() {
-    let sub = this.ProjectChanged.subscribe(x => {
-      sub.unsubscribe();
+    this.OnCloseProject().then(() => {
       this.clearLoginData();
       this.messagesService.Info('messages.info.logout');
       this.router.navigate(['/']);
     });
-    this.OnCloseProject();
   }
 
   private clearLoginData() {
@@ -630,7 +628,7 @@ export class DataService {
     let content = '';
     let name = '';
     if (isProject && this.Project) {
-      content = this.getFileContent(this.Project.ToJSON(), true, this.SelectedGHProject.isEncrypted);
+      content = this.getFileContent(this.Project.ToJSON(), true, this.SelectedGHProject ? this.SelectedGHProject.isEncrypted : false);
       if (this.SelectedGHProject) name = this.SelectedGHProject.name;
       else name = 'Project.ttmp';
     }
@@ -878,18 +876,30 @@ export class DataService {
       this.isLoading.add();
       const octokit = new Octokit({ auth: this.accessToken });
       octokit.request('GET /user').then(({ data }) => {
+        const onSuccess = () => {
+          if (this.KeepUserSignedIn) {
+            this.locStorage.Set(LocStorageKeys.GH_ACCOUNT_NAME, this.userAccount);
+            this.locStorage.Set(LocStorageKeys.GH_USER_NAME, this.userName);
+            this.locStorage.Set(LocStorageKeys.GH_USER_URL, this.userURL);
+            this.locStorage.Set(LocStorageKeys.GH_USER_EMAIL, this.userEmail);
+          }
+          this.retrieveRepositories();
+          this.router.navigate(['/home']);
+        };
+
         this.userAccount = data.login;
         this.userName = data.name;
         this.userURL = data.html_url;
         this.userEmail = data.email;
-        if (this.KeepUserSignedIn) {
-          this.locStorage.Set(LocStorageKeys.GH_ACCOUNT_NAME, data.login);
-          this.locStorage.Set(LocStorageKeys.GH_USER_NAME, data.name);
-          this.locStorage.Set(LocStorageKeys.GH_USER_URL, data.html_url);
-          this.locStorage.Set(LocStorageKeys.GH_USER_EMAIL, data.email);
+        if (!this.UserEmail) {
+          octokit.users.listEmailsForAuthenticatedUser().then(({ data }) => {
+            this.userEmail = data.find(x => x.primary).email;
+            onSuccess();
+          }).catch(err => this.messagesService.Error('messages.error.githubfetch', err)).finally(() => this.isLoading.remove());
         }
-        this.retrieveRepositories();
-        this.router.navigate(['/home'])
+        else {
+          onSuccess();
+        }
       }).catch((err) => {
         this.messagesService.Error('messages.error.githubfetch', err);
       })
@@ -999,7 +1009,7 @@ export class DataService {
     const octokit = new Octokit();
     const owner = 'SecSimon';
     const repoName = 'TTM-examples';
-    const req = octokit.repos.get({ owner: 'SecSimon', repo: 'TTM-examples' });
+    const req = octokit.repos.get({ owner: owner, repo: repoName });
     req.then(data => {
       const repoId = data.data.id;
       let item: IGHRepository = {

@@ -354,8 +354,9 @@ export class ThreatEngineService {
       return true;
     }
     else if (r.RestType == RestrictionTypes.DataFlowCrosses) {
-      if (r.DataflowRest.TrustAreaIDs.length == 0) return (element as DataFlow).Sender.Parent.ID != (element as DataFlow).Receiver.Parent.ID;
-      else return r.DataflowRest.TrustAreaIDs.includes((element as DataFlow).Sender.Parent.GetProperty('Type').ID) || r.DataflowRest.TrustAreaIDs.includes((element as DataFlow).Receiver.Parent.GetProperty('Type').ID);
+      let res = (element as DataFlow).Sender.Parent.ID != (element as DataFlow).Receiver.Parent.ID;
+      if (res && r.DataflowRest.TrustAreaIDs.length > 0) res = r.DataflowRest.TrustAreaIDs.includes((element as DataFlow).Sender.Parent.GetProperty('Type').ID) || r.DataflowRest.TrustAreaIDs.includes((element as DataFlow).Receiver.Parent.GetProperty('Type').ID);
+      return res;
     }
     else if (r.RestType == RestrictionTypes.PhysicalElement) {
       if (ruleType == RuleTypes.Stencil) { return ThreatEngineService.EvalProp(r.PhyElementRest.Property, (element as DFDElement).PhysicalElement); }

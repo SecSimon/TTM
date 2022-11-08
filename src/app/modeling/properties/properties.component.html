@@ -66,6 +66,10 @@
         <mat-select class="matSelect" *ngIf="prop.Type == 'Protocol Select'" style="width: 100%;" multiple [value]="GetValue(prop)" (selectionChange)="SetValue(prop, $event['value'])">
           <mat-option class="matOption" color="primary" *ngFor="let protocol of GetProtocols()" [value]="protocol">{{protocol.Name}}</mat-option>
         </mat-select>
+        <!--Open Notes-->
+        <button mat-raised-button *ngIf="prop.Type == 'Open Notes'" (click)="OpenNotes()">{{'properties.openNotes' | translate}}</button>
+        <!--Open Questionnaire-->
+        <button mat-raised-button *ngIf="prop.Type == 'Open Questionnaire'" (click)="OpenQuestionnaire()">{{'properties.openQuestionnaire' | translate}}</button>
         <!--Stencil Type-->
         <select *ngIf="prop.Type == 'Stencil Type'" style="width: 100%;" [ngModel]="GetStencilType()" (change)="SetType(prop, $event['target']['value'])">
           <option *ngFor="let type of GetAvailableTypes(selectedObject)" [value]="type.ID">{{type.Name}}</option>
@@ -86,9 +90,6 @@
         </td>
       </tr>
     </ng-container>
-    <tr *ngIf="IsComponent()">
-      <td colspan="2"><button mat-raised-button (click)="OpenQuestionnaire()">{{'properties.openQuestionnaire' | translate}}</button></td>
-    </tr>
     <tr *ngIf="IsUseCase()">
       <td colspan="2"><button mat-raised-button (click)="CreateUseCaseDiagram()">{{'properties.createDataFlowDiagram' | translate}}</button></td>
     </tr>

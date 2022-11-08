@@ -5,7 +5,7 @@ import { CharScope } from "./char-scope";
 import { MyComponentType, MyComponent, MyComponentStack, MyComponentTypeIDs } from "./component";
 import { ConfigFile } from "./config-file";
 import { DatabaseBase, DataChangedTypes, IDatabaseBase, IDataChanged, IDataReferences, INote } from "./database";
-import { DFDContainerRef, DFDElement, DFDElementRef } from "./dfd-model";
+import { DFDContainer, DFDContainerRef, DFDElement, DFDElementRef } from "./dfd-model";
 import { CtxDiagram, Diagram, DiagramTypes, HWDFDiagram } from "./diagram";
 import { ObjImpact } from "./obj-impact";
 import { SystemThreat } from "./system-threat";
@@ -605,6 +605,16 @@ export class ProjectFile extends DatabaseBase {
     val.mitigationProcesses?.forEach(x => res.mitigationProcesses.push(MitigationProcess.FromJSON(x, res, cf)));
 
     val.checklists?.forEach(x => res.checklists.push(Checklist.FromJSON(x, res, cf)));
+
+    res.GetDFDElements().forEach(ele => {
+      if (ele instanceof DFDContainer) {
+        let childs = ele.GetChildren();
+        if (childs.some(x => x == undefined)) {
+          console.error('Uncleared reference');
+          ele.Data['childrenIDs'] = childs.filter(x => x).map(x => x.ID);
+        }
+      }
+    });
 
     return res;
   }

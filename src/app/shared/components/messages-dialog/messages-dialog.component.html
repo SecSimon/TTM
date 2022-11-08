@@ -14,7 +14,7 @@
         <mat-icon mat-list-icon *ngIf="msg.type == 'warning'" matTooltip="{{'general.Warning' | translate}}">warning</mat-icon>
         <mat-icon mat-list-icon *ngIf="msg.type == 'error'" matTooltip="{{'general.Error' | translate}}">error</mat-icon>
         <div mat-line>{{msg.text}}</div>
-        <div mat-line>{{msg.time | date:'medium'}}</div>
+        <div mat-line>{{msg.time | localDateTime}}</div>
       </mat-list-item>
     </mat-list>
   </ng-container>

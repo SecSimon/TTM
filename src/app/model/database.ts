@@ -47,6 +47,8 @@ export enum PropertyEditTypes {
   MyDataSelect = 'Data Select',
   PhysicalElementSelect = 'Physical Element Select',
   ProtocolSelect = 'Protocol Select',
+  OpenNotes = 'Open Notes',
+  OpenQuestionnaire = 'Open Questionnaire',
   StencilType = 'Stencil Type',
   TextArea = 'Text Area',
   TextBox = 'Text Box',

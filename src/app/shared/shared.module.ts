@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { LOCALE_ID, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
@@ -64,9 +64,16 @@ import { CvssEntryComponent } from './components/cvss-entry/cvss-entry.component
 import { ProgressTrackerComponent } from './components/progress-tracker/progress-tracker.component';
 import { ModelInfoComponent } from './components/model-info/model-info.component';
 import { NotesComponent } from './components/notes/notes.component';
+import { LocalDatePipe, LocalDateTimePipe, LocalizationService } from '../util/localization.service';
 
 @NgModule({
-  declarations: [PageNotFoundComponent, WebviewDirective, StatusBarComponent, SideNavComponent, SaveDialogComponent, PasswordDialogComponent, MessagesDialogComponent, TwoOptionsDialogComponent, CweEntryComponent, CapecEntryComponent, NavTreeComponent, CvssEntryComponent, ProgressTrackerComponent, ModelInfoComponent, NotesComponent],
+  declarations: [
+    PageNotFoundComponent, WebviewDirective, 
+    StatusBarComponent, SideNavComponent, SaveDialogComponent, PasswordDialogComponent, MessagesDialogComponent, 
+    TwoOptionsDialogComponent, CweEntryComponent, CapecEntryComponent, NavTreeComponent, CvssEntryComponent, 
+    ProgressTrackerComponent, ModelInfoComponent, NotesComponent, 
+    LocalDatePipe, LocalDateTimePipe
+  ],
   imports: [
     CommonModule, 
     RouterModule,
@@ -117,8 +124,6 @@ import { NotesComponent } from './components/notes/notes.component';
     MatSortModule,
     MatStepperModule,
     MatProgressBarModule
-
-
   ],
   exports: [
     TranslateModule, 
@@ -176,7 +181,17 @@ import { NotesComponent } from './components/notes/notes.component';
     CvssEntryComponent,
     NavTreeComponent,
     NotesComponent,
-    ModelInfoComponent
+    ModelInfoComponent,
+
+    LocalDatePipe,
+    LocalDateTimePipe
+  ],
+  providers: [
+    { 
+      provide: LOCALE_ID, 
+      deps: [LocalizationService],
+      useFactory: (translate) => translate.Locale
+    }
   ]
 })
 export class SharedModule {}

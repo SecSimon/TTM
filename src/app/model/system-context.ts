@@ -262,15 +262,7 @@ export class Device extends ContextElement {
       this.HardwareDiagram = pf.CreateDiagram(DiagramTypes.Hardware) as HWDFDiagram;
     }
 
-    if (!this.Data['softwareStackID']) {
-      this.SoftwareStack = pf.CreateStack(MyComponentTypeIDs.Software);
-      cf.GetMyComponentSWTypeGroups().forEach(x => x.Types.forEach(y => this.SoftwareStack.AddChild(pf.CreateComponent(y))));
-    }
-
-    if (!this.Data['processStackID']) {
-      this.ProcessStack = pf.CreateStack(MyComponentTypeIDs.Process);
-      cf.GetMyComponentPTypeGroups().forEach(x => x.Types.forEach(y => this.ProcessStack.AddChild(pf.CreateComponent(y))));
-    }
+    this.CreateSoftwareStack();
 
     if (!this.Data['checklistIDs']) this.Data['checklistIDs'] = [];
 
@@ -282,6 +274,34 @@ export class Device extends ContextElement {
     }
 
     this.Name = this.Name; // call setter
+  }
+
+  public CreateSoftwareStack() {
+    if (!this.Data['softwareStackID']) {
+      this.SoftwareStack = this.project.CreateStack(MyComponentTypeIDs.Software);
+      this.project.Config.GetMyComponentSWTypeGroups().forEach(x => x.Types.forEach(y => this.SoftwareStack.AddChild(this.project.CreateComponent(y))));
+    }
+
+    return this.SoftwareStack;
+  }
+
+  public DeleteSoftwareStack() {
+    this.project.DeleteStack(this.SoftwareStack);
+    this.Data['softwareStackID'] = null;
+  }
+
+  public CreateProcessStack() {
+    if (!this.Data['processStackID']) {
+      this.ProcessStack = this.project.CreateStack(MyComponentTypeIDs.Process);
+      this.project.Config.GetMyComponentPTypeGroups().forEach(x => x.Types.forEach(y => this.ProcessStack.AddChild(this.project.CreateComponent(y))));
+    }
+
+    return this.ProcessStack;
+  }
+
+  public DeleteProcessStack() {
+    this.project.DeleteStack(this.ProcessStack);
+    this.Data['processStackID'] = null;
   }
 
   public AddChecklist(list: Checklist) {
@@ -705,16 +725,6 @@ export class MobileApp extends ContextElement {
       this.Data['assetGroupID'] = root.ID;
     }
 
-    if (!this.Data['softwareStackID']) {
-      this.SoftwareStack = pf.CreateStack(MyComponentTypeIDs.Software);
-      //cf.GetMyComponentSWTypeGroups().forEach(x => x.Types.forEach(y => this.SoftwareStack.AddChild(pf.CreateComponent(y))));
-    }
-
-    if (!this.Data['processStackID']) {
-      this.ProcessStack = pf.CreateStack(MyComponentTypeIDs.Process);
-      cf.GetMyComponentPTypeGroups().forEach(x => x.Types.forEach(y => this.ProcessStack.AddChild(pf.CreateComponent(y))));
-    }
-
     if (!this.Data['checklistIDs']) this.Data['checklistIDs'] = [];
 
     if (this.InterfaceTop == null) {
@@ -725,6 +735,33 @@ export class MobileApp extends ContextElement {
     }
 
     this.Name = this.Name; // call setter
+  }
+
+  public CreateSoftwareStack() {
+    if (!this.Data['softwareStackID']) {
+      this.SoftwareStack = this.project.CreateStack(MyComponentTypeIDs.Software);
+    }
+
+    return this.SoftwareStack;
+  }
+
+  public DeleteSoftwareStack() {
+    this.project.DeleteStack(this.SoftwareStack);
+    this.Data['softwareStackID'] = null;
+  }
+
+  public CreateProcessStack() {
+    if (!this.Data['processStackID']) {
+      this.ProcessStack = this.project.CreateStack(MyComponentTypeIDs.Process);
+      this.project.Config.GetMyComponentPTypeGroups().forEach(x => x.Types.forEach(y => this.ProcessStack.AddChild(this.project.CreateComponent(y))));
+    }
+
+    return this.ProcessStack;
+  }
+
+  public DeleteProcessStack() {
+    this.project.DeleteStack(this.ProcessStack);
+    this.Data['processStackID'] = null;
   }
 
   public AddChecklist(list: Checklist) {

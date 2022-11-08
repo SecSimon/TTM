@@ -66,7 +66,7 @@
           <table>
             <tr *ngFor="let commit of commits; index as index; count as count">
               <td style="text-align: right;">{{count-index}})</td>
-              <td>{{commit.date | date:'medium'}}</td>
+              <td>{{commit.date | localDateTime}}</td>
               <td>-</td>
               <td>{{commit.commiter}}</td>
               <td>:</td>

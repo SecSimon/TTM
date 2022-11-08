@@ -54,6 +54,10 @@
         </mat-optgroup>
       </mat-select>
   </mat-form-field>
+  <mat-form-field appearance="fill" style="width: 100%;">
+    <mat-label>{{ 'properties.Description' | translate }}</mat-label>
+    <textarea matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="attackScenario.Description"></textarea>
+  </mat-form-field>
   <mat-form-field appearance="fill" style="width: 150px;">
     <mat-label>{{ 'properties.Severity' | translate }}</mat-label>
     <mat-select [(value)]="attackScenario.Severity" (selectionChange)="CalculateRisk()">
@@ -85,10 +89,6 @@
   <mat-form-field appearance="fill" style="width: 100%;">
     <mat-label>{{ 'properties.RiskStrategyReason' | translate }}</mat-label>
     <textarea matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="attackScenario.RiskStrategyReason"></textarea>
-  </mat-form-field>
-  <mat-form-field appearance="fill" style="width: 100%;">
-    <mat-label>{{ 'properties.Description' | translate }}</mat-label>
-    <textarea matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="attackScenario.Description"></textarea>
   </mat-form-field>
   <mat-accordion class="expansion-panel-headers-align" style="pointer-events: initial;">
     <mat-expansion-panel *ngIf="attackScenario.ThreatOrigin">

@@ -308,12 +308,23 @@ export class ModelingComponent extends SideNavBase implements OnInit {
         canRename: true,
         onRename: (val: string) => { dev.Name = val; },
         canAdd: true,
+        addOptions: [],
         onAdd: (val: string) => {
           if (val == 'Assets') {
             let ag = pf.InitializeNewAssetGroup(pf.Config);
             dev.Data['assetGroupID'] = ag.ID;
             this.createNodes();
             this.selectedNode = NavTreeBase.FindNodeOfObject(ag, this.nodes);
+          }
+          else if (val == 'Software') {
+            let stack = dev.CreateSoftwareStack();
+            this.createNodes();
+            this.selectedNode = NavTreeBase.FindNodeOfObject(stack, this.nodes);
+          }
+          else if (val == 'Process') {
+            let stack = dev.CreateProcessStack();
+            this.createNodes();
+            this.selectedNode = NavTreeBase.FindNodeOfObject(stack, this.nodes);
           }
           else {
             let type = this.dataService.Config.GetChecklistTypes().find(x => x.Name == val.replace('Checklist: ', ''));
@@ -363,28 +374,34 @@ export class ModelingComponent extends SideNavBase implements OnInit {
         children: []
       };
 
-      let assets: INavigationNode = {
-        name: () => 'Assets',
-        icon: AssetGroup.Icon,
-        iconAlignLeft: true,
-        canSelect: true,
-        data: dev.AssetGroup,
-        dataType: NodeTypes.Assets,
-        canDelete: true,
-        onDelete: () => {
-          let ag = dev.AssetGroup;
-          this.dialog.OpenDeleteObjectDialog(ag).subscribe(res => {
-            if (res) {
-              let agn = NavTreeBase.FindNodeOfObject(ag, this.nodes);
-              this.dataService.Project.DeleteAssetGroup(ag);
-              if (this.selectedNode == agn) this.selectedNode = null;
-              let tab = this.tabs.find(x => x.nav.data.ID == ag.ID);
-              if (tab) this.RemoveTab(tab);
-              this.createNodes();
-            }
-          });
-        }
-      };
+      if (dev.AssetGroup) {
+        let assets: INavigationNode = {
+          name: () => 'Assets',
+          icon: AssetGroup.Icon,
+          iconAlignLeft: true,
+          canSelect: true,
+          data: dev.AssetGroup,
+          dataType: NodeTypes.Assets,
+          canDelete: true,
+          onDelete: () => {
+            let ag = dev.AssetGroup;
+            this.dialog.OpenDeleteObjectDialog(ag).subscribe(res => {
+              if (res) {
+                let agn = NavTreeBase.FindNodeOfObject(ag, this.nodes);
+                this.dataService.Project.DeleteAssetGroup(ag);
+                if (this.selectedNode == agn) this.selectedNode = null;
+                let tab = this.tabs.find(x => x.nav.data.ID == ag.ID);
+                if (tab) this.RemoveTab(tab);
+                this.createNodes();
+              }
+            });
+          }
+        };
+        node.children.push(assets);
+      }
+      else {
+        node.addOptions.push('Assets');
+      }
 
       let hw: INavigationNode = {
         name: () => 'Hardware',
@@ -397,36 +414,69 @@ export class ModelingComponent extends SideNavBase implements OnInit {
         canDelete: false,
         canDuplicate: false
       };
+      node.children.push(hw);
 
-      let sw: INavigationNode = {
-        name: () => 'Software',
-        icon: 'code',
-        iconAlignLeft: true,
-        canSelect: true,
-        data: dev.SoftwareStack,
-        dataType: NodeTypes.Software,
-        canRename: false,
-        canDelete: false,
-        canDuplicate: false
-      };
+      if (dev.SoftwareStack) {
+        let sw: INavigationNode = {
+          name: () => 'Software',
+          icon: 'code',
+          iconAlignLeft: true,
+          canSelect: true,
+          data: dev.SoftwareStack,
+          dataType: NodeTypes.Software,
+          canRename: false,
+          canDelete: true,
+          onDelete: () => {
+            let stack = dev.SoftwareStack;
+            this.dialog.OpenDeleteObjectDialog(stack).subscribe(res => {
+              if (res) {
+                let stackNode = NavTreeBase.FindNodeOfObject(stack, this.nodes);
+                dev.DeleteSoftwareStack();
+                if (this.selectedNode == stackNode) this.selectedNode = null;
+                let tab = this.tabs.find(x => x.nav.data.ID == stack.ID);
+                if (tab) this.RemoveTab(tab);
+                this.createNodes();
+              }
+            });
+          }
+        };
+        node.children.push(sw);
+      }
+      else {
+        node.addOptions.push('Software');
+      }
 
-      let p: INavigationNode = {
-        name: () => 'Process',
-        icon: 'policy',
-        iconAlignLeft: true,
-        canSelect: true,
-        data: dev.ProcessStack,
-        dataType: NodeTypes.Process,
-        canRename: false,
-        canDelete: false,
-        canDuplicate: false
-      };
+      if (dev.ProcessStack) {
+        let p: INavigationNode = {
+          name: () => 'Process',
+          icon: 'policy',
+          iconAlignLeft: true,
+          canSelect: true,
+          data: dev.ProcessStack,
+          dataType: NodeTypes.Process,
+          canRename: false,
+          canDelete: true,
+          onDelete: () => {
+            let stack = dev.ProcessStack;
+            this.dialog.OpenDeleteObjectDialog(stack).subscribe(res => {
+              if (res) {
+                let stackNode = NavTreeBase.FindNodeOfObject(stack, this.nodes);
+                dev.DeleteProcessStack();
+                if (this.selectedNode == stackNode) this.selectedNode = null;
+                let tab = this.tabs.find(x => x.nav.data.ID == stack.ID);
+                if (tab) this.RemoveTab(tab);
+                this.createNodes();
+              }
+            });
+          }
+        };
+        node.children.push(p);
+      }
+      else {
+        node.addOptions.push('Process');
+      }
 
-      node.addOptions = [];
-      if (assets.data == null) node.addOptions.push('Assets');
       node.addOptions.push(...this.dataService.Config.GetChecklistTypes().map(x => 'Checklist: ' + x.Name));
-      if (assets.data) node.children = [assets];
-      node.children.push(...[hw, sw, p]);
 
       dev.Checklists.forEach(x => node.children.push(createChecklist(x)));
 
@@ -441,12 +491,23 @@ export class ModelingComponent extends SideNavBase implements OnInit {
         canRename: true,
         onRename: (val: string) => { app.Name = val; },
         canAdd: true,
+        addOptions: [],
         onAdd: (val: string) => {
           if (val == 'Assets') {
             let ag = pf.InitializeNewAssetGroup(pf.Config);
             app.Data['assetGroupID'] = ag.ID;
             this.createNodes();
             this.selectedNode = NavTreeBase.FindNodeOfObject(ag, this.nodes);
+          }
+          else if (val == 'Software') {
+            let stack = app.CreateSoftwareStack();
+            this.createNodes();
+            this.selectedNode = NavTreeBase.FindNodeOfObject(stack, this.nodes);
+          }
+          else if (val == 'Process') {
+            let stack = app.CreateProcessStack();
+            this.createNodes();
+            this.selectedNode = NavTreeBase.FindNodeOfObject(stack, this.nodes);
           }
           else {
             let type = this.dataService.Config.GetChecklistTypes().find(x => x.Name == val.replace('Checklist: ', ''));
@@ -496,58 +557,96 @@ export class ModelingComponent extends SideNavBase implements OnInit {
         children: []
       };
 
-      let assets: INavigationNode = {
-        name: () => 'Assets',
-        icon: AssetGroup.Icon,
-        iconAlignLeft: true,
-        canSelect: true,
-        data: app.AssetGroup,
-        dataType: NodeTypes.Assets,
-        canDelete: true,
-        onDelete: () => {
-          let ag = app.AssetGroup;
-          this.dialog.OpenDeleteObjectDialog(ag).subscribe(res => {
-            if (res) {
-              let agn = NavTreeBase.FindNodeOfObject(ag, this.nodes);
-              this.dataService.Project.DeleteAssetGroup(ag);
-              if (this.selectedNode == agn) this.selectedNode = null;
-              let tab = this.tabs.find(x => x.nav.data.ID == ag.ID);
-              if (tab) this.RemoveTab(tab);
-              this.createNodes();
-            }
-          });
-        }
-      };
+      if (app.AssetGroup) {
+        let assets: INavigationNode = {
+          name: () => 'Assets',
+          icon: AssetGroup.Icon,
+          iconAlignLeft: true,
+          canSelect: true,
+          data: app.AssetGroup,
+          dataType: NodeTypes.Assets,
+          canDelete: true,
+          onDelete: () => {
+            let ag = app.AssetGroup;
+            this.dialog.OpenDeleteObjectDialog(ag).subscribe(res => {
+              if (res) {
+                let agn = NavTreeBase.FindNodeOfObject(ag, this.nodes);
+                this.dataService.Project.DeleteAssetGroup(ag);
+                if (this.selectedNode == agn) this.selectedNode = null;
+                let tab = this.tabs.find(x => x.nav.data.ID == ag.ID);
+                if (tab) this.RemoveTab(tab);
+                this.createNodes();
+              }
+            });
+          }
+        };
+        node.children.push(assets);
+      }
+      else {
+        node.addOptions.push('Assets');
+      }
 
-      let sw: INavigationNode = {
-        name: () => 'Software',
-        icon: 'code',
-        iconAlignLeft: true,
-        canSelect: true,
-        data: app.SoftwareStack,
-        dataType: NodeTypes.Software,
-        canRename: false,
-        canDelete: false,
-        canDuplicate: false
-      };
+      if (app.SoftwareStack) {
+        let sw: INavigationNode = {
+          name: () => 'Software',
+          icon: 'code',
+          iconAlignLeft: true,
+          canSelect: true,
+          data: app.SoftwareStack,
+          dataType: NodeTypes.Software,
+          canRename: false,
+          canDelete: true,
+          onDelete: () => {
+            let stack = app.SoftwareStack;
+            this.dialog.OpenDeleteObjectDialog(stack).subscribe(res => {
+              if (res) {
+                let stackNode = NavTreeBase.FindNodeOfObject(stack, this.nodes);
+                app.DeleteSoftwareStack();
+                if (this.selectedNode == stackNode) this.selectedNode = null;
+                let tab = this.tabs.find(x => x.nav.data.ID == stack.ID);
+                if (tab) this.RemoveTab(tab);
+                this.createNodes();
+              }
+            });
+          }
+        };
+        node.children.push(sw);
+      }
+      else {
+        node.addOptions.push('Software');
+      }
 
-      let p: INavigationNode = {
-        name: () => 'Process',
-        icon: 'policy',
-        iconAlignLeft: true,
-        canSelect: true,
-        data: app.ProcessStack,
-        dataType: NodeTypes.Process,
-        canRename: false,
-        canDelete: false,
-        canDuplicate: false
-      };
+      if (app.ProcessStack) {
+        let p: INavigationNode = {
+          name: () => 'Process',
+          icon: 'policy',
+          iconAlignLeft: true,
+          canSelect: true,
+          data: app.ProcessStack,
+          dataType: NodeTypes.Process,
+          canRename: false,
+          canDelete: true,
+          onDelete: () => {
+            let stack = app.ProcessStack;
+            this.dialog.OpenDeleteObjectDialog(stack).subscribe(res => {
+              if (res) {
+                let stackNode = NavTreeBase.FindNodeOfObject(stack, this.nodes);
+                app.DeleteProcessStack();
+                if (this.selectedNode == stackNode) this.selectedNode = null;
+                let tab = this.tabs.find(x => x.nav.data.ID == stack.ID);
+                if (tab) this.RemoveTab(tab);
+                this.createNodes();
+              }
+            });
+          }
+        };
+        node.children.push(p);
+      }
+      else {
+        node.addOptions.push('Process');
+      }
 
-      node.addOptions = [];
-      if (assets.data == null) node.addOptions.push('Assets');
       node.addOptions.push(...this.dataService.Config.GetChecklistTypes().map(x => 'Checklist: ' + x.Name));
-      if (assets.data) node.children = [assets];
-      node.children.push(...[sw, p]);
 
       app.Checklists.forEach(x => node.children.push(createChecklist(x)));
 

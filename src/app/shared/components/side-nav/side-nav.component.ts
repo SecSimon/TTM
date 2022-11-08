@@ -1,6 +1,5 @@
 import { Component, Input, AfterViewInit, Output, EventEmitter } from '@angular/core';
 import { ThemeService } from '../../../util/theme.service';
-import { TranslateService } from '@ngx-translate/core';
 import { LocalStorageService, LocStorageKeys } from '../../../util/local-storage.service';
 import { DataService } from '../../../util/data.service';
 
@@ -8,6 +7,7 @@ import { faCodeBranch } from '@fortawesome/free-solid-svg-icons';
 import { MessagesService } from '../../../util/messages.service';
 import { Router } from '@angular/router';
 import { DialogService } from '../../../util/dialog.service';
+import { LocalizationService } from '../../../util/localization.service';
 
 
 @Component({
@@ -25,7 +25,7 @@ export class SideNavComponent implements AfterViewInit {
 
   public faCodeBranch = faCodeBranch;
 
-  constructor(public theme: ThemeService, private translateService: TranslateService, private locStorage: LocalStorageService, 
+  constructor(public theme: ThemeService, private localization: LocalizationService, private locStorage: LocalStorageService, 
     public dataService: DataService, public messagesService: MessagesService, private router: Router, private dialog: DialogService) { }
 
   ngAfterViewInit(): void {
@@ -42,8 +42,7 @@ export class SideNavComponent implements AfterViewInit {
   }
 
   public ChangeLanguage(lang: string) {
-    this.translateService.use(lang);
-    this.locStorage.Set(LocStorageKeys.LANGUAGE, lang);
+    this.localization.Locale = lang;
   }
 
   public Clear() {

@@ -1,6 +1,6 @@
 import { EventEmitter } from "@angular/core";
 import { ConfigFile } from "./config-file";
-import { DatabaseBase, DataReferenceTypes, IContainer, IDataReferences, IProperty, PropertyEditTypes, ViewElementBase } from "./database";
+import { DatabaseBase, DataReferenceTypes, IContainer, IDataReferences, INote, IProperty, PropertyEditTypes, ViewElementBase } from "./database";
 import { ProjectFile } from "./project-file";
 import { ThreatQuestion } from "./threat-model";
 
@@ -130,6 +130,8 @@ export class MyComponent extends ViewElementBase {
 
   public get ThreatQuestions() { return this.Data['threatQuestions']; } // key: questionID, value: optionVal
 
+  public get Notes(): INote[] { return this.Data['Notes']; }
+  public set Notes(val: INote[]) { this.Data['Notes'] = val; }
   public get NotesPerQuestion(): {} { return this.Data['notesPerQuestion']; }
   public set NotesPerQuestion(val: {}) { this.Data['notesPerQuestion'] = val; }
 
@@ -146,6 +148,7 @@ export class MyComponent extends ViewElementBase {
     this.Type = type;
 
     if (!this.Data['threatQuestions']) this.Data['threatQuestions'] = {};
+    if (!this.Data['Notes']) this.Data['Notes'] = [];
     if (!this.Data['notesPerQuestion']) this.Data['notesPerQuestion'] = {};
 
     cf.GetThreatQuestions().filter(x => x.ComponentType.ID == type.ID).forEach(x => this.AddThreatQuestion(x));
@@ -188,6 +191,8 @@ export class MyComponent extends ViewElementBase {
 
     this.AddProperty('properties.IsActive', 'IsActive', '', true, PropertyEditTypes.CheckBox, true);
     this.AddProperty('properties.IsThirdParty', 'IsThirdParty', '', true, PropertyEditTypes.CheckBox, true);
+    this.AddProperty('properties.Questionnaire', '', '', false, PropertyEditTypes.OpenQuestionnaire, true);
+    this.AddProperty('general.Notes', '', '', false, PropertyEditTypes.OpenNotes, true);
   }
 
   private setTypeProperties(type: MyComponentType) {

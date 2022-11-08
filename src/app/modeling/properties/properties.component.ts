@@ -228,6 +228,10 @@ export class PropertiesComponent implements OnInit {
     this.threatEngine.AddMnemonicThreat(this.selectedElement, letter);
   }
 
+  public OpenNotes() {
+    this.dialog.OpenNotesDialog((this.selectedObject as MyComponent).Notes, true, false, true, true);
+  }
+
   public OpenQuestionnaire() {
     this.openQuestionnaire.emit(this.selectedObject as MyComponent);
   }
