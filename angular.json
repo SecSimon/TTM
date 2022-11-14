@@ -24,6 +24,7 @@
         "build": {
           "builder": "@angular-builders/custom-webpack:browser",
           "options": {
+            "baseHref": "https://www.simon-liebl.de/TTM/",
             "outputPath": "dist",
             "index": "src/index.html",
             "main": "src/main.ts",
