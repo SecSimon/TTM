@@ -34,6 +34,7 @@ export interface INavigationNode {
   onMoveToGroup?(group);
   isBold?: boolean;
   isInactive?: () => boolean;
+  hasMenu?: boolean;
   data?: any;
   dataType?: any;
 }
@@ -110,6 +111,27 @@ export class NavTreeComponent implements OnInit {
 
   public OnMoveToGroup(node: INavigationNode, group: INavigationNode) {
     node.onMoveToGroup(group);
+  }
+
+  public OnCollapse(node: INavigationNode, level: number) {
+    if (level == 1) node.children?.forEach(x => this.treeControl.collapse(x));
+    else if (level == 2) node.children?.forEach(x => x.children?.forEach(y => this.treeControl.collapse(y)));
+    else if (level == 0) {
+      if (this.dataSource.data.includes(node)) this.dataSource.data.forEach(x => this.treeControl.collapse(x));
+      else NavTreeBase.FlattenNodes(this.dataSource.data).find(x => x.children?.includes(node))?.children?.forEach(x => this.treeControl.collapse(x));
+    }
+  }
+
+  public OnExpand(node: INavigationNode, level: number) {
+    if (level == 1) {
+      this.treeControl.expand(node);
+      node.children?.forEach(x => this.treeControl.expand(x));
+    }
+    else if (level == 2) node.children?.forEach(x => this.OnExpand(x, 1));
+    else if (level == 0) {
+      if (this.dataSource.data.includes(node)) this.dataSource.data.forEach(x => this.OnExpand(x, 1));
+      else NavTreeBase.FlattenNodes(this.dataSource.data).find(x => x.children?.includes(node))?.children?.forEach(x => this.OnExpand(x, 1));
+    }
   }
 
   public SetNavTreeData(nodes: INavigationNode[]) {

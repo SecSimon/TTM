@@ -26,6 +26,7 @@ export class CharScopeComponent implements OnInit {
       this.charScope.Application,
       this.charScope.Sector, 
       this.charScope.Function,  
+      this.charScope.Features,
       this.charScope.Requirements,
       this.charScope.Criticality,
       this.charScope.LocEnv,
@@ -48,6 +49,7 @@ export class CharScopeComponent implements OnInit {
     let start = 'pages.modeling.charscope.';
     if (arr == this.charScope.Sector) return start + 'Sector';
     if (arr == this.charScope.Function) return start + 'Function';
+    if (arr == this.charScope.Features) return start + 'Features';
     if (arr == this.charScope.Application) return start + 'Application';
     if (arr == this.charScope.Requirements) return start + 'Requirements';
     if (arr == this.charScope.Criticality) return start + 'Criticality';

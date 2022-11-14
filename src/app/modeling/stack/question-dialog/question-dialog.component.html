@@ -6,7 +6,7 @@
       <ng-template matTabContent>
         <mat-form-field appearance="fill" style="width: 100%; margin: 5px 0px;">
           <mat-label>{{'properties.Description' | translate}}</mat-label>
-          <textarea matInput type="text" [(ngModel)]="comp.Description"></textarea>
+          <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="2" cdkAutosizeMaxRows="5" type="text" [(ngModel)]="comp.Description"></textarea>
         </mat-form-field>
         <h3>{{'general.Notes' | translate}}</h3>
         <app-notes [showTimestamp]="true" [hasCheckbox]="false" [canToggleTimestamp]="true" [canToggleCheckbox]="true" [notes]="selectedComponent.Notes"></app-notes>

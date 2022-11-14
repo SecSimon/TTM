@@ -343,11 +343,11 @@ export class Device extends ContextElement {
   public FindReferences(pf: ProjectFile, cf: ConfigFile): IDataReferences[] {
     let refs: IDataReferences[] = super.FindReferences(pf, cf);
 
-    refs.push({ Type: DataReferenceTypes.DeleteDiagram, Param: this.HardwareDiagram });
-    refs.push({ Type: DataReferenceTypes.DeleteStack, Param: this.SoftwareStack });
-    refs.push({ Type: DataReferenceTypes.DeleteStack, Param: this.ProcessStack });
+    if (this.HardwareDiagram) refs.push({ Type: DataReferenceTypes.DeleteDiagram, Param: this.HardwareDiagram });
+    if (this.SoftwareStack) refs.push({ Type: DataReferenceTypes.DeleteStack, Param: this.SoftwareStack });
+    if (this.ProcessStack) refs.push({ Type: DataReferenceTypes.DeleteStack, Param: this.ProcessStack });
 
-    refs.push({ Type: DataReferenceTypes.DeleteAssetGroup, Param: this.AssetGroup });
+    if (this.AssetGroup) refs.push({ Type: DataReferenceTypes.DeleteAssetGroup, Param: this.AssetGroup });
     this.Checklists.forEach(x => refs.push({ Type: DataReferenceTypes.DeleteChecklist, Param: x }));
 
     return refs;
@@ -801,10 +801,10 @@ export class MobileApp extends ContextElement {
   public FindReferences(pf: ProjectFile, cf: ConfigFile): IDataReferences[] {
     let refs: IDataReferences[] = super.FindReferences(pf, cf);
 
-    refs.push({ Type: DataReferenceTypes.DeleteStack, Param: this.SoftwareStack });
-    refs.push({ Type: DataReferenceTypes.DeleteStack, Param: this.ProcessStack });
+    if (this.SoftwareStack) refs.push({ Type: DataReferenceTypes.DeleteStack, Param: this.SoftwareStack });
+    if (this.ProcessStack) refs.push({ Type: DataReferenceTypes.DeleteStack, Param: this.ProcessStack });
 
-    refs.push({ Type: DataReferenceTypes.DeleteAssetGroup, Param: this.AssetGroup });
+    if (this.AssetGroup) refs.push({ Type: DataReferenceTypes.DeleteAssetGroup, Param: this.AssetGroup });
     this.Checklists.forEach(x => refs.push({ Type: DataReferenceTypes.DeleteChecklist, Param: x }));
 
     return refs;

@@ -158,6 +158,7 @@ export class AssetsComponent extends NavTreeBase implements OnInit {
       root.icon = AssetGroup.Icon; 
       root.iconAlignLeft = false;
       root.canDelete = false;
+      root.hasMenu = true;
   
       this.Nodes.push(root);
       NavTreeBase.TransferExpandedState(prevNodes, this.Nodes);

@@ -54,7 +54,7 @@
   </mat-form-field>
   <mat-form-field appearance="fill" style="width: 100%;">
     <mat-label>{{ 'properties.Description' | translate }}</mat-label>
-    <textarea matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="countermeasure.Description"></textarea>
+    <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="2" cdkAutosizeMaxRows="5" [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="countermeasure.Description"></textarea>
   </mat-form-field>
   <mat-accordion class="expansion-panel-headers-align" style="pointer-events: initial;">
     <mat-expansion-panel *ngIf="countermeasure.Control">

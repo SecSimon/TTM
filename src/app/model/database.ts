@@ -113,6 +113,8 @@ export enum DataReferenceTypes {
   RemoveThreatQuestionFromComponent,
   RemoveThreatOriginFromControl,
 
+  RemoveSystemThreatFromAttackScenario,
+
   // Device
   DeleteDiagram,
   DeleteStack,

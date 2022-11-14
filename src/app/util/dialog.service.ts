@@ -49,7 +49,7 @@ export class DialogService {
   public OpenUnsavedChangesDialog() {
     let data: ITwoOptionDialogData = {
       title: this.translate.instant('dialog.unsaved.title'),
-      textContent: this.translate.instant('dialog.unsaved.save'),
+      textContent: this.translate.instant('dialog.unsaved.saveProject'),
       resultTrueText: this.translate.instant('general.Yes'),
       hasResultFalse: true,
       resultFalseText: this.translate.instant('general.No'),

@@ -166,6 +166,7 @@ export class ControlsComponent extends NavTreeBase implements OnInit {
     root.icon = 'security'; 
     root.canSelect = false;
     root.canDelete = false;
+    root.hasMenu = true;
 
     this.Nodes.push(root);
     NavTreeBase.TransferExpandedState(prevNodes, this.Nodes);

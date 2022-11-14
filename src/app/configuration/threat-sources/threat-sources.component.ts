@@ -74,6 +74,7 @@ export class ThreatSourcesComponent extends NavTreeBase implements OnInit {
       name: () => this.translate.instant('general.ThreatSources'),
       canSelect: false,
       canAdd: true,
+      hasMenu: true,
       icon: 'portrait',
       onAdd: () => {
         let ta = this.dataService.Config.CreateThreatActor();

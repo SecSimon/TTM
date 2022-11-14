@@ -3,7 +3,7 @@
   <ng-container *ngIf="selectedComponentType">
     <mat-form-field appearance="fill" style="width: 100%;">
       <mat-label>{{ 'properties.Description' | translate }}</mat-label>
-      <textarea matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="selectedComponentType.Description"></textarea>
+      <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="2" cdkAutosizeMaxRows="5" [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="selectedComponentType.Description"></textarea>
     </mat-form-field>
     <mat-checkbox color="primary" [(ngModel)]="selectedComponentType.IsActive">{{'properties.IsActive' | translate}}</mat-checkbox>
     <mat-checkbox color="primary" [(ngModel)]="selectedComponentType.IsThirdParty" style="margin-left: 15px;">{{'properties.IsThirdParty' | translate}}</mat-checkbox>

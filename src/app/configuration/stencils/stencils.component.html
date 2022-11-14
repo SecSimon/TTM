@@ -2,15 +2,15 @@
   <h2>{{selectedNode.name()}}</h2>
   <mat-form-field *ngIf="isStencilType" appearance="fill" style="width: 100%;">
     <mat-label>{{ 'properties.Description' | translate }}</mat-label>
-    <textarea matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="selectedType.Description"></textarea>
+    <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="2" cdkAutosizeMaxRows="5" [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="selectedType.Description"></textarea>
   </mat-form-field>
   <mat-form-field *ngIf="isStencilTypeTemplate" appearance="fill" style="width: 100%;">
     <mat-label>{{ 'properties.Description' | translate }}</mat-label>
-    <textarea matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="selectedTypeTemplate.Description"></textarea>
+    <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="2" cdkAutosizeMaxRows="5" [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="selectedTypeTemplate.Description"></textarea>
   </mat-form-field>
   <mat-form-field *ngIf="isStencilThreatMnemonic" appearance="fill" style="width: 100%;">
     <mat-label>{{ 'properties.Description' | translate }}</mat-label>
-    <textarea matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="selectedThreatMnemonic.Description"></textarea>
+    <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="2" cdkAutosizeMaxRows="5" [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="selectedThreatMnemonic.Description"></textarea>
   </mat-form-field>
   <mat-tab-group *ngIf="isStencilType" [selectedIndex]="GetSelectedTabIndex()" (selectedIndexChange)="SetSelectedTabIndex($event)">
     <mat-tab label="{{'general.Properties' | translate}} ({{selectedType?.Properties?.length}})">

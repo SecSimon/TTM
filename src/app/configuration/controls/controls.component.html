@@ -3,7 +3,7 @@
   <ng-container *ngIf="selectedControlGroup">
     <mat-form-field appearance="fill" style="width: 100%;">
       <mat-label>{{ 'properties.Description' | translate }}</mat-label>
-      <textarea matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="selectedControlGroup.Description"></textarea>
+      <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="2" cdkAutosizeMaxRows="5" [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="selectedControlGroup.Description"></textarea>
     </mat-form-field>
   </ng-container>
   <app-control *ngIf="selectedControl" [node]="selectedNode" [control]="selectedControl"></app-control>

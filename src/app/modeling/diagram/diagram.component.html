@@ -93,7 +93,7 @@
     <button mat-button class="toolBtn" (click)="Dia.SelectNextUninitObject()" [disabled]="Dia.ObjectCountToInit.length == 0" matTooltip="{{'pages.modeling.diagram.findUninitObject' | translate}}" matTooltipShowDelay="1000">
       <mat-icon style="z-index: 1;" [matBadge]="Dia.ObjectCountToInit" matBadgeColor="primary" matBadgeSize="small" [matBadgeHidden]="Dia.ObjectCountToInit.length == 0" matBadgePosition="below">update</mat-icon>
     </button>
-    <button mat-button class="toolBtn" [disabled]="!selectedElement" (click)="ShowSuggestedThreats()" matTooltip="{{'pages.modeling.diagram.suggestedThreats' | translate}}" matTooltipShowDelay="1000">
+    <button mat-button class="toolBtn" [disabled]="IsContextDiagram || !selectedElement" (click)="ShowSuggestedThreats()" matTooltip="{{'pages.modeling.diagram.suggestedThreats' | translate}}" matTooltipShowDelay="1000">
       <mat-icon>flash_auto</mat-icon>
     </button>
     <button mat-button class="toolBtn" [disabled]="!selectedElement" (click)="Dia.AddThreat()" matTooltip="{{'pages.modeling.diagram.addThreat' | translate}}" matTooltipShowDelay="1000">
@@ -200,10 +200,17 @@
         </button>
         <mat-divider></mat-divider>
       </ng-container>
-      <button mat-menu-item (click)="Dia.SaveImage()">
+      <button mat-menu-item [matMenuTriggerFor]="saveImg" (click)="Dia.SaveImage()">
         <mat-icon>save</mat-icon>
         <span>{{'pages.modeling.diagram.saveImage' | translate}}</span>
       </button>
+      <mat-menu #saveImg="matMenu">
+        <button mat-menu-item>
+          <mat-slide-toggle color="primary" [(ngModel)]="Dia.SaveImageWithGrid" (click)="$event.stopPropagation()">
+            {{'pages.modeling.diagram.saveImageWithGrid' | translate}}
+          </mat-slide-toggle>
+        </button>
+      </mat-menu>
     </ng-template> 
   </mat-menu> 
 </div>

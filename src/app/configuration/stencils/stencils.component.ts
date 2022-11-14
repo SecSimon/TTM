@@ -398,6 +398,7 @@ export class StencilsComponent extends NavTreeBase implements OnInit {
     this.Nodes.push(createGroup('Physical Link', [ElementTypeIDs.PhysicalLink], PhysicalLink.Icon));
     this.Nodes.push(createGroup('Interface', [ElementTypeIDs.Interface], Interface.Icon));
     this.Nodes.push(createGroup('Trust Area', [ElementTypeIDs.LogTrustArea, ElementTypeIDs.PhyTrustArea], LogTrustArea.Icon));
+    this.Nodes.forEach(x => x.hasMenu = true);
 
     let protocol: INavigationNode = {
       name: () => 'Protocol',

@@ -26,6 +26,8 @@ import { StringExtension } from './string-extension';
 import { APP_CONFIG } from '../../environments/environment';
 import { MatDialog } from '@angular/material/dialog';
 
+import versionFile from '../../assets/version.json';
+
 export interface IGHRepository {
   id: number;
   name: string;
@@ -96,6 +98,29 @@ export class DataService {
     }
 
     this.Config = ConfigFile.DefaultFile();
+
+    setTimeout(() => {
+      const octokit = new Octokit();
+      octokit.repos.listReleases({ owner: 'SecSimon', repo: 'TTM' }).then(({data}) => {
+      const isNewVersion = (tag: string): boolean => {
+        const currArr = versionFile.version.replace('v', '').split('.');
+        const tagArr = tag.replace('v', '').split('.');
+
+        if (currArr.length == tagArr.length) {
+          for (let i = 0; i < currArr.length; i++) {
+            if (tagArr[i] > currArr[i]) return true;
+          }
+        }
+
+        return false;
+      };
+      
+      const newerVersion = data.find(x => isNewVersion(x.tag_name));
+      if (newerVersion) {
+        this.messagesService.Info('messages.info.newVersion');
+      }
+    });
+    }, 12000);
   }
 
   public get UserMode(): UserModes { return this.userMode; }
@@ -180,12 +205,15 @@ export class DataService {
   public ProjectSaved = new EventEmitter<ProjectFile>();
   public ConfigChanged = new EventEmitter<ConfigFile>();
 
+  private isLoggingIn = false;
   public LogIn(code: string) {
+    if (this.isLoggingIn) return;
     if (this.locStorage.Get(LocStorageKeys.AUTH_LAST_CODE) == code) {
       return;
     }
 
     try {
+      this.isLoggingIn = true;
       this.isLoading.add();
       this.clearLoginData();
       const requestOptions: Object = {
@@ -206,14 +234,18 @@ export class DataService {
         else {
           this.messagesService.Error('messages.error.githubauth', res);
         }
+        this.isLoading.remove();
+        this.isLoggingIn = false;
       },
       (err) => { 
         this.messagesService.Error('messages.error.githubauth', err);
+        this.isLoading.remove();
+        this.isLoggingIn = false;
       });
     } catch (error) {
       this.messagesService.Error('messages.error.githubauth', error);
-    } finally {
       this.isLoading.remove();
+      this.isLoggingIn = false;
     }
   }
 
@@ -392,6 +424,13 @@ export class DataService {
     });
   }
 
+  public ReloadProject() {
+    const curr = this.SelectedGHProject;
+    this.OnCloseProject().then(() => {
+      this.LoadProject(curr);
+    });
+  }
+
   public RestoreCommit(commit: IGHCommitInfo) {
     const octokit = this.UserMode == UserModes.LoggedIn ? new Octokit({ auth: this.accessToken }) : new Octokit();
     const proj = this.SelectedGHProject;
@@ -536,6 +575,13 @@ export class DataService {
       }).finally(() => {
         this.isLoading.remove();
       });
+    });
+  }
+
+  public ReloadConfig() {
+    const curr = this.SelectedGHConfig;
+    this.OnCloseConfig().then(() => {
+      if (curr) this.LoadConfig(curr);
     });
   }
 
@@ -761,7 +807,7 @@ export class DataService {
       if (this.Project?.FileChanged) {
         let data: ITwoOptionDialogData = {
           title: this.translate.instant('dialog.unsaved.title'),
-          textContent: this.translate.instant('dialog.unsaved.save'),
+          textContent: this.translate.instant('dialog.unsaved.saveProject'),
           resultTrueText: this.translate.instant('general.Yes'),
           hasResultFalse: true,
           resultFalseText: this.translate.instant('general.No'),
@@ -797,10 +843,59 @@ export class DataService {
     });
   }
 
+  public OnCloseConfig() {
+    return new Promise<void>((resolve, reject) => {
+      if (this.Config?.FileChanged) {
+        let data: ITwoOptionDialogData = {
+          title: this.translate.instant('dialog.unsaved.title'),
+          textContent: this.translate.instant('dialog.unsaved.saveConfig'),
+          resultTrueText: this.translate.instant('general.Yes'),
+          hasResultFalse: true,
+          resultFalseText: this.translate.instant('general.No'),
+          resultTrueEnabled: () => { return true; },
+          initalTrue: true
+        };
+        const dialogRef = this.dialog.open(TwoOptionsDialogComponent, { hasBackdrop: false, data: data });
+        dialogRef.afterClosed().subscribe(res => {
+          if (res) {
+            if (this.UserMode == UserModes.LoggedIn) {
+              this.OpenSaveConfigDialog('').then(() => {
+                this.closeConfig();
+                resolve();
+              })
+              .catch(() => reject());
+            }
+            else if (this.UserMode == UserModes.Guest) {
+              this.ExportFile(false);
+              this.closeConfig();
+              resolve();
+            }
+          }
+          else {
+            this.closeConfig();
+            resolve();
+          }
+        });
+      }
+      else {
+        this.closeConfig();
+        resolve();
+      }
+    });
+  }
+
   private closeProject() {
     this.Project = null;
     this.selectedGHProject = null;
     this.locStorage.Remove(LocStorageKeys.GH_LAST_PROJECT);
+    this.Config = ConfigFile.DefaultFile();
+    this.Config.FileChanged = false;
+    this.router.navigate(['/']);
+  }
+
+  private closeConfig() {
+    this.Config = null;
+    this.selectedGHConfig = null;
     this.Config = ConfigFile.DefaultFile();
     this.Config.FileChanged = false;
     this.router.navigate(['/']);

@@ -1,6 +1,6 @@
 {
   "name": "ttmodeler",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Thing Threat Modeler for Internet of Things Devices",
   "homepage": "https://www.simon-liebl.de/TTM",
   "author": {
@@ -33,7 +33,7 @@
     "electron:serve-tsc": "tsc -p tsconfig.serve.json",
     "electron:serve": "wait-on tcp:4200 && npm run electron:serve-tsc && electron . --serve",
     "electron:local": "npm run build:prod && electron .",
-    "electron:build": "npm run build:prod && electron-builder build --publish=never",
+    "electron:build": "npm run build:prod && electron-builder build -p always",
     "test": "ng test --watch=false",
     "test:watch": "ng test",
     "e2e": "npm run build:prod && playwright test -c e2e/playwright.config.ts e2e/",
@@ -63,6 +63,7 @@
     "@swimlane/ngx-charts": "20.1.0",
     "angular-resize-event": "3.2.0",
     "angular-split": "14.1.0",
+    "browser-image-compression": "2.0.0",
     "buffer": "6.0.3",
     "crypto-browserify": "3.12.0",
     "cvss-calculator": "1.0.0",

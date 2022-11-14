@@ -11,6 +11,8 @@ export class CharScope extends DatabaseBase {
   public set Sector(val: string[]) { this.Data['Sector'] = val; }
   public get Function(): string[] { return this.Data['Function']; }
   public set Function(val: string[]) { this.Data['Function'] = val; }
+  public get Features(): string[] { return this.Data['Features']; }
+  public set Features(val: string[]) { this.Data['Features'] = val; }
   public get Application(): string[] { return this.Data['Application']; }
   public set Application(val: string[]) { this.Data['Application'] = val; }
   public get Requirements(): string[] { return this.Data['Requirements']; }
@@ -37,7 +39,7 @@ export class CharScope extends DatabaseBase {
   public set Assumptions(val: string[]) { this.Data['Assumptions'] = val; }
 
   public StepProperties: string[] = [
-    'Application', 'Sector', 'Function', 'Requirements', 'Criticality', 'LocEnv', 'Connectivity', 'TargetMarket', 'Standards', 'InvolvedPeople',
+    'Application', 'Sector', 'Function', 'Features', 'Requirements', 'Criticality', 'LocEnv', 'Connectivity', 'TargetMarket', 'Standards', 'InvolvedPeople',
     'Budget', 'Timeframe', 'ExpectedOutput', 'Assumptions'
   ];
 
@@ -48,6 +50,7 @@ export class CharScope extends DatabaseBase {
 
     if (!this.Sector) this.Sector = [];
     if (!this.Function) this.Function = [];
+    if (!this.Features) this.Features = [];
     if (!this.Application) this.Application = [];
     if (!this.Requirements) this.Requirements = [];
     if (!this.Criticality) this.Criticality = [];

@@ -165,6 +165,7 @@ export abstract class CanvasBase {
   public BackgroundColor = 'black';
   public CanvasScreenWidth: number = 0;
   public CanvasScreenHeight: number = 0;
+  public SaveImageWithGrid: boolean = false;
 
   public get CanCopy(): boolean { return this.copyID != null; }
 
@@ -424,9 +425,7 @@ export abstract class CanvasBase {
     }
   }
 
-  public CopyElement() {
-    this.copyID = this.SelectedElement.ID;
-  }
+  public abstract CopyElement();
 
   public abstract PasteElement();
 
@@ -522,6 +521,8 @@ export abstract class CanvasBase {
     }
      */
 
+    const showGrid = this.ShowGrid;
+    if (this.ShowGrid != this.SaveImageWithGrid) this.ShowGrid = this.SaveImageWithGrid;
     if (this.theme.IsDarkMode) this.SetColors(false);
     let newTab = window.open();
     let img = new Image();
@@ -530,6 +531,7 @@ export abstract class CanvasBase {
       if (this.theme.IsDarkMode) this.SetColors(true);
     }
     img.src = this.GetImage();
+    if (this.ShowGrid != showGrid) this.ShowGrid = showGrid;
   }
 
   public SetColors(isDarkMode: boolean) {
@@ -753,6 +755,19 @@ export abstract class CanvasBase {
             x['_objects'].splice(index, 1);
             x.addWithUpdate(newFa);
             this.Canvas.remove(fa);
+            console.log('update flow anchor');
+          }
+          else if (x[CProps.myType] == CTypes.Interactor) {
+            // this is a fix, but I don't know what the problem causes (all points at one position)
+            let left = -6.5;
+            let top = -19.29;
+            if (fa[CProps.fa] == 'e') left = 19;
+            else if (fa[CProps.fa] == 'w') left = -28.5;
+            else if (fa[CProps.fa] == 'n') top = -38.79;
+            else if (fa[CProps.fa] == 's') top = 3.71;
+            fa['left'] = left;
+            fa['top'] = top;
+            fa.setCoords();
           }
         });
       }
@@ -871,6 +886,11 @@ export abstract class CanvasBase {
       arr = this.getCanvasElementByCanvasID(df[CProps.arrowSID]);
       this.Canvas.bringToFront(arr);
     });
+
+    // updates
+    this.Canvas.getObjects().filter(x => x[CProps.myType] == CTypes.DataFlowCircle).forEach(x => x.selectable = false);
+
+    this.Canvas.getObjects().forEach(x => this.fireScaling(x));
 
     this.Canvas.requestRenderAll();
   }
@@ -1035,7 +1055,7 @@ export abstract class CanvasBase {
 
   private onMovingObject(movingObj) {
     this.blockCheckingIntersection = true;
-    if (['p0', 'p1', 'p2'].includes(movingObj[CProps.name])) this.dfOnPointMoving(movingObj);
+    if (['p1'].includes(movingObj[CProps.name])) this.dfOnPointMoving(movingObj);
     else if (movingObj[CProps.myType] == CTypes.TextPosPoint) this.textOnMovingPoint(movingObj);
     else if (movingObj[CProps.t0ID]) this.textOnMovingText(movingObj);
     if (movingObj[CProps.ID]) {
@@ -1406,7 +1426,7 @@ export abstract class CanvasBase {
       stroke: this.theme.Primary, fill: this.theme.Primary,
       originX: 'center', originY: 'center',
       name: name, canvasID: uuidv4(), myType: CTypes.DataFlowCircle,
-      selectable: true, hasBorders: false, hasControls: false
+      selectable: false, hasBorders: false, hasControls: false
     });
 
     c[CProps.flowID] = flow[CProps.canvasID];
@@ -1793,6 +1813,10 @@ export abstract class CanvasBase {
     });
   }
 
+  protected fireScaling(obj) {
+    obj.fire('scaling', { transform: { target: obj } });
+  }
+
   protected abstract getViewBaseElement(ID: string): ViewElementBase;
   protected abstract getViewBaseElements(): ViewElementBase[];
 
@@ -2044,6 +2068,12 @@ export abstract class CanvasBase {
 export class HWDFCanvas extends CanvasBase {
   public Diagram: HWDFDiagram;
 
+  public CopyElement() {
+    if (this.SelectedElement instanceof DFDElementRef || this.SelectedElement instanceof DFDContainerRef) return;
+    if (this.SelectedElement instanceof DataFlow) return;
+    this.copyID = this.SelectedElement.ID;
+  }
+
   public PasteElement() {
     if (!this.copyID) return;
     const src = this.getViewBaseElement(this.copyID) as DFDElement;
@@ -2052,6 +2082,10 @@ export class HWDFCanvas extends CanvasBase {
       const copy = this.createElement({ stencilRef: { name: '', stencilID: src.GetProperty('Type').ID } }, srcObj.left +  srcObj.width + 10, srcObj.top);
       copy.CopyFrom(src.Data);
       copy.Name = StringExtension.FindUniqueName(src.GetProperty('Type').Name, this.getViewBaseElements().map(x => x.Name));
+      const copyObj = this.getCanvasElementByID(copy.ID);
+      copyObj.set('width', srcObj.width);
+      copyObj.set('height', srcObj.height);
+      this.fireScaling(copyObj);
       this.copyID = null;
     }
   }
@@ -2067,7 +2101,7 @@ export class HWDFCanvas extends CanvasBase {
       element.Name = this.dataService.Project.FindDeviceOfDiagram(this.Diagram)?.Name + "'s Casing";
       obj.set('scaleX', (cc.clientWidth - 200) / obj.width);
       obj.set('scaleY', (cc.clientHeight - 100) / obj.height);
-      obj.fire('scaling', { transform: { target: obj } });
+      this.fireScaling(obj);
       setTimeout(() => {
         this.SendToBack();
         this.SelectedElement = null;
@@ -2109,7 +2143,7 @@ export class HWDFCanvas extends CanvasBase {
           let obj = this.getCanvasElementByID(element.ID);
           obj.set('scaleX', (template.Layout[i].width) / obj.width);
           obj.set('scaleY', (template.Layout[i].height) / obj.height);
-          obj.fire('scaling', { transform: { target: obj } });
+          this.fireScaling(obj);
         }
       }
 
@@ -2560,6 +2594,12 @@ export class CtxCanvas extends CanvasBase {
     this.IsUseCaseDiagram = nodeType == 'use-case';
   }
 
+  public CopyElement() {
+    if (this.SelectedElement instanceof ContextElementRef || this.SelectedElement instanceof SystemContextContainerRef) return;
+    if (this.SelectedElement instanceof Device || this.SelectedElement instanceof MobileApp) return;
+    this.copyID = this.SelectedElement.ID;
+  }
+
   public PasteElement() {
     if (!this.copyID) return;
     const src = this.getViewBaseElement(this.copyID) as ContextElement;
@@ -2568,6 +2608,10 @@ export class CtxCanvas extends CanvasBase {
       const copy = this.createElement({ contextRef: { name: ContextElementTypeUtil.ToString(src.Type) } }, srcObj.left +  srcObj.width + 10, srcObj.top);
       copy.CopyFrom(src.Data);
       copy.Name = StringExtension.FindUniqueName(ContextElementTypeUtil.ToString(src.Type), this.getViewBaseElements().map(x => x.Name));
+      const copyObj = this.getCanvasElementByID(copy.ID);
+      copyObj.set('width', srcObj.width);
+      copyObj.set('height', srcObj.height);
+      this.fireScaling(copyObj);
       this.copyID = null;
     }
   }
@@ -2803,7 +2847,7 @@ export class CtxCanvas extends CanvasBase {
     let dev: Device = null;
     if (element instanceof Device) dev = element;
     else if (element instanceof ContextElementRef && element.Ref instanceof Device) dev = element.Ref;
-    dev.DeviceInterfaceNameChanged.subscribe(x => this.changeDeviceInterfaceVisibility(dev));
+    if (detailedInterfaces) dev.DeviceInterfaceNameChanged.subscribe(x => this.changeDeviceInterfaceVisibility(dev));
     parts.push(...[elbl1, elbl1l, elbl2, elbl2l, elbl3, elbl3l, elbl4, elbl4l]);
 
     parts.push(...this.createFlowAnchors(wid, hei, true, true, true, true));
@@ -2816,7 +2860,7 @@ export class CtxCanvas extends CanvasBase {
     });
 
     g.on('scaling', (e) => this.onScaleDevice(e));
-    this.changeDeviceInterfaceVisibility(dev, g);
+    this.changeDeviceInterfaceVisibility(dev, g, !detailedInterfaces);
 
     g.setControlsVisibility({ mtr: false }); // remove rotate button
     return g;
@@ -2892,7 +2936,7 @@ export class CtxCanvas extends CanvasBase {
     this.onCanvasModified();
   }
 
-  private changeDeviceInterfaceVisibility(dev: Device, devObj?) {
+  private changeDeviceInterfaceVisibility(dev: Device, devObj?, hide = false) {
     if (devObj == null) devObj = this.getCanvasElementByID(dev.ID);
     if (devObj) {
       let elbl1 = devObj._objects.find(x => x[CProps.myType] == CTypes.DeviceLabel1);
@@ -2905,17 +2949,17 @@ export class CtxCanvas extends CanvasBase {
       let elbl4l = devObj._objects.find(x => x[CProps.myType] == CTypes.DeviceLabel4Line);
 
       elbl1.set('text', this.translate.instant(dev.InterfaceLeft));
-      elbl1.set(CProps.visible, dev.InterfaceLeft != DeviceInterfaceNames.None);
-      elbl1l.set(CProps.visible, dev.InterfaceLeft != DeviceInterfaceNames.None);
+      elbl1.set(CProps.visible, dev.InterfaceLeft != DeviceInterfaceNames.None && !hide);
+      elbl1l.set(CProps.visible, dev.InterfaceLeft != DeviceInterfaceNames.None && !hide);
       elbl2.set('text', this.translate.instant(dev.InterfaceBottom));
-      elbl2.set(CProps.visible, dev.InterfaceBottom != DeviceInterfaceNames.None);
-      elbl2l.set(CProps.visible, dev.InterfaceBottom != DeviceInterfaceNames.None);
+      elbl2.set(CProps.visible, dev.InterfaceBottom != DeviceInterfaceNames.None && !hide);
+      elbl2l.set(CProps.visible, dev.InterfaceBottom != DeviceInterfaceNames.None && !hide);
       elbl3.set('text', this.translate.instant(dev.InterfaceRight));
-      elbl3.set(CProps.visible, dev.InterfaceRight != DeviceInterfaceNames.None);
-      elbl3l.set(CProps.visible, dev.InterfaceRight != DeviceInterfaceNames.None);
+      elbl3.set(CProps.visible, dev.InterfaceRight != DeviceInterfaceNames.None && !hide);
+      elbl3l.set(CProps.visible, dev.InterfaceRight != DeviceInterfaceNames.None && !hide);
       elbl4?.set('text', this.translate.instant(dev.InterfaceTop));
-      elbl4?.set(CProps.visible, dev.InterfaceTop != DeviceInterfaceNames.None);
-      elbl4l?.set(CProps.visible, dev.InterfaceTop != DeviceInterfaceNames.None);
+      elbl4?.set(CProps.visible, dev.InterfaceTop != DeviceInterfaceNames.None && !hide);
+      elbl4l?.set(CProps.visible, dev.InterfaceTop != DeviceInterfaceNames.None && !hide);
 
       this.Canvas.requestRenderAll();
     }
@@ -2985,7 +3029,7 @@ export class CtxCanvas extends CanvasBase {
     let app: MobileApp = null;
     if (element instanceof MobileApp) app = element;
     else if (element instanceof ContextElementRef && element.Ref instanceof MobileApp) app = element.Ref;
-    app.MobileAppInterfaceNameChanged.subscribe(x => this.changeMobileAppInterfaceVisibility(app));
+    if (detailedInterfaces) app.MobileAppInterfaceNameChanged.subscribe(x => this.changeMobileAppInterfaceVisibility(app));
     parts.push(...[elbl1, elbl1l, elbl2, elbl2l, elbl3, elbl3l, elbl4, elbl4l]);
 
     parts.push(...this.createFlowAnchors(wid, hei, true, true, true, true));
@@ -2998,7 +3042,7 @@ export class CtxCanvas extends CanvasBase {
     });
 
     g.on('scaling', (e) => this.onScaleMobileApp(e));
-    this.changeMobileAppInterfaceVisibility(app, g);
+    this.changeMobileAppInterfaceVisibility(app, g, !detailedInterfaces);
 
     g.setControlsVisibility({ mtr: false }); // remove rotate button
     return g;
@@ -3074,7 +3118,7 @@ export class CtxCanvas extends CanvasBase {
     this.onCanvasModified();
   }
 
-  private changeMobileAppInterfaceVisibility(app: MobileApp, appObj?) {
+  private changeMobileAppInterfaceVisibility(app: MobileApp, appObj?, hide = false) {
     if (appObj == null) appObj = this.getCanvasElementByID(app.ID);
     if (appObj) {
       let elbl1 = appObj._objects.find(x => x[CProps.myType] == CTypes.AppLabel1);
@@ -3087,17 +3131,17 @@ export class CtxCanvas extends CanvasBase {
       let elbl4l = appObj._objects.find(x => x[CProps.myType] == CTypes.AppLabel4Line);
 
       elbl1.set('text', this.translate.instant(app.InterfaceLeft));
-      elbl1.set(CProps.visible, app.InterfaceLeft != DeviceInterfaceNames.None);
-      elbl1l.set(CProps.visible, app.InterfaceLeft != DeviceInterfaceNames.None);
+      elbl1.set(CProps.visible, app.InterfaceLeft != DeviceInterfaceNames.None && !hide);
+      elbl1l.set(CProps.visible, app.InterfaceLeft != DeviceInterfaceNames.None && !hide);
       elbl2.set('text', this.translate.instant(app.InterfaceBottom));
-      elbl2.set(CProps.visible, app.InterfaceBottom != DeviceInterfaceNames.None);
-      elbl2l.set(CProps.visible, app.InterfaceBottom != DeviceInterfaceNames.None);
+      elbl2.set(CProps.visible, app.InterfaceBottom != DeviceInterfaceNames.None && !hide);
+      elbl2l.set(CProps.visible, app.InterfaceBottom != DeviceInterfaceNames.None && !hide);
       elbl3.set('text', this.translate.instant(app.InterfaceRight));
-      elbl3.set(CProps.visible, app.InterfaceRight != DeviceInterfaceNames.None);
-      elbl3l.set(CProps.visible, app.InterfaceRight != DeviceInterfaceNames.None);
+      elbl3.set(CProps.visible, app.InterfaceRight != DeviceInterfaceNames.None && !hide);
+      elbl3l.set(CProps.visible, app.InterfaceRight != DeviceInterfaceNames.None && !hide);
       elbl4?.set('text', this.translate.instant(app.InterfaceTop));
-      elbl4?.set(CProps.visible, app.InterfaceTop != DeviceInterfaceNames.None);
-      elbl4l?.set(CProps.visible, app.InterfaceTop != DeviceInterfaceNames.None);
+      elbl4?.set(CProps.visible, app.InterfaceTop != DeviceInterfaceNames.None && !hide);
+      elbl4l?.set(CProps.visible, app.InterfaceTop != DeviceInterfaceNames.None && !hide);
 
       this.Canvas.requestRenderAll();
     }
@@ -3271,18 +3315,18 @@ export class CtxCanvas extends CanvasBase {
   };
 
   private onScaleInterface(event) {
-    this.onScaleElement(event);
-    let g = event.transform.target;
-    let e = g._objects.find(x => x[CProps.myType] == CTypes.ElementBorder);
+    // this.onScaleElement(event);
+    // let g = event.transform.target;
+    // let e = g._objects.find(x => x[CProps.myType] == CTypes.ElementBorder);
 
-    let wg = g.width * g.scaleX, hg = g.height * g.scaleY;
-    e.set({
-      'height': hg, 'width': wg,
-      'scaleX': 1, 'scaleY': 1,
-      'left': -wg / 2,
-      'top': -hg / 2
-    });
-    this.onCanvasModified();
+    // let wg = g.width * g.scaleX, hg = g.height * g.scaleY;
+    // e.set({
+    //   'height': hg, 'width': wg,
+    //   'scaleX': 1, 'scaleY': 1,
+    //   'left': -wg / 2,
+    //   'top': -hg / 2
+    // });
+    // this.onCanvasModified();
   }
 
   private createUseCase(left: number, top: number, element: ContextElement): fabric.Object {
@@ -3462,6 +3506,8 @@ export class DiagramComponent implements OnInit {
 
   @Input() public diagram: Diagram;
 
+  public get IsContextDiagram(): boolean { return this.diagram instanceof CtxDiagram; }
+
   public get selectedElement(): ViewElementBase { return this.Dia?.SelectedElement; }
   @Input() public set selectedElement(element: ViewElementBase) {
     if (this.Dia) this.Dia.SelectedElement = element;
@@ -3490,16 +3536,16 @@ export class DiagramComponent implements OnInit {
   @HostListener('document:keydown', ['$event'])
   public onKeyDown(event: KeyboardEvent) {
     if (event.ctrlKey) {
-      if (event.key == 'c' && this.selectedElement) {
+      if (event.key == 'c' && this.selectedElement && document.activeElement.tagName == 'BODY') {
         event.preventDefault();
         this.Dia.CopyElement();
       }
-      else if (event.key == 'v' && this.Dia.CanCopy) {
+      else if (event.key == 'v' && this.Dia.CanCopy && document.activeElement.tagName == 'BODY') {
         event.preventDefault();
         this.Dia.PasteElement();
       }
     }
-    else if (event.key == 'Delete' && this.selectedElement) {
+    else if (event.key == 'Delete' && this.selectedElement && document.activeElement.tagName == 'BODY') {
       event.preventDefault();
       this.Dia.OnDeleteElement(this.selectedElement);
     }

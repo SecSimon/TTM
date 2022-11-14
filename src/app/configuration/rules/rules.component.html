@@ -3,7 +3,7 @@
   <ng-container *ngIf="selectedThreatRuleGroup">
     <mat-form-field appearance="fill" style="width: 100%;">
       <mat-label>{{ 'properties.Description' | translate }}</mat-label>
-      <textarea matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="selectedThreatRuleGroup.Description"></textarea>
+      <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="2" cdkAutosizeMaxRows="5" [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="selectedThreatRuleGroup.Description"></textarea>
     </mat-form-field>
   </ng-container>
   <!--

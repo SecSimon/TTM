@@ -18,7 +18,7 @@ export class SuggestedThreatsDialogComponent implements OnInit {
     this.element = element;
 
     this.dataService.Config.GetStencilThreatMnemonics().forEach(x => {
-      const cats = x.Letters.filter(l => l.AffectedElementTypes.includes(this.element.GetProperty('Type').ElementTypeID));
+      const cats = x.Letters.filter(l => l.AffectedElementTypes.includes(this.element.GetProperty('Type')?.ElementTypeID));
       if (cats.length > 0) this.mnemonicArray.push([x, cats]);
     }); 
   }

@@ -16,6 +16,9 @@
     <button mat-icon-button class="msgBtn" [disabled]="!dataService.CanSaveProject" matTooltip="{{'general.SaveAs' | translate}}" matTooltipShowDelay="1000" (click)="dataService.OpenSaveProjectDialog('', true)">
       <mat-icon class="iconBtn">save_as</mat-icon> 
     </button>
+    <button mat-icon-button class="msgBtn" [disabled]="!dataService.SelectedGHProject" matTooltip="{{'general.ReloadProject' | translate}}" matTooltipShowDelay="1000" (click)="dataService.ReloadProject()">
+      <mat-icon class="iconBtn">refresh</mat-icon> 
+    </button>
   </ng-container>
   <ng-container *ngIf="!dataService.Project && dataService.Config">
     <button mat-icon-button class="msgBtn" style="margin-left: 20px;">
@@ -26,6 +29,9 @@
     </button>
     <button mat-icon-button class="msgBtn" [disabled]="!dataService.CanSaveConfig" matTooltip="{{'general.SaveAs' | translate}}" matTooltipShowDelay="1000" (click)="dataService.OpenSaveConfigDialog('', true)">
       <mat-icon class="iconBtn">save_as</mat-icon> 
+    </button>
+    <button mat-icon-button class="msgBtn" matTooltip="{{'general.ReloadConfig' | translate}}" matTooltipShowDelay="1000" (click)="dataService.ReloadConfig()">
+      <mat-icon class="iconBtn">refresh</mat-icon> 
     </button>
   </ng-container>
   <button mat-icon-button tourAnchor="set-progress" class="msgBtn" style="margin-left: 20px;" (click)="dialogService.OpenProgresstrackerDialog()">

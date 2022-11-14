@@ -95,6 +95,8 @@ export class ProjectFile extends DatabaseBase {
   public set Tasks(val: INote[]) { this.Data['Tasks'] = val; }
   public get Notes(): INote[] { return this.Data['Notes']; }
   public set Notes(val: INote[]) { this.Data['Notes'] = val; }
+  public get Image(): string { return this.Data['Image']; }
+  public set Image(val: string) { this.Data['Image'] = val; }
 
   public GetProjectName(): string { return StringExtension.FromCamelCase(this.Name.replace('.ttmp', '')); }
 
@@ -286,6 +288,7 @@ export class ProjectFile extends DatabaseBase {
   public DeleteThreatActor(ta: ThreatActor) {
     const index = this.threatActors.indexOf(ta);
     if (index >= 0) {
+      ta.OnDelete(this, this.config);
       this.threatActors.splice(index, 1);
     }
     return index >= 0;
@@ -510,6 +513,7 @@ export class ProjectFile extends DatabaseBase {
   public CreateChecklist(item: Device | MobileApp, type: ChecklistType): Checklist {
     let list = new Checklist({}, type, this, this.Config);
     list.Name = type.Name;
+    list.Description = type.Description;
     item.AddChecklist(list);
     this.checklists.push(list);
     return list;

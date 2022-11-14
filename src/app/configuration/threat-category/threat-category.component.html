@@ -1,7 +1,7 @@
 <div [class.disable]="!canEdit">
   <mat-form-field appearance="fill" style="width: 100%;">
     <mat-label>{{ 'properties.Description' | translate }}</mat-label>
-    <textarea matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="threatCat.Description"></textarea>
+    <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="2" cdkAutosizeMaxRows="5" [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="threatCat.Description"></textarea>
   </mat-form-field>
   <div style="margin-top: 10px; display: flex; flex-wrap: wrap;">
     <table *ngFor="let impact of GetImpactCategories()" style="min-width: 200px;">

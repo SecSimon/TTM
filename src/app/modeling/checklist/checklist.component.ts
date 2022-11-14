@@ -69,6 +69,15 @@ export class ChecklistComponent implements OnInit {
     }
   }
 
+  public OnRequirementClick(req: IFlatRequirement, index: number) {
+    req.value.Values[index] = !req.value.Values[index];
+    if (req.value.Values[index]) {
+      for (let i = index; i < req.value.Values.length; i++) {
+        req.value.Values[i] = true;
+      }
+    }
+  }
+
   public GetCellStatus(req: IFlatRequirement, index: number) {
     let expected = req.requirement.RequiredPerLevel[index];
     if (expected) {

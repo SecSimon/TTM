@@ -157,6 +157,7 @@ export class ThreatCategoriesComponent extends NavTreeBase implements OnInit {
       name: () => this.translate.instant('pages.config.threatcategories.ThreatCategoryGroups'),
       canSelect: false,
       canAdd: true,
+      hasMenu: true,
       icon: 'flash_on',
       onAdd: () => {
         let group = this.dataService.Config.CreateThreatCategoryGroup();

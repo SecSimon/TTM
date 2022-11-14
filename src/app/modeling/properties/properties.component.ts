@@ -29,9 +29,10 @@ export class PropertiesComponent implements OnInit {
       }); 
     }, 10);
     
-    setTimeout(() => {
-      this.FocusFirst();
-    }, 100);
+    // focus first element when element was selected
+    // setTimeout(() => {
+    //   this.FocusFirst();
+    // }, 100);
   };
 
   public get selectedElement(): DFDElement { return this._selectedObject as DFDElement; }

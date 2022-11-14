@@ -92,6 +92,6 @@ export class ContainerTreeComponent implements OnInit {
     }
   }
 
-  public isSelected(node: ViewElementBase) { return this.selectedElement?.ID == node.ID; }
+  public isSelected(node: ViewElementBase) { return this.selectedElement?.ID == node?.ID; }
   public hasChild = (_: number, node: ViewElementBase) => (this.isContainer(node) && node.GetChildren().length > 0);
 }

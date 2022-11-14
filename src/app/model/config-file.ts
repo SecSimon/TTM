@@ -753,7 +753,7 @@ export class ConfigFile extends DatabaseBase {
   }
 
   public static DefaultFile(): ConfigFile {
-    let res = ConfigFile.FromJSON(defaultConfig);
+    let res = ConfigFile.FromJSON(JSON.parse(JSON.stringify(defaultConfig)));
 
     return res;
   }

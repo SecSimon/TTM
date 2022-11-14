@@ -178,6 +178,7 @@ export class MitigationOverviewComponent extends SideNavBase implements OnInit {
       icon:'security',
       canSelect: true,
       canAdd: true,
+      hasMenu: true,
       onAdd: () => {
         let newObj = pf.CreateMitigationProcess();
         this.createNodes();

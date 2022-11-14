@@ -167,6 +167,7 @@ export class ThreatLibraryComponent extends NavTreeBase implements OnInit {
     root.canDelete = false;
     root.addOptions = null;
     root.canRename = false;
+    root.hasMenu = true;
 
     this.Nodes.push(root);
     NavTreeBase.TransferExpandedState(prevNodes, this.Nodes);

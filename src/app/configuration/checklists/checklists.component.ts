@@ -190,6 +190,7 @@ export class ChecklistsComponent extends NavTreeBase implements OnInit {
       canSelect: false,
       icon: 'fact_check',
       canAdd: true,
+      hasMenu: true,
       onAdd: () => {
         let newObj = this.dataService.Config.CreateChecklistType();
         this.createNodes();
@@ -300,6 +301,7 @@ export class ChecklistsComponent extends NavTreeBase implements OnInit {
       icon: 'check_circle_outline',
       data: this.selectedChecklistType,
       canAdd: true,
+      hasMenu: true,
       onAdd: () => {
         let newObj = this.dataService.Config.CreateRequirementType();
         this.selectedChecklistType.AddRequirementType(newObj);

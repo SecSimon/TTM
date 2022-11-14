@@ -9,6 +9,7 @@ import { WelcomeDialogComponent } from './Dialogs/welcome-dialog/welcome-dialog.
 import { TourService } from 'ngx-ui-tour-md-menu';
 import { TranslateService } from '@ngx-translate/core';
 import { ITTMStage, TTMService } from '../util/ttm.service';
+import { ElectronService } from '../core/services';
 
 @Component({
   selector: 'app-home',
@@ -21,7 +22,7 @@ export class HomeComponent implements OnInit {
   public get Stages(): ITTMStage[] { return this.ttmService.Stages; }
 
   constructor(private router: Router, private route: ActivatedRoute, private theme: ThemeService, public dataService: DataService, private dialog: MatDialog,
-    private locStorage: LocalStorageService, public tourService: TourService, private translate: TranslateService, private ttmService: TTMService) { }
+    private locStorage: LocalStorageService, public tourService: TourService, private translate: TranslateService, private electronService: ElectronService, private ttmService: TTMService) { }
 
   ngOnInit(): void {
     let createStep = (anchor: string) => {
@@ -67,6 +68,12 @@ export class HomeComponent implements OnInit {
         dest = params['origin'];
       }
     });
+
+    if (this.electronService.isElectron) {
+      this.electronService.ipcRenderer.on('oncode', (e, args) => {
+        this.dataService.LogIn(args);
+      });
+    }
 
     this.dataService.ProjectChanged.subscribe(x => this.router.navigate(['/' + dest]));
   }

@@ -10,11 +10,11 @@
   </ng-container>
   <mat-form-field appearance="fill" style="width: 100%;">
     <mat-label>{{ 'properties.Description' | translate }}</mat-label>
-    <textarea matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="threatOrigin.Description"></textarea>
+    <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="2" cdkAutosizeMaxRows="5" [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="threatOrigin.Description"></textarea>
   </mat-form-field>
   <mat-form-field appearance="fill" style="width: 100%;">
     <mat-label>{{ 'properties.Adversaries' | translate }}</mat-label>
-    <textarea matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="threatOrigin.Adversaries"></textarea>
+    <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="2" cdkAutosizeMaxRows="5" [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="threatOrigin.Adversaries"></textarea>
   </mat-form-field>
   <mat-form-field appearance="fill" class="property-form-field" *ngIf="isShownInDialog || !canEdit">
     <mat-label>{{'general.Group' | translate}}</mat-label>

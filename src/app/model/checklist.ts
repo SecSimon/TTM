@@ -68,9 +68,10 @@ export class RequirementType extends DatabaseBase {
       if (this.ReqFulfillRule.SWRule.ComponentTypeID && this.ReqFulfillRule.SWRule.PropertyRest.ID) {
         let comp = device.SoftwareStack.GetChildrenFlat().find(x => x.Type.ID == this.ReqFulfillRule.SWRule.ComponentTypeID);
         if (comp) {
-          let res = ThreatEngineService.EvalProp(this.ReqFulfillRule.SWRule.PropertyRest, comp);
-          if (res) return this.RequiredPerLevel;
-          else return new Array(this.RequiredPerLevel.length).fill(false);
+          const res = ThreatEngineService.EvalProp(this.ReqFulfillRule.SWRule.PropertyRest, comp);
+          const arr = new Array(this.RequiredPerLevel.length).fill(false);
+          if (res) for (let i = 0; i < this.RequiredPerLevel.length; i++) arr[i] = this.RequiredPerLevel[i];
+          return arr;
         }
       }
     }

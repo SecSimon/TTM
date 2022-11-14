@@ -2445,6 +2445,14 @@
           "HasGetter": false,
           "Editable": true,
           "Type": "Check Box"
+        },
+        {
+          "DisplayName": "Warns User of Full Log File",
+          "ID": "95b793b3-b68f-4533-9dc0-4e7d414effe3",
+          "Tooltip": "Are users notified when the log file reaches its maximum size?",
+          "HasGetter": false,
+          "Editable": true,
+          "Type": "Check Box"
         }
       ]
     },
@@ -7206,6 +7214,29 @@
       "propertyID": "d0532ce9-51a9-4bb1-84ae-c8c63ee78e7f"
     },
     {
+      "ID": "90985455-d995-4b8f-93e4-559882304b7c",
+      "Name": "Log file overwritten",
+      "Description": "",
+      "ChangesPerOption": {
+        "general.Yes": {
+          "Active": true,
+          "Value": true
+        },
+        "general.No": {
+          "Active": true,
+          "Value": false
+        },
+        "general.N/A": {
+          "Active": true,
+          "Value": "undefined"
+        }
+      },
+      "OptionType": 1,
+      "componentTypeID": "02b94aae-efea-451e-a017-81be68db03d7",
+      "Question": "Are users notified when the log file reaches its maximum size?",
+      "propertyID": "95b793b3-b68f-4533-9dc0-4e7d414effe3"
+    },
+    {
       "ID": "d6d5e1bd-d8c2-4b0c-b85a-b7cd2c9190ed",
       "Name": "Missing log evaluation",
       "Description": "",
@@ -9487,7 +9518,8 @@
         "f424f4d3-b3c2-4718-8c5f-ec9b3b6eef74",
         "1a54b8f3-ecd6-4704-9f6c-e05b7e948548",
         "105910c0-a5b5-4496-a2f7-99f11422e4b0",
-        "8f8d0183-5a29-451a-bb84-df061c0728d4"
+        "8f8d0183-5a29-451a-bb84-df061c0728d4",
+        "b274e8f6-5a0f-4efc-bc4e-40210c2035ad"
       ]
     },
     {
@@ -13083,6 +13115,37 @@
             "RestType": 1,
             "PropertyRest": {
               "ID": "d0532ce9-51a9-4bb1-84ae-c8c63ee78e7f",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          }
+        ]
+      },
+      "Severity": 2
+    },
+    {
+      "ID": "b274e8f6-5a0f-4efc-bc4e-40210c2035ad",
+      "Name": "Log file overwritten",
+      "Description": "",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "f19e41bd-9fd9-4046-a195-28d441207fa0",
+          "96bdc11d-dbb0-4785-8a5c-373e2c492eb0"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 3,
+      "ComponentRestriction": {
+        "componentTypeID": "02b94aae-efea-451e-a017-81be68db03d7",
+        "DetailRestrictions": [
+          {
+            "IsOR": true,
+            "Layer": 0,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "95b793b3-b68f-4533-9dc0-4e7d414effe3",
               "ComparisonType": "==",
               "Value": false
             }
@@ -18001,36 +18064,37 @@
     },
     {
       "ID": "6dbaec8c-55cd-402e-9f9b-8089ad5d8e88",
-      "Name": "RE 1 Unique identification and authentication",
+      "Name": "RE-1 Unique identification and authentication",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        null,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {
+        "SWRule": {
+          "ComponentTypeID": "7e64d98b-ecbe-4921-9545-8b30d0f9bde8",
+          "PropertyRest": {
+            "ID": "6391f8f2-eb04-4caf-b490-49c920315867",
+            "ComparisonType": "==",
+            "Value": true
+          }
+        },
+        "NeedsReview": false,
+        "RuleType": 1
+      }
+    },
+    {
+      "ID": "91a52e70-60f4-430c-b2f8-292e80931d70",
+      "Name": "RE-2 Multifactor authentication for all interfaces",
       "Description": "",
       "subReqTypeIDs": [],
       "RequiredPerLevel": [
         null,
         null,
         true,
-        true
-      ],
-      "ReqFulfillRule": {
-        "SWRule": {
-          "ComponentTypeID": "75752ec0-7fa9-41a9-a06a-edcf890ca569",
-          "PropertyRest": {
-            "ID": "IsThirdParty",
-            "ComparisonType": "==",
-            "Value": true
-          }
-        },
-        "NeedsReview": false
-      }
-    },
-    {
-      "ID": "91a52e70-60f4-430c-b2f8-292e80931d70",
-      "Name": "RE 2 Multifactor authentication for all interfaces",
-      "Description": "",
-      "subReqTypeIDs": [],
-      "RequiredPerLevel": [
-        null,
-        null,
-        null,
         true
       ],
       "ReqFulfillRule": {
@@ -18045,36 +18109,1836 @@
         },
         "NeedsReview": true
       }
+    },
+    {
+      "ID": "d47f441d-e3bf-461d-b724-47a90c19bc89",
+      "Name": "CR-1-2 Software process and device identification and authentication",
+      "Description": "",
+      "subReqTypeIDs": [
+        "3480145a-7767-48e8-a55c-09514771d17f"
+      ],
+      "RequiredPerLevel": [
+        null,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "3480145a-7767-48e8-a55c-09514771d17f",
+      "Name": "RE-1 Unique identification and authentication",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        null,
+        null,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "83a019dd-d28b-4f3d-bf48-e254d2031445",
+      "Name": "CR-1-3 Account management",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {
+        "RuleType": 1,
+        "SWRule": {
+          "ComponentTypeID": "7e64d98b-ecbe-4921-9545-8b30d0f9bde8",
+          "PropertyRest": {
+            "ID": "IsActive",
+            "ComparisonType": "==",
+            "Value": true
+          }
+        }
+      }
+    },
+    {
+      "ID": "b7bcf087-c925-4eec-9a11-e042250afbf1",
+      "Name": "CR-1-4 Identifier management",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {
+        "RuleType": 1,
+        "SWRule": {
+          "ComponentTypeID": "7e64d98b-ecbe-4921-9545-8b30d0f9bde8",
+          "PropertyRest": {
+            "ID": "IsActive",
+            "ComparisonType": "==",
+            "Value": true
+          }
+        }
+      }
+    },
+    {
+      "ID": "f28381c7-5c24-4fd3-b75e-03fbebe03857",
+      "Name": "CR-1-5 Authenticator management",
+      "Description": "",
+      "subReqTypeIDs": [
+        "afa6717a-657d-462f-be28-04fe00231224"
+      ],
+      "RequiredPerLevel": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "afa6717a-657d-462f-be28-04fe00231224",
+      "Name": "RE-1 Hardware security for authenticators",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        null,
+        null,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "bd31bc1e-43ed-48f2-80ae-885680bcd378",
+      "Name": "CR-1-6 Wireless access management",
+      "Description": "",
+      "subReqTypeIDs": [
+        "cb2f2e32-bd57-4fed-8c04-9efd325ecc08"
+      ],
+      "RequiredPerLevel": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "cb2f2e32-bd57-4fed-8c04-9efd325ecc08",
+      "Name": "RE-1 Unique identification and authentication",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        null,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "40670f38-5fd9-47a3-994b-41a271a71694",
+      "Name": "CR-1-7 Strength of password-based authentication",
+      "Description": "",
+      "subReqTypeIDs": [
+        "41bd377e-a304-44ae-aabc-807d51f3772d",
+        "9b275641-37b2-4da1-a70a-1cc365085a99"
+      ],
+      "RequiredPerLevel": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {
+        "RuleType": 1,
+        "SWRule": {
+          "ComponentTypeID": "f049724d-ed42-4c16-af4e-9bcacffc7f0b",
+          "PropertyRest": {
+            "ID": "540e39da-3227-4e6c-86ea-32a017318511",
+            "ComparisonType": "==",
+            "Value": true
+          }
+        }
+      }
+    },
+    {
+      "ID": "41bd377e-a304-44ae-aabc-807d51f3772d",
+      "Name": "RE-1 Password generation and lifetime restrictions for human users",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        null,
+        null,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {
+        "SWRule": {
+          "ComponentTypeID": "f049724d-ed42-4c16-af4e-9bcacffc7f0b",
+          "PropertyRest": {
+            "ID": "",
+            "ComparisonType": "==",
+            "Value": true
+          }
+        }
+      }
+    },
+    {
+      "ID": "9b275641-37b2-4da1-a70a-1cc365085a99",
+      "Name": "RE-2 Password lifetime restrictions for all users (human, software, process or device)",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        null,
+        null,
+        null,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "72982bda-38dc-4904-8080-4e7a37df743d",
+      "Name": "CR-1-8 Public key infrastructure certificates",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        null,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "ccb81ee9-073d-4deb-aed5-7972b2d212a3",
+      "Name": "CR-1-9 Strength of public key-based authentication",
+      "Description": "",
+      "subReqTypeIDs": [
+        "cfd6bbed-bff7-44e9-866a-ea3a217cb32c"
+      ],
+      "RequiredPerLevel": [
+        null,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "cfd6bbed-bff7-44e9-866a-ea3a217cb32c",
+      "Name": "RE-1 Hardware security for public key-based authentication",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        null,
+        null,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "da50a4ec-ca68-4c4e-a8a7-0a71ba408c4a",
+      "Name": "CR-1-10 Authenticator feedback",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "370cc79b-a473-4247-b171-4ad0233a0a34",
+      "Name": "CR-1-11 Unsuccessful login attempts",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {
+        "RuleType": 1,
+        "SWRule": {
+          "ComponentTypeID": "f049724d-ed42-4c16-af4e-9bcacffc7f0b",
+          "PropertyRest": {
+            "ID": "aa74f499-b995-4f5e-8d92-91f3ca172743",
+            "ComparisonType": "==",
+            "Value": true
+          }
+        }
+      }
+    },
+    {
+      "ID": "a8e6d55e-3440-46b1-8624-bcb1bd8364cc",
+      "Name": "CR-1-12 System use notifications",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "c5230fd4-d5f9-4229-8f71-170617397b3a",
+      "Name": "NDR-1-13 Access via untrusted networks",
+      "Description": "",
+      "subReqTypeIDs": [
+        "3a1fcb32-f7d2-4aee-bc69-d7d2fad4a1b2"
+      ],
+      "RequiredPerLevel": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "3a1fcb32-f7d2-4aee-bc69-d7d2fad4a1b2",
+      "Name": "RE-1 Explicit access request approval",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        null,
+        null,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "65a904e7-9c92-4932-946e-042b19d5c7c9",
+      "Name": "NDR-1-14 Strength of symmetric key-based authentication",
+      "Description": "",
+      "subReqTypeIDs": [
+        "1177ff8e-e4b0-49cf-b59f-f01ed37401e6"
+      ],
+      "RequiredPerLevel": [
+        null,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "1177ff8e-e4b0-49cf-b59f-f01ed37401e6",
+      "Name": "RE-1 Hardware security for symmetric key-based authentication",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        null,
+        null,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "dda8e95b-17ba-465f-a789-430d5a378ee1",
+      "Name": "CR-2-1 Authorization enforcement",
+      "Description": "",
+      "subReqTypeIDs": [
+        "8a9f3fdc-4b47-45d8-97d0-29baf9b5aee5",
+        "2872406c-cd16-433f-af5d-23401f08c6eb",
+        "39f2063b-c426-4504-a00e-4d77a69aba7e",
+        "646f8c75-c631-4b2e-af11-4d069816cefe"
+      ],
+      "RequiredPerLevel": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "8a9f3fdc-4b47-45d8-97d0-29baf9b5aee5",
+      "Name": "RE-1 Authorization enforcement for all users (human, software, processes, devices)",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        null,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "2872406c-cd16-433f-af5d-23401f08c6eb",
+      "Name": "RE-2 Permission mapping of roles",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        null,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "39f2063b-c426-4504-a00e-4d77a69aba7e",
+      "Name": "RE-3 Supervisor override",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        null,
+        null,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "646f8c75-c631-4b2e-af11-4d069816cefe",
+      "Name": "RE-4 Dual approval",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        null,
+        null,
+        null,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "ff84fa60-5084-438a-9536-7f2fb011c9b3",
+      "Name": "CR-2-2 Wireless use control",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "8cfe7593-93b6-4b0c-a715-caddbc7d18cb",
+      "Name": "CR-2-3 Use control for portable and mobile devices",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "532c1932-789e-4fbb-8167-6d63eb789c92",
+      "Name": "SAR-2-4 Mobile code",
+      "Description": "",
+      "subReqTypeIDs": [
+        "eb2fbe1f-2d10-40cf-ba68-c72e03b3154b"
+      ],
+      "RequiredPerLevel": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "eb2fbe1f-2d10-40cf-ba68-c72e03b3154b",
+      "Name": "RE-1 Mobile code integrity check",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        null,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "401ef547-ea2c-4398-8015-66490cb02976",
+      "Name": "EDR-2-4 Mobile code ",
+      "Description": "",
+      "subReqTypeIDs": [
+        "b8252e5d-de07-4b58-bab7-0869f9bed5a2"
+      ],
+      "RequiredPerLevel": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "b8252e5d-de07-4b58-bab7-0869f9bed5a2",
+      "Name": "RE-1 Mobile code integrity check",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        null,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "37d9f118-5bb7-4691-976b-2c949172dce3",
+      "Name": "HDR-2-4 Mobile code",
+      "Description": "",
+      "subReqTypeIDs": [
+        "6bafc0b1-efbf-4eb9-a83d-c4e8714420bc"
+      ],
+      "RequiredPerLevel": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "6bafc0b1-efbf-4eb9-a83d-c4e8714420bc",
+      "Name": "RE-1 Mobile code integrity check",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        null,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "5740c4a1-403c-482a-a235-fff4444fb92e",
+      "Name": "NDR-2-4 Mobile code",
+      "Description": "",
+      "subReqTypeIDs": [
+        "8db6ce88-f19f-4f3d-8d8e-6dfefff6123c"
+      ],
+      "RequiredPerLevel": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "8db6ce88-f19f-4f3d-8d8e-6dfefff6123c",
+      "Name": "RE-1 Mobile code integrity check",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        null,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "6b2fb862-508c-4b88-a2f6-a3b2ecfa08bc",
+      "Name": "CR-2-5 Session lock",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "3e691ca4-eb77-4be1-902e-04c75aefcd00",
+      "Name": "CR-2-6 Remote session termination",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        null,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "3af81552-bb3f-4125-99d2-6127fa74c428",
+      "Name": "CR-2-7 Concurrent session control",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        null,
+        null,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "779d3751-b9bd-4e97-80db-70a0631181ad",
+      "Name": "CR-2-8 Auditable events",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {
+        "SWRule": {
+          "ComponentTypeID": "02b94aae-efea-451e-a017-81be68db03d7",
+          "PropertyRest": {
+            "ID": "IsActive",
+            "ComparisonType": "==",
+            "Value": true
+          }
+        }
+      }
+    },
+    {
+      "ID": "ed08bb4b-7e98-47b1-bf97-cbce20a304cd",
+      "Name": "CR-2-9 Audit storage capacity",
+      "Description": "",
+      "subReqTypeIDs": [
+        "c504eafc-876f-47a4-8a60-cb0f7816747e"
+      ],
+      "RequiredPerLevel": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "c504eafc-876f-47a4-8a60-cb0f7816747e",
+      "Name": "RE-1 Warn when audit record storage capacity threshold reached",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        null,
+        null,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {
+        "RuleType": 1,
+        "SWRule": {
+          "ComponentTypeID": "02b94aae-efea-451e-a017-81be68db03d7",
+          "PropertyRest": {
+            "ID": "95b793b3-b68f-4533-9dc0-4e7d414effe3",
+            "ComparisonType": "==",
+            "Value": true
+          }
+        }
+      }
+    },
+    {
+      "ID": "5c662093-fd9f-4861-ae05-41f91e6a3514",
+      "Name": "CR-2-10 Response to audit processing failures",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "0317d147-90d9-4879-bf07-6e167c0dc533",
+      "Name": "CR-2-11 Timestamps",
+      "Description": "",
+      "subReqTypeIDs": [
+        "9c3f74c1-f63b-4b83-843d-c67a63c634a5",
+        "6137a0c0-5939-4857-a44c-c117a3d99531"
+      ],
+      "RequiredPerLevel": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "9c3f74c1-f63b-4b83-843d-c67a63c634a5",
+      "Name": "RE-1 Time synchronization",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        null,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "6137a0c0-5939-4857-a44c-c117a3d99531",
+      "Name": "RE-2 Protection of time source integrity",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        null,
+        false,
+        false,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "3d164cce-adde-41cd-9470-c0e60ff22559",
+      "Name": "CR-2-12 Non-repudiation",
+      "Description": "",
+      "subReqTypeIDs": [
+        "5fea8725-6bae-4cf8-9a3a-ec4669bec7a1"
+      ],
+      "RequiredPerLevel": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "5fea8725-6bae-4cf8-9a3a-ec4669bec7a1",
+      "Name": "RE-1 Non-repudiation for all users",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        null,
+        null,
+        null,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "77a29d2d-372e-4c12-b538-81f95afd6e0b",
+      "Name": "EDR-2-13 Use of physical diagnostic and test interfaces",
+      "Description": "",
+      "subReqTypeIDs": [
+        "1243b38d-ea80-424c-946c-c8f9aef190fd"
+      ],
+      "RequiredPerLevel": [
+        null,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "1243b38d-ea80-424c-946c-c8f9aef190fd",
+      "Name": "RE-1 Active monitoring",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        null,
+        null,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "956c289a-0cd4-4e8c-831a-b327c8dbbde5",
+      "Name": "HDR-2-13 Use of physical diagnostic and test interfaces",
+      "Description": "",
+      "subReqTypeIDs": [
+        "735882c4-439f-4cca-a97f-0e535519fe2f"
+      ],
+      "RequiredPerLevel": [
+        null,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "735882c4-439f-4cca-a97f-0e535519fe2f",
+      "Name": "RE-1 Active monitoring",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        null,
+        null,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "2615ae9d-2dad-47c1-81b3-fc4c9e73ba36",
+      "Name": "NDR-2-13 Use of physical diagnostic and test interfaces",
+      "Description": "",
+      "subReqTypeIDs": [
+        "1a69695b-d04e-409d-9256-4be696ea78df"
+      ],
+      "RequiredPerLevel": [
+        null,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "1a69695b-d04e-409d-9256-4be696ea78df",
+      "Name": "RE-1 Active monitoring",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        null,
+        null,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "79bd4891-d677-4c06-91d6-3bc414e59193",
+      "Name": "CR-3-1 Communication integrity",
+      "Description": "",
+      "subReqTypeIDs": [
+        "79b5872c-1d0e-498f-8fe7-c97f1163a4b3"
+      ],
+      "RequiredPerLevel": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "79b5872c-1d0e-498f-8fe7-c97f1163a4b3",
+      "Name": "RE-1 Communication authentication",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        null,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "c5b4aa95-a00a-42b3-96ca-31d98557a19c",
+      "Name": "SAR-3-2 Protection from malicious code",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "b26d4748-2b7c-4821-b11a-f51fd7e85307",
+      "Name": "EDR-3-2 Protection from malicious code",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "8a51e9e7-b87f-4d62-85df-288320d456f1",
+      "Name": "HDR-3-2 Protection from malicious code",
+      "Description": "",
+      "subReqTypeIDs": [
+        "888d4fc0-a127-4890-9de2-46a3235ff069"
+      ],
+      "RequiredPerLevel": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "888d4fc0-a127-4890-9de2-46a3235ff069",
+      "Name": "RE-1 Report version of code protection",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        null,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "13a182cc-6caa-4193-8fd2-4b497e0a16ed",
+      "Name": "NDR-3-2 Protection from malicious code",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "9c8a4b08-ce26-467d-8d7d-bf9db81f8944",
+      "Name": "CR-3-3 Security functionality verification",
+      "Description": "",
+      "subReqTypeIDs": [
+        "a6729f24-7a95-432b-a61c-98c2621246e0"
+      ],
+      "RequiredPerLevel": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "a6729f24-7a95-432b-a61c-98c2621246e0",
+      "Name": "RE-1 Security functionality verification during normal operation",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        null,
+        null,
+        null,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "63a333db-4074-4ebc-9fa5-63a248e9e3e1",
+      "Name": "CR-3-4 Software and information integrity",
+      "Description": "",
+      "subReqTypeIDs": [
+        "73159393-9139-4f82-9980-a28e2285c936",
+        "d62835c2-73c9-4fdd-a01c-a92a613ba773"
+      ],
+      "RequiredPerLevel": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "73159393-9139-4f82-9980-a28e2285c936",
+      "Name": "RE-1 Authenticity of software and information",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        null,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "d62835c2-73c9-4fdd-a01c-a92a613ba773",
+      "Name": "RE-2 Automated notification of integrity violations",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        null,
+        null,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "b6dcb790-3ce2-4635-839e-3b2032499ffa",
+      "Name": "CR-3-5 Input validation",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "0d163821-ac6f-4969-81d6-821afc8f181e",
+      "Name": "CR-3-6 Deterministic output",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "1291f5d2-f6eb-49f3-a437-c8bccad2d0f8",
+      "Name": "CR-3-7 Error handling",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "4da5a2ec-cfb7-497c-9c0c-f2d4a784e9a9",
+      "Name": "CR-3-8 Session integrity",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        null,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "f74ea015-618a-4553-86b8-c2917ff637ae",
+      "Name": "CR-3-9 Protection of audit information",
+      "Description": "",
+      "subReqTypeIDs": [
+        "df820586-0d90-4d3a-848b-31695c26f589"
+      ],
+      "RequiredPerLevel": [
+        null,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "df820586-0d90-4d3a-848b-31695c26f589",
+      "Name": "RE-1 Audit records on write-once media",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        null,
+        null,
+        null,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "41defa29-c849-4680-847b-9f40fabc7286",
+      "Name": "EDR-3-10 Support for updates",
+      "Description": "",
+      "subReqTypeIDs": [
+        "f38c5728-f34c-412e-92da-323f7b4e9a81"
+      ],
+      "RequiredPerLevel": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "ac95cfac-e4b9-4639-a066-3bf7df6c7c73",
+      "Name": "HDR-3-10 Support for updates",
+      "Description": "",
+      "subReqTypeIDs": [
+        "16784a5f-9b1c-49b8-aafb-38efb2d353d3"
+      ],
+      "RequiredPerLevel": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "1a731a13-8b40-4b33-aa7f-286a3bc2882a",
+      "Name": "NDR-3-10 Support for updates",
+      "Description": "",
+      "subReqTypeIDs": [
+        "4e1187a2-cc24-44be-9224-f623a08d9c4d"
+      ],
+      "RequiredPerLevel": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "f38c5728-f34c-412e-92da-323f7b4e9a81",
+      "Name": "RE-1 Update authenticity and integrity",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        null,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "16784a5f-9b1c-49b8-aafb-38efb2d353d3",
+      "Name": "RE-1 Update authenticity and integrity",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        null,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "4e1187a2-cc24-44be-9224-f623a08d9c4d",
+      "Name": "RE-1 Update authenticity and integrity",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        null,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "e62acf0c-4013-468c-9bb7-7940d0270e69",
+      "Name": "EDR-3-11 Physical tamper resistance and detection",
+      "Description": "",
+      "subReqTypeIDs": [
+        "af74cb52-979d-4d87-8f90-c5e7bd89bd24"
+      ],
+      "RequiredPerLevel": [
+        null,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "af74cb52-979d-4d87-8f90-c5e7bd89bd24",
+      "Name": "RE-1 Notification of a tampering attempt",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        null,
+        null,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "57d7ca9b-b06e-4273-800f-8caa19dfb1e7",
+      "Name": "HDR-3-11 Physical tamper resistance and detection",
+      "Description": "",
+      "subReqTypeIDs": [
+        "715c78fa-1a00-48be-8041-00d51fbaaea3"
+      ],
+      "RequiredPerLevel": [
+        null,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "715c78fa-1a00-48be-8041-00d51fbaaea3",
+      "Name": "RE-1 Notification of a tampering attempt",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        null,
+        false,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "4b10fb26-5b3a-41e7-b7d2-4c31b4cb92f6",
+      "Name": "NDR-3-11 Physical tamper resistance and detection",
+      "Description": "",
+      "subReqTypeIDs": [
+        "db0f3812-37c4-4a42-994d-eed41733aecd"
+      ],
+      "RequiredPerLevel": [
+        null,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "db0f3812-37c4-4a42-994d-eed41733aecd",
+      "Name": "RE-1 Notification of a tampering attempt",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        null,
+        null,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "fbd84ea0-43a1-4b39-ae16-bba8bb7c102c",
+      "Name": "EDR-3-12 Provisioning product supplier root of trusts",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        null,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "d6b5b544-3184-43ba-bc05-ae90bf503067",
+      "Name": "HDR-3-12 Provisioning product supplier root of trusts",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        null,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "15b54837-a7f6-4e95-8773-9b999abfa998",
+      "Name": "NDR-3-12 Provisioning product supplier root of trusts",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        null,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "2e279fd1-f688-4c9a-aee2-abff49d6b1ab",
+      "Name": "EDR-3-13 Provisioning of asset owner root of trusts",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        null,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "db2383ba-3aba-408b-8317-6c10af37d1ea",
+      "Name": "HDR-3-13 Provisioning of asset owner root of trusts",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        null,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "d30db9ad-4a71-4e14-bc8f-718834d56e03",
+      "Name": "NDR-3-13 Provisioning of asset owner root of trusts",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        null,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "d8332abf-0ac2-4096-bde8-02f5716ba15e",
+      "Name": "EDR-3-14 Integrity of the boot process",
+      "Description": "",
+      "subReqTypeIDs": [
+        "ea71647c-8da7-47d1-afbb-74c1f2a650c3"
+      ],
+      "RequiredPerLevel": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "b4c58d1f-016b-4244-baf3-e2ee57eff599",
+      "Name": "HDR-3-14 Integrity of the boot process",
+      "Description": "",
+      "subReqTypeIDs": [
+        "05e9457f-fbee-4d97-9544-602355a9cfcf"
+      ],
+      "RequiredPerLevel": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "88e8ef92-3f66-4c19-8a67-d2a2d97abeb2",
+      "Name": "NDR-3-14 Integrity of the boot process",
+      "Description": "",
+      "subReqTypeIDs": [
+        "f5f5cd83-4363-4d82-bae8-1d544d819817"
+      ],
+      "RequiredPerLevel": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "ea71647c-8da7-47d1-afbb-74c1f2a650c3",
+      "Name": "RE-1 Authenticity of the boot process",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        null,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "05e9457f-fbee-4d97-9544-602355a9cfcf",
+      "Name": "RE-1 Authenticity of the boot process",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        null,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "f5f5cd83-4363-4d82-bae8-1d544d819817",
+      "Name": "RE-1 Authenticity of the boot process",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        null,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "926c6b5b-0a1f-4833-a612-97691a10d83f",
+      "Name": "CR-4-1 Information confidentiality",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "6cefc8a9-b69b-4197-961c-dbbc27cbd23b",
+      "Name": "CR-4-2 Information persistence",
+      "Description": "",
+      "subReqTypeIDs": [
+        "f7aecf4a-2116-4ae0-91b1-3662d934c780",
+        "a89a4958-6563-4000-94c0-89c8f6e8957c"
+      ],
+      "RequiredPerLevel": [
+        false,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "4854fee5-99e3-4c4b-8b53-4c37629005d0",
+      "Name": "CR-4-3 Use of cryptography",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "f7aecf4a-2116-4ae0-91b1-3662d934c780",
+      "Name": "RE-1 Erase of shared memory resources",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        null,
+        null,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "a89a4958-6563-4000-94c0-89c8f6e8957c",
+      "Name": "RE-2 Erase verification",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        null,
+        null,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "8ed9c57b-fbe4-435a-8036-501cf5a95f3e",
+      "Name": "CR-5-1 Network segmentation",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "98d81760-6978-4372-809a-8303352c53b7",
+      "Name": "NDR-5-2 Zone boundary protection",
+      "Description": "",
+      "subReqTypeIDs": [
+        "1baf9958-8f82-471a-878f-b1fffa8635d5",
+        "e63f8128-7889-4913-8e11-9d47ec988ddf",
+        "77ae236f-11a6-4736-bb48-57c54ab5db07"
+      ],
+      "RequiredPerLevel": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "1baf9958-8f82-471a-878f-b1fffa8635d5",
+      "Name": "RE-1 Deny all, permit by exeption",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        null,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "e63f8128-7889-4913-8e11-9d47ec988ddf",
+      "Name": "RE-2 Island mode",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        null,
+        false,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "77ae236f-11a6-4736-bb48-57c54ab5db07",
+      "Name": "RE-3 Fail close",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        null,
+        false,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "b06635ce-dc29-44de-a719-81829a3962de",
+      "Name": "NDR-5-3 General purpose, person-to-person communication restrictions",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "72adfa45-cc4e-4539-ad87-99d1f46f4eab",
+      "Name": "CR-6-1 Audit log accessibility",
+      "Description": "",
+      "subReqTypeIDs": [
+        "1b81685b-6009-4433-b015-8a27125c2d21"
+      ],
+      "RequiredPerLevel": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "1b81685b-6009-4433-b015-8a27125c2d21",
+      "Name": "RE-1 Programmatic access to audit logs",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        null,
+        null,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "798e83ee-b5ad-46c2-8bd5-58c968e8390a",
+      "Name": "CR-6-2 Continuous monitoring",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        null,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "64064d6d-e701-4ebf-ab84-3f702b32b8ff",
+      "Name": "CR-7-1 Denial of service protection",
+      "Description": "",
+      "subReqTypeIDs": [
+        "1c033715-b1c1-45f1-a39d-0aeda88a1682"
+      ],
+      "RequiredPerLevel": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "d07a5fcc-e3fa-4525-8253-e5463c56a905",
+      "Name": "CR-7-2 Resource management",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "1c033715-b1c1-45f1-a39d-0aeda88a1682",
+      "Name": "RE-1 Manage communication load from component",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        null,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "1936692f-af1c-4335-b9c4-60ff1da57ae1",
+      "Name": "CR-7-3 Control system backup",
+      "Description": "",
+      "subReqTypeIDs": [
+        "1e5aec13-f2b6-4039-9f67-fa343e2c8098"
+      ],
+      "RequiredPerLevel": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "0c455f28-1b52-4d02-b358-fc13ae9c2e85",
+      "Name": "CR-7-4 Control system recovery and reconstruction",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "1e5aec13-f2b6-4039-9f67-fa343e2c8098",
+      "Name": "RE-1 Backup integrity verification",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        null,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "2b6d967f-e572-4e6a-a5dd-11cdce427df4",
+      "Name": "CR-7-5 Emergency-power supply",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "1cb6a6d6-6c8b-431e-8eaa-5f3604c2e153",
+      "Name": "CR-7-6 Network and security configuration settings",
+      "Description": "",
+      "subReqTypeIDs": [
+        "ffc7b8ca-e43d-4190-8f15-2ae2f3e8998f"
+      ],
+      "RequiredPerLevel": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "08cf1ab2-c34b-473e-a332-4e99c616db7d",
+      "Name": "CR-7-7 Least functionality",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "8d84eb63-48d8-41e8-aeb1-ef767a5fb572",
+      "Name": "CR-7-8 Control system component inventory",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        false,
+        true,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
+    },
+    {
+      "ID": "ffc7b8ca-e43d-4190-8f15-2ae2f3e8998f",
+      "Name": "RE-1 Machine-readable reporting of current security settings",
+      "Description": "",
+      "subReqTypeIDs": [],
+      "RequiredPerLevel": [
+        null,
+        null,
+        true,
+        true
+      ],
+      "ReqFulfillRule": {}
     }
   ],
   "checklistTypes": [
     {
       "ID": "afc63fe6-27cc-4ab5-b44e-adcb29ecab49",
       "Name": "IEC-62443",
-      "Description": "",
+      "Description": "CR: Component requirement, SAR: Software application requirement, EDR: Embedded device requirement, HDR: Host device requirement, NDR: Network device requirement",
       "requirementTypeIDs": [
-        "b008aede-3518-44f3-8cc2-7e92b68e0329"
+        "b008aede-3518-44f3-8cc2-7e92b68e0329",
+        "d47f441d-e3bf-461d-b724-47a90c19bc89",
+        "83a019dd-d28b-4f3d-bf48-e254d2031445",
+        "b7bcf087-c925-4eec-9a11-e042250afbf1",
+        "f28381c7-5c24-4fd3-b75e-03fbebe03857",
+        "bd31bc1e-43ed-48f2-80ae-885680bcd378",
+        "40670f38-5fd9-47a3-994b-41a271a71694",
+        "72982bda-38dc-4904-8080-4e7a37df743d",
+        "ccb81ee9-073d-4deb-aed5-7972b2d212a3",
+        "da50a4ec-ca68-4c4e-a8a7-0a71ba408c4a",
+        "370cc79b-a473-4247-b171-4ad0233a0a34",
+        "a8e6d55e-3440-46b1-8624-bcb1bd8364cc",
+        "c5230fd4-d5f9-4229-8f71-170617397b3a",
+        "65a904e7-9c92-4932-946e-042b19d5c7c9",
+        "dda8e95b-17ba-465f-a789-430d5a378ee1",
+        "ff84fa60-5084-438a-9536-7f2fb011c9b3",
+        "8cfe7593-93b6-4b0c-a715-caddbc7d18cb",
+        "532c1932-789e-4fbb-8167-6d63eb789c92",
+        "401ef547-ea2c-4398-8015-66490cb02976",
+        "37d9f118-5bb7-4691-976b-2c949172dce3",
+        "5740c4a1-403c-482a-a235-fff4444fb92e",
+        "6b2fb862-508c-4b88-a2f6-a3b2ecfa08bc",
+        "3e691ca4-eb77-4be1-902e-04c75aefcd00",
+        "3af81552-bb3f-4125-99d2-6127fa74c428",
+        "779d3751-b9bd-4e97-80db-70a0631181ad",
+        "ed08bb4b-7e98-47b1-bf97-cbce20a304cd",
+        "5c662093-fd9f-4861-ae05-41f91e6a3514",
+        "0317d147-90d9-4879-bf07-6e167c0dc533",
+        "3d164cce-adde-41cd-9470-c0e60ff22559",
+        "77a29d2d-372e-4c12-b538-81f95afd6e0b",
+        "956c289a-0cd4-4e8c-831a-b327c8dbbde5",
+        "2615ae9d-2dad-47c1-81b3-fc4c9e73ba36",
+        "79bd4891-d677-4c06-91d6-3bc414e59193",
+        "c5b4aa95-a00a-42b3-96ca-31d98557a19c",
+        "b26d4748-2b7c-4821-b11a-f51fd7e85307",
+        "8a51e9e7-b87f-4d62-85df-288320d456f1",
+        "13a182cc-6caa-4193-8fd2-4b497e0a16ed",
+        "9c8a4b08-ce26-467d-8d7d-bf9db81f8944",
+        "63a333db-4074-4ebc-9fa5-63a248e9e3e1",
+        "b6dcb790-3ce2-4635-839e-3b2032499ffa",
+        "0d163821-ac6f-4969-81d6-821afc8f181e",
+        "1291f5d2-f6eb-49f3-a437-c8bccad2d0f8",
+        "4da5a2ec-cfb7-497c-9c0c-f2d4a784e9a9",
+        "f74ea015-618a-4553-86b8-c2917ff637ae",
+        "41defa29-c849-4680-847b-9f40fabc7286",
+        "ac95cfac-e4b9-4639-a066-3bf7df6c7c73",
+        "1a731a13-8b40-4b33-aa7f-286a3bc2882a",
+        "e62acf0c-4013-468c-9bb7-7940d0270e69",
+        "57d7ca9b-b06e-4273-800f-8caa19dfb1e7",
+        "4b10fb26-5b3a-41e7-b7d2-4c31b4cb92f6",
+        "fbd84ea0-43a1-4b39-ae16-bba8bb7c102c",
+        "d6b5b544-3184-43ba-bc05-ae90bf503067",
+        "15b54837-a7f6-4e95-8773-9b999abfa998",
+        "2e279fd1-f688-4c9a-aee2-abff49d6b1ab",
+        "db2383ba-3aba-408b-8317-6c10af37d1ea",
+        "d30db9ad-4a71-4e14-bc8f-718834d56e03",
+        "d8332abf-0ac2-4096-bde8-02f5716ba15e",
+        "b4c58d1f-016b-4244-baf3-e2ee57eff599",
+        "88e8ef92-3f66-4c19-8a67-d2a2d97abeb2",
+        "926c6b5b-0a1f-4833-a612-97691a10d83f",
+        "6cefc8a9-b69b-4197-961c-dbbc27cbd23b",
+        "4854fee5-99e3-4c4b-8b53-4c37629005d0",
+        "8ed9c57b-fbe4-435a-8036-501cf5a95f3e",
+        "98d81760-6978-4372-809a-8303352c53b7",
+        "b06635ce-dc29-44de-a719-81829a3962de",
+        "72adfa45-cc4e-4539-ad87-99d1f46f4eab",
+        "798e83ee-b5ad-46c2-8bd5-58c968e8390a",
+        "64064d6d-e701-4ebf-ab84-3f702b32b8ff",
+        "d07a5fcc-e3fa-4525-8253-e5463c56a905",
+        "1936692f-af1c-4335-b9c4-60ff1da57ae1",
+        "0c455f28-1b52-4d02-b358-fc13ae9c2e85",
+        "2b6d967f-e572-4e6a-a5dd-11cdce427df4",
+        "1cb6a6d6-6c8b-431e-8eaa-5f3604c2e153",
+        "08cf1ab2-c34b-473e-a332-4e99c616db7d",
+        "8d84eb63-48d8-41e8-aeb1-ef767a5fb572"
       ],
       "Levels": [
         {
           "Name": "Security Level 1",
           "Abbr": "SL1",
-          "Description": ""
+          "Description": "Prevent the unauthorized disclosure of information via eavesdropping or causal exposure"
         },
         {
           "Name": "Security Level 2",
           "Abbr": "SL2",
-          "Description": ""
+          "Description": "Prevent the unauthorized disclosure of information to an entity actively searching for it using simple means with low resources, generic skills and low motivation "
         },
         {
           "Name": "Security Level 3",
           "Abbr": "SL3",
-          "Description": ""
+          "Description": "Prevent the unauthorized disclosure of information to an entity actively searching for it using sophisticated means with moderate resources, IACS specific skills and moderate motivation "
         },
         {
           "Name": "Security Level 4",
           "Abbr": "SL4",
-          "Description": ""
+          "Description": "Prevent the unauthorized disclosure of information to an entity actively searching for it using sophisticated means with extended resources, IACS specific skills and high motivation"
         }
       ]
     }

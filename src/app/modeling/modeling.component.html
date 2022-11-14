@@ -21,7 +21,7 @@
         <as-split-area [size]="GetSplitSize(1, 1, $any('*'))" [order]=2 [class.bg-color-light3]="!theme.IsDarkMode" [class.bg-color-dark3]="theme.IsDarkMode">
           <as-split direction="vertical" [gutterSize]="3" [restrictMove]="true" (dragEnd)="OnSplitSizeChange($event, 2)">
             <as-split-area [size]="GetSplitSize(2, 0, 70)" [order]=1>
-              <mat-tab-group [selectedIndex]="selectedTabIndex" (selectedIndexChange)="OnTabIndexChange($event)" style="height: 100%;" class="topTabGroup">
+              <mat-tab-group [selectedIndex]="selectedTabIndex" (selectedIndexChange)="OnTabIndexChange($event)" style="height: 100%;" class="topTabGroup" preserveContent>
                 <mat-tab *ngFor="let tab of tabs; let index = index" style="width: 100%; height: 100%;" class="tab-content">
                   <ng-template mat-tab-label style="width: 100%;">
                     <table (mouseenter)="tab.isHovered = true" (mouseleave)="tab.isHovered = false" (dblclick)="tab.keepOpen = true">

@@ -1,8 +1,8 @@
 import { AssetGroup, LowMediumHighNumber, MyData } from "./assets";
 import { ConfigFile } from "./config-file";
-import { DatabaseBase, IDataReferences } from "./database";
+import { DatabaseBase, DataReferenceTypes, IDataReferences } from "./database";
 import { ProjectFile } from "./project-file";
-import { ImpactCategories, ThreatCategory } from "./threat-model";
+import { AttackScenario, ImpactCategories, ThreatCategory } from "./threat-model";
 
 export class SystemThreat extends DatabaseBase {
   private project: ProjectFile;
@@ -45,10 +45,21 @@ export class SystemThreat extends DatabaseBase {
   }
 
   public FindReferences(pf: ProjectFile, cf: ConfigFile): IDataReferences[] {
-    return [];
+    let res: IDataReferences[] = [];
+
+    pf?.GetAttackScenarios().filter(x => x.SystemThreats.includes(this)).forEach(x => res.push({ Type: DataReferenceTypes.RemoveSystemThreatFromAttackScenario, Param: x }));
+    return res;
   }
 
   public OnDelete(pf: ProjectFile, cf: ConfigFile) {
+    let refs = this.FindReferences(pf, cf);
+
+    refs.forEach(ref => {
+      if (ref.Type == DataReferenceTypes.RemoveSystemThreatFromAttackScenario) {
+        const at = ref.Param as AttackScenario;
+        at.SystemThreats = at.SystemThreats.filter(x => x.ID != this.ID);
+      }
+    });
   }
 
   public static FromJSON(data, pf: ProjectFile, cf: ConfigFile): SystemThreat {

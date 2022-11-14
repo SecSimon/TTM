@@ -327,7 +327,7 @@ export class ModelingComponent extends SideNavBase implements OnInit {
             this.selectedNode = NavTreeBase.FindNodeOfObject(stack, this.nodes);
           }
           else {
-            let type = this.dataService.Config.GetChecklistTypes().find(x => x.Name == val.replace('Checklist: ', ''));
+            let type = this.dataService.Config.GetChecklistTypes().find(x => x.Name == val.replace(this.translate.instant('general.Checklist') + ': ', ''));
             if (type) {
               let newObj = this.dataService.Project.CreateChecklist(dev, type);
               this.createNodes();
@@ -476,7 +476,7 @@ export class ModelingComponent extends SideNavBase implements OnInit {
         node.addOptions.push('Process');
       }
 
-      node.addOptions.push(...this.dataService.Config.GetChecklistTypes().map(x => 'Checklist: ' + x.Name));
+      node.addOptions.push(...this.dataService.Config.GetChecklistTypes().map(x => this.translate.instant('general.Checklist') + ': ' + x.Name));
 
       dev.Checklists.forEach(x => node.children.push(createChecklist(x)));
 
@@ -711,7 +711,7 @@ export class ModelingComponent extends SideNavBase implements OnInit {
     };
 
     let analysis: INavigationNode = {
-      name: () => 'Analysis',
+      name: () => this.translate.instant('pages.modeling.analysis'),
       icon: 'create',
       iconAlignLeft: false,
       canSelect: false,
@@ -801,7 +801,7 @@ export class ModelingComponent extends SideNavBase implements OnInit {
     }
 
     let devices: INavigationNode = {
-      name: () => 'Devices',
+      name: () => this.translate.instant('pages.modeling.devices'),
       icon: Device.Icon,
       iconAlignLeft: false,
       canSelect: false,
@@ -814,7 +814,7 @@ export class ModelingComponent extends SideNavBase implements OnInit {
     };
 
     let apps: INavigationNode = {
-      name: () => 'Apps',
+      name: () => this.translate.instant('pages.modeling.apps'),
       icon: MobileApp.Icon,
       iconAlignLeft: false,
       canSelect: false,
@@ -828,7 +828,7 @@ export class ModelingComponent extends SideNavBase implements OnInit {
     };
 
     let useCases: INavigationNode = {
-      name: () => 'Use Cases',
+      name: () => this.translate.instant('pages.modeling.useCases'),
       icon: 'account_tree',
       iconAlignLeft: false,
       canSelect: false,

@@ -38,7 +38,8 @@
       <mat-menu #addMenu="matMenu">
         <button mat-menu-item *ngFor="let op of node.addOptions" (click)="node.onAdd(op)">{{op}}</button>
       </mat-menu>
-      <mat-icon *ngIf="!node.iconAlignLeft && node.icon" style="margin-left: auto; margin-right: 5px; opacity: 1;">{{node.icon}}</mat-icon>
+      <button mat-icon-button *ngIf="node.hasMenu" style="margin-left: auto; margin-right: 5px; opacity: 1;" [matMenuTriggerFor]="menuMenu" [matMenuTriggerData]="{item: node}" matTooltip="{{'general.More' | translate}}" matTooltipShowDelay="1000"><mat-icon>more_vert</mat-icon></button>
+      <mat-icon *ngIf="!node.iconAlignLeft && node.icon" [style.marginLeft]="node.hasMenu ? '0' : 'auto'" style="margin-right: 5px; opacity: 1;">{{node.icon}}</mat-icon>
     </div>
     <!-- There is inline padding applied to this div using styles.
         This padding value depends on the mat-icon-button width.  -->
@@ -47,6 +48,45 @@
     </div>
   </mat-nested-tree-node>
 </mat-tree>
+
+<mat-menu #menuMenu="matMenu">
+  <ng-template matMenuContent let-item="item">
+    <button mat-menu-item [matMenuTriggerFor]="collapseMenu">
+      <mat-icon>chevron_right</mat-icon>
+      <span>{{'nav-tree.collapse' | translate}}</span>
+    </button>
+    <mat-menu #collapseMenu="matMenu">
+      <ng-template matMenuContent>
+        <button mat-menu-item (click)="OnCollapse(item, 0)">
+          <span>{{'nav-tree.level0' | translate}}</span>
+        </button>
+        <button mat-menu-item (click)="OnCollapse(item, 1)">
+          <span>{{'nav-tree.level1' | translate}}</span>
+        </button>
+        <button mat-menu-item (click)="OnCollapse(item, 2)">
+          <span>{{'nav-tree.level2' | translate}}</span>
+        </button>
+      </ng-template> 
+    </mat-menu>
+    <button mat-menu-item [matMenuTriggerFor]="expandMenu">
+      <mat-icon>expand_more</mat-icon>
+      <span>{{'nav-tree.expand' | translate}}</span>
+    </button>
+    <mat-menu #expandMenu="matMenu">
+      <ng-template matMenuContent>
+        <button mat-menu-item (click)="OnExpand(item, 0)">
+          <span>{{'nav-tree.level0' | translate}}</span>
+        </button>
+        <button mat-menu-item (click)="OnExpand(item, 1)">
+          <span>{{'nav-tree.level1' | translate}}</span>
+        </button>
+        <button mat-menu-item (click)="OnExpand(item, 2)">
+          <span>{{'nav-tree.level2' | translate}}</span>
+        </button>
+      </ng-template> 
+    </mat-menu>
+  </ng-template> 
+</mat-menu>
 
 <div #ctxMenu="matMenuTrigger" style="visibility: hidden; position: fixed;" [style.left]="menuTopLeftPosition.x" [style.top]="menuTopLeftPosition.y" [matMenuTriggerFor]="rightMenu"></div> 
 <mat-menu #rightMenu="matMenu"> 

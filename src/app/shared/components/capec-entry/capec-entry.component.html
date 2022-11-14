@@ -16,6 +16,6 @@
   </button>
   <mat-form-field appearance="fill" style="width: 100%;">
     <mat-label>{{ 'properties.Description' | translate }}</mat-label>
-    <textarea matInput [spellcheck]="dataService.HasSpellCheck" [value]="GetCAPECProperty('Description')" cdkTextareaAutosize></textarea>
+    <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="2" cdkAutosizeMaxRows="5" [spellcheck]="dataService.HasSpellCheck" [value]="GetCAPECProperty('Description')" cdkTextareaAutosize></textarea>
   </mat-form-field>
 </div>

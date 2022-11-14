@@ -24,6 +24,7 @@ function createWindow(): BrowserWindow {
     },
   });
 
+  let pageURL = '';
   if (serve) {
     const debug = require('electron-debug');
     debug();
@@ -41,6 +42,7 @@ function createWindow(): BrowserWindow {
 
     const url = new URL(path.join('file:', __dirname, pathIndex));
     win.loadURL(url.href);
+    pageURL = url.href;
   }
 
   // Emitted when the window is closed.
@@ -52,6 +54,23 @@ function createWindow(): BrowserWindow {
   });
 
   win.webContents.session.setSpellCheckerLanguages(['en-US', 'de']);
+
+  win.webContents.on('will-navigate', (event, url) => {
+    if (url.indexOf('?code=') >= 0) {
+      event.preventDefault();
+      win.loadURL(pageURL);
+      setTimeout(() => {
+        win.webContents.send('oncode', url.substring(url.indexOf('?code=')+6));
+      }, 1000);
+    } 
+  });
+
+  win.webContents.on('will-redirect', (event, url) => {
+    if (url.indexOf('?code=') >= 0) {
+      event.preventDefault();
+      win.webContents.send('oncode', url.substring(url.indexOf('?code=')+6));
+    } 
+  });
 
   return win;
 }

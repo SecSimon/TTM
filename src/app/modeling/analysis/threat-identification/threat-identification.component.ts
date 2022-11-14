@@ -180,6 +180,7 @@ export class ThreatIdentificationComponent implements OnInit {
       root.icon = AssetGroup.Icon;
       root.iconAlignLeft = false;
       root.name = () => { return 'Assets'; }
+      root.hasMenu = true;
       this.assetNodes.push(root);
     }
     file.GetDevices().filter(x => x.AssetGroup != null).forEach(dev => {
@@ -188,6 +189,7 @@ export class ThreatIdentificationComponent implements OnInit {
       root.icon = Device.Icon;
       root.iconAlignLeft = false;
       root.name = () => { return dev.Name; }
+      root.hasMenu = true;
       this.assetNodes.push(root);
     });
 
@@ -196,6 +198,7 @@ export class ThreatIdentificationComponent implements OnInit {
       root.icon = MobileApp.Icon;
       root.iconAlignLeft = false;
       root.name = () => { return app.Name; }
+      root.hasMenu = true;
       this.assetNodes.push(root);
     });
 
@@ -234,6 +237,7 @@ export class ThreatIdentificationComponent implements OnInit {
       name: () => 'Threat Category Groups',
       canSelect: false,
       icon: 'flash_on',
+      hasMenu: true,
       children: [],
     };
 

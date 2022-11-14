@@ -392,6 +392,7 @@ export class ComponentsComponent extends NavTreeBase implements OnInit {
       canSelect: false,
       icon: this.componentType == MyComponentTypeIDs.Software ? 'code' : 'policy',
       canAdd: true,
+      hasMenu: true,
       onAdd: () => {
         let newObj = this.dataService.Config.CreateMyComponentTypeGroup(this.componentType);
         this.createNodes();
@@ -401,11 +402,13 @@ export class ComponentsComponent extends NavTreeBase implements OnInit {
       children: [],
     };
 
-    this.dataService.Config.GetMyComponentTypeGroups(this.componentType).forEach(x => {
-      let g = createGroup(x, root);
-      x.Types.forEach(y => g.children.push(createType(y, x, g, root)));
-      root.children.push(g);
-    });
+    if (this.dataService.Config) {
+      this.dataService.Config.GetMyComponentTypeGroups(this.componentType).forEach(x => {
+        let g = createGroup(x, root);
+        x.Types.forEach(y => g.children.push(createType(y, x, g, root)));
+        root.children.push(g);
+      });
+    }
 
     this.Nodes.push(root);
     NavTreeBase.TransferExpandedState(prevNodes, this.Nodes);

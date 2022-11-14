@@ -20,7 +20,7 @@
   <mat-slider style="width: 276px;" color="primary" thumbLabel [displayWith]="formatLabel" tickInterval="5" step="5" min="0" max="100" [(ngModel)]="mitigationProcess.Progress" (change)="OnProgressChange($event.value)"></mat-slider>
   <mat-form-field appearance="fill" style="width: 100%;">
     <mat-label>{{ 'properties.Description' | translate }}</mat-label>
-    <textarea matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="mitigationProcess.Description"></textarea>
+    <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="2" cdkAutosizeMaxRows="5" [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="mitigationProcess.Description"></textarea>
   </mat-form-field>
   <div>
     <h4>{{'general.Tasks' | translate}}</h4>

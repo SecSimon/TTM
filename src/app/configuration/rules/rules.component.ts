@@ -200,6 +200,7 @@ export class RulesComponent extends NavTreeBase implements OnInit {
     this.Nodes.push(libDFD);
     this.Nodes.push(libStencil);
     this.Nodes.push(libComponent);
+    this.Nodes.forEach(x => x.hasMenu = true);
     NavTreeBase.TransferExpandedState(prevNodes, this.Nodes);
     this.nodeTreeChanged.emit(this.Nodes);
   }

@@ -2,7 +2,7 @@
   <h2>{{checklist.Name}}</h2>
   <mat-form-field appearance="fill" style="width: 100%;">
     <mat-label>{{ 'properties.Description' | translate }}</mat-label>
-    <textarea matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="checklist.Description"></textarea>
+    <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="2" cdkAutosizeMaxRows="5" [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="checklist.Description"></textarea>
   </mat-form-field>
   <table style="border-spacing: 2px 2px;">
     <tr>
@@ -12,7 +12,7 @@
     </tr>
     <tr *ngFor="let req of Requirements">
       <td><span [style.margin-left]="(req.level * 20).toString() + 'px'">{{req.requirement.Name}}</span></td>
-      <td *ngFor="let level of checklist.Type.Levels; index as index" style="text-align: center; height: 25px; min-width: 30px;" [style.backgroundColor]="GetBackgroundColor(req, index)" (click)="req.value.Values[index] = !req.value.Values[index];">
+      <td *ngFor="let level of checklist.Type.Levels; index as index" style="text-align: center; height: 25px; min-width: 30px;" [style.backgroundColor]="GetBackgroundColor(req, index)" (click)="OnRequirementClick(req, index)">
         <mat-icon *ngIf="GetCellStatus(req, index) != null">{{GetCellStatus(req, index) ? 'done' : 'close'}}</mat-icon>
       </td>
       <td style="height: 20px;">

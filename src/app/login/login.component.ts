@@ -1,8 +1,7 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
+import { ElectronService } from '../core/services';
 import { DataService } from '../util/data.service';
-import { LocalStorageService } from '../util/local-storage.service';
 import { ThemeService } from '../util/theme.service';
 
 @Component({
@@ -12,14 +11,21 @@ import { ThemeService } from '../util/theme.service';
 })
 export class LoginComponent implements OnInit {
 
-  constructor(public theme: ThemeService, private route: ActivatedRoute, public dataService: DataService, private router: Router) { }
+  constructor(public theme: ThemeService, private route: ActivatedRoute, public dataService: DataService, private electronService: ElectronService) { }
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe(params => {
-      if (params['code'] != null) {
-        this.dataService.LogIn(params['code']);
-      }
-    });
+    if (this.electronService.isElectron) {
+      this.electronService.ipcRenderer.on('oncode', (e, args) => {
+        this.dataService.LogIn(args);
+      });
+    }
+    else {
+      this.route.queryParams.subscribe(params => {
+        if (params['code'] != null) {
+          this.dataService.LogIn(params['code']);
+        }
+      });
+    }
   }
 
   public onInstallAppClick() {
@@ -31,6 +37,7 @@ export class LoginComponent implements OnInit {
   }
 
   public onGithubLogin() {
-    window.open('https://github.com/login/oauth/authorize?client_id=Iv1.6824f14edcb01831&redirect_uri=' + window.location.href.toString(), '_self');
+    if (this.electronService.isElectron) window.open('https://github.com/login/oauth/authorize?client_id=Iv1.6824f14edcb01831&redirect_uri=http://localhost:4200/login', '_self');
+    else window.open('https://github.com/login/oauth/authorize?client_id=Iv1.6824f14edcb01831&redirect_uri=' + window.location.href.toString(), '_self');
   }
 }

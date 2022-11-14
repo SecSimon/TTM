@@ -9,7 +9,7 @@
   <br/>
   <mat-form-field appearance="fill" style="width: 100%;">
     <mat-label>{{'properties.consequencesImpact' | translate}}</mat-label>
-    <textarea matInput [spellcheck]="dataService.HasSpellCheck" type="text" [(ngModel)]="systemThreat.Description"></textarea>
+    <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="2" cdkAutosizeMaxRows="5" [spellcheck]="dataService.HasSpellCheck" type="text" [(ngModel)]="systemThreat.Description"></textarea>
   </mat-form-field>
   <br/>
   <mat-form-field appearance="fill" class="property-form-field">

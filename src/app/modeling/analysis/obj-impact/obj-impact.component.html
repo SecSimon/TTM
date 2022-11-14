@@ -26,34 +26,9 @@
                 </mat-panel-description>
               </mat-expansion-panel-header>
 
-              <ng-container *ngIf="selectedArray === objImpact.DeviceGoals">
-                Define the device goals, e.g.
-                <ul>
-                  <li>high confidentiality,</li>
-                  <li>high privacy assurance,</li>
-                  <li>safety,</li>
-                  <li>usability,</li>
-                  <li>energy efficiency,</li>
-                </ul>
-              </ng-container>
-              <ng-container *ngIf="selectedArray === objImpact.BusinessGoals">
-                Define the business and brand goals, e.g.
-                <ul>
-                  <li>products known for its high security,</li>
-                  <li>good customer service,</li>
-                  <li>global leader,</li>
-                  <li>unique selling point,</li>
-                  <li>high profits</li>
-                </ul>
-              </ng-container>
-              <ng-container *ngIf="selectedArray === objImpact.BusinessImpact">
-                Identify the potential business impact
-                <ul>
-                  <li>Gather examples of security incidents (of competitors)</li>
-                  <li>Identify worst case scenarios. Examples: human injured, production stopped, sensitive data leaked</li>
-                  <li>Analyse the business impact of incidents. Examples: fines, litigation costs, post-breach audit costs, development efforts for further security controls, costs for downtime, loss of accreditation, IP loss</li>
-                </ul>
-              </ng-container>
+              <div *ngIf="selectedArray === objImpact.DeviceGoals" innerHTML="{{'pages.modeling.objimpact.DeviceGoals.d' | translate}}"></div>
+              <div *ngIf="selectedArray === objImpact.BusinessGoals" innerHTML="{{'pages.modeling.objimpact.BusinessGoals.d' | translate}}"></div>
+              <div *ngIf="selectedArray === objImpact.BusinessImpact" innerHTML="{{'pages.modeling.objimpact.BusinessImpact.d' | translate}}"></div>
             </mat-expansion-panel>
           </mat-accordion>
           <app-notes [showTimestamp]="false" [hasCheckbox]="false" [strings]="selectedArray"></app-notes>
@@ -65,7 +40,7 @@
   <div>
     <mat-form-field appearance="fill" style="width: 100%; margin-top: 10px;">
       <mat-label>{{ 'general.Notes' | translate }}</mat-label>
-      <textarea matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="objImpact.Description"></textarea>
+      <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="2" cdkAutosizeMaxRows="5" [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="objImpact.Description"></textarea>
     </mat-form-field>
   </div>
 </div>
