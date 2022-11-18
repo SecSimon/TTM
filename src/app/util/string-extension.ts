@@ -6,7 +6,7 @@ export class StringExtension {
       return true;
     };
     let similar = database.filter(x => x.startsWith(name));
-    let existing = similar.filter(x => isNumber(x[name.length])).map(x => x.replace('-Reference', ''));
+    let existing = similar.filter(x => isNumber(x[name.length]));
     let nums = existing.map(x => Number(x.replace(name, '')));
     if (nums.length == 0) return name + '1';
     return name + (Math.max(...nums)+1).toString();

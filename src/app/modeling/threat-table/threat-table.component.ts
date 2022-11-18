@@ -167,7 +167,7 @@ export class ThreatTableComponent implements OnInit {
       this.OnViewCountermeasures(entry);
     }
     else {
-      this.dialog.OpenAttackScenarioDialog(entry, false, this.AttackScenarios);
+      this.dialog.OpenAttackScenarioDialog(entry, false);
     }
   }
 

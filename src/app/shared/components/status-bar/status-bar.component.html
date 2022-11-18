@@ -10,7 +10,7 @@
     <button mat-icon-button class="msgBtn" style="margin-left: 20px;"  (click)="dialogService.OpenModelInfoDialog()">
       <mat-icon class="iconBtn">source</mat-icon>  <span [style.color]="dataService.Project?.FileChanged ? 'yellow' : 'white'">{{dataService.Project?.Name}}</span>
     </button>
-    <button mat-icon-button tourAnchor="save-file" class="msgBtn" style="margin-left: 5px;" matTooltip="{{'general.Save' | translate}}" matTooltipShowDelay="1000" (click)="dataService.OpenSaveProjectDialog('')">
+    <button mat-icon-button tourAnchor="save-file" class="msgBtn" style="margin-left: 5px;" [disabled]="!dataService.CanSaveProject" matTooltip="{{'general.Save' | translate}}" matTooltipShowDelay="1000" (click)="dataService.OpenSaveProjectDialog('')">
       <mat-icon class="iconBtn">save</mat-icon> 
     </button>
     <button mat-icon-button class="msgBtn" [disabled]="!dataService.CanSaveProject" matTooltip="{{'general.SaveAs' | translate}}" matTooltipShowDelay="1000" (click)="dataService.OpenSaveProjectDialog('', true)">

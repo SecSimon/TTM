@@ -9,7 +9,6 @@ import { LocalStorageService, LocStorageKeys } from './util/local-storage.servic
 import { Observable } from 'rxjs';
 import { DataService } from './util/data.service';
 import { DatabaseBase, DataChangedTypes, IDataChanged } from './model/database';
-import { NavigationEnd, Router } from '@angular/router';
 
 interface IDiff {
   key: string;
@@ -38,19 +37,9 @@ export class AppComponent {
     private electronService: ElectronService, private translate: TranslateService,
     private theme: ThemeService, private locStorage: LocalStorageService,
     private overlay: OverlayContainer, private isLoadingService: IsLoadingService,
-    public dataService: DataService, private kvDiffers: KeyValueDiffers, private router: Router
+    public dataService: DataService, private kvDiffers: KeyValueDiffers
   ) {
     this.translate.setDefaultLang('en');
-
-    this.router.events.subscribe(val => {
-      if (val instanceof NavigationEnd) {
-        let history: any[] = [];
-        let histStr = this.locStorage.Get(LocStorageKeys.WEBSITE_HISTORY);
-        if (histStr != null) history = JSON.parse(histStr);
-        history.push([new Date().getTime(), val.url]);
-        this.locStorage.Set(LocStorageKeys.WEBSITE_HISTORY, JSON.stringify(history));
-      }
-    });
 
     window.onbeforeunload = (event) => {
       return this.dataService.OnClose(event);
@@ -60,14 +49,12 @@ export class AppComponent {
   ngOnInit() {    
     this.isLoading = this.isLoadingService.isLoading$();
 
-    if (!this.electronService.isElectron) {
-      document.onkeydown = (e) => {
-        if (e.ctrlKey && e.key == 's') {
-          e.preventDefault();
-          this.dataService.Save();
-        }
-      };
-    }
+    document.onkeydown = (e) => {
+      if (e.ctrlKey && e.key == 's') {
+        e.preventDefault();
+        this.dataService.Save();
+      }
+    };
   }
 
   ngAfterViewInit() {

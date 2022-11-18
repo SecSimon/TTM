@@ -41,7 +41,6 @@ export enum PropertyEditTypes {
   DiagramReference = 'Diagram Reference',
   ElementName = 'Element Name',
   FlowType = 'Flow Type',
-  ImpactCategory = 'Impact Category',
   InterfaceElementSelect = 'Interface Element Select',
   LineType = 'Line Type',
   LowMediumHighSelect = 'Low Medium High Select',

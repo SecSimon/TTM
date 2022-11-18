@@ -50,8 +50,6 @@
             <mat-icon>add</mat-icon>
           </button>
         </ng-container>
-        <!--Impact Category-->
-        <mat-checkbox *ngIf="prop.Type == 'Impact Category'" color="primary" [checked]="GetImpactCategory(prop)" (change)="SetImpactCategory(prop)"></mat-checkbox>
         <!--Line Type-->
         <select *ngIf="prop.Type == 'Line Type'" style="width: 100%;" [class.disable]="!prop.Editable" [ngModel]="GetValue(prop)" (change)="SetValue(prop, $event['target']['value'])">
           <option *ngFor="let type of GetLineTypes()" [value]="type">{{GetLineTypeName(type) | translate}}</option>

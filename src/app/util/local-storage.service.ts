@@ -37,7 +37,6 @@ export enum LocStorageKeys {
   PAGE_REPORTING_DIAGRAM_SHOW_GRID  = "page_reporting_diagram_show_grid",
   PAGE_REPORTING_SHOW_CHARTS  = "page_reporting_show_charts",
   SPELL_CHECK                 = "spell_check",
-  WEBSITE_HISTORY             = "website_history",
   WELCOME_TOUR_STARTED      = "welcome_tour_started"
 }
 

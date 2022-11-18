@@ -5,7 +5,6 @@ import { DatabaseBase, IProperty, ViewElementBase } from '../../model/database';
 import { DataFlowEntity, DFDElement, ElementTypeIDs, IElementTypeThreat, StencilType } from '../../model/dfd-model';
 import { Diagram, DiagramTypes } from '../../model/diagram';
 import { Device, DeviceInterfaceNameUtil, FlowArrowPositions, FlowArrowPositionUtil, FlowLineTypes, FlowLineTypeUtil, FlowTypes, FlowTypeUtil, SystemUseCase } from '../../model/system-context';
-import { ImpactCategoryUtil } from '../../model/threat-model';
 import { DataService } from '../../util/data.service';
 import { DialogService } from '../../util/dialog.service';
 import { ThemeService } from '../../util/theme.service';
@@ -94,20 +93,6 @@ export class PropertiesComponent implements OnInit {
   public GetStencilType() {
     if (this.selectedObject instanceof DFDElement) return this.selectedObject.GetProperty('Type').ID;
     return null;
-  }
-
-  public GetImpactCategory(prop: IProperty) {
-    const arr = this.selectedObject.Data[prop.ID.split('-')[0]];
-    const cat = Number(prop.ID.split('-')[1]);
-    return arr.includes(cat);
-  }
-
-  public SetImpactCategory(prop: IProperty) {
-    const cat = Number(prop.ID.split('-')[1]);
-    const arr = this.selectedObject.Data[prop.ID.split('-')[0]];
-    const index = arr.indexOf(cat);
-    if (index >= 0) arr.splice(index, 1);
-    else arr.push(cat);
   }
 
   public GetElementName(prop: IProperty): string {

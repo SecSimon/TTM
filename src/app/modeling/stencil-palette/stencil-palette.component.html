@@ -69,20 +69,6 @@
       {{'pages.modeling.stencilpalettte.a.info' | translate}}
     </mat-expansion-panel>
   </ng-container>
-  <ng-container *ngIf="NodeType == 'software' || NodeType == 'process'">
-    <mat-expansion-panel expanded="true">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          {{'general.Info' | translate}}
-        </mat-panel-title>
-        <mat-panel-description>
-          <mat-icon>info</mat-icon>
-        </mat-panel-description>
-      </mat-expansion-panel-header>
-  
-      {{'pages.modeling.stencilpalettte.swp.info' | translate}}
-    </mat-expansion-panel>
-  </ng-container>
 
   <ng-container *ngIf="NodeType == 'dataflow' || NodeType == 'hardware'">
     <mat-expansion-panel expanded="true">
@@ -182,7 +168,7 @@
       </div>
     </mat-expansion-panel>
 
-    <mat-expansion-panel expanded="true" *ngIf="NodeType == 'hardware' && dataService.ShowCPDFDElements">
+    <mat-expansion-panel expanded="true" *ngIf="NodeType == 'hardware'">
       <mat-expansion-panel-header>
         <mat-panel-title>
           Interface
@@ -211,7 +197,7 @@
       </div>
     </mat-expansion-panel>
 
-    <mat-expansion-panel expanded="true" *ngIf="dataService.ShowCPDFDElements">
+    <mat-expansion-panel expanded="true">
       <mat-expansion-panel-header>
         <mat-panel-title>
           Physical Link

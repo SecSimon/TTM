@@ -6,10 +6,6 @@
   <ng-container *ngIf="data['component']"><ng-container *ngComponentOutlet="data['component']; injector: dataInjector"></ng-container></ng-container>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
-  <ng-container *ngIf="data['canIterate']">
-    <button mat-button [disabled]="!data.canPrevious()" (click)="data.onPrevious()">{{'tour.prev' | translate}}</button>
-    <button mat-button [disabled]="!data.canNext()" (click)="data.onNext()">{{'tour.next' | translate}}</button>
-  </ng-container>
   <ng-container *ngIf="data['initalTrue'] == true">
     <button mat-button cdkFocusInitial [disabled]="!data['resultTrueEnabled']()" [mat-dialog-close]="true">{{data['resultTrueText']}}</button>
     <button mat-button *ngIf="data['hasResultFalse']" mat-dialog-close>{{data['resultFalseText']}}</button>

@@ -24,8 +24,7 @@
       ],
       "assetIDs": [],
       "associatedDataIDs": [],
-      "IsActive": true,
-      "ImpactCats": []
+      "IsActive": true
     },
     {
       "ID": "9e0b09ae-246e-4000-b17d-ff71b142e881",
@@ -36,8 +35,7 @@
       ],
       "assetIDs": [],
       "associatedDataIDs": [],
-      "IsActive": true,
-      "ImpactCats": []
+      "IsActive": true
     },
     {
       "ID": "fd5d32e6-212c-4b26-a129-d1a87d014c1d",
@@ -49,8 +47,7 @@
       ],
       "assetIDs": [],
       "associatedDataIDs": [],
-      "IsActive": true,
-      "ImpactCats": []
+      "IsActive": true
     },
     {
       "ID": "90d512d4-583d-47d1-a174-55d7441b7495",
@@ -67,8 +64,7 @@
         "7fcf997f-5c00-4a8b-9ade-3e8325ad391e"
       ],
       "associatedDataIDs": [],
-      "IsActive": true,
-      "ImpactCats": []
+      "IsActive": true
     },
     {
       "ID": "148b81d8-2c0a-454d-a95c-d993e67c7266",
@@ -83,8 +79,7 @@
         "d0ed6d37-a544-43d1-b94d-4924cabbf26a"
       ],
       "associatedDataIDs": [],
-      "IsActive": true,
-      "ImpactCats": []
+      "IsActive": true
     },
     {
       "ID": "cb2b51c2-63a8-4f7a-bf0b-a6ec8b248b78",
@@ -98,8 +93,7 @@
         "346e2669-f5a1-4790-9033-e6937d5448a2"
       ],
       "associatedDataIDs": [],
-      "IsActive": true,
-      "ImpactCats": []
+      "IsActive": true
     },
     {
       "ID": "15dcf410-df02-4824-83e6-ef80b63a6da9",
@@ -114,8 +108,7 @@
         "077e1f6d-094a-44d6-a8a1-1ac3978f00eb"
       ],
       "associatedDataIDs": [],
-      "IsActive": true,
-      "ImpactCats": []
+      "IsActive": true
     },
     {
       "ID": "cb8c3cec-c2ec-444a-a148-9dec9825e92e",
@@ -130,8 +123,7 @@
         "c3910e35-3353-490f-9fc2-da60660e444c"
       ],
       "associatedDataIDs": [],
-      "IsActive": true,
-      "ImpactCats": []
+      "IsActive": true
     },
     {
       "ID": "95809a78-46fd-48a4-a840-d3271b11d71d",
@@ -146,8 +138,7 @@
         "7f62763b-8816-4569-8455-b96788d9e479"
       ],
       "associatedDataIDs": [],
-      "IsActive": true,
-      "ImpactCats": []
+      "IsActive": true
     },
     {
       "ID": "5e07e85d-cdb4-4c3f-8294-eba6d865eab6",
@@ -155,12 +146,7 @@
       "Description": "",
       "assetGroupIDs": [],
       "associatedDataIDs": [],
-      "IsActive": true,
-      "ImpactCats": [
-        2,
-        14,
-        5
-      ]
+      "IsActive": true
     },
     {
       "ID": "76f4759e-f5d8-4b34-a142-969fbe754562",
@@ -168,13 +154,7 @@
       "Description": "",
       "assetGroupIDs": [],
       "associatedDataIDs": [],
-      "IsActive": true,
-      "ImpactCats": [
-        2,
-        15,
-        9,
-        14
-      ]
+      "IsActive": true
     },
     {
       "ID": "3ba3acb5-8e8c-49cf-b9d9-86df13c39dd6",
@@ -182,12 +162,7 @@
       "Description": "",
       "assetGroupIDs": [],
       "associatedDataIDs": [],
-      "IsActive": true,
-      "ImpactCats": [
-        1,
-        10,
-        11
-      ]
+      "IsActive": true
     },
     {
       "ID": "2d6f3914-6d2a-46ff-9699-56ec9f0f0034",
@@ -195,10 +170,7 @@
       "Description": "",
       "assetGroupIDs": [],
       "associatedDataIDs": [],
-      "IsActive": true,
-      "ImpactCats": [
-        9
-      ]
+      "IsActive": true
     },
     {
       "ID": "e0abf169-5402-4fa6-bd56-49e6f154a6d6",
@@ -206,11 +178,7 @@
       "Description": "",
       "assetGroupIDs": [],
       "associatedDataIDs": [],
-      "IsActive": true,
-      "ImpactCats": [
-        12,
-        1
-      ]
+      "IsActive": true
     },
     {
       "ID": "354b8f5d-756b-400b-80cb-100182918021",
@@ -218,11 +186,7 @@
       "Description": "",
       "assetGroupIDs": [],
       "associatedDataIDs": [],
-      "IsActive": true,
-      "ImpactCats": [
-        12,
-        1
-      ]
+      "IsActive": true
     },
     {
       "ID": "1f2a21a0-c358-4140-861f-c795453f6322",
@@ -230,11 +194,7 @@
       "Description": "",
       "assetGroupIDs": [],
       "associatedDataIDs": [],
-      "IsActive": true,
-      "ImpactCats": [
-        12,
-        1
-      ]
+      "IsActive": true
     },
     {
       "ID": "9293377e-1a41-40fa-8bd7-e603c7b73fc2",
@@ -242,12 +202,7 @@
       "Description": "",
       "assetGroupIDs": [],
       "associatedDataIDs": [],
-      "IsActive": true,
-      "ImpactCats": [
-        3,
-        12,
-        14
-      ]
+      "IsActive": true
     },
     {
       "ID": "e946820d-0adc-4b9a-a1b1-d7f361c7d82a",
@@ -255,11 +210,7 @@
       "Description": "",
       "assetGroupIDs": [],
       "associatedDataIDs": [],
-      "IsActive": true,
-      "ImpactCats": [
-        9,
-        15
-      ]
+      "IsActive": true
     },
     {
       "ID": "f4a97cef-26dd-48c1-8cce-68d2cf6fab1d",
@@ -267,11 +218,7 @@
       "Description": "",
       "assetGroupIDs": [],
       "associatedDataIDs": [],
-      "IsActive": true,
-      "ImpactCats": [
-        2,
-        5
-      ]
+      "IsActive": true
     },
     {
       "ID": "51e182b7-5608-4f8c-9281-3e15725d1837",
@@ -279,12 +226,7 @@
       "Description": "",
       "assetGroupIDs": [],
       "associatedDataIDs": [],
-      "IsActive": true,
-      "ImpactCats": [
-        2,
-        1,
-        10
-      ]
+      "IsActive": true
     },
     {
       "ID": "abc10bed-01eb-4e3d-8743-f3a48b710844",
@@ -292,14 +234,7 @@
       "Description": "",
       "assetGroupIDs": [],
       "associatedDataIDs": [],
-      "IsActive": true,
-      "ImpactCats": [
-        1,
-        2,
-        4,
-        5,
-        10
-      ]
+      "IsActive": true
     }
   ],
   "myData": [],
@@ -10585,7 +10520,7 @@
       "Name": "Improper user input validation",
       "Description": "Verify that all input is verified for correctness using an approved list input validation approach.",
       "IsActive": true,
-      "RuleGenerationType": 3,
+      "RuleGenerationType": 1,
       "Mapping": {
         "ThreatOriginID": "d92ccd9c-3a24-4e07-a2ca-c1e9949bb386",
         "ThreatCategoryIDs": [
@@ -16159,7 +16094,7 @@
       "Name": "User unawareness of data collection",
       "Description": "Personal information such as talks, coughs, etc. is exposed and processed by an external system",
       "IsActive": true,
-      "RuleGenerationType": 3,
+      "RuleGenerationType": 1,
       "Mapping": {
         "ThreatOriginID": "7742f998-ab1e-4f64-8ac6-12b3f97b936a",
         "ThreatCategoryIDs": [

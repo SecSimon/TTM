@@ -416,13 +416,13 @@ export class ResultsAnalysisComponent implements AfterViewInit {
   }
 
   public OnMappingDblClick(entry, event = null) {
-    if (entry instanceof AttackScenario) this.dialog.OpenAttackScenarioDialog(entry, false, this.AttackScenarios);
+    if (entry instanceof AttackScenario) this.dialog.OpenAttackScenarioDialog(entry, false);
     else if (entry instanceof Countermeasure) {
       if (event && event.target && this.displayedCountermeasureColumns[event.target.cellIndex] == 'progress' && entry.MitigationProcess) {
         this.dialog.OpenMitigationProcessDialog(entry.MitigationProcess, false);
       }
       else {
-        this.dialog.OpenCountermeasureDialog(entry, false, [], this.Countermeasures);
+        this.dialog.OpenCountermeasureDialog(entry, false, []);
       }
     }
   }

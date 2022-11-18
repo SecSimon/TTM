@@ -12,11 +12,6 @@ export interface ITwoOptionDialogData {
   resultFalseText: string;
   resultTrueEnabled: () => boolean;
   initalTrue: boolean;
-  canIterate?: boolean;
-  canPrevious?: () => boolean;
-  canNext?: () => boolean;
-  onPrevious?: () => void;
-  onNext?: () => void;
 }
 
 @Component({

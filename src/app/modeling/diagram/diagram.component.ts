@@ -228,7 +228,7 @@ export abstract class CanvasBase {
     if (arr && arr[this.Diagram.DiagramType]) return Number(arr[this.Diagram.DiagramType]);
     if (this.Diagram.DiagramType == DiagramTypes.Context) return FlowArrowPositions.Both;
     else if (this.Diagram.DiagramType == DiagramTypes.UseCase) return FlowArrowPositions.End;
-    return FlowArrowPositions.End;
+    return FlowArrowPositions.Initiator;
   }
   public set FlowArrowPosition(val: FlowArrowPositions) {
     let arrStr = this.locStorage.Get(LocStorageKeys.PAGE_MODELING_DIAGRAM_ARROW_POS);
@@ -952,28 +952,6 @@ export abstract class CanvasBase {
     }
   }
 
-  protected onCanvasMouseUp(opt) {
-    this.Canvas.setViewportTransform(this.Canvas.viewportTransform);
-    if (this.MouseMode == MouseModes.Pan) {
-      this.SetMouse();
-    }
-    else if (this.MouseMode == MouseModes.Mouse) {
-      let checkIntersections = this.blockCheckingIntersection;
-      this.blockCheckingIntersection = false; 
-      if (checkIntersections) this.checkIntersection();
-
-      if (opt.transform?.target && opt.transform.target[CProps.ID] && !this.blockSelectionChangedAfterSend) {
-        const ele = this.getViewBaseElement(opt.transform.target[CProps.ID]);
-        if (ele == this.SelectedElement) {
-          if (this.instanceOfContainer(this.SelectedElement)) {
-            this.SendToBack();
-          }
-          this.SelectedElement = null;
-        }
-      }
-    }
-  }
-
   protected onCanvasMouseOver(opt) {
     if (opt.target) {
       if (opt.target._objects) {
@@ -1158,6 +1136,18 @@ export abstract class CanvasBase {
         this.Canvas.setHeight(movingObj['top'] + movingObj['height']);
         this.Canvas.requestRenderAll();
       }
+    }
+  }
+
+  protected onCanvasMouseUp(opt) {
+    this.Canvas.setViewportTransform(this.Canvas.viewportTransform);
+    if (this.MouseMode == MouseModes.Pan) {
+      this.SetMouse();
+    }
+    else if (this.MouseMode == MouseModes.Mouse) {
+      let checkIntersections = this.blockCheckingIntersection;
+      this.blockCheckingIntersection = false; 
+      if (checkIntersections) this.checkIntersection();
     }
   }
 

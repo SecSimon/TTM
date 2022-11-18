@@ -1,7 +1,6 @@
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, Input, OnInit } from '@angular/core';
 import { AssetGroup, LowMediumHighNumber, LowMediumHighNumberUtil, MyData } from '../../model/assets';
-import { ImpactCategories, ImpactCategoryUtil } from '../../model/threat-model';
 import { NavTreeBase } from '../../shared/components/nav-tree/nav-tree-base';
 import { INavigationNode } from '../../shared/components/nav-tree/nav-tree.component';
 import { DataService } from '../../util/data.service';
@@ -69,20 +68,6 @@ export class AssetsComponent extends NavTreeBase implements OnInit {
 
   public GetSensitivity(val: LowMediumHighNumber): string {
     return LowMediumHighNumberUtil.ToString(val);
-  }
-
-  public ImpactCatChanged(group: AssetGroup, impact: ImpactCategories) {
-    const index = group.ImpactCats.indexOf(impact);
-    if (index >= 0) group.ImpactCats.splice(index, 1);
-    else group.ImpactCats.push(impact);
-  }
-
-  public GetImpactCategories() {
-    return ImpactCategoryUtil.GetKeys();
-  }
-
-  public GetImpactCategoryName(cat: ImpactCategories) {
-    return ImpactCategoryUtil.ToString(cat);
   }
 
   private createNodes() {

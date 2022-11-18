@@ -49,10 +49,10 @@ export class ThreatEngineService {
     let checkElements = (ruleType: RuleTypes, elements: DFDElement[]) => {
       // rules for each element
       elements.forEach(element => {
-        this.dataService.Config.GetThreatRules().filter(x => x.RuleType == ruleType && x.IsActive && [RuleGenerationTypes.EachElement, RuleGenerationTypes.OnceForEachElement].includes(x.RuleGenerationType)).forEach(rule => {
+        this.dataService.Config.GetThreatRules().filter(x => x.RuleType == ruleType && x.IsActive && x.RuleGenerationType == RuleGenerationTypes.EachElement).forEach(rule => {
           let matches = this.checkElementAgainstRule(rule, element, elements);
           matches.forEach(m => {
-            let existing = this.checkForExistingMapping(rule, m.target, rule.RuleGenerationType == RuleGenerationTypes.EachElement ? m.elements : null);
+            let existing = this.checkForExistingMapping(rule, m.target, m.elements);
             if (existing) {
               existing.MappingState = MappingStates.Stable;
               mappingsBefore.splice(mappingsBefore.findIndex(x => x.ID == existing.ID), 1); // remove from list as this mapping still applies

@@ -19,7 +19,7 @@
                   <mat-icon>more_vert</mat-icon>
                 </button>
                 <mat-menu #projMenu="matMenu">
-                  <button mat-menu-item [disabled]="!dataService.SelectedGHProject || !dataService.GetRepoOfFile(dataService.SelectedGHProject)?.isWritable" (click)="dataService.OpenSaveProjectDialog('')">
+                  <button mat-menu-item [disabled]="!dataService.SelectedGHProject || !dataService.GetRepoOfFile(dataService.SelectedGHProject).isWritable" (click)="dataService.OpenSaveProjectDialog('')">
                     <mat-icon>save</mat-icon>
                     <span>{{'pages.home.menu.saveProject' | translate}}</span>
                   </button>
@@ -77,7 +77,7 @@
                   <button mat-icon-button class="show-on-hover" style="width: 20px; height: 20px; line-height: 20px; margin-right: 5px;" (click)="dataService.OpenRepo(proj)" matTooltip="{{'general.openInNew' | translate}}" matTooltipShowDelay="1000">
                     <mat-icon>open_in_new</mat-icon>
                   </button>
-                  <button *ngIf="dataService.GetRepoOfFile(proj)?.isWritable" mat-icon-button class="show-on-hover" style="width: 20px; height: 20px; line-height: 20px;" (click)="dataService.DeleteGHFile(proj)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000">
+                  <button *ngIf="dataService.GetRepoOfFile(proj).isWritable" mat-icon-button class="show-on-hover" style="width: 20px; height: 20px; line-height: 20px;" (click)="dataService.DeleteGHFile(proj)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000">
                     <mat-icon>delete</mat-icon>
                   </button>
                 </div>
@@ -104,7 +104,7 @@
                   <button mat-icon-button class="show-on-hover" style="width: 20px; height: 20px; line-height: 20px; margin-right: 5px;" (click)="dataService.OpenRepo(conf)" matTooltip="{{'general.openInNew' | translate}}" matTooltipShowDelay="1000">
                     <mat-icon>open_in_new</mat-icon>
                   </button>
-                  <button *ngIf="dataService.GetRepoOfFile(conf)?.isWritable" mat-icon-button class="show-on-hover" style="width: 20px; height: 20px; line-height: 20px;" (click)="dataService.DeleteGHFile(conf)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000">
+                  <button *ngIf="dataService.GetRepoOfFile(conf).isWritable" mat-icon-button class="show-on-hover" style="width: 20px; height: 20px; line-height: 20px;" (click)="dataService.DeleteGHFile(conf)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000">
                     <mat-icon>delete</mat-icon>
                   </button>
                 </div>

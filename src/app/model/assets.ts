@@ -1,7 +1,6 @@
 import { ConfigFile } from "./config-file";
 import { DatabaseBase, DataReferenceTypes, IDataReferences, PropertyEditTypes } from "./database";
 import { ProjectFile } from "./project-file";
-import { ImpactCategories, ImpactCategoryUtil } from "./threat-model";
 
 export enum LowMediumHighNumber {
   Low = 1,
@@ -32,15 +31,12 @@ export class MyData extends DatabaseBase {
   public get Sensitivity(): LowMediumHighNumber { return this.Data['Sensitivity']; }
   public set Sensitivity(val: LowMediumHighNumber) { this.Data['Sensitivity'] = val; }
 
-  public get ImpactCats(): ImpactCategories[] { return this.Data['ImpactCats']; }
-
   constructor(data, pf: ProjectFile, cf: ConfigFile) {
     super(data);
     this.project = pf;
     this.config = cf;
 
     if (!this.Sensitivity) this.Sensitivity = LowMediumHighNumber.Medium;
-    if (!this.ImpactCats) this.Data['ImpactCats'] = [];
   }
 
   public FindAssetGroup(): AssetGroup {
@@ -64,7 +60,6 @@ export class MyData extends DatabaseBase {
     super.initProperties();
 
     this.AddProperty('properties.Sensitivity', 'Sensitivity', '', true, PropertyEditTypes.LowMediumHighSelect, true);
-    ImpactCategoryUtil.GetKeys().forEach(x => this.AddProperty(ImpactCategoryUtil.ToString(x), 'ImpactCats-'+x.toString(), '', false, PropertyEditTypes.ImpactCategory, true, false));
   }
 
   public static FromJSON(data, pf: ProjectFile, cf: ConfigFile): MyData {
@@ -109,8 +104,6 @@ export class AssetGroup extends DatabaseBase {
     return this.file.GetAssetGroups().find(x => x.SubGroups.includes(this));
   }
 
-  public get ImpactCats(): ImpactCategories[] { return this.Data['ImpactCats']; }
-
   constructor(data, pf: ProjectFile, cf: ConfigFile) {
     super(data);
     this.project = pf;
@@ -118,7 +111,6 @@ export class AssetGroup extends DatabaseBase {
 
     if (!this.Data['assetGroupIDs']) { this.Data['assetGroupIDs'] = []; }
     if (!this.Data['associatedDataIDs']) { this.Data['associatedDataIDs'] = []; }
-    if (!this.ImpactCats) this.Data['ImpactCats'] = [];
 
     if (this.IsActive == null) this.IsActive = true;
   }
@@ -190,8 +182,6 @@ export class AssetGroup extends DatabaseBase {
     super.initProperties();
 
     this.AddProperty('properties.IsActive', 'IsActive', '', true, PropertyEditTypes.CheckBox, true);
-
-    ImpactCategoryUtil.GetKeys().forEach(x => this.AddProperty(ImpactCategoryUtil.ToString(x), 'ImpactCats-'+x.toString(), '', false, PropertyEditTypes.ImpactCategory, true, false));
   }
 
   public static FromJSON(data, pf: ProjectFile, cf: ConfigFile): AssetGroup {
