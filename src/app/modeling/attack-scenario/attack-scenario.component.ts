@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, Optional } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Optional } from '@angular/core';
 import { LowMediumHighNumber, LowMediumHighNumberUtil } from '../../model/assets';
 import { Countermeasure } from '../../model/mitigations';
 import { RiskStrategies, RiskStrategyUtil, ThreatCategoryGroup, AttackScenario, ThreatOriginGroup, ThreatSeverities, ThreatSeverityUtil, ThreatStates, ThreatStateUtil } from '../../model/threat-model';
@@ -27,8 +27,11 @@ export class AttackScenarioComponent implements OnInit {
 
   @Input() canEdit: boolean = true;
 
-  constructor(@Optional() mapping: AttackScenario, public theme: ThemeService, public dataService: DataService, private dialog: DialogService) {
+  constructor(@Optional() mapping: AttackScenario, @Optional() onChange: EventEmitter<AttackScenario>, public theme: ThemeService, public dataService: DataService, private dialog: DialogService) {
     this.attackScenario = mapping;
+    if (onChange) {
+      onChange.subscribe(x => this.attackScenario = x);
+    }
   }
 
   ngOnInit(): void {

@@ -1,4 +1,4 @@
-import {app, BrowserWindow, screen} from 'electron';
+import {app, BrowserWindow, screen, Menu} from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
 
@@ -71,6 +71,27 @@ function createWindow(): BrowserWindow {
       win.webContents.send('oncode', url.substring(url.indexOf('?code=')+6));
     } 
   });
+
+  const temp = [];
+  temp.push({
+    label: 'File',
+    submenu: [
+      { label: 'Save', accelerator: 'Ctrl+S', click: () => { win.webContents.send('onsave'); } },
+      { role: 'quit', label: '&Quit', accelerator: 'Ctrl+Q', click: () => { app.quit(); } }
+    ]
+  });
+  temp.push({
+    label: 'View',
+    submenu: [
+      { label: 'Reload', accelerator: 'Ctrl+R', click: (item, focusedWindow) => { focusedWindow.reload(); } },
+      { label: 'Full Screen', accelerator: 'F11', click: (item, focusedWindow) => { focusedWindow.setFullScreen(!focusedWindow.isFullScreen()); } },
+      { label: 'Minimize', 'role': 'minimize', accelerator: 'Ctrl+M' },
+      { label: 'Toggle Developer Tools', accelerator: 'Ctrl+Shift+I', click: (item, focusedWindow) => { focusedWindow.webContents.toggleDevTools(); } }
+    ]
+  });
+
+  const menu = Menu.buildFromTemplate(temp);
+  Menu.setApplicationMenu(menu);
 
   return win;
 }

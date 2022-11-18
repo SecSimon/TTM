@@ -6,6 +6,12 @@
       <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="2" cdkAutosizeMaxRows="5" [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="selectedAssetGroup.Description"></textarea>
     </mat-form-field>
     <mat-checkbox color="primary" [(ngModel)]="selectedAssetGroup.IsActive">{{'properties.IsActive' | translate}}</mat-checkbox>
+    <h3>{{'properties.ImpactCategories' | translate}}</h3>
+    <div style="margin-top: 10px; display: flex; flex-wrap: wrap;">
+      <table *ngFor="let impact of GetImpactCategories()" style="min-width: 200px;">
+        <tr><td><mat-checkbox color="primary" [checked]="selectedAssetGroup.ImpactCats.includes(impact)" (change)="ImpactCatChanged(selectedAssetGroup, impact)">{{GetImpactCategoryName(impact) | translate}}</mat-checkbox></td></tr>
+      </table>
+    </div>
   </ng-container>
   <div class="row">
     <div class="column1">

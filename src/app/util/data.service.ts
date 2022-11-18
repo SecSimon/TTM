@@ -27,6 +27,7 @@ import { APP_CONFIG } from '../../environments/environment';
 import { MatDialog } from '@angular/material/dialog';
 
 import versionFile from '../../assets/version.json';
+import { ElectronService } from '../core/services';
 
 export interface IGHRepository {
   id: number;
@@ -91,7 +92,7 @@ export class DataService {
   private config: ConfigFile;
 
   constructor(private locStorage: LocalStorageService, private isLoading: IsLoadingService, private http: HttpClient, private router: Router, private clipboard: Clipboard,
-    private dialog: MatDialog, private messagesService: MessagesService, private translate: TranslateService, private fileUpdate: FileUpdateService, private zone: NgZone) { 
+    private dialog: MatDialog, private messagesService: MessagesService, private translate: TranslateService, private fileUpdate: FileUpdateService, private zone: NgZone, private electron: ElectronService) { 
     this.restoreUserAccount();
     if (this.UserMode == UserModes.LoggedIn) {
       this.retrieveRepositories();
@@ -121,6 +122,12 @@ export class DataService {
       }
     });
     }, 12000);
+    
+    if (this.electron.isElectron && this.electron.ipcRenderer) {
+      this.electron.ipcRenderer.on('onsave', () => {
+        this.Save();
+      });
+    }
   }
 
   public get UserMode(): UserModes { return this.userMode; }
@@ -347,26 +354,30 @@ export class DataService {
   }
 
   public Save() {
-    if (this.UserMode == UserModes.LoggedIn) {
-      if (this.Project) return this.OpenSaveProjectDialog('');
-      else return this.OpenSaveConfigDialog('');
-    }
+    if (this.Project) return this.OpenSaveProjectDialog('');
+    else if (this.UserMode == UserModes.LoggedIn) return this.OpenSaveConfigDialog('');
   }
 
   public OpenSaveProjectDialog(msg: string, saveAs: boolean = false) {
     return new Promise<void>((resolve, reject) => {
-      let data = { 'msg': msg };
-      if (!this.SelectedGHProject || saveAs) {
-        data['newProject'] = { name: '', configFile: null, path: '', repoId: null, isEncrypted: false, sha: null } as IGHFile;
-      }
-      else if (this.SelectedGHProject?.isEncrypted) data['removePW'] = false;
-      const dialogRef = this.dialog.open(SaveDialogComponent, { hasBackdrop: false, data: data });
-      dialogRef.afterClosed().subscribe(res => {
-        if (res) {
-          this.SaveProject(data.msg, data['removePW'] != null ? data['removePW'] : false, data['pw'] != null ? data['pw'] : null, data['newProject'] ? data['newProject'] : null).then(() => resolve()).catch(() => reject());
+      if (this.CanSaveProject) {
+        let data = { 'msg': msg };
+        if (!this.SelectedGHProject || saveAs) {
+          data['newProject'] = { name: '', configFile: null, path: '', repoId: null, isEncrypted: false, sha: null } as IGHFile;
         }
-        else resolve();
-      });
+        else if (this.SelectedGHProject?.isEncrypted) data['removePW'] = false;
+        const dialogRef = this.dialog.open(SaveDialogComponent, { hasBackdrop: false, data: data });
+        dialogRef.afterClosed().subscribe(res => {
+          if (res) {
+            this.SaveProject(data.msg, data['removePW'] != null ? data['removePW'] : false, data['pw'] != null ? data['pw'] : null, data['newProject'] ? data['newProject'] : null).then(() => resolve()).catch(() => reject());
+          }
+          else resolve();
+        });
+      }
+      else {
+        this.ExportFile(true);
+        resolve();
+      }
     });
   }
 

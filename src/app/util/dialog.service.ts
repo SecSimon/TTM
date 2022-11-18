@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { EventEmitter, Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
@@ -96,21 +96,37 @@ export class DialogService {
     return this.OpenTwoOptionsDialog(data);
   }
 
-  public OpenAttackScenarioDialog(mapping: AttackScenario, isNew: boolean) {
+  public OpenAttackScenarioDialog(scenario: AttackScenario, isNew: boolean, scenarios: AttackScenario[] = null) {
     let data: ITwoOptionDialogData = {
       title: this.translate.instant('pages.modeling.attackscenario.dialogTitle'),
       resultTrueText: isNew ? this.translate.instant('general.Add') : this.translate.instant('general.Close'),
       hasResultFalse: isNew,
       resultFalseText: this.translate.instant('general.Cancel'),
       resultTrueEnabled: () => {
-        return !isNew || mapping.ThreatOrigin != null || mapping.ThreatCategories.length > 0;
+        return !isNew || scenario.ThreatOrigin != null || scenario.ThreatCategories.length > 0;
       },
       initalTrue: false,
       component: AttackScenarioComponent,
       componentInputData: [
-        { Key: AttackScenario, Value: mapping }
+        { Key: AttackScenario, Value: scenario }
       ]
     };
+    if (scenarios) {
+      data.canIterate = true;
+      let curr = scenario;
+      const onChange = new EventEmitter<AttackScenario>();
+      data.componentInputData.push({ Key: EventEmitter<AttackScenario>, Value: onChange });
+      data.canNext = () => { return scenarios.indexOf(curr) < scenarios.length-1; };
+      data.canPrevious = () => { return scenarios.indexOf(curr) > 0; };
+      data.onNext = () => { 
+        curr = scenarios[scenarios.indexOf(curr)+1];
+        onChange.emit(curr);
+      };
+      data.onPrevious = () => {
+        curr = scenarios[scenarios.indexOf(curr)-1];
+        onChange.emit(curr);
+      };
+    }
     return this.OpenTwoOptionsDialog(data);
   }
 
@@ -185,7 +201,7 @@ export class DialogService {
     return this.OpenTwoOptionsDialog(data);
   }
 
-  public OpenCountermeasureDialog(mapping: Countermeasure, isNew: boolean, elements: ViewElementBase[]) {
+  public OpenCountermeasureDialog(measure: Countermeasure, isNew: boolean, elements: ViewElementBase[], measures: Countermeasure[] = null) {
     let isNewWrapper = new MyBoolean();
     isNewWrapper.Value = isNew;
     let data: ITwoOptionDialogData = {
@@ -194,16 +210,32 @@ export class DialogService {
       hasResultFalse: isNew,
       resultFalseText: this.translate.instant('general.Cancel'),
       resultTrueEnabled: () => {
-        return !isNew || mapping.Control != null || mapping.Targets.length > 0;
+        return !isNew || measure.Control != null || measure.Targets.length > 0;
       },
       initalTrue: false,
       component: CountermeasureComponent,
       componentInputData: [
-        { Key: Countermeasure, Value: mapping },
+        { Key: Countermeasure, Value: measure },
         { Key: MyBoolean, Value: isNewWrapper },
         { Key: Array, Value: elements }
       ]
     };
+    if (measures) {
+      data.canIterate = true;
+      let curr = measure;
+      const onChange = new EventEmitter<Countermeasure>();
+      data.componentInputData.push({ Key: EventEmitter<Countermeasure>, Value: onChange });
+      data.canNext = () => { return measures.indexOf(curr) < measures.length-1; };
+      data.canPrevious = () => { return measures.indexOf(curr) > 0; };
+      data.onNext = () => { 
+        curr = measures[measures.indexOf(curr)+1];
+        onChange.emit(curr);
+      };
+      data.onPrevious = () => {
+        curr = measures[measures.indexOf(curr)-1];
+        onChange.emit(curr);
+      };
+    }
     return this.OpenTwoOptionsDialog(data);
   }
 

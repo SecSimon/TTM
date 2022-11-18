@@ -49,12 +49,14 @@ export class AppComponent {
   ngOnInit() {    
     this.isLoading = this.isLoadingService.isLoading$();
 
-    document.onkeydown = (e) => {
-      if (e.ctrlKey && e.key == 's') {
-        e.preventDefault();
-        this.dataService.Save();
-      }
-    };
+    if (!this.electronService.isElectron) {
+      document.onkeydown = (e) => {
+        if (e.ctrlKey && e.key == 's') {
+          e.preventDefault();
+          this.dataService.Save();
+        }
+      };
+    }
   }
 
   ngAfterViewInit() {
