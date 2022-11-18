@@ -576,18 +576,20 @@ export enum RuleTypes {
 
 export enum RuleGenerationTypes {
   EachElement = 1,
-  OnceForAllElements = 2
+  OnceForAllElements = 2,
+  OnceForEachElement = 3
 }
 
 export class RuleGenerationTypsUtil {
   public static GetTypes(): RuleGenerationTypes[] {
-    return [RuleGenerationTypes.EachElement, RuleGenerationTypes.OnceForAllElements];
+    return [RuleGenerationTypes.EachElement, RuleGenerationTypes.OnceForAllElements, RuleGenerationTypes.OnceForEachElement];
   }
 
   public static ToString(rgt: RuleGenerationTypes): string {
     switch (rgt) {
       case RuleGenerationTypes.EachElement: return 'properties.eachElement';
       case RuleGenerationTypes.OnceForAllElements: return 'properties.onceForAllElements';
+      case RuleGenerationTypes.OnceForEachElement: return 'properties.onceForEachElement';
       default:
         console.error('Missing Rule Generation Type in RuleGenerationTypes.ToString()')
         return 'Undefined';

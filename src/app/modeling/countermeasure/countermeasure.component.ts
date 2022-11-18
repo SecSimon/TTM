@@ -24,10 +24,14 @@ export class CountermeasureComponent implements OnInit {
 
   @Output() public mitigationProcessChange = new EventEmitter();
 
-  constructor(@Optional() mapping: Countermeasure, @Optional() isNew: MyBoolean, @Optional() elements: Array<ViewElementBase>, public theme: ThemeService, public dataService: DataService, private dialog: DialogService) {
+  constructor(@Optional() mapping: Countermeasure, @Optional() isNew: MyBoolean, @Optional() elements: Array<ViewElementBase>, @Optional() onChange: EventEmitter<Countermeasure>, 
+  public theme: ThemeService, public dataService: DataService, private dialog: DialogService) {
     this.countermeasure = mapping;
     if (isNew) this.isManualEntry = isNew.Value;
     if (elements) this.elements = elements;
+    if (onChange) {
+      onChange.subscribe(x => this.countermeasure = x);
+    }
   }
 
   ngOnInit(): void {

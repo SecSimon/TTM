@@ -12,7 +12,7 @@ import { FileUpdateService } from './file-update.service';
 import { MessagesService } from './messages.service';
 import { ConfigFile } from '../model/config-file';
 import { ProjectFile } from '../model/project-file';
-import { ThreatOriginTypes } from '../model/threat-model';
+import { ThreatOriginTypes, ThreatStates } from '../model/threat-model';
 import { SaveDialogComponent } from '../shared/components/save-dialog/save-dialog.component';
 import { ITwoOptionDialogData, TwoOptionsDialogComponent } from '../shared/components/two-options-dialog/two-options-dialog.component';
 import { TranslateService } from '@ngx-translate/core';
@@ -25,8 +25,10 @@ import { StringExtension } from './string-extension';
 
 import { APP_CONFIG } from '../../environments/environment';
 import { MatDialog } from '@angular/material/dialog';
+import { ElementTypeIDs } from '../model/dfd-model';
 
 import versionFile from '../../assets/version.json';
+import { ElectronService } from '../core/services';
 
 export interface IGHRepository {
   id: number;
@@ -91,7 +93,7 @@ export class DataService {
   private config: ConfigFile;
 
   constructor(private locStorage: LocalStorageService, private isLoading: IsLoadingService, private http: HttpClient, private router: Router, private clipboard: Clipboard,
-    private dialog: MatDialog, private messagesService: MessagesService, private translate: TranslateService, private fileUpdate: FileUpdateService, private zone: NgZone) { 
+    private dialog: MatDialog, private messagesService: MessagesService, private translate: TranslateService, private fileUpdate: FileUpdateService, private zone: NgZone, private electron: ElectronService) { 
     this.restoreUserAccount();
     if (this.UserMode == UserModes.LoggedIn) {
       this.retrieveRepositories();
@@ -121,6 +123,12 @@ export class DataService {
       }
     });
     }, 12000);
+    
+    if (this.electron.isElectron && this.electron.ipcRenderer) {
+      this.electron.ipcRenderer.on('onsave', () => {
+        this.Save();
+      });
+    }
   }
 
   public get UserMode(): UserModes { return this.userMode; }
@@ -200,6 +208,8 @@ export class DataService {
     this.hasSpellCheck = val;
     this.locStorage.Set(LocStorageKeys.SPELL_CHECK, String(val));
   }
+
+  public ShowCPDFDElements = true;
 
   public ProjectChanged = new EventEmitter<ProjectFile>();
   public ProjectSaved = new EventEmitter<ProjectFile>();
@@ -340,6 +350,12 @@ export class DataService {
       proj.InitializeNewProject();
       //let dev = proj.CreateDevice();
       proj.CreateDiagram(DiagramTypes.DataFlow);
+      if (!this.ShowCPDFDElements) {
+        let temps = cfg.GetStencilTypeTemplates();
+        let index = temps[0].StencilTypes.findIndex(x => x.ElementTypeID == ElementTypeIDs.Interface);
+        temps[0].Layout = temps[0].Layout.filter(x => temps[0].Layout.indexOf(x) != index);
+        temps[0].StencilTypes = temps[0].StencilTypes.filter(x => x.ElementTypeID != ElementTypeIDs.Interface);
+      }
 
       this.Project = proj;
       this.locStorage.Remove(LocStorageKeys.GH_LAST_PROJECT);
@@ -347,26 +363,30 @@ export class DataService {
   }
 
   public Save() {
-    if (this.UserMode == UserModes.LoggedIn) {
-      if (this.Project) return this.OpenSaveProjectDialog('');
-      else return this.OpenSaveConfigDialog('');
-    }
+    if (this.Project) return this.OpenSaveProjectDialog('');
+    else if (this.UserMode == UserModes.LoggedIn) return this.OpenSaveConfigDialog('');
   }
 
   public OpenSaveProjectDialog(msg: string, saveAs: boolean = false) {
     return new Promise<void>((resolve, reject) => {
-      let data = { 'msg': msg };
-      if (!this.SelectedGHProject || saveAs) {
-        data['newProject'] = { name: '', configFile: null, path: '', repoId: null, isEncrypted: false, sha: null } as IGHFile;
-      }
-      else if (this.SelectedGHProject?.isEncrypted) data['removePW'] = false;
-      const dialogRef = this.dialog.open(SaveDialogComponent, { hasBackdrop: false, data: data });
-      dialogRef.afterClosed().subscribe(res => {
-        if (res) {
-          this.SaveProject(data.msg, data['removePW'] != null ? data['removePW'] : false, data['pw'] != null ? data['pw'] : null, data['newProject'] ? data['newProject'] : null).then(() => resolve()).catch(() => reject());
+      if (this.CanSaveProject) {
+        let data = { 'msg': msg };
+        if (!this.SelectedGHProject || saveAs) {
+          data['newProject'] = { name: '', configFile: null, path: '', repoId: null, isEncrypted: false, sha: null } as IGHFile;
         }
-        else resolve();
-      });
+        else if (this.SelectedGHProject?.isEncrypted) data['removePW'] = false;
+        const dialogRef = this.dialog.open(SaveDialogComponent, { hasBackdrop: false, data: data });
+        dialogRef.afterClosed().subscribe(res => {
+          if (res) {
+            this.SaveProject(data.msg, data['removePW'] != null ? data['removePW'] : false, data['pw'] != null ? data['pw'] : null, data['newProject'] ? data['newProject'] : null).then(() => resolve()).catch(() => reject());
+          }
+          else resolve();
+        });
+      }
+      else {
+        this.ExportFile(true);
+        resolve();
+      }
     });
   }
 
@@ -674,7 +694,52 @@ export class DataService {
     let content = '';
     let name = '';
     if (isProject && this.Project) {
-      content = this.getFileContent(this.Project.ToJSON(), true, this.SelectedGHProject ? this.SelectedGHProject.isEncrypted : false);
+      const proj = this.Project.ToJSON();
+      // export type
+      proj['ShowCPDFDElements'] = this.ShowCPDFDElements;
+      // export history
+      const history = this.locStorage.Get(LocStorageKeys.WEBSITE_HISTORY);
+      if (history) proj['history'] = JSON.parse(history);
+      // export diagrams
+      let dias = [];
+      this.Project.GetDiagrams().forEach(x => {
+        if (x.DiagramType == DiagramTypes.Hardware || x.DiagramType == DiagramTypes.DataFlow) {
+          const eles = x.Elements.GetChildrenFlat();
+          const cnts = [];
+          cnts.push(eles.filter(y => [ElementTypeIDs.PhyProcessing, ElementTypeIDs.LogProcessing].includes(y.GetProperty('Type').ElementTypeID)).length);
+          cnts.push(eles.filter(y => [ElementTypeIDs.PhyDataStore, ElementTypeIDs.LogDataStore].includes(y.GetProperty('Type').ElementTypeID)).length);
+          cnts.push(eles.filter(y => [ElementTypeIDs.PhyExternalEntity, ElementTypeIDs.LogExternalEntity].includes(y.GetProperty('Type').ElementTypeID)).length);
+          cnts.push(eles.filter(y => [ElementTypeIDs.DataFlow].includes(y.GetProperty('Type').ElementTypeID)).length);
+          cnts.push(eles.filter(y => [ElementTypeIDs.PhyTrustArea, ElementTypeIDs.LogTrustArea].includes(y.GetProperty('Type').ElementTypeID)).length);
+          cnts.push(eles.filter(y => [ElementTypeIDs.PhysicalLink].includes(y.GetProperty('Type').ElementTypeID)).length);
+          cnts.push(eles.filter(y => [ElementTypeIDs.Interface].includes(y.GetProperty('Type').ElementTypeID)).length);
+          dias.push([x.Name, ...cnts].join(';'));
+        }
+      });
+      dias.push('Software');
+      proj['dias'] = dias;
+      // export attack scenarios
+      let threats = [];
+      this.Project.GetAttackScenarios().forEach(x => {
+        let dia = this.Project.GetDiagram(x.ViewID);
+        let stack = this.Project.GetStack(x.ViewID);
+        let diaName: string = dia?.Name;
+        if (!diaName) diaName = this.Project.GetStack(x.ViewID)?.Name;
+        let catName = 'Hardware';
+        if (dia && dia.DiagramType == DiagramTypes.DataFlow) catName = 'Data Flow';
+        else if (stack) catName = 'Software';
+        let status = 'Open';
+        if (x.ThreatState == ThreatStates.NotApplicable) status = 'NA';
+        const edit = x.Description?.length > 0 || x.RiskStrategyReason?.length > 0 ? 'Yes' : 'No';
+        const dupl = threats.some(y => y[1].includes(x.Name) && x.Name.split(' ').length > 3) ? 'Yes' : 'No';
+        threats.push([diaName, x.Number + ') ' + x.Name, x.IsGenerated ? 'Yes': 'No', edit, 'Security', 'Custom', 'High', status, dupl, 'No', catName].map(y => '"' + y + '"'));
+      });
+      threats = threats.sort((a, b) => {
+        return a[0].localeCompare(b[0]);
+      });
+      threats = threats.map(x => x.join(';'));
+      proj['threats'] = threats;
+      content = this.getFileContent(proj, true, false);
       if (this.SelectedGHProject) name = this.SelectedGHProject.name;
       else name = 'Project.ttmp';
     }
@@ -688,15 +753,18 @@ export class DataService {
     if (content.length > 0) {
       const blob = new Blob([content], {type: 'text/plain;charset=utf-8'});
       let now = new Date();
+      name = '.ttmp';
       let names = name.split('.');
       let date = [now.getFullYear(), now.getMonth()+1, now.getDate()];
-      let time = [now.getHours(), now.getMinutes(), now.getSeconds()];
+      let time = [now.getHours(), now.getMinutes()];
       let leading0 = (num: number, length: number = 2): string => {
         let val = num.toString();
         while(val.length < length) val = '0' + val;
         return val;
       };
-      names.splice(1, 0, ...['_', ...date.map(x => leading0(x)), '_', ...time.map(x => leading0(x)), '.']);
+      names.splice(1, 0, ...['_', date.map(x => leading0(x)).join('-'), '_', time.map(x => leading0(x)).join('-'), '.']);
+      names.splice(0, 2);
+      names.splice(names.length-2, 0, '_RAUM_PLATZ');
       saveAs(blob, names.join(''));
     }
   }
@@ -1116,7 +1184,7 @@ export class DataService {
         private: data.data.private,
         isWritable: false
       };
-      this.repos.push(item);
+      //this.repos.push(item);
     }).catch(err => {
       this.messagesService.Error(err.message);
     }).finally(() => {

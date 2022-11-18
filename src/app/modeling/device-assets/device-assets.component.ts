@@ -68,9 +68,10 @@ export class DeviceAssetsComponent implements OnInit {
   }
 
   public AddGroup(parent: AssetGroup, event) {
-    let group;
+    let group: AssetGroup;
     if (parent.IsProjectAsset) group = this.dataService.Project.CreateAssetGroup(parent);
     else group = this.dataService.Config.CreateAssetGroup(parent);
+    parent.ImpactCats?.forEach(x => group.ImpactCats.push(x));
     this.SelectObject(event, group);
   }
 
@@ -126,6 +127,7 @@ export class DeviceAssetsComponent implements OnInit {
 
   public AddMyData(group: AssetGroup, event) {
     let data = this.dataService.Project.CreateMyData(group);
+    group.ImpactCats?.forEach(x => data.ImpactCats.push(x));
     this.selectedMyData = data;
     this.SelectObject(event, data);
   }

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
 import { ThemeService } from '../util/theme.service';
 
 import { DataService } from '../util/data.service';
@@ -66,6 +66,13 @@ export class ModelingComponent extends SideNavBase implements OnInit {
       if (val) this.hasBottomTabGroup = [NodeTypes.Context, NodeTypes.UseCase, NodeTypes.Hardware, NodeTypes.Software, NodeTypes.Process, NodeTypes.Dataflow].includes(val.dataType);
       else this.hasBottomTabGroup = true;
       if (val) this.newTab(val);
+
+      // save history
+      let history: any[] = [];
+      let histStr = this.locStorage.Get(LocStorageKeys.WEBSITE_HISTORY);
+      if (histStr != null) history = JSON.parse(histStr);
+      history.push([new Date().getTime(), '/modeling' + (this.selectedNode?.dataType ? '/' + this.selectedNode?.dataType : '')]);
+      this.locStorage.Set(LocStorageKeys.WEBSITE_HISTORY, JSON.stringify(history));
     }, 10);
   }
 
@@ -279,6 +286,7 @@ export class ModelingComponent extends SideNavBase implements OnInit {
         icon: 'fact_check',
         iconAlignLeft: true,
         canSelect: true,
+        isInactive: () => true,
         data: list,
         dataType: NodeTypes.Checklist,
         canRename: true,
@@ -307,7 +315,7 @@ export class ModelingComponent extends SideNavBase implements OnInit {
         data: dev,
         canRename: true,
         onRename: (val: string) => { dev.Name = val; },
-        canAdd: true,
+        canAdd: false,
         addOptions: [],
         onAdd: (val: string) => {
           if (val == 'Assets') {
@@ -380,9 +388,10 @@ export class ModelingComponent extends SideNavBase implements OnInit {
           icon: AssetGroup.Icon,
           iconAlignLeft: true,
           canSelect: true,
+          isInactive: () => true,
           data: dev.AssetGroup,
           dataType: NodeTypes.Assets,
-          canDelete: true,
+          canDelete: false,
           onDelete: () => {
             let ag = dev.AssetGroup;
             this.dialog.OpenDeleteObjectDialog(ag).subscribe(res => {
@@ -425,7 +434,7 @@ export class ModelingComponent extends SideNavBase implements OnInit {
           data: dev.SoftwareStack,
           dataType: NodeTypes.Software,
           canRename: false,
-          canDelete: true,
+          canDelete: false,
           onDelete: () => {
             let stack = dev.SoftwareStack;
             this.dialog.OpenDeleteObjectDialog(stack).subscribe(res => {
@@ -452,6 +461,7 @@ export class ModelingComponent extends SideNavBase implements OnInit {
           icon: 'policy',
           iconAlignLeft: true,
           canSelect: true,
+          isInactive: () => true,
           data: dev.ProcessStack,
           dataType: NodeTypes.Process,
           canRename: false,
@@ -490,7 +500,7 @@ export class ModelingComponent extends SideNavBase implements OnInit {
         data: app,
         canRename: true,
         onRename: (val: string) => { app.Name = val; },
-        canAdd: true,
+        canAdd: false,
         addOptions: [],
         onAdd: (val: string) => {
           if (val == 'Assets') {
@@ -563,9 +573,10 @@ export class ModelingComponent extends SideNavBase implements OnInit {
           icon: AssetGroup.Icon,
           iconAlignLeft: true,
           canSelect: true,
+          isInactive: () => true,
           data: app.AssetGroup,
           dataType: NodeTypes.Assets,
-          canDelete: true,
+          canDelete: false,
           onDelete: () => {
             let ag = app.AssetGroup;
             this.dialog.OpenDeleteObjectDialog(ag).subscribe(res => {
@@ -622,6 +633,7 @@ export class ModelingComponent extends SideNavBase implements OnInit {
           icon: 'policy',
           iconAlignLeft: true,
           canSelect: true,
+          isInactive: () => true,
           data: app.ProcessStack,
           dataType: NodeTypes.Process,
           canRename: false,
@@ -715,10 +727,12 @@ export class ModelingComponent extends SideNavBase implements OnInit {
       icon: 'create',
       iconAlignLeft: false,
       canSelect: false,
+      isInactive: () => true,
       children: [
         {
           name: () => 'Characterization & Scope',
           canSelect: true,
+          isInactive: () => true,
           iconAlignLeft: true,
           icon: 'edit_note', 
           data: pf.GetCharScope(),
@@ -727,6 +741,7 @@ export class ModelingComponent extends SideNavBase implements OnInit {
         {
           name: () => 'Business Objectives & Impact',
           canSelect: true,
+          isInactive: () => true,
           iconAlignLeft: true,
           icon: 'outlined_flag',
           data: pf.GetObjImpact(),
@@ -735,6 +750,7 @@ export class ModelingComponent extends SideNavBase implements OnInit {
         {
           name: () => 'System Interaction',
           canSelect: true,
+          isInactive: () => true,
           iconAlignLeft: true,
           icon: 'signpost',
           data: pf.GetSysContext()?.ContextDiagram,
@@ -743,6 +759,7 @@ export class ModelingComponent extends SideNavBase implements OnInit {
         {
           name: () => 'Use Cases',
           canSelect: true,
+          isInactive: () => true,
           iconAlignLeft: true,
           icon: 'explore',
           data: pf.GetSysContext()?.UseCaseDiagram,
@@ -751,11 +768,12 @@ export class ModelingComponent extends SideNavBase implements OnInit {
         {
           name: () => 'Assets',
           canSelect: true,
+          isInactive: () => true,
           iconAlignLeft: true,
           icon: AssetGroup.Icon,
           data: pf.GetProjectAssetGroup(),
           dataType: NodeTypes.Assets,
-          canDelete: true,
+          canDelete: false,
           onDelete: () => {
             let ag = pf.GetProjectAssetGroup();
             this.dialog.OpenDeleteObjectDialog(ag).subscribe(res => {
@@ -773,6 +791,7 @@ export class ModelingComponent extends SideNavBase implements OnInit {
         {
           name: () => 'Threat Sources',
           canSelect: true,
+          isInactive: () => true,
           iconAlignLeft: true,
           icon: 'portrait',
           data: pf.GetThreatSources(),
@@ -781,6 +800,7 @@ export class ModelingComponent extends SideNavBase implements OnInit {
         {
           name: () => 'Threat Identification',
           canSelect: true,
+          isInactive: () => true,
           iconAlignLeft: true,
           icon: 'flash_on',
           dataType: NodeTypes.SystemThreats
@@ -790,7 +810,7 @@ export class ModelingComponent extends SideNavBase implements OnInit {
     let assetIndex = analysis.children.findIndex(x => x.dataType == NodeTypes.Assets);
     if (analysis.children[assetIndex].data == null) {
       analysis.children.splice(assetIndex, 1);
-      analysis.canAdd = true;
+      analysis.canAdd = false;
       analysis.addOptions = ['Assets'];
       analysis.onAdd = () => {
         let ag = pf.InitializeNewAssetGroup(pf.Config);
@@ -853,6 +873,7 @@ export class ModelingComponent extends SideNavBase implements OnInit {
     this.nodes.push(apps);
     this.nodes.push(useCases);
     NavTreeBase.TransferExpandedState(prevNodes, this.nodes);
+    analysis.isExpanded = false;
     if (this.navTree) this.navTree.SetNavTreeData(this.nodes);
   }
 }
