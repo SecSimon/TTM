@@ -2,7 +2,7 @@
 
 ## Threat Modeling for Internet of Things Devices
 
-A new threat modeling tool available as GitHub page and deskop application (soon).
+A new threat modeling tool available as GitHub page and deskop application.
 
 ## How to use TTModeler
 
