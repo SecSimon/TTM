@@ -962,13 +962,13 @@ export abstract class CanvasBase {
       this.blockCheckingIntersection = false; 
       if (checkIntersections) this.checkIntersection();
 
-      if (opt.transform?.target && opt.transform.target[CProps.ID] && !this.blockSelectionChangedAfterSend) {
+      if (opt.transform?.target && opt.transform.target[CProps.ID] && !this.blockSelectionChangedAfterSend && !this.blockCheckingIntersection) {
         const ele = this.getViewBaseElement(opt.transform.target[CProps.ID]);
         if (ele == this.SelectedElement) {
           if (this.instanceOfContainer(this.SelectedElement)) {
             this.SendToBack();
           }
-          this.SelectedElement = null;
+          this.SelectionChanged.emit(null);
         }
       }
     }

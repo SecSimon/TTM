@@ -1,5 +1,6 @@
 {
   "asar": true,
+  "productName": "TTModeler",
   "directories": {
     "output": "release/"
   },
@@ -33,7 +34,8 @@
     "icon": "dist/assets/icons",
     "category": "Development",
     "target": [
-      "AppImage"
+      "AppImage",
+      "deb"
     ]
   }
 }

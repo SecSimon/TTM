@@ -363,9 +363,10 @@ export class DataService {
       if (this.CanSaveProject) {
         let data = { 'msg': msg };
         if (!this.SelectedGHProject || saveAs) {
-          data['newProject'] = { name: '', configFile: null, path: '', repoId: null, isEncrypted: false, sha: null } as IGHFile;
+          data['newProject'] = { name: '', configFile: null, path: '', repoId: null, isEncrypted: this.SelectedGHProject?.isEncrypted ? true : false, sha: null } as IGHFile;
         }
-        else if (this.SelectedGHProject?.isEncrypted) data['removePW'] = false;
+        if (this.SelectedGHProject?.isEncrypted) { data['removePW'] = false; }
+
         const dialogRef = this.dialog.open(SaveDialogComponent, { hasBackdrop: false, data: data });
         dialogRef.afterClosed().subscribe(res => {
           if (res) {

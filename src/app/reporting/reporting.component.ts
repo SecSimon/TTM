@@ -220,7 +220,7 @@ export class ReportingComponent implements OnInit {
       this.createSubHeading(this.ttmService.Stages[1].steps[2].name);
       let stacks = [...this.Project.GetDevices(), ...this.Project.GetMobileApps()];
       for (let i = 0; i < stacks.length; i++) {
-        if (stacks[i].SoftwareStack.GetChildrenFlat().length > 0) {
+        if (stacks[i].SoftwareStack?.GetChildrenFlat().length > 0) {
           this.createSubSubHeading(stacks[i].Name);
           const stackComp = this.viewContainerRef.createComponent(StackComponent);
           stackComp.instance.stack = stacks[i].SoftwareStack;
@@ -252,7 +252,7 @@ export class ReportingComponent implements OnInit {
 
       this.createSubHeading(this.ttmService.Stages[1].steps[4].name);
       for (let i = 0; i < stacks.length; i++) {
-        if (stacks[i].SoftwareStack.GetChildrenFlat().length > 0) {
+        if (stacks[i].SoftwareStack?.GetChildrenFlat().length > 0) {
           this.createSubSubHeading(stacks[i].Name);
           const stackComp = this.viewContainerRef.createComponent(StackComponent);
           stackComp.instance.stack = stacks[i].ProcessStack;
@@ -278,10 +278,11 @@ export class ReportingComponent implements OnInit {
 
       // risk
       this.createSubHeading(this.ttmService.Stages[2].steps[0].name);
-      const views: DatabaseBase[] = [this.Project.GetSysContext().ContextDiagram, this.Project.GetSysContext().UseCaseDiagram];
+      let views: DatabaseBase[] = [this.Project.GetSysContext().ContextDiagram, this.Project.GetSysContext().UseCaseDiagram];
       this.Project.GetDevices().forEach(x => views.push(...[x.HardwareDiagram, x.SoftwareStack, x.ProcessStack]));
       this.Project.GetMobileApps().forEach(x => views.push(...[x.SoftwareStack, x.ProcessStack]));
       this.Project.GetDFDiagrams().forEach(x => views.push(x));
+      views = views.filter(x => !!x);
 
       let threats: [string, AttackScenario[]][] = [];
       views.forEach(view => {
