@@ -122,7 +122,17 @@
         <div class="column">
           <div class="second-column-content">
             <h2>{{'pages.home.process' | translate}}</h2>
-
+            <ng-container *ngIf="!HasCookieConsent">
+              <div style="margin-bottom: 10px;">
+                {{'pages.home.video' | translate}}: <a href="https://youtu.be/VF5Msusf7ZU" target="_blank">YouTube</a>
+                <br/>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="HasCookieConsent">
+              <div class="videoContainer">
+                <iframe class="video" [src]="VideoURL" title="Thing Threat Modeling" frameborder="0" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+              </div>
+            </ng-container>
             <mat-accordion class="expansion-panel-headers-align">
               <mat-expansion-panel [expanded]="processStep === 0" (opened)="SetProcessStep(0)" hideToggle>
                 <mat-expansion-panel-header>
@@ -140,7 +150,7 @@
                   <button mat-button color="primary" (click)="NextProcessStep()">{{'tour.next' | translate}}</button>
                 </mat-action-row>
               </mat-expansion-panel>
-              <mat-expansion-panel *ngFor="let stage of Stages; index as indexStage; last as isLast;" [expanded]="processStep === indexStage+1" (opened)="SetProcessStep(indexStage+1)" hideToggle>
+              <mat-expansion-panel *ngFor="let stage of Stages; index as indexStage; last as isLast;" [style.marginBottom]="isLast ? '20px' : '0px'" [expanded]="processStep === indexStage+1" (opened)="SetProcessStep(indexStage+1)" hideToggle>
                 <mat-expansion-panel-header>
                   <mat-panel-title>
                     {{stage.name}}

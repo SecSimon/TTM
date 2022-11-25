@@ -4,6 +4,7 @@ export enum LocStorageKeys {
   AUTH_KEEP_SIGNED_IN         = "keep_signed_in",
   AUTH_ACCESS_TOKEN           = "auth_access_token",
   AUTH_LAST_CODE              = "auth_last_code",
+  COOKIE_CONSENT              = "cookie_consent",
   CURRENT_VERSION             = "current_verison",
   DARK_MODE                   = "dark_mode",
   DIALOG_WARNING_CONSENT      = "dialog_warning_consent",

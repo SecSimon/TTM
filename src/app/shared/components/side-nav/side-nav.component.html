@@ -81,6 +81,10 @@
           <mat-icon>grid_view</mat-icon>
           <span>{{'side-nav.resetLayout' | translate}}</span>
         </button>
+        <button mat-menu-item (click)="OpenCookieConsent()">
+          <mat-icon>cookie</mat-icon>
+          <span>{{'side-nav.cookieConsent' | translate}}</span>
+        </button>
         <button mat-menu-item (click)="OpenGitHubUrl()" *ngIf="dataService.IsLoggedIn">
           <fa-icon style="margin-left: 7px; margin-right: 23px;" [icon]="faCodeBranch"></fa-icon>
           <span>{{dataService.UserAccount}} (GitHub)</span>

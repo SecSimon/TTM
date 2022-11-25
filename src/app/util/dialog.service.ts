@@ -21,6 +21,7 @@ import { ControlComponent } from '../configuration/control/control.component';
 import { SuggestedThreatsDialogComponent } from '../modeling/diagram/suggested-threats-dialog/suggested-threats-dialog.component';
 import { DFDElement } from '../model/dfd-model';
 import { NotesComponent } from '../shared/components/notes/notes.component';
+import { LocalStorageService, LocStorageKeys } from './local-storage.service';
 
 export class MyBoolean {
   public Value: boolean;
@@ -39,7 +40,7 @@ export class NoteConfig {
 })
 export class DialogService {
 
-  constructor(private dialog: MatDialog, private translate: TranslateService, public dataService: DataService) { }
+  constructor(private dialog: MatDialog, private translate: TranslateService, public dataService: DataService, private locStorage: LocalStorageService) { }
 
   public OpenTwoOptionsDialog(data: ITwoOptionDialogData, hasBackdrop = false, width = null): Observable<any> {
     const dialogRef = this.dialog.open(TwoOptionsDialogComponent, { hasBackdrop: hasBackdrop, data: data, width: width });
@@ -337,5 +338,22 @@ export class DialogService {
       component: ModelInfoComponent
     };
     return this.OpenTwoOptionsDialog(data);
+  }
+
+  public OpenCookieConsentDialog() {
+    const data: ITwoOptionDialogData = {
+      title: this.translate.instant('dialog.cookie.title'),
+      textContent: this.translate.instant('dialog.cookie.text'),
+      initalTrue: false,
+      hasResultFalse: true,
+      resultTrueText: this.translate.instant('dialog.cookie.consent'),
+      resultFalseText: this.translate.instant('dialog.cookie.reject'),
+      resultTrueEnabled: () => true
+    };
+    const dialogRef = this.OpenTwoOptionsDialog(data, false, '600px');
+    dialogRef.subscribe(res => {
+      this.locStorage.Set(LocStorageKeys.COOKIE_CONSENT, JSON.stringify(res));
+    });
+    return dialogRef;
   }
 }

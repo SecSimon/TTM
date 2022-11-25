@@ -17,13 +17,6 @@
       </button>
     </div>
   </mat-step>
-  <mat-step label="{{'general.View' | translate}}" state="view">
-    <div>
-      {{'pages.home.dia.welcome.view' | translate}} 
-      <button mat-button matStepperNext>{{'general.Manufacturer' | translate}}</button> {{'general.or' | translate}}
-      <button mat-button matStepperNext>{{'general.Operator' | translate}}</button>?
-    </div>
-  </mat-step>
   <mat-step label="Done" state="fin">
     <div>
       <button mat-button matStepperNext [mat-dialog-close]="true">Done!</button>
@@ -36,9 +29,6 @@
   </ng-template>
   <ng-template matStepperIcon="theme">
     <mat-icon>dark_mode</mat-icon>
-  </ng-template>
-  <ng-template matStepperIcon="view">
-    <mat-icon>person</mat-icon>
   </ng-template>
   <ng-template matStepperIcon="fin">
     <mat-icon>done</mat-icon>

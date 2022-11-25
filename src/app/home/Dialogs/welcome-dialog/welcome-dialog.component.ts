@@ -27,7 +27,7 @@ export class WelcomeDialogComponent implements OnInit {
   }
 
   public OnStepChanged(event: StepperSelectionEvent) {
-    if (event.selectedIndex == 3) {
+    if (event.selectedIndex == 2) {
       this.tourService.start();
     }
   }

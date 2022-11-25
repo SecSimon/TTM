@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ThemeService } from '../util/theme.service';
 import { DataService, UserModes } from '../util/data.service';
-import { MatDialog } from '@angular/material/dialog';
 import { LocalStorageService, LocStorageKeys } from '../util/local-storage.service';
 
 import { WelcomeDialogComponent } from './Dialogs/welcome-dialog/welcome-dialog.component';
@@ -10,6 +10,7 @@ import { TourService } from 'ngx-ui-tour-md-menu';
 import { TranslateService } from '@ngx-translate/core';
 import { ITTMStage, TTMService } from '../util/ttm.service';
 import { ElectronService } from '../core/services';
+import { DialogService } from '../util/dialog.service';
 
 @Component({
   selector: 'app-home',
@@ -21,8 +22,18 @@ export class HomeComponent implements OnInit {
 
   public get Stages(): ITTMStage[] { return this.ttmService.Stages; }
 
-  constructor(private router: Router, private route: ActivatedRoute, private theme: ThemeService, public dataService: DataService, private dialog: MatDialog,
-    private locStorage: LocalStorageService, public tourService: TourService, private translate: TranslateService, private electronService: ElectronService, private ttmService: TTMService) { }
+  public VideoURL: SafeResourceUrl = null;
+  public get HasCookieConsent(): boolean {
+    let consent = this.locStorage.Get(LocStorageKeys.COOKIE_CONSENT);
+    if (consent != null) return JSON.parse(consent);
+    return false;
+  }
+
+  constructor(private router: Router, private route: ActivatedRoute, private theme: ThemeService, public dataService: DataService, private dialogService: DialogService,
+    private locStorage: LocalStorageService, public tourService: TourService, private translate: TranslateService, private electronService: ElectronService, 
+    private ttmService: TTMService, private sanitizer: DomSanitizer) {
+      this.VideoURL = this.sanitizer.bypassSecurityTrustResourceUrl('https://www.youtube-nocookie.com/embed/VF5Msusf7ZU');
+    }
 
   ngOnInit(): void {
     let createStep = (anchor: string) => {
@@ -44,7 +55,8 @@ export class HomeComponent implements OnInit {
       if (!lang || lang.length == 0) {
         // this.dialog.open(WelcomeDialogComponent);
         // skip welcome, set language
-        this.locStorage.Set(LocStorageKeys.LANGUAGE, 'en');
+        if ((navigator.language || navigator.languages).includes('de')) this.locStorage.Set(LocStorageKeys.LANGUAGE, 'de');
+        else this.locStorage.Set(LocStorageKeys.LANGUAGE, 'en');
       }
 
       this.tourService.initialize([
@@ -60,6 +72,9 @@ export class HomeComponent implements OnInit {
           this.locStorage.Set(LocStorageKeys.WELCOME_TOUR_STARTED, JSON.stringify(true));
         }
       }
+
+      let consent = this.locStorage.Get(LocStorageKeys.COOKIE_CONSENT);
+      if (consent == null) this.dialogService.OpenCookieConsentDialog();
     });
 
     let dest = 'modeling';

@@ -87,6 +87,10 @@ export class SideNavComponent implements AfterViewInit {
     }
   }
 
+  public OpenCookieConsent() {
+    this.dialog.OpenCookieConsentDialog();
+  }
+
   public OpenGitHubUrl() {
     window.open(this.dataService.UserURL, '_blank');
   }
