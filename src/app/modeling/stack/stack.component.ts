@@ -105,9 +105,8 @@ export class StackComponent implements OnInit {
   public AddCountermeasure(item: MyComponent) {
     if (!item) item = this.selectedComponent;
     if (item) {
-      let map = this.dataService.Project.CreateCountermeasure(this.stack.ID);
+      let map = this.dataService.Project.CreateCountermeasure(this.stack.ID, false);
       map.SetMapping(null, [item], []);
-      map.IsGenerated = false;
       this.dialogService.OpenCountermeasureDialog(map, true, this.stack.GetChildrenFlat()).subscribe(result => {
         if (!result) {
           this.dataService.Project.DeleteCountermeasure(map);

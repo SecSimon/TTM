@@ -1,8 +1,9 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, Optional } from '@angular/core';
 import { ICVSSEntry } from '../../../model/threat-model';
 
 import Cvss from 'cvss-calculator';
 import { DataService } from '../../../util/data.service';
+import { MyCVSSEntry } from '../../../util/dialog.service';
 
 @Component({
   selector: 'app-cvss-entry',
@@ -17,7 +18,9 @@ export class CvssEntryComponent implements OnInit {
   }
   public set Score(val: number) { this.entry.Score = val; }
 
-  constructor(public dataService: DataService) { }
+  constructor(@Optional() public data: MyCVSSEntry, public dataService: DataService) {
+    if (data) this.entry = data.Value;
+  }
 
   ngOnInit(): void {
     if (!this.Score) this.CalcScore();
@@ -40,7 +43,7 @@ export class CvssEntryComponent implements OnInit {
     if (this.entry) {
       let vec = 'CVSS:3.1';
       Object.keys(this.entry).forEach(k => {
-        if (this.entry[k]) vec += '/' + k + ':' + this.entry[k];
+        if (this.entry[k] && typeof this.entry[k] === 'string') vec += '/' + k + ':' + this.entry[k];
       });
       return vec;
     }

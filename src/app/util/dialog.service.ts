@@ -7,7 +7,7 @@ import { ThreatOriginComponent } from '../configuration/threat-origin/threat-ori
 import { ThreatRuleComponent } from '../configuration/threat-rule/threat-rule.component';
 import { MyData } from '../model/assets';
 import { DatabaseBase, DataReferencesUtil, INote, ViewElementBase } from '../model/database';
-import { AttackScenario, ThreatOrigin, ThreatRule } from '../model/threat-model';
+import { AttackScenario, ICVSSEntry, IOwaspRREntry, ThreatOrigin, ThreatRule } from '../model/threat-model';
 import { CountermeasureComponent } from '../modeling/countermeasure/countermeasure.component';
 import { MitigationProcessComponent } from '../modeling/mitigation-process/mitigation-process.component';
 import { AttackScenarioComponent } from '../modeling/attack-scenario/attack-scenario.component';
@@ -22,6 +22,8 @@ import { SuggestedThreatsDialogComponent } from '../modeling/diagram/suggested-t
 import { DFDElement } from '../model/dfd-model';
 import { NotesComponent } from '../shared/components/notes/notes.component';
 import { LocalStorageService, LocStorageKeys } from './local-storage.service';
+import { CvssEntryComponent } from '../shared/components/cvss-entry/cvss-entry.component';
+import { OwaspRREntryComponent } from '../shared/components/owasp-rr-entry/owasp-rr-entry.component';
 
 export class MyBoolean {
   public Value: boolean;
@@ -33,6 +35,14 @@ export class NoteConfig {
   public HasCheckbox: boolean;
   public CanToggleTimestamp: boolean;
   public CanToggleCheckbox: boolean;
+}
+
+export class MyCVSSEntry {
+  public Value: ICVSSEntry;
+}
+
+export class MyOwaspRREntry {
+  public Value: IOwaspRREntry;
 }
 
 @Injectable({
@@ -179,6 +189,42 @@ export class DialogService {
       component: ThreatRuleComponent,
       componentInputData: [
         { Key: ThreatRule, Value: rule }
+      ]
+    };
+    return this.OpenTwoOptionsDialog(data, true);
+  }
+
+  public OpenCVSSEntryDiaglog(entry: ICVSSEntry) {
+    const val = new MyCVSSEntry();
+    val.Value = entry;
+    let data: ITwoOptionDialogData = {
+      title: this.translate.instant('shared.cvss.name.l'),
+      resultTrueText: this.translate.instant('general.Close'),
+      hasResultFalse: false,
+      resultFalseText: '',
+      resultTrueEnabled: () => true,
+      initalTrue: true,
+      component: CvssEntryComponent,
+      componentInputData: [
+        { Key: MyCVSSEntry, Value: val }
+      ]
+    };
+    return this.OpenTwoOptionsDialog(data, true);
+  }
+
+  public OpenOwaspRREntryDiaglog(entry: IOwaspRREntry) {
+    const val = new MyOwaspRREntry();
+    val.Value = entry;
+    let data: ITwoOptionDialogData = {
+      title: this.translate.instant('shared.owasprr.name.l'),
+      resultTrueText: this.translate.instant('general.Close'),
+      hasResultFalse: false,
+      resultFalseText: '',
+      resultTrueEnabled: () => true,
+      initalTrue: true,
+      component: OwaspRREntryComponent,
+      componentInputData: [
+        { Key: MyOwaspRREntry, Value: val }
       ]
     };
     return this.OpenTwoOptionsDialog(data, true);

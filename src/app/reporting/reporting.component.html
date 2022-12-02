@@ -7,35 +7,75 @@
     <mat-drawer-content [class.splitter-light2]="!theme.IsDarkMode" [class.splitter-dark2]="theme.IsDarkMode">
       <div style="margin: 10px;">
         <h2>{{'side-nav.reporting' | translate}}</h2>
-        <button mat-raised-button [disabled]="IsReportGenerating" (click)="GenerateReport()">{{'pages.reporting.GenerateReport' | translate}}</button>
-        <button mat-icon-button [disabled]="IsReportGenerating" [matMenuTriggerFor]="settings">
-          <mat-icon>settings</mat-icon>
-        </button>
-        <mat-menu #settings="matMenu">
-          <button mat-menu-item>
-            <mat-slide-toggle color="primary" [(ngModel)]="ShowCharts" (click)="$event.stopPropagation()">
-              {{'pages.reporting.showCharts' | translate}}
-            </mat-slide-toggle>
-          </button>
-          <button mat-menu-item>
-            <mat-slide-toggle color="primary" [(ngModel)]="DiagramShowGrid" (click)="$event.stopPropagation()">
-              {{'pages.reporting.showGrid' | translate}}
-            </mat-slide-toggle>
-          </button>
-        </mat-menu>
-        <mat-progress-spinner *ngIf="IsReportGenerating" style="display: inline; margin-left: 5px;" [diameter]="25" mode="indeterminate"></mat-progress-spinner>
-        <button mat-raised-button [disabled]="!IsReportGenerated" color="primary" style="margin-left: 50px;" (click)="SaveHTML()">{{'pages.reporting.DownloadHTML' | translate}}</button>
-        <button mat-raised-button [disabled]="!IsReportGenerated" color="primary" style="margin-left: 10px;" (click)="SaveDOCX()">{{'pages.reporting.DownloadDOCX' | translate}}</button>
+        <mat-tab-group style="height: 100%;" preserveContent>
+          <mat-tab>
+            <ng-template mat-tab-label>
+              <mat-icon class="tab-icon">description</mat-icon>
+              {{ 'pages.reporting.Report' | translate }}
+            </ng-template>
+            <ng-template matTabContent>
+              <button mat-raised-button [disabled]="IsReportGenerating" (click)="GenerateReport()">{{'pages.reporting.GenerateReport' | translate}}</button>
+              <button mat-icon-button [disabled]="IsReportGenerating" [matMenuTriggerFor]="settings">
+                <mat-icon>settings</mat-icon>
+              </button>
+              <mat-menu #settings="matMenu">
+                <button mat-menu-item>
+                  <mat-slide-toggle color="primary" [(ngModel)]="ShowCharts" (click)="$event.stopPropagation()">
+                    {{'pages.reporting.showCharts' | translate}}
+                  </mat-slide-toggle>
+                </button>
+                <button mat-menu-item>
+                  <mat-slide-toggle color="primary" [(ngModel)]="DiagramShowGrid" (click)="$event.stopPropagation()">
+                    {{'pages.reporting.showGrid' | translate}}
+                  </mat-slide-toggle>
+                </button>
+              </mat-menu>
+              <mat-progress-spinner *ngIf="IsReportGenerating" style="display: inline; margin-left: 5px;" [diameter]="25" mode="indeterminate"></mat-progress-spinner>
+              <button mat-raised-button [disabled]="!IsReportGenerated" color="primary" style="margin-left: 50px;" (click)="SaveHTML()">{{'pages.reporting.DownloadHTML' | translate}}</button>
+              <button mat-raised-button [disabled]="!IsReportGenerated" color="primary" style="margin-left: 10px;" (click)="SaveDOCX()">{{'pages.reporting.DownloadDOCX' | translate}}</button>
 
-        <div style="margin-top: 30px;">
-          <div #reportcontent style="background-color: white; color: black; max-width: 210mm; padding: 25mm;">
-            <h1>TTModeler Report <img src='./assets/icons/favicon.192x192.png' style="width: 50px; margin-left: 20px; vertical-align: middle;" alt='logo'></h1>
-            <p>{{'report.for' | translate}}</p>
-            <h2>{{Project.GetProjectName()}}</h2>
-            <p>{{GetDate() | localDate}}, {{'properties.Version' | translate}} {{Project.UserVersion}}</p>
-            <ng-container *ngIf="!IsReportGenerated">{{'pages.reporting.toBeGenerated' | translate}}</ng-container>
-          </div>
-        </div>
+              <div style="margin-top: 30px;">
+                <div #reportcontent style="background-color: white; color: black; max-width: 210mm; padding: 25mm;">
+                  <h1>TTModeler Report <img src='./assets/icons/favicon.192x192.png' style="width: 50px; margin-left: 20px; vertical-align: middle;" alt='logo'></h1>
+                  <p>{{'report.for' | translate}}</p>
+                  <h2>{{Project.GetProjectName()}}</h2>
+                  <p>{{GetDate() | localDate}}, {{'properties.Version' | translate}} {{Project.UserVersion}}</p>
+                  <ng-container *ngIf="!IsReportGenerated">{{'pages.reporting.toBeGenerated' | translate}}</ng-container>
+                </div>
+              </div>
+            </ng-template>
+          </mat-tab>
+          <mat-tab>
+            <ng-template mat-tab-label>
+              <mat-icon class="tab-icon">table_chart</mat-icon>
+              {{ 'pages.reporting.CSVExport' | translate }}
+            </ng-template>
+            <ng-template matTabContent>
+              <div class="row" style="margin-bottom: 10px;">
+                <div class="column1">
+                  <mat-list class="prop-list reorder-list" [class.prop-list-light]="!theme.IsDarkMode" [class.prop-list-dark]="theme.IsDarkMode">
+                    <div mat-subheader>{{ 'pages.reporting.Templates' | translate }} 
+                      <button mat-icon-button style="margin-left: 15px;" (click)="AddTemplate()" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000"><mat-icon>add</mat-icon></button>
+                    </div>
+                    <mat-list-item *ngFor="let template of exportTemplates" (click)="selectedExportTemplate = template"
+                      [class.highlight-light]="selectedExportTemplate === template && !theme.IsDarkMode" [class.highlight-dark]="selectedExportTemplate === template && theme.IsDarkMode"
+                      matTooltip="{{template.Name}}" matTooltipShowDelay="1000">
+                      <mat-icon mat-list-icon>chevron_right</mat-icon>
+                      <div mat-line style="pointer-events: initial;">{{template.Name}}</div>
+                      <!-- <button mat-icon-button style="margin-left: auto; margin-right: 0px;" (click)="EditAttackScenario(scenario)" matTooltip="{{'general.Edit' | translate}}" matTooltipShowDelay="1000"><mat-icon>edit</mat-icon></button> -->
+                      <button mat-icon-button style="margin-left: auto;" (click)="DeleteTemplate(template)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000"><mat-icon>delete</mat-icon></button>
+                    </mat-list-item>
+                  </mat-list>
+                </div>
+                <div class="column2">
+                  <div style="margin: 10px;">
+                    <app-export-template *ngIf="selectedExportTemplate" [template]="selectedExportTemplate"></app-export-template>
+                  </div>
+                </div>
+              </div>
+            </ng-template>
+          </mat-tab>
+        </mat-tab-group>
       </div>
     </mat-drawer-content>
   </mat-drawer-container>

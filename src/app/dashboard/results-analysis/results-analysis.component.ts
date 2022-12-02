@@ -200,8 +200,8 @@ export class ResultsAnalysisComponent implements AfterViewInit {
     let getSeries = (mappings: AttackScenario[]): ISerie[] => {
       let res: ISerie[] = [];
       allAttackScnearios = allAttackScnearios.filter(x => !mappings.includes(x));
-      res.push({ name: translate.instant('properties.threatstate.NotSet'), value: mappings.filter(x => !ThreatSeverityUtil.GetTypes().includes(x.Severity)).length });
-      ThreatSeverityUtil.GetTypes().forEach(sev => {
+      res.push({ name: translate.instant('properties.threatstate.NotSet'), value: mappings.filter(x => !ThreatSeverityUtil.GetTypesDashboard().includes(x.Severity)).length });
+      ThreatSeverityUtil.GetTypesDashboard().forEach(sev => {
         res.push({ name: translate.instant(ThreatSeverityUtil.ToString(sev)), value: mappings.filter(x => x.Severity == sev).length });
       });
       return res;
@@ -236,6 +236,8 @@ export class ResultsAnalysisComponent implements AfterViewInit {
       };
       diagramValues.push(data);
     }
+
+    diagramValues = diagramValues.filter(x => !x.series.every(y => y.value == 0));
 
     let dia: IDiagramData = {
       results: diagramValues,
@@ -289,6 +291,8 @@ export class ResultsAnalysisComponent implements AfterViewInit {
       diagramValues.push(data);
     }
 
+    diagramValues = diagramValues.filter(x => !x.series.every(y => y.value == 0));
+
     let dia: IDiagramData = {
       results: diagramValues,
       view: [wid, hei],
@@ -305,8 +309,8 @@ export class ResultsAnalysisComponent implements AfterViewInit {
     let getSeries = (mappings: AttackScenario[]): ISerie[] => {
       let res: ISerie[] = [];
       allAttackScenarios = allAttackScenarios.filter(x => !mappings.includes(x));
-      res.push({ name: translate.instant('properties.threatstate.NotSet'), value: mappings.filter(x => !ThreatSeverityUtil.GetTypes().includes(x.Severity)).length });
-      ThreatSeverityUtil.GetTypes().forEach(sev => {
+      res.push({ name: translate.instant('properties.threatstate.NotSet'), value: mappings.filter(x => !ThreatSeverityUtil.GetTypesDashboard().includes(x.Severity)).length });
+      ThreatSeverityUtil.GetTypesDashboard().forEach(sev => {
         res.push({ name: translate.instant(ThreatSeverityUtil.ToString(sev)), value: mappings.filter(x => x.Severity == sev).length });
       });
       return res;
@@ -346,8 +350,8 @@ export class ResultsAnalysisComponent implements AfterViewInit {
     let getSeries = (mappings: AttackScenario[]): ISerie[] => {
       let res: ISerie[] = [];
       allAttackScenarios = allAttackScenarios.filter(x => !mappings.includes(x));
-      res.push({ name: translate.instant('properties.threatstate.NotSet'), value: mappings.filter(x => !ThreatSeverityUtil.GetTypes().includes(x.Severity)).length });
-      ThreatSeverityUtil.GetTypes().forEach(sev => {
+      res.push({ name: translate.instant('properties.threatstate.NotSet'), value: mappings.filter(x => !ThreatSeverityUtil.GetTypesDashboard().includes(x.Severity)).length });
+      ThreatSeverityUtil.GetTypesDashboard().forEach(sev => {
         res.push({ name: translate.instant(ThreatSeverityUtil.ToString(sev)), value: mappings.filter(x => x.Severity == sev).length });
       });
       return res;
@@ -474,7 +478,7 @@ export class ResultsAnalysisComponent implements AfterViewInit {
   }
 
   public GetSeverityTypes() {
-    return ThreatSeverityUtil.GetTypes();
+    return ThreatSeverityUtil.GetTypesDashboard();
   }
 
   public GetSeverityTypeName(sev: ThreatSeverities) {

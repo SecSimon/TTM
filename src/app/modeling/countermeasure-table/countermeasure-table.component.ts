@@ -174,6 +174,10 @@ export class CountermeasureTableComponent implements OnInit {
     return mit.MitigationState == MitigationStates.NotApplicable;
   }
 
+  public IsCountermeasureRejected(mit: Countermeasure) {
+    return mit.MitigationState == MitigationStates.Rejected;
+  }
+
   public SelectCountermeasure(mit: Countermeasure) {
     this.selectedCountermeasures = [mit];
 

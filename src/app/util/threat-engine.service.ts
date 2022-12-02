@@ -423,12 +423,12 @@ export class ThreatEngineService {
     if (!property.ID || !ele) return false;
     let val = ele.GetProperty(property.ID);
     switch (property.ComparisonType) {
-      case PropertyComparisonTypes.Equals: return val == property.Value;
       case PropertyComparisonTypes.EqualsNot: return val != property.Value;
       case PropertyComparisonTypes.GreaterThan: return val >= property.Value;
       case PropertyComparisonTypes.LessThan: return val <= property.Value;
       case PropertyComparisonTypes.GreaterThanOrEquals: return val >= property.Value;
       case PropertyComparisonTypes.LessThanOrEquals: return val <= property.Value;
+      default: return val == property.Value;
     }
   }
 }

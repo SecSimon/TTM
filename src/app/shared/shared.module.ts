@@ -65,12 +65,13 @@ import { ProgressTrackerComponent } from './components/progress-tracker/progress
 import { ModelInfoComponent } from './components/model-info/model-info.component';
 import { NotesComponent } from './components/notes/notes.component';
 import { LocalDatePipe, LocalDateTimePipe, LocalizationService } from '../util/localization.service';
+import { OwaspRREntryComponent } from './components/owasp-rr-entry/owasp-rr-entry.component';
 
 @NgModule({
   declarations: [
     PageNotFoundComponent, WebviewDirective, 
     StatusBarComponent, SideNavComponent, SaveDialogComponent, PasswordDialogComponent, MessagesDialogComponent, 
-    TwoOptionsDialogComponent, CweEntryComponent, CapecEntryComponent, NavTreeComponent, CvssEntryComponent, 
+    TwoOptionsDialogComponent, CweEntryComponent, CapecEntryComponent, NavTreeComponent, CvssEntryComponent, OwaspRREntryComponent,
     ProgressTrackerComponent, ModelInfoComponent, NotesComponent, 
     LocalDatePipe, LocalDateTimePipe
   ],

@@ -1,0 +1,180 @@
+<table *ngIf="entry != null">
+  <tr>
+    <td colspan="2"><h2 style="margin: 0;">Likelihood Factors</h2></td>
+    <td colspan="2"><h2 style="margin: 0;">Impact Factors</h2></td>
+  </tr>
+  <tr>
+    <td style="width: 25%;"><h3 style="margin: 0;">Threat Agent Factors</h3></td>
+    <td style="width: 25%;"><h3 style="margin: 0;">Vulnerability Factors</h3></td>
+    <td style="width: 25%;"><h3 style="margin: 0;">Technical Impact Factors</h3></td>
+    <td style="width: 25%;"><h3 style="margin: 0;">Business Impact Factors</h3></td>
+  </tr>
+  <tr>
+    <td>
+      <mat-form-field appearance="fill" class="property-form-field">
+        <mat-label>{{ 'shared.owasprr.sl' | translate }}</mat-label>
+        <mat-select [(value)]="entry['SL']">
+          <mat-option *ngFor="let num of [0,1,3,5,6,9]" [value]="num">{{'shared.owasprr.sl' + num.toString() | translate}}</mat-option>
+        </mat-select>
+        <mat-icon matSuffix matTooltip="{{ 'shared.owasprr.sl.tt' | translate }}" matTooltipShowDelay="1000">info</mat-icon>
+      </mat-form-field>
+    </td>
+    <td>
+      <mat-form-field appearance="fill" class="property-form-field">
+        <mat-label>{{ 'shared.owasprr.ed' | translate }}</mat-label>
+        <mat-select [(value)]="entry['ED']">
+          <mat-option *ngFor="let num of [0,1,3,7,9]" [value]="num">{{'shared.owasprr.ed' + num.toString() | translate}}</mat-option>
+        </mat-select>
+        <mat-icon matSuffix matTooltip="{{ 'shared.owasprr.ed.tt' | translate }}" matTooltipShowDelay="1000">info</mat-icon>
+      </mat-form-field>
+    </td>
+    <td>
+      <mat-form-field appearance="fill" class="property-form-field">
+        <mat-label>{{ 'shared.owasprr.lc' | translate }}</mat-label>
+        <mat-select [(value)]="entry['LC']">
+          <mat-option *ngFor="let num of [0,2,6,7,9]" [value]="num">{{'shared.owasprr.lc' + num.toString() | translate}}</mat-option>
+        </mat-select>
+        <mat-icon matSuffix matTooltip="{{ 'shared.owasprr.lc.tt' | translate }}" matTooltipShowDelay="1000">info</mat-icon>
+      </mat-form-field>
+    </td>
+    <td>
+      <mat-form-field appearance="fill" class="property-form-field">
+        <mat-label>{{ 'shared.owasprr.fd' | translate }}</mat-label>
+        <mat-select [(value)]="entry['FD']">
+          <mat-option *ngFor="let num of [0,1,3,7,9]" [value]="num">{{'shared.owasprr.fd' + num.toString() | translate}}</mat-option>
+        </mat-select>
+        <mat-icon matSuffix matTooltip="{{ 'shared.owasprr.fd.tt' | translate }}" matTooltipShowDelay="1000">info</mat-icon>
+      </mat-form-field>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <mat-form-field appearance="fill" class="property-form-field">
+        <mat-label>{{ 'shared.owasprr.m' | translate }}</mat-label>
+        <mat-select [(value)]="entry['M']">
+          <mat-option *ngFor="let num of [0,1,4,9]" [value]="num">{{'shared.owasprr.m' + num.toString() | translate}}</mat-option>
+        </mat-select>
+        <mat-icon matSuffix matTooltip="{{ 'shared.owasprr.m.tt' | translate }}" matTooltipShowDelay="1000">info</mat-icon>
+      </mat-form-field>
+    </td>
+    <td>
+      <mat-form-field appearance="fill" class="property-form-field">
+        <mat-label>{{ 'shared.owasprr.ee' | translate }}</mat-label>
+        <mat-select [(value)]="entry['EE']">
+          <mat-option *ngFor="let num of [0,1,5,9]" [value]="num">{{'shared.owasprr.ee' + num.toString() | translate}}</mat-option>
+        </mat-select>
+        <mat-icon matSuffix matTooltip="{{ 'shared.owasprr.ee.tt' | translate }}" matTooltipShowDelay="1000">info</mat-icon>
+      </mat-form-field>
+    </td>
+    <td>
+      <mat-form-field appearance="fill" class="property-form-field">
+        <mat-label>{{ 'shared.owasprr.li' | translate }}</mat-label>
+        <mat-select [(value)]="entry['LI']">
+          <mat-option *ngFor="let num of [0,1,3,5,7,9]" [value]="num">{{'shared.owasprr.li' + num.toString() | translate}}</mat-option>
+        </mat-select>
+        <mat-icon matSuffix matTooltip="{{ 'shared.owasprr.li.tt' | translate }}" matTooltipShowDelay="1000">info</mat-icon>
+      </mat-form-field>
+    </td>
+    <td>
+      <mat-form-field appearance="fill" class="property-form-field">
+        <mat-label>{{ 'shared.owasprr.rd' | translate }}</mat-label>
+        <mat-select [(value)]="entry['RD']">
+          <mat-option *ngFor="let num of [0,1,4,5,9]" [value]="num">{{'shared.owasprr.rd' + num.toString() | translate}}</mat-option>
+        </mat-select>
+        <mat-icon matSuffix matTooltip="{{ 'shared.owasprr.rd.tt' | translate }}" matTooltipShowDelay="1000">info</mat-icon>
+      </mat-form-field>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <mat-form-field appearance="fill" class="property-form-field">
+        <mat-label>{{ 'shared.owasprr.o' | translate }}</mat-label>
+        <mat-select [(value)]="entry['O']">
+          <mat-option *ngFor="let num of [0,4,7,9]" [value]="num">{{'shared.owasprr.o' + num.toString() | translate}}</mat-option>
+        </mat-select>
+        <mat-icon matSuffix matTooltip="{{ 'shared.owasprr.o.tt' | translate }}" matTooltipShowDelay="1000">info</mat-icon>
+      </mat-form-field>
+    </td>
+    <td>
+      <mat-form-field appearance="fill" class="property-form-field">
+        <mat-label>{{ 'shared.owasprr.a' | translate }}</mat-label>
+        <mat-select [(value)]="entry['A']">
+          <mat-option *ngFor="let num of [0,1,4,6,9]" [value]="num">{{'shared.owasprr.a' + num.toString() | translate}}</mat-option>
+        </mat-select>
+        <mat-icon matSuffix matTooltip="{{ 'shared.owasprr.a.tt' | translate }}" matTooltipShowDelay="1000">info</mat-icon>
+      </mat-form-field>
+    </td>
+    <td>
+      <mat-form-field appearance="fill" class="property-form-field">
+        <mat-label>{{ 'shared.owasprr.lav' | translate }}</mat-label>
+        <mat-select [(value)]="entry['LAV']">
+          <mat-option *ngFor="let num of [0,1,5,7,9]" [value]="num">{{'shared.owasprr.lav' + num.toString() | translate}}</mat-option>
+        </mat-select>
+        <mat-icon matSuffix matTooltip="{{ 'shared.owasprr.lav.tt' | translate }}" matTooltipShowDelay="1000">info</mat-icon>
+      </mat-form-field>
+    </td>
+    <td>
+      <mat-form-field appearance="fill" class="property-form-field">
+        <mat-label>{{ 'shared.owasprr.nc' | translate }}</mat-label>
+        <mat-select [(value)]="entry['NC']">
+          <mat-option *ngFor="let num of [0,2,5,7]" [value]="num">{{'shared.owasprr.nc' + num.toString() | translate}}</mat-option>
+        </mat-select>
+        <mat-icon matSuffix matTooltip="{{ 'shared.owasprr.nc.tt' | translate }}" matTooltipShowDelay="1000">info</mat-icon>
+      </mat-form-field>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <mat-form-field appearance="fill" class="property-form-field">
+        <mat-label>{{ 'shared.owasprr.s' | translate }}</mat-label>
+        <mat-select [(value)]="entry['S']">
+          <mat-option *ngFor="let num of [0,2,4,5,6,9]" [value]="num">{{'shared.owasprr.s' + num.toString() | translate}}</mat-option>
+        </mat-select>
+        <mat-icon matSuffix matTooltip="{{ 'shared.owasprr.s.tt' | translate }}" matTooltipShowDelay="1000">info</mat-icon>
+      </mat-form-field>
+    </td>
+    <td>
+      <mat-form-field appearance="fill" class="property-form-field">
+        <mat-label>{{ 'shared.owasprr.id' | translate }}</mat-label>
+        <mat-select [(value)]="entry['ID']">
+          <mat-option *ngFor="let num of [0,1,3,8,9]" [value]="num">{{'shared.owasprr.id' + num.toString() | translate}}</mat-option>
+        </mat-select>
+        <mat-icon matSuffix matTooltip="{{ 'shared.owasprr.id.tt' | translate }}" matTooltipShowDelay="1000">info</mat-icon>
+      </mat-form-field>
+    </td>
+    <td>
+      <mat-form-field appearance="fill" class="property-form-field">
+        <mat-label>{{ 'shared.owasprr.lac' | translate }}</mat-label>
+        <mat-select [(value)]="entry['LAC']">
+          <mat-option *ngFor="let num of [0,1,7,9]" [value]="num">{{'shared.owasprr.lac' + num.toString() | translate}}</mat-option>
+        </mat-select>
+        <mat-icon matSuffix matTooltip="{{ 'shared.owasprr.lac.tt' | translate }}" matTooltipShowDelay="1000">info</mat-icon>
+      </mat-form-field>
+    </td>
+    <td>
+      <mat-form-field appearance="fill" class="property-form-field">
+        <mat-label>{{ 'shared.owasprr.pv' | translate }}</mat-label>
+        <mat-select [(value)]="entry['PV']">
+          <mat-option *ngFor="let num of [0,3,5,7,9]" [value]="num">{{'shared.owasprr.pv' + num.toString() | translate}}</mat-option>
+        </mat-select>
+        <mat-icon matSuffix matTooltip="{{ 'shared.owasprr.pv.tt' | translate }}" matTooltipShowDelay="1000">info</mat-icon>
+      </mat-form-field>
+    </td>
+  </tr>
+  <tr>
+    <td><h3>Threat Agent Factor:<br/>{{ GetLabelThreatAgent() }}</h3></td>
+    <td><h3>Vulnerability Factor:<br/>{{ GetLabelVulnerability() }}</h3></td>
+    <td><h3>Technical Impact Factor:<br/>{{ GetLabelTechnicalImpact() }}</h3></td>
+    <td><h3>Business Impact Factor:<br/>{{ GetLabelBusinessImpact() }}</h3></td>
+  </tr>
+  <tr>
+    <td colspan="2"><h3 style="margin: 0;">Likelihood Factor: {{ GetLabelLikelihood() }}</h3></td>
+    <td colspan="2"><h3 style="margin: 0;">Impact Factor: {{ GetLabelImpact() }}</h3></td>
+  </tr>
+  <tr>
+    <td colspan="4"><h3>Overall Risk Severity: {{ GetLabelOverallRisk() }}</h3></td>
+  </tr>
+  <tr>
+    <td colspan="4">Score Vector: <a href="{{ GetURL() }}" target="_blank">{{ GetVector() }}</a></td>
+  </tr>
+</table>

@@ -58,7 +58,47 @@
     <mat-label>{{ 'properties.Description' | translate }}</mat-label>
     <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="2" cdkAutosizeMaxRows="5" [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="attackScenario.Description"></textarea>
   </mat-form-field>
-  <mat-form-field appearance="fill" style="width: 150px;">
+  {{'general.RiskAssessment' | translate}} 
+  <button mat-icon-button [matMenuTriggerFor]="raMenu" matTooltip="{{'general.More' | translate}}" matTooltipShowDelay="1000">
+    <mat-icon>more_vert</mat-icon>
+  </button>
+  <mat-menu #raMenu="matMenu">
+    <button mat-menu-item [disabled]="attackScenario.ScoreCVSS != null" (click)="AddMethodCVSS()">{{'pages.modeling.attackscenario.addCVSS' | translate}}</button>
+    <button mat-menu-item [disabled]="attackScenario.ScoreOwaspRR != null" (click)="AddMethodOwaspRR()">{{'pages.modeling.attackscenario.addOwaspRR' | translate}}</button>
+    <button mat-menu-item [matMenuTriggerFor]="viewList">{{'pages.modeling.attackscenario.takeRiskValuesFrom' | translate}}</button>
+  </mat-menu>
+  <mat-menu #viewList="matMenu">
+    <button mat-menu-item *ngFor="let group of GetAttackScenarioGroups()" [matMenuTriggerFor]="scenarioList" [matMenuTriggerData]="{ item: group.scenarios }">{{group.name}}</button>
+  </mat-menu>
+  <mat-menu #scenarioList="matMenu">
+    <ng-template matMenuContent let-item="item">
+      <button mat-menu-item *ngFor="let scenario of item" matTooltip="{{scenario.Name}}" matTooltipShowDelay="1000" (click)="AdoptRiskValuesFrom(scenario)">{{scenario.Name}}</button>
+    </ng-template> 
+  </mat-menu>
+  <mat-form-field appearance="fill" *ngIf="attackScenario.ScoreCVSS" style="width: 200px; margin-left: 10px;">
+    <mat-label>{{'shared.cvss.name.s' | translate}}</mat-label>
+    <input matInput type="number" [(ngModel)]="attackScenario.ScoreCVSS['Score']"/>
+    <button matSuffix mat-icon-button aria-label="Edit" (click)="EditMethodCVSS(); $event.stopPropagation()">
+      <mat-icon>edit</mat-icon>
+    </button>
+    <button matSuffix mat-icon-button aria-label="Delete" (click)="RemoveMethodCVSS(); $event.stopPropagation()">
+      <mat-icon>delete</mat-icon>
+    </button>
+  </mat-form-field>
+  <mat-form-field appearance="fill" *ngIf="attackScenario.ScoreOwaspRR" style="width: 200px; margin-left: 10px;">
+    <mat-label>{{'shared.owasprr.name.s' | translate}}</mat-label>
+    <mat-select [(value)]="attackScenario.ScoreOwaspRR['Score']">
+      <mat-option>{{'properties.selectNone' | translate}}</mat-option>
+      <mat-option *ngFor="let type of GetSeverityTypes()" [value]="type">{{GetSeverityTypeName(type) | translate}}</mat-option>
+    </mat-select>
+    <button matSuffix mat-icon-button aria-label="Edit" (click)="EditMethodOwaspRR(); $event.stopPropagation()">
+      <mat-icon>edit</mat-icon>
+    </button>
+    <button matSuffix mat-icon-button aria-label="Delete" (click)="RemoveMethodOwaspRR(); $event.stopPropagation()">
+      <mat-icon>delete</mat-icon>
+    </button>
+  </mat-form-field>
+  <mat-form-field appearance="fill" style="width: 150px; margin-left: 30px;">
     <mat-label>{{ 'properties.Severity' | translate }}</mat-label>
     <mat-select [(value)]="attackScenario.Severity" (selectionChange)="CalculateRisk()">
       <mat-option>{{'properties.selectNone' | translate}}</mat-option>
@@ -90,6 +130,35 @@
     <mat-label>{{ 'properties.RiskStrategyReason' | translate }}</mat-label>
     <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="2" cdkAutosizeMaxRows="5" [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="attackScenario.RiskStrategyReason"></textarea>
   </mat-form-field>
+  <div class="row" style="margin-bottom: 10px;">
+    <div class="column1">
+      <mat-list class="prop-list reorder-list" [class.prop-list-light]="!theme.IsDarkMode" [class.prop-list-dark]="theme.IsDarkMode">
+        <div mat-subheader>{{ 'general.Countermeasures' | translate }} 
+          <button mat-icon-button style="margin-left: 15px;" [matMenuTriggerFor]="addMenu" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000"><mat-icon>add</mat-icon></button>
+          <mat-menu #addMenu="matMenu">
+            <button mat-menu-item (click)="AddCountermeasure()">{{'general.New' | translate}}</button>
+            <button mat-menu-item [matMenuTriggerFor]="existing">{{'general.Existing' | translate}}</button>
+          </mat-menu>
+          <mat-menu #existing="matMenu">
+            <button mat-menu-item *ngFor="let cm of GetPossibleCountermeasures()" (click)="AddExistingCountermeasure(cm)">{{cm.Name}}</button>
+          </mat-menu>
+        </div>
+        <mat-list-item *ngFor="let cm of countermeasures" (click)="selectedCountermeasure = cm" cdkDrag
+          [class.highlight-light]="selectedCountermeasure === cm && !theme.IsDarkMode" [class.highlight-dark]="selectedCountermeasure === cm && theme.IsDarkMode"
+          matTooltip="{{cm.Name}}" matTooltipShowDelay="1000">
+          <mat-icon mat-list-icon>chevron_right</mat-icon>
+          <div mat-line style="pointer-events: initial;">{{cm.Name | translate}}</div>
+          <button mat-icon-button style="margin-left: auto; margin-right: 0px;" (click)="RemoveCountermeasure(cm)" matTooltip="{{'general.Remove' | translate}}" matTooltipShowDelay="1000"><mat-icon>remove</mat-icon></button>
+          <button mat-icon-button style="margin-left: auto;" (click)="DeleteCountermeasure(cm)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000"><mat-icon>delete</mat-icon></button>
+        </mat-list-item>
+      </mat-list>
+    </div>
+    <div class="column2">
+      <div style="margin: 10px 0 10px 10px;" *ngIf="selectedCountermeasure">
+        <app-countermeasure [countermeasure]="selectedCountermeasure"></app-countermeasure>
+      </div>
+    </div>
+  </div>
   <mat-accordion class="expansion-panel-headers-align" style="pointer-events: initial;">
     <mat-expansion-panel *ngIf="attackScenario.ThreatOrigin">
       <mat-expansion-panel-header>
@@ -133,20 +202,36 @@
         <app-threat-rule [canEdit]="false" [threatRule]="attackScenario.ThreatRule"></app-threat-rule>
       </ng-template>
     </mat-expansion-panel>
-    <mat-expansion-panel *ngFor="let map of countermeasures">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          {{'general.Countermeasure' | translate}}
-        </mat-panel-title>
-        <mat-panel-description>
-          {{map.Name}}
-          <mat-icon>info</mat-icon>
-        </mat-panel-description>
-      </mat-expansion-panel-header>
-      <ng-template matExpansionPanelContent>
-        <app-countermeasure [canEdit]="false" [countermeasure]="map"></app-countermeasure>
-      </ng-template>
-    </mat-expansion-panel>
   </mat-accordion>
   <br/>
+  <div class="row" style="margin-bottom: 10px;">
+    <div class="column1">
+      <mat-list class="prop-list reorder-list" [class.prop-list-light]="!theme.IsDarkMode" [class.prop-list-dark]="theme.IsDarkMode">
+        <div mat-subheader>{{ 'pages.modeling.attackscenario.linkedScenarios' | translate }} 
+          <button mat-icon-button style="margin-left: 15px;" [matMenuTriggerFor]="addLinkedMenu" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000"><mat-icon>add</mat-icon></button>
+          <mat-menu #addLinkedMenu="matMenu">
+            <button mat-menu-item *ngFor="let group of GetAttackScenarioGroups()" [matMenuTriggerFor]="linkedScenarioList" [matMenuTriggerData]="{ item: group.scenarios }">{{group.name}}</button>
+          </mat-menu>
+          <mat-menu #linkedScenarioList="matMenu">
+            <ng-template matMenuContent let-item="item">
+              <button mat-menu-item *ngFor="let scenario of item" matTooltip="{{scenario.Name}}" matTooltipShowDelay="1000" (click)="OnLinkScenario(scenario)">{{scenario.Name}}</button>
+            </ng-template> 
+          </mat-menu>
+        </div>
+        <mat-list-item *ngFor="let scenario of attackScenario.LinkedScenarios" (click)="selectedLinkedScenario = scenario"
+          [class.highlight-light]="selectedLinkedScenario === scenario && !theme.IsDarkMode" [class.highlight-dark]="selectedLinkedScenario === scenario && theme.IsDarkMode"
+          matTooltip="{{scenario.Name}}" matTooltipShowDelay="1000">
+          <mat-icon mat-list-icon>chevron_right</mat-icon>
+          <div mat-line style="pointer-events: initial;">{{scenario.Name}}</div>
+          <button mat-icon-button style="margin-left: auto; margin-right: 0px;" (click)="EditAttackScenario(scenario)" matTooltip="{{'general.Edit' | translate}}" matTooltipShowDelay="1000"><mat-icon>edit</mat-icon></button>
+          <button mat-icon-button style="margin-left: auto;" (click)="OnUnlinkScenario(scenario)" matTooltip="{{'general.Remove' | translate}}" matTooltipShowDelay="1000"><mat-icon>remove</mat-icon></button>
+        </mat-list-item>
+      </mat-list>
+    </div>
+    <div class="column2">
+      <div style="margin: 10px 0 10px 10px;" *ngIf="selectedLinkedScenario">
+        <app-attack-scenario [canEdit]="false" [attackScenario]="selectedLinkedScenario"></app-attack-scenario>
+      </div>
+    </div>
+  </div>
 </div>

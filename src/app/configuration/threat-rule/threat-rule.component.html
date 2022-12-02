@@ -292,6 +292,9 @@
                   </mat-optgroup>
                 </mat-select>
               </mat-form-field>
+              <button mat-raised-button style="margin-left: 10px; vertical-align: super;" (click)="OnNextComparisonType(rest, rest.PropertyRest)">
+                {{rest.PropertyRest.ComparisonType}}
+              </button>
               <ng-container *ngIf="GetPropertyEditType(rest) == 'Check Box'">
                 <mat-checkbox color="primary" style="margin-left: 10px; vertical-align: super;" [(ngModel)]="rest.SenderInterfaceRestriction.Property.Value"></mat-checkbox>
               </ng-container>
@@ -314,6 +317,9 @@
                   </mat-optgroup>
                 </mat-select>
               </mat-form-field>
+              <button mat-raised-button style="margin-left: 10px; vertical-align: super;" (click)="OnNextComparisonType(rest, rest.PropertyRest)">
+                {{rest.PropertyRest.ComparisonType}}
+              </button>
               <ng-container *ngIf="GetPropertyEditType(rest) == 'Check Box'">
                 <mat-checkbox color="primary" style="margin-left: 10px; vertical-align: super;" [(ngModel)]="rest.ReceiverInterfaceRestriction.Property.Value"></mat-checkbox>
               </ng-container>

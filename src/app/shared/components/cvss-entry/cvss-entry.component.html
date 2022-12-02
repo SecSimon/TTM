@@ -1,87 +1,87 @@
 <table *ngIf="entry != null">
   <tr>
-    <td>Attack Vector (AV) <mat-icon style="vertical-align: inherit;" matTooltip="{{'shared.cvss.av' | translate}}">info</mat-icon></td>
-    <td>Scope (S) <mat-icon style="vertical-align: inherit;" matTooltip="{{'shared.cvss.s' | translate}}">info</mat-icon></td>
+    <td>Attack Vector (AV) <mat-icon style="vertical-align: inherit;" matTooltip="{{'shared.cvss.av' | translate}}" matTooltipShowDelay="1000">info</mat-icon></td>
+    <td>Scope (S) <mat-icon style="vertical-align: inherit;" matTooltip="{{'shared.cvss.s' | translate}}" matTooltipShowDelay="1000">info</mat-icon></td>
   </tr>
   <tr>
     <td>
       <mat-button-toggle-group [(ngModel)]="entry['AV']" (change)="CalcScore()">
         <mat-button-toggle value="">Undefined</mat-button-toggle>
-        <mat-button-toggle value="N" matTooltip="{{'shared.cvss.av.n' | translate}}">Network</mat-button-toggle>
-        <mat-button-toggle value="A" matTooltip="{{'shared.cvss.av.a' | translate}}">Adjacent Network</mat-button-toggle>
-        <mat-button-toggle value="L" matTooltip="{{'shared.cvss.av.l' | translate}}">Local</mat-button-toggle>
-        <mat-button-toggle value="P" matTooltip="{{'shared.cvss.av.p' | translate}}">Physical</mat-button-toggle>
+        <mat-button-toggle value="N" matTooltip="{{'shared.cvss.av.n' | translate}}" matTooltipShowDelay="1000">Network</mat-button-toggle>
+        <mat-button-toggle value="A" matTooltip="{{'shared.cvss.av.a' | translate}}" matTooltipShowDelay="1000">Adjacent Network</mat-button-toggle>
+        <mat-button-toggle value="L" matTooltip="{{'shared.cvss.av.l' | translate}}" matTooltipShowDelay="1000">Local</mat-button-toggle>
+        <mat-button-toggle value="P" matTooltip="{{'shared.cvss.av.p' | translate}}" matTooltipShowDelay="1000">Physical</mat-button-toggle>
       </mat-button-toggle-group>
     </td>
     <td>
       <mat-button-toggle-group [(ngModel)]="entry['S']" (change)="CalcScore()">
         <mat-button-toggle value="">Undefined</mat-button-toggle>
-        <mat-button-toggle value="U" matTooltip="{{'shared.cvss.s.u' | translate}}">Unchanged</mat-button-toggle>
-        <mat-button-toggle value="C" matTooltip="{{'shared.cvss.s.c' | translate}}">Changed</mat-button-toggle>
+        <mat-button-toggle value="U" matTooltip="{{'shared.cvss.s.u' | translate}}" matTooltipShowDelay="1000">Unchanged</mat-button-toggle>
+        <mat-button-toggle value="C" matTooltip="{{'shared.cvss.s.c' | translate}}" matTooltipShowDelay="1000">Changed</mat-button-toggle>
       </mat-button-toggle-group>
     </td>
   </tr>
   <tr>
-    <td>Attack Complexity (AC) <mat-icon style="vertical-align: inherit;" matTooltip="{{'shared.cvss.ac' | translate}}">info</mat-icon></td>
-    <td>Confidentiality (C) <mat-icon style="vertical-align: inherit;" matTooltip="{{'shared.cvss.c' | translate}}">info</mat-icon></td>
+    <td>Attack Complexity (AC) <mat-icon style="vertical-align: inherit;" matTooltip="{{'shared.cvss.ac' | translate}}" matTooltipShowDelay="1000">info</mat-icon></td>
+    <td>Confidentiality (C) <mat-icon style="vertical-align: inherit;" matTooltip="{{'shared.cvss.c' | translate}}" matTooltipShowDelay="1000">info</mat-icon></td>
   </tr>
   <tr>
     <td>
       <mat-button-toggle-group [(ngModel)]="entry['AC']" (change)="CalcScore()">
         <mat-button-toggle value="">Undefined</mat-button-toggle>
-        <mat-button-toggle value="L" matTooltip="{{'shared.cvss.ac.l' | translate}}">Low</mat-button-toggle>
-        <mat-button-toggle value="H" matTooltip="{{'shared.cvss.ac.h' | translate}}">High</mat-button-toggle>
+        <mat-button-toggle value="L" matTooltip="{{'shared.cvss.ac.l' | translate}}" matTooltipShowDelay="1000">Low</mat-button-toggle>
+        <mat-button-toggle value="H" matTooltip="{{'shared.cvss.ac.h' | translate}}" matTooltipShowDelay="1000">High</mat-button-toggle>
       </mat-button-toggle-group>
     </td>
     <td>
       <mat-button-toggle-group [(ngModel)]="entry['C']" (change)="CalcScore()">
         <mat-button-toggle value="">Undefined</mat-button-toggle>
-        <mat-button-toggle value="N" matTooltip="{{'shared.cvss.c.n' | translate}}">None</mat-button-toggle>
-        <mat-button-toggle value="L" matTooltip="{{'shared.cvss.c.l' | translate}}">Low</mat-button-toggle>
-        <mat-button-toggle value="H" matTooltip="{{'shared.cvss.c.h' | translate}}">High</mat-button-toggle>
+        <mat-button-toggle value="N" matTooltip="{{'shared.cvss.c.n' | translate}}" matTooltipShowDelay="1000">None</mat-button-toggle>
+        <mat-button-toggle value="L" matTooltip="{{'shared.cvss.c.l' | translate}}" matTooltipShowDelay="1000">Low</mat-button-toggle>
+        <mat-button-toggle value="H" matTooltip="{{'shared.cvss.c.h' | translate}}" matTooltipShowDelay="1000">High</mat-button-toggle>
       </mat-button-toggle-group>
     </td>
   </tr>
   <tr>
-    <td>Privileges Required (PR) <mat-icon style="vertical-align: inherit;" matTooltip="{{'shared.cvss.pr' | translate}}">info</mat-icon></td>
-    <td>Integrity (I) <mat-icon style="vertical-align: inherit;" matTooltip="{{'shared.cvss.i' | translate}}">info</mat-icon></td>
+    <td>Privileges Required (PR) <mat-icon style="vertical-align: inherit;" matTooltip="{{'shared.cvss.pr' | translate}}" matTooltipShowDelay="1000">info</mat-icon></td>
+    <td>Integrity (I) <mat-icon style="vertical-align: inherit;" matTooltip="{{'shared.cvss.i' | translate}}" matTooltipShowDelay="1000">info</mat-icon></td>
   </tr>
   <tr>
     <td>
       <mat-button-toggle-group [(ngModel)]="entry['PR']" (change)="CalcScore()">
         <mat-button-toggle value="">Undefined</mat-button-toggle>
-        <mat-button-toggle value="N" matTooltip="{{'shared.cvss.pr.n' | translate}}">None</mat-button-toggle>
-        <mat-button-toggle value="L" matTooltip="{{'shared.cvss.pr.l' | translate}}">Low</mat-button-toggle>
-        <mat-button-toggle value="H" matTooltip="{{'shared.cvss.pr.h' | translate}}">High</mat-button-toggle>
+        <mat-button-toggle value="N" matTooltip="{{'shared.cvss.pr.n' | translate}}" matTooltipShowDelay="1000">None</mat-button-toggle>
+        <mat-button-toggle value="L" matTooltip="{{'shared.cvss.pr.l' | translate}}" matTooltipShowDelay="1000">Low</mat-button-toggle>
+        <mat-button-toggle value="H" matTooltip="{{'shared.cvss.pr.h' | translate}}" matTooltipShowDelay="1000">High</mat-button-toggle>
       </mat-button-toggle-group>
     </td>
     <td>
       <mat-button-toggle-group [(ngModel)]="entry['I']" (change)="CalcScore()">
         <mat-button-toggle value="">Undefined</mat-button-toggle>
-        <mat-button-toggle value="N" matTooltip="{{'shared.cvss.i.n' | translate}}">None</mat-button-toggle>
-        <mat-button-toggle value="L" matTooltip="{{'shared.cvss.i.l' | translate}}">Low</mat-button-toggle>
-        <mat-button-toggle value="H" matTooltip="{{'shared.cvss.i.h' | translate}}">High</mat-button-toggle>
+        <mat-button-toggle value="N" matTooltip="{{'shared.cvss.i.n' | translate}}" matTooltipShowDelay="1000">None</mat-button-toggle>
+        <mat-button-toggle value="L" matTooltip="{{'shared.cvss.i.l' | translate}}" matTooltipShowDelay="1000">Low</mat-button-toggle>
+        <mat-button-toggle value="H" matTooltip="{{'shared.cvss.i.h' | translate}}" matTooltipShowDelay="1000">High</mat-button-toggle>
       </mat-button-toggle-group>
     </td>
   </tr>
   <tr>
-    <td>User Interaction (UI) <mat-icon style="vertical-align: inherit;" matTooltip="{{'shared.cvss.ui' | translate}}">info</mat-icon></td>
-    <td>Availability (A) <mat-icon style="vertical-align: inherit;" matTooltip="{{'shared.cvss.a' | translate}}">info</mat-icon></td>
+    <td>User Interaction (UI) <mat-icon style="vertical-align: inherit;" matTooltip="{{'shared.cvss.ui' | translate}}" matTooltipShowDelay="1000">info</mat-icon></td>
+    <td>Availability (A) <mat-icon style="vertical-align: inherit;" matTooltip="{{'shared.cvss.a' | translate}}" matTooltipShowDelay="1000">info</mat-icon></td>
   </tr>
   <tr>
     <td>
       <mat-button-toggle-group [(ngModel)]="entry['UI']" (change)="CalcScore()">
         <mat-button-toggle value="">Undefined</mat-button-toggle>
-        <mat-button-toggle value="N" matTooltip="{{'shared.cvss.ui.n' | translate}}">None</mat-button-toggle>
-        <mat-button-toggle value="R" matTooltip="{{'shared.cvss.ui.r' | translate}}">Required</mat-button-toggle>
+        <mat-button-toggle value="N" matTooltip="{{'shared.cvss.ui.n' | translate}}" matTooltipShowDelay="1000">None</mat-button-toggle>
+        <mat-button-toggle value="R" matTooltip="{{'shared.cvss.ui.r' | translate}}" matTooltipShowDelay="1000">Required</mat-button-toggle>
       </mat-button-toggle-group>
     </td>
     <td>
       <mat-button-toggle-group [(ngModel)]="entry['A']" (change)="CalcScore()">
         <mat-button-toggle value="">Undefined</mat-button-toggle>
-        <mat-button-toggle value="N" matTooltip="{{'shared.cvss.a.n' | translate}}">None</mat-button-toggle>
-        <mat-button-toggle value="L" matTooltip="{{'shared.cvss.a.l' | translate}}">Low</mat-button-toggle>
-        <mat-button-toggle value="H" matTooltip="{{'shared.cvss.a.h' | translate}}">High</mat-button-toggle>
+        <mat-button-toggle value="N" matTooltip="{{'shared.cvss.a.n' | translate}}" matTooltipShowDelay="1000">None</mat-button-toggle>
+        <mat-button-toggle value="L" matTooltip="{{'shared.cvss.a.l' | translate}}" matTooltipShowDelay="1000">Low</mat-button-toggle>
+        <mat-button-toggle value="H" matTooltip="{{'shared.cvss.a.h' | translate}}" matTooltipShowDelay="1000">High</mat-button-toggle>
       </mat-button-toggle-group>
     </td>
   </tr>
@@ -90,7 +90,7 @@
     <td>
       <mat-form-field appearance="fill">
         <mat-label>CVSS Score</mat-label>
-        <input matInput type="number" [ngModel]="Score">
+        <input matInput type="number" [(ngModel)]="Score">
       </mat-form-field>
       <button mat-icon-button style="vertical-align: super; pointer-events: all;" (click)="OpenCVSS()" matTooltip="{{'general.openInNew' | translate}}" matTooltipShowDelay="1000">
         <mat-icon>open_in_new</mat-icon>

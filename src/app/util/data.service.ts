@@ -501,6 +501,7 @@ export class DataService {
       this.Config = this.Project.Config;
       this.selectedGHConfig = null;
       if (this.KeepUserSignedIn && this.selectedGHProject) this.locStorage.Set(LocStorageKeys.GH_LAST_PROJECT, JSON.stringify({ owner: this.GetRepoOfFile(this.SelectedGHProject).owner, repoId: this.SelectedGHProject.repoId, path: this.SelectedGHProject.path, sha: this.SelectedGHProject.sha }));
+      this.addProjectToHistory(this.SelectedGHProject);
       this.messagesService.Success('messages.success.loadProject', name);
     } 
     catch (error) {
@@ -978,6 +979,22 @@ export class DataService {
     return res;
   }
 
+  private addProjectToHistory(proj: IGHFile) {
+    if (this.KeepUserSignedIn && proj) {
+      const history = this.getProjectHistory();
+      const name = proj.repoId + ':' + proj.path;
+      if (history.indexOf(name) >= 0) history.splice(history.indexOf(name), 1);
+      history.splice(0, 0, name);
+      this.locStorage.Set(LocStorageKeys.PROJECT_HISTORY, JSON.stringify(history));
+    }
+  }
+
+  private getProjectHistory(): string[] {
+    const historyStr = this.locStorage.Get(LocStorageKeys.PROJECT_HISTORY);
+    if (historyStr) return JSON.parse(historyStr); 
+    else return [];
+  }
+
   private retrieveUser() {
     if (!!this.accessToken && this.accessToken.length > 0) {
       this.isLoading.add();
@@ -1040,7 +1057,18 @@ export class DataService {
               .then(({ data: fileArray }) => {
                 (fileArray as []).filter(x => (x['name'] as string).endsWith('.ttmp')).forEach(x => {
                   this.availableGHProjects.push({ repoId: rep.id, name: x['name'], path: x['path'], sha: x['sha'], isEncrypted: false });
+                  const getName = (file: IGHFile): string => { return file.repoId + ':' + file.path; };
+                  const history = this.getProjectHistory();
                   this.availableGHProjects = this.availableGHProjects.sort((a, b) => {
+                    if (this.GetRepoOfFile(a).isWritable == this.GetRepoOfFile(b).isWritable) {
+                      let aIdx = history.indexOf(getName(a));
+                      let bIdx = history.indexOf(getName(b));
+                      if (aIdx >= 0 || bIdx >= 0) {
+                        if (aIdx == -1) aIdx = Number.MAX_VALUE;
+                        if (bIdx == -1) bIdx = Number.MAX_VALUE;
+                        return aIdx < bIdx ? -1 : 1;
+                      }
+                    }
                     return this.GetRepoOfFile(a).isWritable ? -1 : (this.GetRepoOfFile(b).isWritable ? 1 : 0);
                   });
                   let lastProject = this.locStorage.Get(LocStorageKeys.GH_LAST_PROJECT);

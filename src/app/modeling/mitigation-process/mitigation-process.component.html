@@ -11,7 +11,7 @@
   </mat-form-field>
   <br/>
   <mat-form-field appearance="fill" class="property-form-field">
-    <mat-label>{{'properties.Countermeasures' | translate}}</mat-label>
+    <mat-label>{{'general.Countermeasures' | translate}}</mat-label>
     <mat-select [(value)]="mitigationProcess.Countermeasures" multiple (selectionChange)="countermeasuresChange.emit()" matTooltip="{{GetCountermeasuresName(mitigationProcess.Countermeasures)}}" matTooltipShowDelay="1000">
       <mat-option *ngFor="let map of GetCountermeasures()" [value]="map">{{map.Name}}</mat-option>
     </mat-select>

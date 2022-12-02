@@ -1,0 +1,61 @@
+<div *ngIf="template" [class.disable]="!canEdit" style="overflow: auto;">
+  <mat-form-field appearance="fill" class="property-form-field">
+    <mat-label>{{ 'properties.Name' | translate }}</mat-label>
+    <input matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="template.Name" matTooltip="{{template.Name}}" matTooltipShowDelay="1000"/>
+  </mat-form-field>
+  <br/>
+  <mat-form-field appearance="fill" class="property-form-field">
+    <mat-label>{{'pages.reporting.exporttemplate.ExportType' | translate}}</mat-label>
+    <mat-select [(value)]="template.ExportType" matTooltip="{{GetExportTypeName(template.ExportType) | translate}}" matTooltipShowDelay="1000">
+      <mat-option *ngFor="let type of GetExportTypeValues()" [value]="type">{{GetExportTypeName(type) | translate}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <br/>
+  <table [style.borderColor]="theme.IsDarkMode ? '#424242' : '#F5F5F5'">
+    <tr [style.borderColor]="theme.IsDarkMode ? '#424242' : '#F5F5F5'">
+      <th [style.borderColor]="theme.IsDarkMode ? '#424242' : '#F5F5F5'"></th>
+      <th *ngFor="let col of template.Template; index as i" [style.borderColor]="theme.IsDarkMode ? '#424242' : '#F5F5F5'">{{ 'pages.reporting.exporttemplate.Column' | translate }} {{i}}</th>
+    </tr>
+    <tr [style.borderColor]="theme.IsDarkMode ? '#424242' : '#F5F5F5'">
+      <td [style.borderColor]="theme.IsDarkMode ? '#424242' : '#F5F5F5'">{{ 'pages.reporting.exporttemplate.Header' | translate}}</td>
+      <td *ngFor="let col of template.Template" [style.borderColor]="theme.IsDarkMode ? '#424242' : '#F5F5F5'"><input style="width: 142px;" [(ngModel)]="col.name"/></td>
+    </tr>
+    <tr>
+      <td [style.borderColor]="theme.IsDarkMode ? '#424242' : '#F5F5F5'">{{ 'pages.reporting.exporttemplate.Rows' | translate}}</td>
+      <td *ngFor="let col of template.Template; index as i" [style.borderColor]="theme.IsDarkMode ? '#424242' : '#F5F5F5'">
+        <select style="width: 150px;" [(ngModel)]="col.value" (change)="OnCellChanged($event, i)">
+          <option value=""> -- None -- </option>
+          <optgroup *ngFor="let cl of GetAvailableClasses()" label="{{GetExportClassName(cl) | translate}}">
+            <option *ngFor="let prop of GetExportProperties(cl)" [value]="cl + '.' + prop">{{GetExportPropertyName(prop) | translate}}</option>
+          </optgroup>
+        </select>
+      </td>
+    </tr>
+  </table>
+
+  <div style="margin-top: 10px;">
+    <button mat-raised-button [disabled]="!canGenerate" (click)="GeneratePreview()">{{'pages.reporting.exporttemplate.Preview' | translate}}</button>
+    <button mat-raised-button [disabled]="!canDownload" color="primary" style="margin-left: 10px;" (click)="SaveCSV()">{{'pages.reporting.exporttemplate.DownloadCSV' | translate}}</button>
+    <br/>
+    <mat-form-field *ngIf="dataRows" class="property-form-field" style="margin-top: 10px;">
+      <mat-label>{{ 'pages.reporting.exporttemplate.filter' | translate }}</mat-label>
+      <input matInput (keyup)="ApplyFilter($event)">
+    </mat-form-field>
+    <br/>
+    <div style="margin-bottom: 10px; max-height: 300px; overflow: auto;">
+      <table mat-table *ngIf="dataRows" [dataSource]="dataRows" matSort>
+        <ng-container *ngFor="let column of displayedTemplate; index as i" [matColumnDef]="ToString(i)">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{column.name}}
+          </th>
+          <td mat-cell *matCellDef="let row">
+            {{row[i]}}
+          </td>
+        </ng-container>
+      
+        <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </div>
+  </div>
+</div>

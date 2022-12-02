@@ -67,7 +67,7 @@ export class MitigationEngineService {
             }
           }
           else {
-            const map = pf.CreateCountermeasure(viewID);
+            const map = pf.CreateCountermeasure(viewID, true);
             map.SetMapping(mit, targets, [tm]);
           }
         });

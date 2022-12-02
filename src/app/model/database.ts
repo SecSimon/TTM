@@ -128,6 +128,7 @@ export enum DataReferenceTypes {
   DeleteCountermeasure,
   RemoveElementFromCountermeasure,
   RemoveAttackScenarioFromCountermeasure,
+  RemoveAttackScenarioFromAttackScenario,
   RemoveMitigationProcessFromCountermeasure,
 
   // Checklist

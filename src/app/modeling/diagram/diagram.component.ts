@@ -407,9 +407,8 @@ export abstract class CanvasBase {
 
   public AddCountermeasure() {
     if (this.SelectedElement) {
-      let map = this.dataService.Project.CreateCountermeasure(this.Diagram.ID);
+      let map = this.dataService.Project.CreateCountermeasure(this.Diagram.ID, false);
       map.SetMapping(null, [this.SelectedElement], []);
-      map.IsGenerated = false;
       this.dialog.OpenCountermeasureDialog(map, true, this.Diagram.Elements.GetChildrenFlat()).subscribe(result => {
         if (!result) {
           this.dataService.Project.DeleteCountermeasure(map);

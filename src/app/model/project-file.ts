@@ -15,6 +15,7 @@ import { ContextElement, ContextElementRef, ContextElementTypes, Device, MobileA
 import { Checklist, ChecklistType } from "./checklist";
 import { Countermeasure, MitigationProcess } from "./mitigations";
 import { FileUpdateService } from "../util/file-update.service";
+import { ExportTemplate } from "./export-template";
 
 export interface IProjectFile extends IDatabaseBase {
   charSope: {};
@@ -38,6 +39,8 @@ export interface IProjectFile extends IDatabaseBase {
   mitigationProcesses: {}[];
 
   checklists: {}[];
+
+  exportTemplates: {}[];
 
   config: {};
 }
@@ -74,6 +77,8 @@ export class ProjectFile extends DatabaseBase {
   private mitigationProcesses: MitigationProcess[] = [];
 
   private checklists: Checklist[] = [];
+
+  private exportTemplates: ExportTemplate[] = [];
 
   public get Version(): number { return this.Data['Version']; }
   public get ProgressTracker() { return this.Data['ProgressTracker']; }
@@ -125,6 +130,8 @@ export class ProjectFile extends DatabaseBase {
   public GetMitigationProcesses(): MitigationProcess[] { return this.mitigationProcesses; }
 
   public GetChecklists(): Checklist[] { return this.checklists; }
+
+  public GetExportTemplates(): ExportTemplate[] { return this.exportTemplates; }
 
   public get Config(): ConfigFile { return this.config; }
 
@@ -462,8 +469,9 @@ export class ProjectFile extends DatabaseBase {
     return this.countermeasureMap.get(ID);
   }
 
-  public CreateCountermeasure(viewID: string) {
+  public CreateCountermeasure(viewID: string, isGenerated: boolean) {
     let map = new Countermeasure({}, this, this.Config);
+    map.IsGenerated = isGenerated
     if (this.GetCountermeasures().length == 0) map.Number = '1';
     else map.Number = (Math.max(...this.GetCountermeasures().map(x => Number(x.Number)))+1).toString();
     map.ViewID = viewID;
@@ -528,6 +536,32 @@ export class ProjectFile extends DatabaseBase {
     return index >= 0;
   }
 
+  public GetExportTemplate(ID: string) {
+    return this.exportTemplates.find(x => x.ID == ID);
+  }
+
+  public CreateExportTemplate(): ExportTemplate {
+    let template = new ExportTemplate({}, this, this.Config);
+    template.Name = StringExtension.FindUniqueName('Export Template', this.GetExportTemplates().map(x => x.Name));
+    this.exportTemplates.push(template);
+    return template;
+  }
+
+  public DeleteExportTemplate(template: ExportTemplate) {
+    const index = this.exportTemplates.indexOf(template);
+    if (index >= 0) {
+      template.OnDelete(this, this.config);
+      this.exportTemplates.splice(index, 1);
+    }
+    return index >= 0;
+  }
+
+  public GetView(viewID: string) {
+    let view: Diagram|MyComponentStack = this.GetDiagram(viewID);
+    if (!view) view = this.GetStack(viewID);
+    return view;
+  }
+
   private moveItemInMap<Type>(mapName: string, prevIndex: number, currIndex: number) {
     let map = this[mapName] as Map<string, any>;
     let arr = Array.from(map.entries());
@@ -562,6 +596,7 @@ export class ProjectFile extends DatabaseBase {
       countermeasures: [],
       mitigationProcesses: [],
       checklists: [],
+      exportTemplates: [],
       config: this.Config.ToJSON()
     };
 
@@ -580,6 +615,7 @@ export class ProjectFile extends DatabaseBase {
     this.mitigationProcesses.forEach(x => res.mitigationProcesses.push(x.ToJSON()));
 
     this.checklists.forEach(x => res.checklists.push(x.ToJSON()));
+    this.exportTemplates.forEach(x => res.exportTemplates.push(x.ToJSON()));
 
     return res;
   }
@@ -609,6 +645,8 @@ export class ProjectFile extends DatabaseBase {
     val.mitigationProcesses?.forEach(x => res.mitigationProcesses.push(MitigationProcess.FromJSON(x, res, cf)));
 
     val.checklists?.forEach(x => res.checklists.push(Checklist.FromJSON(x, res, cf)));
+
+    val.exportTemplates?.forEach(x => res.exportTemplates.push(ExportTemplate.FromJSON(x, res, cf)));
 
     res.GetDFDElements().forEach(ele => {
       if (ele instanceof DFDContainer) {

@@ -285,7 +285,6 @@ export class Countermeasure extends DatabaseBase {
     this.Targets = targets;
     this.AttackScenarios = mappings;
     this.Name = null;
-    this.IsGenerated = true;
     this.RuleStillApplies = true;
   }
 

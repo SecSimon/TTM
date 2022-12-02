@@ -275,6 +275,28 @@ export interface ICVSSEntry {
   Score: number;
 }
 
+export interface IOwaspRREntry {
+  SL: number; // skill level
+  M: number; // motive
+  O: number; // opportunity
+  S: number; // size
+  ED: number; // ease of discovery
+  EE: number; // ease of exploit
+  A: number; // awareness
+  ID: number; // intrusion detection
+  LC: number; // loss of confidentiality
+  LI: number; // loss of integrity
+  LAV: number; // loss of availablility
+  LAC: number; // loss of accountability
+  FD: number; // financial damage
+  RD: number; // repudational damage
+  NC: number; // non-compliance
+  PV: number; // privacy violation
+  Impact: LowMediumHighNumber;
+  Likelihood: LowMediumHighNumber;
+  Score: ThreatSeverities;
+}
+
 export interface IAttackTechnique {
   CAPECID: number;
   CVSS: ICVSSEntry;
@@ -285,6 +307,7 @@ export interface IWeakness {
 }
 
 export enum ThreatSeverities {
+  None = 0,
   Low = 1,
   Medium = 2,
   High = 3,
@@ -293,11 +316,16 @@ export enum ThreatSeverities {
 
 export class ThreatSeverityUtil {
   public static GetTypes(): ThreatSeverities[] {
+    return [ThreatSeverities.None, ThreatSeverities.Low, ThreatSeverities.Medium, ThreatSeverities.High, ThreatSeverities.Critical];
+  }
+
+  public static GetTypesDashboard(): ThreatSeverities[] {
     return [ThreatSeverities.Low, ThreatSeverities.Medium, ThreatSeverities.High, ThreatSeverities.Critical];
   }
 
   public static ToString(ot: ThreatSeverities): string {
     switch (ot) {
+      case ThreatSeverities.None: return 'properties.threatseverity.None';
       case ThreatSeverities.Low: return 'properties.threatseverity.Low';
       case ThreatSeverities.Medium: return 'properties.threatseverity.Medium';
       case ThreatSeverities.High: return 'properties.threatseverity.High';
@@ -1197,6 +1225,10 @@ export class AttackScenario extends DatabaseBase {
   public set ThreatState(val: ThreatStates) { this.Data['ThreatState'] = Number(val); }
   public get IsGenerated(): boolean { return this.Data['IsGenerated']; }
   public set IsGenerated(val: boolean) { this.Data['IsGenerated'] = val; }
+  public get ScoreCVSS(): ICVSSEntry { return this.Data['ScoreCVSS']; }
+  public set ScoreCVSS(val: ICVSSEntry) { this.Data['ScoreCVSS'] = val; }
+  public get ScoreOwaspRR(): IOwaspRREntry { return this.Data['ScoreOwaspRR']; }
+  public set ScoreOwaspRR(val: IOwaspRREntry) { this.Data['ScoreOwaspRR'] = val; }
   public get Severity(): ThreatSeverities { return this.Data['Severity']; }
   public set Severity(val: ThreatSeverities) { this.Data['Severity'] = val; }
   public get Likelihood(): LowMediumHighNumber { return this.Data['Likelihood']; }
@@ -1254,6 +1286,13 @@ export class AttackScenario extends DatabaseBase {
   } 
   public set SystemThreats(val: SystemThreat[]) { this.Data['systemThreatIDs'] = val?.map(x => x.ID); }
 
+  public get LinkedScenarios(): AttackScenario[] {
+    let res = [];
+    this.Data['linkedScenarioIDs'].forEach(id => res.push(this.project.GetAttackScenario(id)));
+    return res;
+  }
+  public set LinkedScenarios(val: AttackScenario[]) { this.Data['linkedScenarioIDs'] = val?.map(x => x.ID); }
+
   constructor(data, pf: ProjectFile, cf: ConfigFile) {
     super(data);
     this.project = pf;
@@ -1263,14 +1302,18 @@ export class AttackScenario extends DatabaseBase {
     if (!this.Data['targetIDs']) this.Data['targetIDs'] = [];
     if (!this.Data['ThreatState']) this.ThreatState = ThreatStates.NotSet;
     if (!this.Data['systemThreatIDs']) this.Data['systemThreatIDs'] = [];
+    if (!this.Data['linkedScenarioIDs']) this.Data['linkedScenarioIDs'] = [];
   }
 
   public SetMapping(threatOriginID: string, categorieIDs: string[], target: ViewElementBase, elements: ViewElementBase[], rule: ThreatRule, question: ThreatQuestion) {
     this.MappingState = MappingStates.New;
     this.Mapping.Threat = { ThreatOriginID: threatOriginID, ThreatCategoryIDs: categorieIDs };
-    if (rule?.Severity) this.Severity = rule.Severity;
-    else if (this.ThreatOrigin) this.Severity = this.ThreatOrigin.Severity;
-    if (rule) this.ThreatRule = rule;
+    if (rule) {
+      this.ThreatRule = rule;
+      if (rule.Severity) this.Severity = rule.Severity;
+      else if (this.ThreatOrigin) this.Severity = this.ThreatOrigin.Severity;
+      if (rule.ThreatOrigin?.AttackTechnique?.CVSS) this.ScoreCVSS = JSON.parse(JSON.stringify(rule.ThreatOrigin.AttackTechnique.CVSS));
+    }
     if (question) this.ThreatQuestion = question;
     this.Name = null;
     this.Target = target;
@@ -1278,10 +1321,32 @@ export class AttackScenario extends DatabaseBase {
     this.RuleStillApplies = true;
   }
 
+  public AddLinkedAttackScenario(map: AttackScenario) {
+    if (!this.LinkedScenarios.includes(map)) {
+      this.Data['linkedScenarioIDs'].push(map.ID);
+    }
+  }
+
+  public RemoveLinkedAttackScenario(id: string) {
+    const index = this.Data['linkedScenarioIDs'].indexOf(id); 
+    if (index >= 0) {
+      this.Data['linkedScenarioIDs'].splice(index, 1);
+    }
+  }
+
+  public GetCountermeasures() {
+    return this.project.GetCountermeasures().filter(x => x.AttackScenarios.includes(this));
+  }
+
+  public GetDiagram() {
+    return this.project.GetView(this.ViewID);
+  }
+
   public FindReferences(pf: ProjectFile, cf: ConfigFile): IDataReferences[] {
     let res: IDataReferences[] = [];
 
-    pf?.GetCountermeasures().filter(x => x.AttackScenarios.includes(this)).forEach(x => res.push({ Type: DataReferenceTypes.RemoveAttackScenarioFromCountermeasure, Param: x }));
+    pf?.GetCountermeasures().filter(x => x.AttackScenarios.includes(this)).forEach(x => res.push({ Type: DataReferenceTypes.RemoveAttackScenarioFromAttackScenario, Param: x }));
+    pf?.GetAttackScenarios().filter(x => x.LinkedScenarios.includes(this)).forEach(x => res.push({ Type: DataReferenceTypes.DeleteAssetGroup, Param: x }));
     return res;
   }
 
@@ -1293,6 +1358,9 @@ export class AttackScenario extends DatabaseBase {
     refs.forEach(ref => {
       if (ref.Type == DataReferenceTypes.RemoveAttackScenarioFromCountermeasure) {
         (ref.Param as Countermeasure).RemoveAttackScenario(this.ID);
+      }
+      else if (ref.Type == DataReferenceTypes.RemoveAttackScenarioFromAttackScenario) {
+        (ref.Param as AttackScenario).RemoveLinkedAttackScenario(this.ID);
       }
     });
   }

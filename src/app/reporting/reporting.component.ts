@@ -40,6 +40,7 @@ import {
 } from 'docx';
 
 import html2canvas from 'html2canvas';
+import { ExportTemplate } from '../model/export-template';
 
 @Component({
   selector: 'app-reporting',
@@ -75,6 +76,10 @@ export class ReportingComponent implements OnInit {
 
   public Project: ProjectFile;
   public Dia: CtxCanvas|HWDFCanvas;
+
+  public get exportTemplates(): ExportTemplate[] { return this.dataService.Project.GetExportTemplates(); }
+
+  public selectedExportTemplate: ExportTemplate = null;
 
   constructor(public theme: ThemeService, public dataService: DataService, public ttmService: TTMService, private translate: TranslateService,
     public dialog: DialogService, private router: Router, private http: HttpClient, private locStorage: LocalStorageService, private viewContainerRef: ViewContainerRef) { 
@@ -194,7 +199,7 @@ export class ReportingComponent implements OnInit {
       this.Project.GetThreatSources().Sources.forEach(src => {
         this.createSubSubHeading(src.Name);
         if (src.Motive.length > 0) {
-          this.createParagraph(this.translate.instant('pages.modeling.threatsources.Motive') + ':');
+          this.createParagraph(this.translate.instant('properties.Motive') + ':');
           this.createUL(src.Motive);
         }
         this.createParagraph(this.translate.instant('general.Likelihood') + ': ' + this.translate.instant(LowMediumHighNumberUtil.ToString(src.Likelihood)));
@@ -368,6 +373,19 @@ export class ReportingComponent implements OnInit {
     Packer.toBuffer(doc).then((buffer) => {
       const blob = new Blob([buffer]);
       saveAs(blob, this.Project.Name.replace('.ttmp', '.docx'));
+    });
+  }
+
+  public AddTemplate() {
+    this.selectedExportTemplate = this.dataService.Project.CreateExportTemplate();
+  }
+
+  public DeleteTemplate(template) {
+    this.dialog.OpenDeleteObjectDialog(template).subscribe(res => {
+      if (res) {
+        if (template == this.selectedExportTemplate) this.selectedExportTemplate = null;
+        this.dataService.Project.DeleteExportTemplate(template);
+      }
     });
   }
 

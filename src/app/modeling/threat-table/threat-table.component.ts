@@ -196,9 +196,8 @@ export class ThreatTableComponent implements OnInit {
   }
 
   public AddCountermeasure(entry: AttackScenario) {
-    let map = this.dataService.Project.CreateCountermeasure(this.selectedNode.data['ID']);
+    let map = this.dataService.Project.CreateCountermeasure(this.selectedNode.data['ID'], false);
     map.SetMapping(null, entry.Targets, [entry]);
-    map.IsGenerated = false;
     let elements: ViewElementBase[] = [];
     if (this.selectedNode.data instanceof Diagram) elements = this.selectedNode.data.Elements.GetChildrenFlat();
     else if (this.selectedNode.data instanceof MyComponentStack) elements = this.selectedNode.data.GetChildrenFlat();
