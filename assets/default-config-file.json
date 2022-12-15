@@ -4169,12 +4169,12 @@
       ]
     }
   ],
-  "threatOriginGroups": [
+  "attackVectorGroups": [
     {
       "ID": "e17870ae-2c37-435c-a284-8df90ff7a5f0",
       "Name": "Threat Library",
       "Description": "",
-      "threatOriginGroupIDs": [
+      "attackVectorGroupIDs": [
         "037c0934-3db3-4320-a580-3581ec92f627",
         "4e160ff0-f1c9-4d2b-a470-6b23ab9c8868",
         "bee6117a-63ee-41b5-b77a-dd2b2b25cec8",
@@ -4186,14 +4186,14 @@
         "1a63ed36-ee55-4773-89d5-8cd466f34cad",
         "98dacc1a-f9e4-46b0-84c2-8718d9301cbb"
       ],
-      "threatOriginIDs": []
+      "attackVectorIDs": []
     },
     {
       "ID": "037c0934-3db3-4320-a580-3581ec92f627",
       "Name": "Cryptography Attacks",
       "Description": "",
-      "threatOriginGroupIDs": [],
-      "threatOriginIDs": [
+      "attackVectorGroupIDs": [],
+      "attackVectorIDs": [
         "0ffd675d-d83c-4f74-8835-398e7f3930cb",
         "31f89637-4b8a-41e9-acac-9d012767a424",
         "97b5a1d4-be82-4485-82f6-e4532795a20b",
@@ -4207,8 +4207,8 @@
       "ID": "4e160ff0-f1c9-4d2b-a470-6b23ab9c8868",
       "Name": "Network Attacks",
       "Description": "",
-      "threatOriginGroupIDs": [],
-      "threatOriginIDs": [
+      "attackVectorGroupIDs": [],
+      "attackVectorIDs": [
         "e58fcbde-e429-4704-9f22-c00d187994bc",
         "8f9a24d4-e962-4136-b0ec-8e9f797a6f62",
         "23c3a785-a539-4570-aee0-42bdffb43983",
@@ -4226,8 +4226,8 @@
       "ID": "bee6117a-63ee-41b5-b77a-dd2b2b25cec8",
       "Name": "Chip-Level Attacks",
       "Description": "",
-      "threatOriginGroupIDs": [],
-      "threatOriginIDs": [
+      "attackVectorGroupIDs": [],
+      "attackVectorIDs": [
         "b703d3d9-1f29-480a-b7ad-b11716727a91",
         "8a6476b9-7a5c-4306-bd43-db6fe32bbf66",
         "1a99fb9b-d1f0-4215-93a6-5cd9fd272026",
@@ -4241,8 +4241,8 @@
       "ID": "a1ddc171-0321-4131-ae58-25b39006320a",
       "Name": "PCB-Level Attacks",
       "Description": "",
-      "threatOriginGroupIDs": [],
-      "threatOriginIDs": [
+      "attackVectorGroupIDs": [],
+      "attackVectorIDs": [
         "f6ddb913-05ab-485a-a736-46a3f7466f85",
         "5605adab-044a-4b1f-9344-90a602d8d448",
         "e851a284-6b41-41c9-9efd-dc8b01f788da",
@@ -4255,31 +4255,31 @@
       "ID": "53298967-848a-4d3f-8577-a54d76942a8e",
       "Name": "Sub Group",
       "Description": "",
-      "threatOriginGroupIDs": [],
-      "threatOriginIDs": []
+      "attackVectorGroupIDs": [],
+      "attackVectorIDs": []
     },
     {
       "ID": "c3c1c9ff-637f-4964-8de5-994de73927f8",
       "Name": "Sub Sub Group",
       "Description": "",
-      "threatOriginGroupIDs": [
+      "attackVectorGroupIDs": [
         "dbbb888b-1a29-4ba4-8245-9af87316f4f9"
       ],
-      "threatOriginIDs": []
+      "attackVectorIDs": []
     },
     {
       "ID": "dbbb888b-1a29-4ba4-8245-9af87316f4f9",
       "Name": "Sub Sub Sub Group",
       "Description": "",
-      "threatOriginGroupIDs": [],
-      "threatOriginIDs": []
+      "attackVectorGroupIDs": [],
+      "attackVectorIDs": []
     },
     {
       "ID": "e112d000-a2e3-40c0-acdc-1b7856ad99e0",
       "Name": "Firmware Attacks",
       "Description": "",
-      "threatOriginGroupIDs": [],
-      "threatOriginIDs": [
+      "attackVectorGroupIDs": [],
+      "attackVectorIDs": [
         "99864969-3b71-45ad-bae5-09bc4ecc5cc1",
         "24645edb-85ac-438b-9033-ba2721c3e2c7",
         "5656f112-8443-4245-aa38-38cd9d9375e0",
@@ -4298,8 +4298,8 @@
       "ID": "fa6a378a-0e74-43b0-960b-b37576081160",
       "Name": "Application Attacks",
       "Description": "",
-      "threatOriginGroupIDs": [],
-      "threatOriginIDs": [
+      "attackVectorGroupIDs": [],
+      "attackVectorIDs": [
         "7dc1eb8e-2312-4b2f-becf-f9725d45cdce",
         "d92ccd9c-3a24-4e07-a2ca-c1e9949bb386",
         "1a511f9e-5d1b-47b9-9071-4d39407cc75c",
@@ -4324,8 +4324,8 @@
       "ID": "29a5994a-1de4-46e2-94c4-3b9832fff28e",
       "Name": "Supply Chain Attacks",
       "Description": "",
-      "threatOriginGroupIDs": [],
-      "threatOriginIDs": [
+      "attackVectorGroupIDs": [],
+      "attackVectorIDs": [
         "327a2f35-8cf5-46d5-a973-a174f6f7be23",
         "90a4e8f3-c750-47c4-97fd-fa9e25b9b599",
         "21c6b5ef-82c7-41e5-bb07-de93445b2156",
@@ -4336,8 +4336,8 @@
       "ID": "e98488d0-f4ac-49ad-8648-d32ae9563225",
       "Name": "Ecosystem Weaknesses",
       "Description": "",
-      "threatOriginGroupIDs": [],
-      "threatOriginIDs": [
+      "attackVectorGroupIDs": [],
+      "attackVectorIDs": [
         "30cf5142-2339-4130-8a6e-2b05869e6df2",
         "afd4bceb-31b0-41cd-9eae-02d2eba6b41c",
         "7742f998-ab1e-4f64-8ac6-12b3f97b936a"
@@ -4347,10 +4347,10 @@
       "ID": "1a63ed36-ee55-4773-89d5-8cd466f34cad",
       "Name": "User Behavior",
       "Description": "",
-      "threatOriginGroupIDs": [
+      "attackVectorGroupIDs": [
         "abf604c4-90f4-41fe-9084-dd2c655d12e8"
       ],
-      "threatOriginIDs": [
+      "attackVectorIDs": [
         "195d942e-02f8-49ad-873f-299f4b4ad4ec",
         "ffd6083b-7183-472c-b250-15b0de223735"
       ]
@@ -4359,8 +4359,8 @@
       "ID": "98dacc1a-f9e4-46b0-84c2-8718d9301cbb",
       "Name": "Credential Attacks",
       "Description": "",
-      "threatOriginGroupIDs": [],
-      "threatOriginIDs": [
+      "attackVectorGroupIDs": [],
+      "attackVectorIDs": [
         "f0ef09ed-0cde-4b12-beb6-f1640132f3e6",
         "0e3c0e3e-1587-46f8-93ea-e9091dff5958",
         "b9436449-7896-4be6-89f8-a19e1c8d014f",
@@ -4381,13 +4381,13 @@
       "ID": "abf604c4-90f4-41fe-9084-dd2c655d12e8",
       "Name": "Social Engineering",
       "Description": "",
-      "threatOriginGroupIDs": [],
-      "threatOriginIDs": [
+      "attackVectorGroupIDs": [],
+      "attackVectorIDs": [
         "cf948333-b659-40ff-b93f-d4bdc8c980d1"
       ]
     }
   ],
-  "threatOrigins": [
+  "attackVectors": [
     {
       "ID": "0ffd675d-d83c-4f74-8835-398e7f3930cb",
       "Name": "Insufficient random values",
@@ -9726,7 +9726,7 @@
       "Description": "ToDo",
       "IsActive": true,
       "Mapping": {
-        "ThreatOriginID": "b703d3d9-1f29-480a-b7ad-b11716727a91",
+        "AttackVectorID": "b703d3d9-1f29-480a-b7ad-b11716727a91",
         "ThreatCategoryIDs": [
           "ddf75d3c-ac5a-4ca2-8268-a4f7b40add7d"
         ]
@@ -9757,7 +9757,7 @@
       "Description": "",
       "IsActive": true,
       "Mapping": {
-        "ThreatOriginID": "e58fcbde-e429-4704-9f22-c00d187994bc",
+        "AttackVectorID": "e58fcbde-e429-4704-9f22-c00d187994bc",
         "ThreatCategoryIDs": [
           "8a3d81d9-3317-4e5d-88fe-a0e0592295fe",
           "d0bcd70c-fbad-4a16-a606-8b0682ae7afe",
@@ -10211,7 +10211,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "5656f112-8443-4245-aa38-38cd9d9375e0",
+        "AttackVectorID": "5656f112-8443-4245-aa38-38cd9d9375e0",
         "ThreatCategoryIDs": [
           "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf"
         ]
@@ -10242,7 +10242,7 @@
       "IsActive": true,
       "RuleGenerationType": 2,
       "Mapping": {
-        "ThreatOriginID": "c097b67f-1179-4f30-924c-3a4e54c04d9d",
+        "AttackVectorID": "c097b67f-1179-4f30-924c-3a4e54c04d9d",
         "ThreatCategoryIDs": [
           "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf"
         ]
@@ -10262,7 +10262,7 @@
       "IsActive": true,
       "RuleGenerationType": 2,
       "Mapping": {
-        "ThreatOriginID": "5605adab-044a-4b1f-9344-90a602d8d448",
+        "AttackVectorID": "5605adab-044a-4b1f-9344-90a602d8d448",
         "ThreatCategoryIDs": [
           "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
           "70d07015-4eda-4d1a-8d07-1791f881f8f0"
@@ -10294,7 +10294,7 @@
       "IsActive": true,
       "RuleGenerationType": 2,
       "Mapping": {
-        "ThreatOriginID": "01a37617-b7ac-446a-86fa-e70c957d154c",
+        "AttackVectorID": "01a37617-b7ac-446a-86fa-e70c957d154c",
         "ThreatCategoryIDs": [
           "f19e41bd-9fd9-4046-a195-28d441207fa0",
           "c0bd6e2f-9784-4c11-9aee-115a966e0a4d",
@@ -10328,7 +10328,7 @@
       "IsActive": true,
       "RuleGenerationType": 2,
       "Mapping": {
-        "ThreatOriginID": "d4292863-c64e-4123-806f-71590ec76ed3",
+        "AttackVectorID": "d4292863-c64e-4123-806f-71590ec76ed3",
         "ThreatCategoryIDs": [
           "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
           "c46b7c74-5979-409d-8ceb-631b8833c596"
@@ -10360,7 +10360,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "8f9a24d4-e962-4136-b0ec-8e9f797a6f62",
+        "AttackVectorID": "8f9a24d4-e962-4136-b0ec-8e9f797a6f62",
         "ThreatCategoryIDs": [
           "b869918c-0b47-45c3-8fab-0b698043aa66"
         ]
@@ -10413,7 +10413,7 @@
       "IsActive": true,
       "RuleGenerationType": 2,
       "Mapping": {
-        "ThreatOriginID": "327a2f35-8cf5-46d5-a973-a174f6f7be23",
+        "AttackVectorID": "327a2f35-8cf5-46d5-a973-a174f6f7be23",
         "ThreatCategoryIDs": [
           "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
           "c46b7c74-5979-409d-8ceb-631b8833c596",
@@ -10456,7 +10456,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "7dc1eb8e-2312-4b2f-becf-f9725d45cdce",
+        "AttackVectorID": "7dc1eb8e-2312-4b2f-becf-f9725d45cdce",
         "ThreatCategoryIDs": [
           "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
           "c46b7c74-5979-409d-8ceb-631b8833c596"
@@ -10479,7 +10479,7 @@
       "IsActive": true,
       "RuleGenerationType": 2,
       "Mapping": {
-        "ThreatOriginID": "23c3a785-a539-4570-aee0-42bdffb43983",
+        "AttackVectorID": "23c3a785-a539-4570-aee0-42bdffb43983",
         "ThreatCategoryIDs": [
           "b869918c-0b47-45c3-8fab-0b698043aa66"
         ]
@@ -10544,7 +10544,7 @@
       "IsActive": true,
       "RuleGenerationType": 2,
       "Mapping": {
-        "ThreatOriginID": "0b47795b-b42d-49d1-bf50-7f4889994fea",
+        "AttackVectorID": "0b47795b-b42d-49d1-bf50-7f4889994fea",
         "ThreatCategoryIDs": [
           "8a3d81d9-3317-4e5d-88fe-a0e0592295fe",
           "d0bcd70c-fbad-4a16-a606-8b0682ae7afe",
@@ -10587,7 +10587,7 @@
       "IsActive": true,
       "RuleGenerationType": 3,
       "Mapping": {
-        "ThreatOriginID": "d92ccd9c-3a24-4e07-a2ca-c1e9949bb386",
+        "AttackVectorID": "d92ccd9c-3a24-4e07-a2ca-c1e9949bb386",
         "ThreatCategoryIDs": [
           "f19e41bd-9fd9-4046-a195-28d441207fa0",
           "b869918c-0b47-45c3-8fab-0b698043aa66",
@@ -10704,7 +10704,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "ef144ae1-4c70-400e-8222-b8a7dd3bf3e9",
+        "AttackVectorID": "ef144ae1-4c70-400e-8222-b8a7dd3bf3e9",
         "ThreatCategoryIDs": [
           "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf"
         ]
@@ -10745,7 +10745,7 @@
       "IsActive": true,
       "RuleGenerationType": 2,
       "Mapping": {
-        "ThreatOriginID": "e851a284-6b41-41c9-9efd-dc8b01f788da",
+        "AttackVectorID": "e851a284-6b41-41c9-9efd-dc8b01f788da",
         "ThreatCategoryIDs": [
           "f19e41bd-9fd9-4046-a195-28d441207fa0",
           "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
@@ -10786,7 +10786,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "bb7358c1-e5b6-424f-962d-daab17345b63",
+        "AttackVectorID": "bb7358c1-e5b6-424f-962d-daab17345b63",
         "ThreatCategoryIDs": [
           "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
           "8a3d81d9-3317-4e5d-88fe-a0e0592295fe"
@@ -10852,7 +10852,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "001ba17c-0400-4369-912e-0ceda3ccd227",
+        "AttackVectorID": "001ba17c-0400-4369-912e-0ceda3ccd227",
         "ThreatCategoryIDs": [
           "f19e41bd-9fd9-4046-a195-28d441207fa0",
           "d0bcd70c-fbad-4a16-a606-8b0682ae7afe",
@@ -10919,7 +10919,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "1a511f9e-5d1b-47b9-9071-4d39407cc75c",
+        "AttackVectorID": "1a511f9e-5d1b-47b9-9071-4d39407cc75c",
         "ThreatCategoryIDs": [
           "f19e41bd-9fd9-4046-a195-28d441207fa0",
           "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
@@ -10952,7 +10952,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "f0ef09ed-0cde-4b12-beb6-f1640132f3e6",
+        "AttackVectorID": "f0ef09ed-0cde-4b12-beb6-f1640132f3e6",
         "ThreatCategoryIDs": [
           "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
           "4f5e6bf4-c9c4-4ea6-9b0e-5c861570e6ec",
@@ -10985,7 +10985,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "0e3c0e3e-1587-46f8-93ea-e9091dff5958",
+        "AttackVectorID": "0e3c0e3e-1587-46f8-93ea-e9091dff5958",
         "ThreatCategoryIDs": [
           "c46b7c74-5979-409d-8ceb-631b8833c596"
         ]
@@ -11026,7 +11026,7 @@
       "IsActive": true,
       "RuleGenerationType": 2,
       "Mapping": {
-        "ThreatOriginID": "d46f6e31-ae41-4d6e-93fc-0e6c3bbb295d",
+        "AttackVectorID": "d46f6e31-ae41-4d6e-93fc-0e6c3bbb295d",
         "ThreatCategoryIDs": [
           "c46b7c74-5979-409d-8ceb-631b8833c596"
         ]
@@ -11067,7 +11067,7 @@
       "IsActive": true,
       "RuleGenerationType": 2,
       "Mapping": {
-        "ThreatOriginID": "be14adbc-19a7-48c8-8f13-2566559e63e2",
+        "AttackVectorID": "be14adbc-19a7-48c8-8f13-2566559e63e2",
         "ThreatCategoryIDs": [
           "f19e41bd-9fd9-4046-a195-28d441207fa0",
           "c0bd6e2f-9784-4c11-9aee-115a966e0a4d",
@@ -11100,7 +11100,7 @@
       "IsActive": true,
       "RuleGenerationType": 2,
       "Mapping": {
-        "ThreatOriginID": "f6ddb913-05ab-485a-a736-46a3f7466f85",
+        "AttackVectorID": "f6ddb913-05ab-485a-a736-46a3f7466f85",
         "ThreatCategoryIDs": [
           "a6a57921-7fcb-4f54-b0f5-bac0a0f74163",
           "ddf75d3c-ac5a-4ca2-8268-a4f7b40add7d"
@@ -11132,7 +11132,7 @@
       "IsActive": true,
       "RuleGenerationType": 2,
       "Mapping": {
-        "ThreatOriginID": "90a4e8f3-c750-47c4-97fd-fa9e25b9b599",
+        "AttackVectorID": "90a4e8f3-c750-47c4-97fd-fa9e25b9b599",
         "ThreatCategoryIDs": [
           "a6a57921-7fcb-4f54-b0f5-bac0a0f74163",
           "ddf75d3c-ac5a-4ca2-8268-a4f7b40add7d"
@@ -11174,7 +11174,7 @@
       "IsActive": true,
       "RuleGenerationType": 2,
       "Mapping": {
-        "ThreatOriginID": "21c6b5ef-82c7-41e5-bb07-de93445b2156",
+        "AttackVectorID": "21c6b5ef-82c7-41e5-bb07-de93445b2156",
         "ThreatCategoryIDs": [
           "c0bd6e2f-9784-4c11-9aee-115a966e0a4d",
           "c46b7c74-5979-409d-8ceb-631b8833c596"
@@ -11195,7 +11195,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "a912b48a-3b4d-44ab-b8f3-28000ca945c4",
+        "AttackVectorID": "a912b48a-3b4d-44ab-b8f3-28000ca945c4",
         "ThreatCategoryIDs": []
       },
       "overridenRuleIDs": [],
@@ -11224,7 +11224,7 @@
       "IsActive": true,
       "RuleGenerationType": 2,
       "Mapping": {
-        "ThreatOriginID": "90a4e8f3-c750-47c4-97fd-fa9e25b9b599",
+        "AttackVectorID": "90a4e8f3-c750-47c4-97fd-fa9e25b9b599",
         "ThreatCategoryIDs": [
           "a6a57921-7fcb-4f54-b0f5-bac0a0f74163",
           "ddf75d3c-ac5a-4ca2-8268-a4f7b40add7d"
@@ -11266,7 +11266,7 @@
       "IsActive": true,
       "RuleGenerationType": 2,
       "Mapping": {
-        "ThreatOriginID": "9538abd8-f79c-4097-b2dd-716e50a125ee",
+        "AttackVectorID": "9538abd8-f79c-4097-b2dd-716e50a125ee",
         "ThreatCategoryIDs": [
           "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf"
         ]
@@ -11286,7 +11286,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "b9436449-7896-4be6-89f8-a19e1c8d014f",
+        "AttackVectorID": "b9436449-7896-4be6-89f8-a19e1c8d014f",
         "ThreatCategoryIDs": [
           "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
           "c46b7c74-5979-409d-8ceb-631b8833c596"
@@ -11318,7 +11318,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "05e04798-41ce-4919-a92b-264f7e985de2",
+        "AttackVectorID": "05e04798-41ce-4919-a92b-264f7e985de2",
         "ThreatCategoryIDs": [
           "c46b7c74-5979-409d-8ceb-631b8833c596"
         ]
@@ -11359,7 +11359,7 @@
       "IsActive": true,
       "RuleGenerationType": 2,
       "Mapping": {
-        "ThreatOriginID": "e6c3d6f5-f4c7-48b7-b516-2092c3557c81",
+        "AttackVectorID": "e6c3d6f5-f4c7-48b7-b516-2092c3557c81",
         "ThreatCategoryIDs": [
           "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
           "c46b7c74-5979-409d-8ceb-631b8833c596",
@@ -11381,7 +11381,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "1447713d-9ad6-454e-81d8-c9f4ef34c72b",
+        "AttackVectorID": "1447713d-9ad6-454e-81d8-c9f4ef34c72b",
         "ThreatCategoryIDs": [
           "9e715340-1a69-47df-864a-7c3b5a9a678e",
           "b869918c-0b47-45c3-8fab-0b698043aa66",
@@ -11404,7 +11404,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "723dfb40-4ceb-4232-bda5-73bcb3c76ac0",
+        "AttackVectorID": "723dfb40-4ceb-4232-bda5-73bcb3c76ac0",
         "ThreatCategoryIDs": [
           "c46b7c74-5979-409d-8ceb-631b8833c596"
         ]
@@ -11435,7 +11435,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "5e7fd04c-0e14-4c76-800d-f581bcf7c7f6",
+        "AttackVectorID": "5e7fd04c-0e14-4c76-800d-f581bcf7c7f6",
         "ThreatCategoryIDs": [
           "c46b7c74-5979-409d-8ceb-631b8833c596"
         ]
@@ -11466,7 +11466,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "5435aa9a-ad52-470f-8fa5-81a4f926b6a6",
+        "AttackVectorID": "5435aa9a-ad52-470f-8fa5-81a4f926b6a6",
         "ThreatCategoryIDs": [
           "c46b7c74-5979-409d-8ceb-631b8833c596"
         ]
@@ -11497,7 +11497,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "63dfaefa-c8a8-4725-b6d6-2efff7306639",
+        "AttackVectorID": "63dfaefa-c8a8-4725-b6d6-2efff7306639",
         "ThreatCategoryIDs": [
           "c46b7c74-5979-409d-8ceb-631b8833c596"
         ]
@@ -11528,7 +11528,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "296e95fe-e06d-4ae3-be84-da98df4a122c",
+        "AttackVectorID": "296e95fe-e06d-4ae3-be84-da98df4a122c",
         "ThreatCategoryIDs": [
           "c46b7c74-5979-409d-8ceb-631b8833c596"
         ]
@@ -11559,7 +11559,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "bf289171-82c3-431a-b3f1-28d17e5a6546",
+        "AttackVectorID": "bf289171-82c3-431a-b3f1-28d17e5a6546",
         "ThreatCategoryIDs": [
           "c46b7c74-5979-409d-8ceb-631b8833c596"
         ]
@@ -11590,7 +11590,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "bf289171-82c3-431a-b3f1-28d17e5a6546",
+        "AttackVectorID": "bf289171-82c3-431a-b3f1-28d17e5a6546",
         "ThreatCategoryIDs": [
           "c46b7c74-5979-409d-8ceb-631b8833c596"
         ]
@@ -11621,7 +11621,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "2f483201-0209-4320-ba2e-2d692274aab5",
+        "AttackVectorID": "2f483201-0209-4320-ba2e-2d692274aab5",
         "ThreatCategoryIDs": [
           "c46b7c74-5979-409d-8ceb-631b8833c596"
         ]
@@ -11652,7 +11652,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "4ee3fc8a-87a5-4fdf-868f-fb35cd12dc91",
+        "AttackVectorID": "4ee3fc8a-87a5-4fdf-868f-fb35cd12dc91",
         "ThreatCategoryIDs": [
           "c46b7c74-5979-409d-8ceb-631b8833c596"
         ]
@@ -11683,7 +11683,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "9e85cf25-febb-46ca-a5f5-c6283412a87b",
+        "AttackVectorID": "9e85cf25-febb-46ca-a5f5-c6283412a87b",
         "ThreatCategoryIDs": [
           "f19e41bd-9fd9-4046-a195-28d441207fa0",
           "c46b7c74-5979-409d-8ceb-631b8833c596"
@@ -11748,7 +11748,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "f170308a-c188-4ae0-bcef-d04af1e429b3",
+        "AttackVectorID": "f170308a-c188-4ae0-bcef-d04af1e429b3",
         "ThreatCategoryIDs": [
           "f19e41bd-9fd9-4046-a195-28d441207fa0",
           "c0bd6e2f-9784-4c11-9aee-115a966e0a4d",
@@ -11782,7 +11782,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "99864969-3b71-45ad-bae5-09bc4ecc5cc1",
+        "AttackVectorID": "99864969-3b71-45ad-bae5-09bc4ecc5cc1",
         "ThreatCategoryIDs": [
           "f19e41bd-9fd9-4046-a195-28d441207fa0",
           "b869918c-0b47-45c3-8fab-0b698043aa66",
@@ -11817,7 +11817,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "c23a62c8-901a-412b-80b8-d2574103b733",
+        "AttackVectorID": "c23a62c8-901a-412b-80b8-d2574103b733",
         "ThreatCategoryIDs": [
           "b869918c-0b47-45c3-8fab-0b698043aa66",
           "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
@@ -11851,7 +11851,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "8a6476b9-7a5c-4306-bd43-db6fe32bbf66",
+        "AttackVectorID": "8a6476b9-7a5c-4306-bd43-db6fe32bbf66",
         "ThreatCategoryIDs": [
           "f19e41bd-9fd9-4046-a195-28d441207fa0",
           "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
@@ -11885,7 +11885,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "1a99fb9b-d1f0-4215-93a6-5cd9fd272026",
+        "AttackVectorID": "1a99fb9b-d1f0-4215-93a6-5cd9fd272026",
         "ThreatCategoryIDs": [
           "f19e41bd-9fd9-4046-a195-28d441207fa0",
           "c46b7c74-5979-409d-8ceb-631b8833c596"
@@ -11917,7 +11917,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "24645edb-85ac-438b-9033-ba2721c3e2c7",
+        "AttackVectorID": "24645edb-85ac-438b-9033-ba2721c3e2c7",
         "ThreatCategoryIDs": [
           "f19e41bd-9fd9-4046-a195-28d441207fa0",
           "b869918c-0b47-45c3-8fab-0b698043aa66",
@@ -11950,7 +11950,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "5656f112-8443-4245-aa38-38cd9d9375e0",
+        "AttackVectorID": "5656f112-8443-4245-aa38-38cd9d9375e0",
         "ThreatCategoryIDs": [
           "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf"
         ]
@@ -11981,7 +11981,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "31f89637-4b8a-41e9-acac-9d012767a424",
+        "AttackVectorID": "31f89637-4b8a-41e9-acac-9d012767a424",
         "ThreatCategoryIDs": [
           "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
           "c46b7c74-5979-409d-8ceb-631b8833c596",
@@ -12014,7 +12014,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "97b5a1d4-be82-4485-82f6-e4532795a20b",
+        "AttackVectorID": "97b5a1d4-be82-4485-82f6-e4532795a20b",
         "ThreatCategoryIDs": [
           "8a3d81d9-3317-4e5d-88fe-a0e0592295fe",
           "d0bcd70c-fbad-4a16-a606-8b0682ae7afe",
@@ -12047,7 +12047,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "a20d6e53-4426-4700-a04f-a4018bc7bfce",
+        "AttackVectorID": "a20d6e53-4426-4700-a04f-a4018bc7bfce",
         "ThreatCategoryIDs": [
           "8a3d81d9-3317-4e5d-88fe-a0e0592295fe",
           "d0bcd70c-fbad-4a16-a606-8b0682ae7afe",
@@ -12080,7 +12080,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "a0729a41-bcc9-43d8-9c86-bfb26c64e93c",
+        "AttackVectorID": "a0729a41-bcc9-43d8-9c86-bfb26c64e93c",
         "ThreatCategoryIDs": [
           "f19e41bd-9fd9-4046-a195-28d441207fa0",
           "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf"
@@ -12112,7 +12112,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "0ffd675d-d83c-4f74-8835-398e7f3930cb",
+        "AttackVectorID": "0ffd675d-d83c-4f74-8835-398e7f3930cb",
         "ThreatCategoryIDs": [
           "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
           "8a3d81d9-3317-4e5d-88fe-a0e0592295fe",
@@ -12145,7 +12145,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "680ceebd-357c-49d6-8bfd-390dc6c51dde",
+        "AttackVectorID": "680ceebd-357c-49d6-8bfd-390dc6c51dde",
         "ThreatCategoryIDs": [
           "8a3d81d9-3317-4e5d-88fe-a0e0592295fe",
           "d0bcd70c-fbad-4a16-a606-8b0682ae7afe",
@@ -12178,7 +12178,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "195d942e-02f8-49ad-873f-299f4b4ad4ec",
+        "AttackVectorID": "195d942e-02f8-49ad-873f-299f4b4ad4ec",
         "ThreatCategoryIDs": [
           "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
           "c0bd6e2f-9784-4c11-9aee-115a966e0a4d",
@@ -12212,7 +12212,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "cf948333-b659-40ff-b93f-d4bdc8c980d1",
+        "AttackVectorID": "cf948333-b659-40ff-b93f-d4bdc8c980d1",
         "ThreatCategoryIDs": [
           "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
           "c0bd6e2f-9784-4c11-9aee-115a966e0a4d",
@@ -12245,7 +12245,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "915f674e-926b-4bd9-94cb-ee8b4637bc80",
+        "AttackVectorID": "915f674e-926b-4bd9-94cb-ee8b4637bc80",
         "ThreatCategoryIDs": [
           "b869918c-0b47-45c3-8fab-0b698043aa66",
           "88d19822-b1b0-469f-ae00-1bc600ccaa1d",
@@ -12268,7 +12268,7 @@
       "IsActive": true,
       "RuleGenerationType": 2,
       "Mapping": {
-        "ThreatOriginID": "f5949698-47d4-48ee-a116-2d212695c41f",
+        "AttackVectorID": "f5949698-47d4-48ee-a116-2d212695c41f",
         "ThreatCategoryIDs": []
       },
       "overridenRuleIDs": [
@@ -12288,7 +12288,7 @@
       "IsActive": true,
       "RuleGenerationType": 2,
       "Mapping": {
-        "ThreatOriginID": "f5949698-47d4-48ee-a116-2d212695c41f",
+        "AttackVectorID": "f5949698-47d4-48ee-a116-2d212695c41f",
         "ThreatCategoryIDs": []
       },
       "overridenRuleIDs": [],
@@ -12306,7 +12306,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "b8835cb9-3c77-496e-ac2d-2ed6fa7f2d78",
+        "AttackVectorID": "b8835cb9-3c77-496e-ac2d-2ed6fa7f2d78",
         "ThreatCategoryIDs": [
           "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
           "c0bd6e2f-9784-4c11-9aee-115a966e0a4d",
@@ -12333,7 +12333,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "573881b4-ceb6-4d6a-a5c3-9c0e6c5a3b3c",
+        "AttackVectorID": "573881b4-ceb6-4d6a-a5c3-9c0e6c5a3b3c",
         "ThreatCategoryIDs": [
           "88d19822-b1b0-469f-ae00-1bc600ccaa1d",
           "f2ba26f4-b2da-49a8-aba2-14e42a746d6a",
@@ -12378,7 +12378,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "a76b8768-9d68-4074-b5e1-0f9abc61bcda",
+        "AttackVectorID": "a76b8768-9d68-4074-b5e1-0f9abc61bcda",
         "ThreatCategoryIDs": [
           "f7639a0c-e85b-4947-bbec-2ac4a0911827",
           "f2ba26f4-b2da-49a8-aba2-14e42a746d6a",
@@ -12423,7 +12423,7 @@
       "IsActive": true,
       "RuleGenerationType": 2,
       "Mapping": {
-        "ThreatOriginID": "30cf5142-2339-4130-8a6e-2b05869e6df2",
+        "AttackVectorID": "30cf5142-2339-4130-8a6e-2b05869e6df2",
         "ThreatCategoryIDs": [
           "a6a57921-7fcb-4f54-b0f5-bac0a0f74163",
           "6b8c08cb-3f02-413a-96b4-179bb1f67997"
@@ -12460,7 +12460,7 @@
           "4f5e6bf4-c9c4-4ea6-9b0e-5c861570e6ec",
           "c46b7c74-5979-409d-8ceb-631b8833c596"
         ],
-        "ThreatOriginID": "06c24920-2ce3-49ca-8134-9fa81fb2cdef"
+        "AttackVectorID": "06c24920-2ce3-49ca-8134-9fa81fb2cdef"
       },
       "overridenRuleIDs": [],
       "RuleType": 1,
@@ -12620,7 +12620,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "30cf5142-2339-4130-8a6e-2b05869e6df2",
+        "AttackVectorID": "30cf5142-2339-4130-8a6e-2b05869e6df2",
         "ThreatCategoryIDs": [
           "a6a57921-7fcb-4f54-b0f5-bac0a0f74163",
           "6b8c08cb-3f02-413a-96b4-179bb1f67997"
@@ -12652,7 +12652,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "c7787e71-5c70-462c-9558-ce20e7cfdfe8",
+        "AttackVectorID": "c7787e71-5c70-462c-9558-ce20e7cfdfe8",
         "ThreatCategoryIDs": [
           "f7639a0c-e85b-4947-bbec-2ac4a0911827",
           "f3fe9ca9-4c34-40fc-a270-3e6252d01e6f",
@@ -12696,7 +12696,7 @@
       "IsActive": false,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "c7787e71-5c70-462c-9558-ce20e7cfdfe8",
+        "AttackVectorID": "c7787e71-5c70-462c-9558-ce20e7cfdfe8",
         "ThreatCategoryIDs": [
           "f7639a0c-e85b-4947-bbec-2ac4a0911827",
           "f3fe9ca9-4c34-40fc-a270-3e6252d01e6f",
@@ -12736,7 +12736,7 @@
       "IsActive": false,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "c7787e71-5c70-462c-9558-ce20e7cfdfe8",
+        "AttackVectorID": "c7787e71-5c70-462c-9558-ce20e7cfdfe8",
         "ThreatCategoryIDs": [
           "f7639a0c-e85b-4947-bbec-2ac4a0911827",
           "f3fe9ca9-4c34-40fc-a270-3e6252d01e6f",
@@ -12776,7 +12776,7 @@
       "IsActive": false,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "c7787e71-5c70-462c-9558-ce20e7cfdfe8",
+        "AttackVectorID": "c7787e71-5c70-462c-9558-ce20e7cfdfe8",
         "ThreatCategoryIDs": [
           "f7639a0c-e85b-4947-bbec-2ac4a0911827",
           "f3fe9ca9-4c34-40fc-a270-3e6252d01e6f",
@@ -12821,7 +12821,7 @@
       "IsActive": false,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "c7787e71-5c70-462c-9558-ce20e7cfdfe8",
+        "AttackVectorID": "c7787e71-5c70-462c-9558-ce20e7cfdfe8",
         "ThreatCategoryIDs": [
           "f7639a0c-e85b-4947-bbec-2ac4a0911827",
           "f3fe9ca9-4c34-40fc-a270-3e6252d01e6f",
@@ -12944,7 +12944,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "184cd5e5-2517-4d7f-a81a-c411942d3601",
+        "AttackVectorID": "184cd5e5-2517-4d7f-a81a-c411942d3601",
         "ThreatCategoryIDs": [
           "f19e41bd-9fd9-4046-a195-28d441207fa0",
           "c0bd6e2f-9784-4c11-9aee-115a966e0a4d",
@@ -12978,7 +12978,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "83d23b79-71c5-488e-adb2-dd0f76d70f44",
+        "AttackVectorID": "83d23b79-71c5-488e-adb2-dd0f76d70f44",
         "ThreatCategoryIDs": [
           "f19e41bd-9fd9-4046-a195-28d441207fa0",
           "b869918c-0b47-45c3-8fab-0b698043aa66",
@@ -13013,7 +13013,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "83d23b79-71c5-488e-adb2-dd0f76d70f44",
+        "AttackVectorID": "83d23b79-71c5-488e-adb2-dd0f76d70f44",
         "ThreatCategoryIDs": [
           "f19e41bd-9fd9-4046-a195-28d441207fa0",
           "b869918c-0b47-45c3-8fab-0b698043aa66",
@@ -13048,7 +13048,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "cf63f187-4353-4bf8-bc37-a7392c6d91bf",
+        "AttackVectorID": "cf63f187-4353-4bf8-bc37-a7392c6d91bf",
         "ThreatCategoryIDs": [
           "f19e41bd-9fd9-4046-a195-28d441207fa0",
           "c0bd6e2f-9784-4c11-9aee-115a966e0a4d",
@@ -13137,7 +13137,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "97c0d7a1-13c7-43d5-b03c-75845f973af5",
+        "AttackVectorID": "97c0d7a1-13c7-43d5-b03c-75845f973af5",
         "ThreatCategoryIDs": [
           "f19e41bd-9fd9-4046-a195-28d441207fa0",
           "c17cbe5c-3210-42fc-be1e-05f1f915865b"
@@ -13304,7 +13304,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "71f761e4-8149-4a88-92fd-35f9d99cc0ef",
+        "AttackVectorID": "71f761e4-8149-4a88-92fd-35f9d99cc0ef",
         "ThreatCategoryIDs": [
           "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf"
         ]
@@ -13335,7 +13335,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "afd4bceb-31b0-41cd-9eae-02d2eba6b41c",
+        "AttackVectorID": "afd4bceb-31b0-41cd-9eae-02d2eba6b41c",
         "ThreatCategoryIDs": [
           "c17cbe5c-3210-42fc-be1e-05f1f915865b"
         ]
@@ -13650,7 +13650,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "5605adab-044a-4b1f-9344-90a602d8d448",
+        "AttackVectorID": "5605adab-044a-4b1f-9344-90a602d8d448",
         "ThreatCategoryIDs": [
           "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
           "ddf75d3c-ac5a-4ca2-8268-a4f7b40add7d"
@@ -13846,7 +13846,7 @@
           "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
           "4f5e6bf4-c9c4-4ea6-9b0e-5c861570e6ec"
         ],
-        "ThreatOriginID": "66c5f951-6286-4b22-a71a-ee4d6232f689"
+        "AttackVectorID": "66c5f951-6286-4b22-a71a-ee4d6232f689"
       },
       "overridenRuleIDs": [],
       "RuleType": 3,
@@ -13932,7 +13932,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "cf63f187-4353-4bf8-bc37-a7392c6d91bf",
+        "AttackVectorID": "cf63f187-4353-4bf8-bc37-a7392c6d91bf",
         "ThreatCategoryIDs": [
           "f19e41bd-9fd9-4046-a195-28d441207fa0",
           "c0bd6e2f-9784-4c11-9aee-115a966e0a4d",
@@ -13965,7 +13965,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "f0a8edb7-d65f-423f-a391-120d1eb04e02",
+        "AttackVectorID": "f0a8edb7-d65f-423f-a391-120d1eb04e02",
         "ThreatCategoryIDs": [
           "f19e41bd-9fd9-4046-a195-28d441207fa0",
           "c0bd6e2f-9784-4c11-9aee-115a966e0a4d",
@@ -13998,7 +13998,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "66c5f951-6286-4b22-a71a-ee4d6232f689",
+        "AttackVectorID": "66c5f951-6286-4b22-a71a-ee4d6232f689",
         "ThreatCategoryIDs": [
           "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
           "4f5e6bf4-c9c4-4ea6-9b0e-5c861570e6ec"
@@ -14056,7 +14056,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "d92ccd9c-3a24-4e07-a2ca-c1e9949bb386",
+        "AttackVectorID": "d92ccd9c-3a24-4e07-a2ca-c1e9949bb386",
         "ThreatCategoryIDs": [
           "f19e41bd-9fd9-4046-a195-28d441207fa0",
           "b869918c-0b47-45c3-8fab-0b698043aa66",
@@ -14154,7 +14154,7 @@
         "ThreatCategoryIDs": [
           "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf"
         ],
-        "ThreatOriginID": "6bf04ffa-1f83-4637-a866-d02ff10d752b"
+        "AttackVectorID": "6bf04ffa-1f83-4637-a866-d02ff10d752b"
       },
       "overridenRuleIDs": [],
       "RuleType": 3,
@@ -14217,7 +14217,7 @@
           "4f5e6bf4-c9c4-4ea6-9b0e-5c861570e6ec",
           "c46b7c74-5979-409d-8ceb-631b8833c596"
         ],
-        "ThreatOriginID": "06c24920-2ce3-49ca-8134-9fa81fb2cdef"
+        "AttackVectorID": "06c24920-2ce3-49ca-8134-9fa81fb2cdef"
       },
       "overridenRuleIDs": [],
       "RuleType": 3,
@@ -14251,7 +14251,7 @@
           "c17cbe5c-3210-42fc-be1e-05f1f915865b",
           "c46b7c74-5979-409d-8ceb-631b8833c596"
         ],
-        "ThreatOriginID": "3162421f-ca5b-400d-bbe8-58a510be9abf"
+        "AttackVectorID": "3162421f-ca5b-400d-bbe8-58a510be9abf"
       },
       "overridenRuleIDs": [],
       "RuleType": 3,
@@ -14279,7 +14279,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "eab94c5b-f7e8-4b2a-9ffb-658aefc8f0d0",
+        "AttackVectorID": "eab94c5b-f7e8-4b2a-9ffb-658aefc8f0d0",
         "ThreatCategoryIDs": [
           "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
           "c46b7c74-5979-409d-8ceb-631b8833c596"
@@ -14311,7 +14311,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "b26fc3e4-7a38-4f00-acdb-ec78246d0b25",
+        "AttackVectorID": "b26fc3e4-7a38-4f00-acdb-ec78246d0b25",
         "ThreatCategoryIDs": [
           "c46b7c74-5979-409d-8ceb-631b8833c596",
           "8a3d81d9-3317-4e5d-88fe-a0e0592295fe",
@@ -14345,7 +14345,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "6509fe5f-7e27-40ec-bd08-97e29c67f8c1",
+        "AttackVectorID": "6509fe5f-7e27-40ec-bd08-97e29c67f8c1",
         "ThreatCategoryIDs": [
           "c46b7c74-5979-409d-8ceb-631b8833c596",
           "8a3d81d9-3317-4e5d-88fe-a0e0592295fe",
@@ -14379,7 +14379,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "ed84da5f-3181-4be1-bef4-d911077b1910",
+        "AttackVectorID": "ed84da5f-3181-4be1-bef4-d911077b1910",
         "ThreatCategoryIDs": [
           "c46b7c74-5979-409d-8ceb-631b8833c596",
           "8a3d81d9-3317-4e5d-88fe-a0e0592295fe",
@@ -14413,7 +14413,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "327a2f35-8cf5-46d5-a973-a174f6f7be23",
+        "AttackVectorID": "327a2f35-8cf5-46d5-a973-a174f6f7be23",
         "ThreatCategoryIDs": [
           "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
           "c46b7c74-5979-409d-8ceb-631b8833c596"
@@ -14445,7 +14445,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "ffd6083b-7183-472c-b250-15b0de223735",
+        "AttackVectorID": "ffd6083b-7183-472c-b250-15b0de223735",
         "ThreatCategoryIDs": [
           "c46b7c74-5979-409d-8ceb-631b8833c596"
         ]
@@ -14476,7 +14476,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "e36eff83-1863-4026-bffe-966a9a104331",
+        "AttackVectorID": "e36eff83-1863-4026-bffe-966a9a104331",
         "ThreatCategoryIDs": [
           "b869918c-0b47-45c3-8fab-0b698043aa66",
           "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf"
@@ -14508,7 +14508,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "6bf04ffa-1f83-4637-a866-d02ff10d752b",
+        "AttackVectorID": "6bf04ffa-1f83-4637-a866-d02ff10d752b",
         "ThreatCategoryIDs": [
           "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf"
         ]
@@ -14542,7 +14542,7 @@
         "ThreatCategoryIDs": [
           "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf"
         ],
-        "ThreatOriginID": "6bf04ffa-1f83-4637-a866-d02ff10d752b"
+        "AttackVectorID": "6bf04ffa-1f83-4637-a866-d02ff10d752b"
       },
       "overridenRuleIDs": [],
       "RuleType": 3,
@@ -14570,7 +14570,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "83d23b79-71c5-488e-adb2-dd0f76d70f44",
+        "AttackVectorID": "83d23b79-71c5-488e-adb2-dd0f76d70f44",
         "ThreatCategoryIDs": [
           "f19e41bd-9fd9-4046-a195-28d441207fa0",
           "b869918c-0b47-45c3-8fab-0b698043aa66",
@@ -14630,7 +14630,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "ef144ae1-4c70-400e-8222-b8a7dd3bf3e9",
+        "AttackVectorID": "ef144ae1-4c70-400e-8222-b8a7dd3bf3e9",
         "ThreatCategoryIDs": [
           "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf"
         ]
@@ -14667,7 +14667,7 @@
           "c46b7c74-5979-409d-8ceb-631b8833c596",
           "3bbe354c-317a-4f76-bdbb-75543b5d5aa4"
         ],
-        "ThreatOriginID": "06c24920-2ce3-49ca-8134-9fa81fb2cdef"
+        "AttackVectorID": "06c24920-2ce3-49ca-8134-9fa81fb2cdef"
       },
       "overridenRuleIDs": [],
       "RuleType": 2,
@@ -14731,7 +14731,7 @@
           "c46b7c74-5979-409d-8ceb-631b8833c596",
           "3bbe354c-317a-4f76-bdbb-75543b5d5aa4"
         ],
-        "ThreatOriginID": "06c24920-2ce3-49ca-8134-9fa81fb2cdef"
+        "AttackVectorID": "06c24920-2ce3-49ca-8134-9fa81fb2cdef"
       },
       "overridenRuleIDs": [],
       "RuleType": 2,
@@ -14791,7 +14791,7 @@
           "c46b7c74-5979-409d-8ceb-631b8833c596",
           "3bbe354c-317a-4f76-bdbb-75543b5d5aa4"
         ],
-        "ThreatOriginID": "06c24920-2ce3-49ca-8134-9fa81fb2cdef"
+        "AttackVectorID": "06c24920-2ce3-49ca-8134-9fa81fb2cdef"
       },
       "overridenRuleIDs": [],
       "RuleType": 2,
@@ -14926,7 +14926,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "4e007b60-94e7-4df3-b3bd-109eb8627da2",
+        "AttackVectorID": "4e007b60-94e7-4df3-b3bd-109eb8627da2",
         "ThreatCategoryIDs": [
           "d0bcd70c-fbad-4a16-a606-8b0682ae7afe",
           "f3fe9ca9-4c34-40fc-a270-3e6252d01e6f"
@@ -14968,7 +14968,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "97c0d7a1-13c7-43d5-b03c-75845f973af5",
+        "AttackVectorID": "97c0d7a1-13c7-43d5-b03c-75845f973af5",
         "ThreatCategoryIDs": [
           "f19e41bd-9fd9-4046-a195-28d441207fa0",
           "c17cbe5c-3210-42fc-be1e-05f1f915865b"
@@ -15088,7 +15088,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "b48781b2-24a2-481b-b7c1-3390dbeeb973",
+        "AttackVectorID": "b48781b2-24a2-481b-b7c1-3390dbeeb973",
         "ThreatCategoryIDs": [
           "f19e41bd-9fd9-4046-a195-28d441207fa0",
           "c0bd6e2f-9784-4c11-9aee-115a966e0a4d",
@@ -15132,7 +15132,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "97c0d7a1-13c7-43d5-b03c-75845f973af5",
+        "AttackVectorID": "97c0d7a1-13c7-43d5-b03c-75845f973af5",
         "ThreatCategoryIDs": [
           "f19e41bd-9fd9-4046-a195-28d441207fa0",
           "c17cbe5c-3210-42fc-be1e-05f1f915865b",
@@ -15191,7 +15191,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "97c0d7a1-13c7-43d5-b03c-75845f973af5",
+        "AttackVectorID": "97c0d7a1-13c7-43d5-b03c-75845f973af5",
         "ThreatCategoryIDs": [
           "f19e41bd-9fd9-4046-a195-28d441207fa0",
           "c17cbe5c-3210-42fc-be1e-05f1f915865b",
@@ -15437,7 +15437,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "c7787e71-5c70-462c-9558-ce20e7cfdfe8",
+        "AttackVectorID": "c7787e71-5c70-462c-9558-ce20e7cfdfe8",
         "ThreatCategoryIDs": [
           "f7639a0c-e85b-4947-bbec-2ac4a0911827",
           "f3fe9ca9-4c34-40fc-a270-3e6252d01e6f",
@@ -15491,7 +15491,7 @@
           "bcd08af5-29bf-4ed8-ab6c-e311e88f4c84",
           "7bbfe5d3-8a91-4210-99ab-79f670715e61"
         ],
-        "ThreatOriginID": "6bf04ffa-1f83-4637-a866-d02ff10d752b"
+        "AttackVectorID": "6bf04ffa-1f83-4637-a866-d02ff10d752b"
       },
       "overridenRuleIDs": [],
       "RuleType": 1,
@@ -15508,7 +15508,7 @@
       "IsActive": true,
       "RuleGenerationType": 2,
       "Mapping": {
-        "ThreatOriginID": "6bf04ffa-1f83-4637-a866-d02ff10d752b",
+        "AttackVectorID": "6bf04ffa-1f83-4637-a866-d02ff10d752b",
         "ThreatCategoryIDs": [
           "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
           "af3ee78e-9e83-4bd1-b9b5-13ec28765518"
@@ -15529,7 +15529,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "7dc1eb8e-2312-4b2f-becf-f9725d45cdce",
+        "AttackVectorID": "7dc1eb8e-2312-4b2f-becf-f9725d45cdce",
         "ThreatCategoryIDs": [
           "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
           "c46b7c74-5979-409d-8ceb-631b8833c596",
@@ -15564,7 +15564,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "7dc1eb8e-2312-4b2f-becf-f9725d45cdce",
+        "AttackVectorID": "7dc1eb8e-2312-4b2f-becf-f9725d45cdce",
         "ThreatCategoryIDs": [
           "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
           "c46b7c74-5979-409d-8ceb-631b8833c596",
@@ -15624,7 +15624,7 @@
           "d0bcd70c-fbad-4a16-a606-8b0682ae7afe",
           "f7639a0c-e85b-4947-bbec-2ac4a0911827"
         ],
-        "ThreatOriginID": "e58fcbde-e429-4704-9f22-c00d187994bc"
+        "AttackVectorID": "e58fcbde-e429-4704-9f22-c00d187994bc"
       },
       "overridenRuleIDs": [],
       "RuleType": 3,
@@ -15652,7 +15652,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "d46f6e31-ae41-4d6e-93fc-0e6c3bbb295d",
+        "AttackVectorID": "d46f6e31-ae41-4d6e-93fc-0e6c3bbb295d",
         "ThreatCategoryIDs": [
           "c46b7c74-5979-409d-8ceb-631b8833c596"
         ]
@@ -15683,7 +15683,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "a0729a41-bcc9-43d8-9c86-bfb26c64e93c",
+        "AttackVectorID": "a0729a41-bcc9-43d8-9c86-bfb26c64e93c",
         "ThreatCategoryIDs": [
           "f19e41bd-9fd9-4046-a195-28d441207fa0",
           "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf"
@@ -15744,7 +15744,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "31f89637-4b8a-41e9-acac-9d012767a424",
+        "AttackVectorID": "31f89637-4b8a-41e9-acac-9d012767a424",
         "ThreatCategoryIDs": [
           "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
           "c46b7c74-5979-409d-8ceb-631b8833c596",
@@ -15777,7 +15777,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "a0729a41-bcc9-43d8-9c86-bfb26c64e93c",
+        "AttackVectorID": "a0729a41-bcc9-43d8-9c86-bfb26c64e93c",
         "ThreatCategoryIDs": [
           "f19e41bd-9fd9-4046-a195-28d441207fa0",
           "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf"
@@ -15809,7 +15809,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "6bf04ffa-1f83-4637-a866-d02ff10d752b",
+        "AttackVectorID": "6bf04ffa-1f83-4637-a866-d02ff10d752b",
         "ThreatCategoryIDs": [
           "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf"
         ]
@@ -15901,7 +15901,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "a0729a41-bcc9-43d8-9c86-bfb26c64e93c",
+        "AttackVectorID": "a0729a41-bcc9-43d8-9c86-bfb26c64e93c",
         "ThreatCategoryIDs": [
           "f19e41bd-9fd9-4046-a195-28d441207fa0",
           "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf"
@@ -15933,7 +15933,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "04d5f07e-2482-451b-9e24-94cb650da53b",
+        "AttackVectorID": "04d5f07e-2482-451b-9e24-94cb650da53b",
         "ThreatCategoryIDs": [
           "f19e41bd-9fd9-4046-a195-28d441207fa0",
           "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
@@ -15966,7 +15966,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "a0729a41-bcc9-43d8-9c86-bfb26c64e93c",
+        "AttackVectorID": "a0729a41-bcc9-43d8-9c86-bfb26c64e93c",
         "ThreatCategoryIDs": [
           "f19e41bd-9fd9-4046-a195-28d441207fa0",
           "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf"
@@ -16004,7 +16004,7 @@
           "8a3d81d9-3317-4e5d-88fe-a0e0592295fe",
           "f7639a0c-e85b-4947-bbec-2ac4a0911827"
         ],
-        "ThreatOriginID": "3162421f-ca5b-400d-bbe8-58a510be9abf"
+        "AttackVectorID": "3162421f-ca5b-400d-bbe8-58a510be9abf"
       },
       "overridenRuleIDs": [],
       "RuleType": 1,
@@ -16037,7 +16037,7 @@
           "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
           "c17cbe5c-3210-42fc-be1e-05f1f915865b"
         ],
-        "ThreatOriginID": "04d5f07e-2482-451b-9e24-94cb650da53b"
+        "AttackVectorID": "04d5f07e-2482-451b-9e24-94cb650da53b"
       },
       "overridenRuleIDs": [],
       "RuleType": 1,
@@ -16070,7 +16070,7 @@
           "d0bcd70c-fbad-4a16-a606-8b0682ae7afe",
           "f7639a0c-e85b-4947-bbec-2ac4a0911827"
         ],
-        "ThreatOriginID": "a0729a41-bcc9-43d8-9c86-bfb26c64e93c"
+        "AttackVectorID": "a0729a41-bcc9-43d8-9c86-bfb26c64e93c"
       },
       "overridenRuleIDs": [],
       "RuleType": 4,
@@ -16087,7 +16087,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "7dc1eb8e-2312-4b2f-becf-f9725d45cdce",
+        "AttackVectorID": "7dc1eb8e-2312-4b2f-becf-f9725d45cdce",
         "ThreatCategoryIDs": [
           "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
           "c46b7c74-5979-409d-8ceb-631b8833c596"
@@ -16119,7 +16119,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "6bf04ffa-1f83-4637-a866-d02ff10d752b",
+        "AttackVectorID": "6bf04ffa-1f83-4637-a866-d02ff10d752b",
         "ThreatCategoryIDs": [
           "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
           "2765e61e-29a9-498e-adf8-4d653f488e3d",
@@ -16161,7 +16161,7 @@
       "IsActive": true,
       "RuleGenerationType": 3,
       "Mapping": {
-        "ThreatOriginID": "7742f998-ab1e-4f64-8ac6-12b3f97b936a",
+        "AttackVectorID": "7742f998-ab1e-4f64-8ac6-12b3f97b936a",
         "ThreatCategoryIDs": [
           "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
           "aead4d1d-0f64-42b4-a512-cbbc979af3ca",
@@ -16216,7 +16216,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "8f9a24d4-e962-4136-b0ec-8e9f797a6f62",
+        "AttackVectorID": "8f9a24d4-e962-4136-b0ec-8e9f797a6f62",
         "ThreatCategoryIDs": [
           "b869918c-0b47-45c3-8fab-0b698043aa66"
         ]
@@ -16269,7 +16269,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "296e95fe-e06d-4ae3-be84-da98df4a122c",
+        "AttackVectorID": "296e95fe-e06d-4ae3-be84-da98df4a122c",
         "ThreatCategoryIDs": [
           "c46b7c74-5979-409d-8ceb-631b8833c596"
         ]
@@ -16289,7 +16289,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "0217b20a-5e3a-4244-8dce-819e28050a47",
+        "AttackVectorID": "0217b20a-5e3a-4244-8dce-819e28050a47",
         "ThreatCategoryIDs": [
           "c46b7c74-5979-409d-8ceb-631b8833c596"
         ]
@@ -16309,7 +16309,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "1909127e-50bd-4892-8b1f-1a2123a4fa61",
+        "AttackVectorID": "1909127e-50bd-4892-8b1f-1a2123a4fa61",
         "ThreatCategoryIDs": [
           "c46b7c74-5979-409d-8ceb-631b8833c596"
         ]
@@ -16329,7 +16329,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "e060675a-41d0-4c4d-9e16-311bb4adec7b",
+        "AttackVectorID": "e060675a-41d0-4c4d-9e16-311bb4adec7b",
         "ThreatCategoryIDs": [
           "f19e41bd-9fd9-4046-a195-28d441207fa0",
           "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
@@ -16408,7 +16408,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "e58fcbde-e429-4704-9f22-c00d187994bc",
+        "AttackVectorID": "e58fcbde-e429-4704-9f22-c00d187994bc",
         "ThreatCategoryIDs": [
           "8a3d81d9-3317-4e5d-88fe-a0e0592295fe",
           "d0bcd70c-fbad-4a16-a606-8b0682ae7afe",
@@ -16441,7 +16441,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "d46f6e31-ae41-4d6e-93fc-0e6c3bbb295d",
+        "AttackVectorID": "d46f6e31-ae41-4d6e-93fc-0e6c3bbb295d",
         "ThreatCategoryIDs": [
           "c46b7c74-5979-409d-8ceb-631b8833c596"
         ]
@@ -17253,7 +17253,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "6bf04ffa-1f83-4637-a866-d02ff10d752b",
+        "AttackVectorID": "6bf04ffa-1f83-4637-a866-d02ff10d752b",
         "ThreatCategoryIDs": [
           "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf"
         ]
@@ -17465,7 +17465,7 @@
       "IsActive": true,
       "RuleGenerationType": 1,
       "Mapping": {
-        "ThreatOriginID": "8f9a24d4-e962-4136-b0ec-8e9f797a6f62",
+        "AttackVectorID": "8f9a24d4-e962-4136-b0ec-8e9f797a6f62",
         "ThreatCategoryIDs": [
           "b869918c-0b47-45c3-8fab-0b698043aa66"
         ]
@@ -17484,7 +17484,7 @@
       "ID": "99636fb9-9a42-48b5-8368-a935a11dc943",
       "Name": "Disable debug access",
       "Description": "",
-      "mitigatedThreatOriginIDs": [
+      "mitigatedattackVectorIDs": [
         "8a6476b9-7a5c-4306-bd43-db6fe32bbf66"
       ],
       "MitigationTips": [
@@ -17519,7 +17519,7 @@
       "ID": "8febb6ed-da70-44ff-8d95-cf9a30d6b0ec",
       "Name": "Device casing mitigations",
       "Description": "",
-      "mitigatedThreatOriginIDs": [],
+      "mitigatedattackVectorIDs": [],
       "MitigationTips": [
         {
           "Name": "PCB design",
@@ -17558,7 +17558,7 @@
       "ID": "c943341c-b65c-4801-8d8e-d83d047ac0b7",
       "Name": "Secure boot",
       "Description": "",
-      "mitigatedThreatOriginIDs": [],
+      "mitigatedattackVectorIDs": [],
       "MitigationTips": [],
       "mitigatedThreatRuleIDs": [
         "11975f59-55e0-420f-9366-513175e9236e",
@@ -17572,7 +17572,7 @@
       "ID": "ea061d92-c31b-4644-8f5f-5093f513dd9d",
       "Name": "Traffic data encryption",
       "Description": "",
-      "mitigatedThreatOriginIDs": [
+      "mitigatedattackVectorIDs": [
         "e58fcbde-e429-4704-9f22-c00d187994bc",
         "bb7358c1-e5b6-424f-962d-daab17345b63",
         "001ba17c-0400-4369-912e-0ceda3ccd227"
@@ -17627,7 +17627,7 @@
       "ID": "8827b03b-475a-474f-baa1-7de740e244ba",
       "Name": "Input validation",
       "Description": "https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html",
-      "mitigatedThreatOriginIDs": [
+      "mitigatedattackVectorIDs": [
         "d92ccd9c-3a24-4e07-a2ca-c1e9949bb386"
       ],
       "mitigatedThreatRuleIDs": [],
@@ -17637,7 +17637,7 @@
       "ID": "9ed45808-7ffa-412a-ab29-84c0e738c8da",
       "Name": "NV memory encryption",
       "Description": "Encrypt the non-volatile memory",
-      "mitigatedThreatOriginIDs": [
+      "mitigatedattackVectorIDs": [
         "e851a284-6b41-41c9-9efd-dc8b01f788da"
       ],
       "mitigatedThreatRuleIDs": [],
@@ -17647,7 +17647,7 @@
       "ID": "a5beea3e-c1e2-40ef-9056-8540c7f5557d",
       "Name": "Certificate validation",
       "Description": "",
-      "mitigatedThreatOriginIDs": [
+      "mitigatedattackVectorIDs": [
         "0b47795b-b42d-49d1-bf50-7f4889994fea",
         "6509fe5f-7e27-40ec-bd08-97e29c67f8c1",
         "ed84da5f-3181-4be1-bef4-d911077b1910",
@@ -17696,7 +17696,7 @@
       "ID": "af734914-6fe1-4ace-8895-a004472c9d13",
       "Name": "True random number generator",
       "Description": "The generation of true random numbers is essential for many cryptographic operations. However, many pseudo-random number generators (PRNGs) are not cryptographically secure.",
-      "mitigatedThreatOriginIDs": [
+      "mitigatedattackVectorIDs": [
         "0ffd675d-d83c-4f74-8835-398e7f3930cb"
       ],
       "mitigatedThreatRuleIDs": [],
@@ -17735,7 +17735,7 @@
       "ID": "34eb5948-314a-4a99-a782-c5ed7d26df01",
       "Name": "Strong block cipher mode",
       "Description": "Review the latest recommendations from organizations such as NIST.",
-      "mitigatedThreatOriginIDs": [
+      "mitigatedattackVectorIDs": [
         "a20d6e53-4426-4700-a04f-a4018bc7bfce"
       ],
       "mitigatedThreatRuleIDs": [],
@@ -17753,7 +17753,7 @@
       "ID": "51afbfbf-f5f5-40f7-908f-5db63ed5e1ca",
       "Name": "Use IV and Nonce only once",
       "Description": "Use an initialization vector (IV) or nonce (number used only once) only once. ",
-      "mitigatedThreatOriginIDs": [
+      "mitigatedattackVectorIDs": [
         "680ceebd-357c-49d6-8bfd-390dc6c51dde"
       ],
       "mitigatedThreatRuleIDs": [],
@@ -17771,7 +17771,7 @@
       "ID": "43834e91-cb84-407e-9819-ffbc58b405a0",
       "Name": "Secure password storage",
       "Description": "",
-      "mitigatedThreatOriginIDs": [
+      "mitigatedattackVectorIDs": [
         "f0ef09ed-0cde-4b12-beb6-f1640132f3e6",
         "0e3c0e3e-1587-46f8-93ea-e9091dff5958",
         "05e04798-41ce-4919-a92b-264f7e985de2"
@@ -17798,7 +17798,7 @@
       "ID": "a23f9f78-27a6-4a21-8c48-29a2afd48830",
       "Name": "Logging",
       "Description": "https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html",
-      "mitigatedThreatOriginIDs": [
+      "mitigatedattackVectorIDs": [
         "71f761e4-8149-4a88-92fd-35f9d99cc0ef",
         "afd4bceb-31b0-41cd-9eae-02d2eba6b41c"
       ],
@@ -17875,7 +17875,7 @@
       "ID": "6149966a-4422-4b32-ac28-88a2ded07354",
       "Name": "Cloud service recovery",
       "Description": "",
-      "mitigatedThreatOriginIDs": [],
+      "mitigatedattackVectorIDs": [],
       "mitigatedThreatRuleIDs": [
         "b05b7085-3952-4f0d-bb85-7c380eb32f92"
       ],
@@ -17893,7 +17893,7 @@
       "ID": "113386c4-73e2-4e37-a390-83c3ef939633",
       "Name": "OPC UA secure configuration",
       "Description": "See Practical Security Recommendations for building OPC UA Applications by OPC Fundation",
-      "mitigatedThreatOriginIDs": [],
+      "mitigatedattackVectorIDs": [],
       "mitigatedThreatRuleIDs": [
         "ea2ba48d-b7f9-42c9-b9d9-f4a9816383b0",
         "7f6ca653-a703-480c-b5d8-d82243171994",
@@ -17950,7 +17950,7 @@
       "ID": "6986a3d3-c10f-4ffb-a348-fafe9c8c9150",
       "Name": "MQTT secure configuration",
       "Description": "",
-      "mitigatedThreatOriginIDs": [],
+      "mitigatedattackVectorIDs": [],
       "mitigatedThreatRuleIDs": [
         "a89ed38a-c36b-445b-a8c2-89e7289cdb9e",
         "104ac1d9-34d6-4ce7-97f1-6d3dedcfbb59"
@@ -17991,7 +17991,7 @@
       "ID": "76ed8c24-b89e-4eb1-9d09-a97548729ba5",
       "Name": "DoS protection",
       "Description": "DoS depends on the used network interfaces, protocols and operating system",
-      "mitigatedThreatOriginIDs": [],
+      "mitigatedattackVectorIDs": [],
       "mitigatedThreatRuleIDs": [
         "7b825bd7-222e-476f-bf22-85fe2e50eb6c"
       ],
