@@ -1,7 +1,7 @@
 import { ConfigFile } from "./config-file";
 import { DatabaseBase, DataReferenceTypes, IDataReferences, INote, ViewElementBase } from "./database";
 import { ProjectFile } from "./project-file";
-import { LifeCycle, MappingStates, AttackScenario, ThreatOrigin, ThreatRule } from "./threat-model";
+import { LifeCycle, MappingStates, AttackScenario, AttackVector, ThreatRule } from "./threat-model";
 
 export interface IMitigationTip {
   Name: string;
@@ -12,13 +12,13 @@ export interface IMitigationTip {
 export class Control extends DatabaseBase {
   private config: ConfigFile;
 
-  public get MitigatedThreatOrigins(): ThreatOrigin[] { 
-    let res: ThreatOrigin[] = [];
-    this.Data['mitigatedThreatOriginIDs'].forEach(x => res.push(this.config.GetThreatOrigin(x)));
+  public get MitigatedAttackVectors(): AttackVector[] { 
+    let res: AttackVector[] = [];
+    this.Data['mitigatedAttackVectorIDs'].forEach(x => res.push(this.config.GetAttackVector(x)));
     return res;
   }
-  public set MitigatedThreatOrigins(val: ThreatOrigin[]) {
-    this.Data['mitigatedThreatOriginIDs'] = val?.map(x => x.ID);
+  public set MitigatedAttackVectors(val: AttackVector[]) {
+    this.Data['mitigatedAttackVectorIDs'] = val?.map(x => x.ID);
   }
 
   public get MitigatedThreatRules(): ThreatRule[] { 
@@ -38,21 +38,21 @@ export class Control extends DatabaseBase {
 
     this.config = cf;
 
-    if (!this.Data['mitigatedThreatOriginIDs']) this.Data['mitigatedThreatOriginIDs'] = [];
+    if (!this.Data['mitigatedAttackVectorIDs']) this.Data['mitigatedAttackVectorIDs'] = [];
     if (!this.Data['mitigatedThreatRuleIDs']) this.Data['mitigatedThreatRuleIDs'] = [];
     if (!this.Data['MitigationTips']) this.Data['MitigationTips'] = [];
   }
 
-  public AddMitigatedThreatOrigin(threat: ThreatOrigin) {
-    if (!this.MitigatedThreatOrigins.includes(threat)) {
-      this.Data['mitigatedThreatOriginIDs'].push(threat.ID);
+  public AddMitigatedAttackVector(threat: AttackVector) {
+    if (!this.MitigatedAttackVectors.includes(threat)) {
+      this.Data['mitigatedAttackVectorIDs'].push(threat.ID);
     }
   }
 
-  public RemoveMitigatedThreatOrigin(threat: ThreatOrigin) {
-    const index = this.MitigatedThreatOrigins.indexOf(threat);
+  public RemoveMitigatedAttackVector(threat: AttackVector) {
+    const index = this.MitigatedAttackVectors.indexOf(threat);
     if (index >= 0) {
-      this.Data['mitigatedThreatOriginIDs'].splice(index, 1);
+      this.Data['mitigatedAttackVectorIDs'].splice(index, 1);
     }
   }
 
@@ -172,12 +172,13 @@ export enum MitigationStates {
   Rejected = 3,
   NeedsInvestigation = 4,
   MitigationStarted = 5,
-  Implemented = 6
+  Implemented = 6,
+  Duplicate = 7
 }
 
 export class MitigationStateUtil {
   public static GetMitigationStates(): MitigationStates[] {
-    return [MitigationStates.NotSet, MitigationStates.NotApplicable, MitigationStates.Rejected, MitigationStates.NeedsInvestigation, MitigationStates.MitigationStarted, MitigationStates.Implemented];
+    return [MitigationStates.NotSet, MitigationStates.NotApplicable, MitigationStates.Rejected, MitigationStates.NeedsInvestigation, MitigationStates.MitigationStarted, MitigationStates.Implemented, MitigationStates.Duplicate];
   }
 
   public static ToString(state: MitigationStates): string {
@@ -188,6 +189,7 @@ export class MitigationStateUtil {
       case MitigationStates.NeedsInvestigation: return 'properties.mitigationstate.NeedsInvestigation';
       case MitigationStates.MitigationStarted: return 'properties.mitigationstate.ImplementationStarted';
       case MitigationStates.Implemented: return 'properties.mitigationstate.Implemented';
+      case MitigationStates.Duplicate: return 'properties.mitigationstate.Duplicate';
       default:
         console.error('Missing State in MitigationStateUtil.ToString()', state)
         return 'Undefined';
@@ -266,8 +268,8 @@ export class Countermeasure extends DatabaseBase {
   public get MitigationProcess(): MitigationProcess { return this.project.GetMitigationProcess(this.Data['mitigationProcessID']); }
   public set MitigationProcess(val: MitigationProcess) { this.Data['mitigationProcessID'] = val?.ID; }
 
-  public get ThreatOrigins(): ThreatOrigin[] {
-    return this.AttackScenarios?.map(x => x?.ThreatOrigin).filter(x => x).filter((value, index, self) => self.indexOf(value) === index);
+  public get AttackVectors(): AttackVector[] {
+    return this.AttackScenarios?.map(x => x?.AttackVector).filter(x => x).filter((value, index, self) => self.indexOf(value) === index);
   }
 
   constructor(data, pf: ProjectFile, cf: ConfigFile) {
@@ -312,6 +314,10 @@ export class Countermeasure extends DatabaseBase {
     if (index >= 0) {
       this.Data['targetIDs'].splice(index, 1);
     }
+  }
+
+  public GetDiagram() {
+    return this.project.GetView(this.ViewID);
   }
 
   public CleanUpReferences() {

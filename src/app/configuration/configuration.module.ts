@@ -11,7 +11,7 @@ import { ComponentsComponent } from './components/components.component';
 import { ThreatLibraryComponent } from './threat-library/threat-library.component';
 import { RulesComponent } from './rules/rules.component';
 import { ThreatRuleComponent } from './threat-rule/threat-rule.component';
-import { ThreatOriginComponent } from './threat-origin/threat-origin.component';
+import { AttackVectorComponent } from './attack-vector/attack-vector.component';
 import { ThreatQuestionComponent } from './threat-question/threat-question.component';
 import { AssetsComponent } from './assets/assets.component';
 import { MyDataComponent } from './mydata/mydata.component';
@@ -24,7 +24,7 @@ import { ThreatActorComponent } from './threat-actor/threat-actor.component';
 import { WarningDialogComponent } from './warning-dialog/warning-dialog.component';
 
 @NgModule({
-  declarations: [ConfigurationComponent, StencilsComponent, ThreatCategoriesComponent, ComponentsComponent, ThreatLibraryComponent, RulesComponent, ThreatRuleComponent, ThreatOriginComponent, ThreatQuestionComponent, AssetsComponent, MyDataComponent, ThreatCategoryComponent, ControlsComponent, ControlComponent, ChecklistsComponent, ThreatSourcesComponent, ThreatActorComponent, WarningDialogComponent],
+  declarations: [ConfigurationComponent, StencilsComponent, ThreatCategoriesComponent, ComponentsComponent, ThreatLibraryComponent, RulesComponent, ThreatRuleComponent, AttackVectorComponent, ThreatQuestionComponent, AssetsComponent, MyDataComponent, ThreatCategoryComponent, ControlsComponent, ControlComponent, ChecklistsComponent, ThreatSourcesComponent, ThreatActorComponent, WarningDialogComponent],
   imports: [
     CommonModule,
     SharedModule,
@@ -32,7 +32,7 @@ import { WarningDialogComponent } from './warning-dialog/warning-dialog.componen
   ],
   exports: [
     ThreatActorComponent,
-    ThreatOriginComponent,
+    AttackVectorComponent,
     ThreatQuestionComponent,
     ThreatRuleComponent,
     AssetsComponent,

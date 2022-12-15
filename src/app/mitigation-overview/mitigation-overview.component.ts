@@ -112,20 +112,24 @@ export class MitigationOverviewComponent extends SideNavBase implements OnInit {
         },
         canMoveUpDown: true,
         onMoveUp: () => {
-          // let arr = pf.GetMitigationProcesses();
-          // if (arr.findIndex(x => x.ID == map.ID) != 0) {
-          //   let idx = arr.findIndex(x => x.ID == map.ID);
-          //   arr.splice(idx, 0, arr.splice(idx-1, 1)[0]);
-          //   groupNode.children.splice(idx, 0, groupNode.children.splice(idx-1, 1)[0]);
-          // }
+          let arr = pf.GetCountermeasures();
+          let arrProcess = groupNode.children?.map(x => x.data);
+          let idxProcess = arrProcess.findIndex(x => x.ID == map.ID);
+          if (idxProcess != 0) {
+            let newIndex = arr.findIndex(x => x.ID == arrProcess[idxProcess-1].ID);
+            pf.MoveItemCountermeasures(arr.findIndex(x => x.ID == map.ID), newIndex);
+            groupNode.children.splice(idxProcess, 0, groupNode.children.splice(idxProcess-1, 1)[0]);
+          }
         },
         onMoveDown: () => {
-          // let arr = pf.GetMitigationProcesses();
-          // if (arr.findIndex(x => x.ID == map.ID) != arr.length-1) {
-          //   let idx = arr.findIndex(x => x.ID == map.ID);
-          //   arr.splice(idx, 0, arr.splice(idx+1, 1)[0]);
-          //   groupNode.children.splice(idx, 0, groupNode.children.splice(idx+1, 1)[0]);
-          // }
+          let arr = pf.GetCountermeasures();
+          let arrProcess = groupNode.children?.map(x => x.data);
+          let idxProcess = arrProcess.findIndex(x => x.ID == map.ID);
+          if (idxProcess != arrProcess.length-1) {
+            let newIndex = arr.findIndex(x => x.ID == arrProcess[idxProcess+1].ID);
+            pf.MoveItemCountermeasures(arr.findIndex(x => x.ID == map.ID), newIndex);
+            groupNode.children.splice(idxProcess, 0, groupNode.children.splice(idxProcess+1, 1)[0]);
+          }
         }
       };
       return node;
@@ -151,18 +155,20 @@ export class MitigationOverviewComponent extends SideNavBase implements OnInit {
         canMoveUpDown: true,
         onMoveUp: () => {
           let arr = pf.GetMitigationProcesses();
-          if (arr.findIndex(x => x.ID == proc.ID) != 0) {
-            let idx = arr.findIndex(x => x.ID == proc.ID);
+          const idx = arr.findIndex(x => x.ID == proc.ID);
+          if (idx != 0) {
             arr.splice(idx, 0, arr.splice(idx-1, 1)[0]);
-            groupNode.children.splice(idx, 0, groupNode.children.splice(idx-1, 1)[0]);
+            const idxNodes = groupNode.children.findIndex(x => x.data == proc);
+            groupNode.children.splice(idxNodes, 0, groupNode.children.splice(idxNodes-1, 1)[0]);
           }
         },
         onMoveDown: () => {
           let arr = pf.GetMitigationProcesses();
-          if (arr.findIndex(x => x.ID == proc.ID) != arr.length-1) {
-            let idx = arr.findIndex(x => x.ID == proc.ID);
+          const idx = arr.findIndex(x => x.ID == proc.ID);
+          if (idx != arr.length-1) {
             arr.splice(idx, 0, arr.splice(idx+1, 1)[0]);
-            groupNode.children.splice(idx, 0, groupNode.children.splice(idx+1, 1)[0]);
+            const idxNodes = groupNode.children.findIndex(x => x.data == proc);
+            groupNode.children.splice(idxNodes, 0, groupNode.children.splice(idxNodes+1, 1)[0]);
           }
         },
         children: []
@@ -193,8 +199,17 @@ export class MitigationOverviewComponent extends SideNavBase implements OnInit {
       canSelect: false,
       children: []
     };
-    pf.GetCountermeasures().filter(x => x.MitigationProcess == null).forEach(x => na.children.push(createMapping(x, na)));
+    pf.GetCountermeasures().filter(x => x.MitigationProcess == null && ![MitigationStates.NotApplicable, MitigationStates.Rejected, MitigationStates.Duplicate].includes(x.MitigationState)).forEach(x => na.children.push(createMapping(x, na)));
     if (na.children.length > 0) root.children.push(na);
+
+    let rej: INavigationNode = {
+      name: () => this.translate.instant('pages.modeling.mitigationoverview.RejectedCountermeasures'),
+      canSelect: false,
+      children: [],
+      isExpanded: false
+    };
+    pf.GetCountermeasures().filter(x => x.MitigationProcess == null && [MitigationStates.NotApplicable, MitigationStates.Rejected, MitigationStates.Duplicate].includes(x.MitigationState)).forEach(x => rej.children.push(createMapping(x, rej)));
+    if (rej.children.length > 0) root.children.push(rej);
 
     pf.GetMitigationProcesses().forEach(x => root.children.push(createProcess(x, root)));
     this.nodes.push(root);

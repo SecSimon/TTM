@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, Optional } from '@angular/core';
 import { DatabaseBase, IKeyValue } from '../../model/database';
-import { OptionTypes, OptionTypesUtil, ThreatCategoryGroup, ThreatOrigin, ThreatOriginGroup, ThreatQuestion } from '../../model/threat-model';
+import { OptionTypes, OptionTypesUtil, ThreatCategoryGroup, AttackVector, AttackVectorGroup, ThreatQuestion } from '../../model/threat-model';
 import { DataService } from '../../util/data.service';
 import { DialogService } from '../../util/dialog.service';
 import { ThemeService } from '../../util/theme.service';
@@ -14,7 +14,7 @@ export class ThreatQuestionComponent implements OnInit {
   private _threatQuestion;
 
   @Input() public canEdit: boolean = true;
-  @Input() public showThreatOrigin = true;
+  @Input() public showAttackVector = true;
 
   public get threatQuestion(): ThreatQuestion { return this._threatQuestion; }
   @Input() public set threatQuestion(val: ThreatQuestion) {

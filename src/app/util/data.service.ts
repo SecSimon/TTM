@@ -12,7 +12,7 @@ import { FileUpdateService } from './file-update.service';
 import { MessagesService } from './messages.service';
 import { ConfigFile } from '../model/config-file';
 import { ProjectFile } from '../model/project-file';
-import { ThreatOriginTypes } from '../model/threat-model';
+import { AttackVectorTypes } from '../model/threat-model';
 import { SaveDialogComponent } from '../shared/components/save-dialog/save-dialog.component';
 import { ITwoOptionDialogData, TwoOptionsDialogComponent } from '../shared/components/two-options-dialog/two-options-dialog.component';
 import { TranslateService } from '@ngx-translate/core';
@@ -124,9 +124,30 @@ export class DataService {
     }, 12000);
     
     if (this.electron.isElectron && this.electron.ipcRenderer) {
-      this.electron.ipcRenderer.on('onsave', () => {
+      this.electron.ipcRenderer.on('OnSave', () => {
         this.Save();
       });
+      this.electron.ipcRenderer.on('OnDownloadProject', () => {
+        if (this.Project) this.ExportFile(true);
+        else if (this.Config) this.ExportFile(false);
+      });
+      this.electron.ipcRenderer.on('OnCloseProject', () => {
+        this.OnCloseProject();
+      });
+
+      this.electron.ipcRenderer.on('OnImportFile', (event, data, filePath) => {
+        if (!this.IsLoggedIn) this.GuestLogin();
+        this.zone.run(() => {
+          this.OnCloseProject().then(() => {
+            const content = JSON.parse(data);
+            const path = filePath.split('/');
+            this.locStorage.Remove(LocStorageKeys.GH_LAST_PROJECT);
+            this.importFile(content, path[path.length-1], null);
+          });
+        });
+      });
+
+      this.electron.ipcRenderer.send('OnMyReady');
     }
   }
 
@@ -496,6 +517,7 @@ export class DataService {
   private loadProjectFile(name: string, json: any) {
     try {
       let updated = this.fileUpdate.UpdateProjectFile(json);
+      json['Data']['Name'] = name;
       this.Project = ProjectFile.FromJSON(json);
       this.Project.FileChanged = updated;
       this.Config = this.Project.Config;
@@ -722,17 +744,7 @@ export class DataService {
         const fileRes = reader.result;
         const file = JSON.parse(fileRes.toString());
         if ('content' in file) {
-          const content = file['content'];
-          const json = JSON.parse(content);
-          this.selectedGHConfig = this.selectedGHProject = null;
-          if (isProject) {
-            this.loadProjectFile(json['Data']['Name'], json);
-            this.Project.FileChanged = true;
-          }
-          else {
-            this.loadConfigFile(fileName.replace('.ttmc', ''), json);
-            this.Config.FileChanged = true;
-          }
+          this.importFile(file, fileName, isProject);
         }
         else {
           this.messagesService.Error('Unsupported file');
@@ -740,6 +752,25 @@ export class DataService {
       };
 
       reader.readAsText(fileInput.target.files[0]);
+    }
+  }
+
+  private importFile(file, fileName: string, isProject: boolean) {
+    if ('content' in file) {
+      const content = file['content'];
+      const json = JSON.parse(content);
+      this.selectedGHConfig = this.selectedGHProject = null;
+      if (isProject == null) isProject = json['config'] != null;
+      if (isProject) {
+        this.loadProjectFile(fileName, json);
+      }
+      else {
+        this.loadConfigFile(fileName, json);
+        this.Config.FileChanged = true;
+      }
+    }
+    else {
+      this.messagesService.Error('Unsupported file');
     }
   }
 
@@ -928,16 +959,16 @@ export class DataService {
 
     let cwes = [];
     let capecs = [];
-    this.Config.GetThreatOrigins().forEach(x => {
-      if (x.OriginTypes.includes(ThreatOriginTypes.Weakness) && x.Weakness?.CWEID) cwes.push(x.Weakness.CWEID);
-      if (x.OriginTypes.includes(ThreatOriginTypes.AttackTechnique) && x.AttackTechnique?.CAPECID) capecs.push(x.AttackTechnique.CAPECID);
+    this.Config.GetAttackVectors().forEach(x => {
+      if (x.OriginTypes.includes(AttackVectorTypes.Weakness) && x.Weakness?.CWEID) cwes.push(x.Weakness.CWEID);
+      if (x.OriginTypes.includes(AttackVectorTypes.AttackTechnique) && x.AttackTechnique?.CAPECID) capecs.push(x.AttackTechnique.CAPECID);
     });
 
     cwes.sort((a,b) => a-b);
     capecs.sort((a,b) => a-b);
 
     let logs = ['Supported CWEs:', cwes, 'Supported CAPECs:', capecs, 'Threat Categories: ', this.Config.GetThreatCategories().length.toString()];
-    logs.push(...['Threats: ', this.Config.GetThreatOrigins().length.toString(), 'Threat Rules: ', this.Config.GetThreatRules().length.toString()]), 'Threats Questions: ', this.Config.GetThreatQuestions().length.toString();
+    logs.push(...['Threats: ', this.Config.GetAttackVectors().length.toString(), 'Threat Rules: ', this.Config.GetThreatRules().length.toString()]), 'Threats Questions: ', this.Config.GetThreatQuestions().length.toString();
     console.log(logs);
   }
 

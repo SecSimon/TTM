@@ -107,8 +107,8 @@ export class AppComponent {
       this.createDiffer(config.GetThreatCategoryGroups(), null);
       this.createDiffer(config.GetThreatCategories(), null);
       this.createDiffer(config.GetThreatCategories(), 'ImpactCats');
-      this.createDiffer(config.GetThreatOriginGroups(), null);
-      this.createDiffer(config.GetThreatOrigins(), null);
+      this.createDiffer(config.GetAttackVectorGroups(), null);
+      this.createDiffer(config.GetAttackVectors(), null);
       this.createDiffer(config.GetThreatQuestions(), null);
       this.createDiffer(config.GetThreatRuleGroups(), null);
       this.createDiffer(config.GetThreatRules(), null);

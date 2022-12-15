@@ -1,10 +1,10 @@
 <div *ngIf="selectedNode" style="margin-left: 10px; margin-right: 10px;">
   <h2>{{selectedNode.name()}}</h2>
-  <ng-container *ngIf="selectedThreatOriginGroup">
+  <ng-container *ngIf="selectedAttackVectorGroup">
     <mat-form-field appearance="fill" style="width: 100%;">
       <mat-label>{{ 'properties.Description' | translate }}</mat-label>
-      <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="2" cdkAutosizeMaxRows="5" [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="selectedThreatOriginGroup.Description"></textarea>
+      <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="2" cdkAutosizeMaxRows="5" [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="selectedAttackVectorGroup.Description"></textarea>
     </mat-form-field>
   </ng-container>
-  <app-threat-origin [threatOrigin]="selectedThreatOrigin"></app-threat-origin>
+  <app-attack-vector [attackVector]="selectedAttackVector"></app-attack-vector>
 </div>

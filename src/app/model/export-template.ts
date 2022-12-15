@@ -62,7 +62,7 @@ export class ExportCommonPropertyUtil {
 export enum ExportAttackScenarioProperties {
   Number = 'Number',
   ThreatState = 'ThreatState',
-  Threat = 'ThreatOrigin',
+  Threat = 'AttackVector',
   Targets = 'Targets',
   ThreatCategories = 'ThreatCategories',
   SystemThreats = 'SystemThreats',
@@ -156,7 +156,7 @@ export enum ExportCountermeasureProperties {
   Targets = 'Targets',
   Diagram = 'Diagram',
   AttackScenarios = 'AttackScenarios',
-  Threats = 'ThreatOrigins',
+  Threats = 'AttackVectors',
   MitigationProcess = 'MitigationProcess'
 }
 

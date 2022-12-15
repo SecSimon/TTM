@@ -20,7 +20,7 @@ import { ResizedEvent } from 'angular-resize-event';
 import { DeviceAssetsComponent } from '../modeling/device-assets/device-assets.component';
 import { StackComponent } from '../modeling/stack/stack.component';
 import { AssetGroup, LowMediumHighNumberUtil } from '../model/assets';
-import { ImpactCategoryUtil, RiskStrategyUtil, AttackScenario, ThreatSeverityUtil } from '../model/threat-model';
+import { ImpactCategoryUtil, RiskStrategyUtil, AttackScenario, ThreatSeverityUtil, ThreatStateUtil } from '../model/threat-model';
 import { DatabaseBase } from '../model/database';
 import { Countermeasure, MitigationProcessStateUtil, MitigationStateUtil } from '../model/mitigations';
 import { ResultsChartComponent } from '../dashboard/results-chart/results-chart.component';
@@ -257,7 +257,7 @@ export class ReportingComponent implements OnInit {
 
       this.createSubHeading(this.ttmService.Stages[1].steps[4].name);
       for (let i = 0; i < stacks.length; i++) {
-        if (stacks[i].SoftwareStack?.GetChildrenFlat().length > 0) {
+        if (stacks[i].ProcessStack?.GetChildrenFlat().length > 0) {
           this.createSubSubHeading(stacks[i].Name);
           const stackComp = this.viewContainerRef.createComponent(StackComponent);
           stackComp.instance.stack = stacks[i].ProcessStack;
@@ -299,6 +299,7 @@ export class ReportingComponent implements OnInit {
           this.createSubSubHeading(x[0]);
           x[1].forEach(threat => {
             this.createBoldParagraph(threat.Name);
+            this.createParagraph(this.translate.instant('properties.Status') + ': ' + this.translate.instant(ThreatStateUtil.ToString(threat.ThreatState)));
             if (threat.SystemThreats?.length > 0) this.createParagraph(this.translate.instant('general.SystemThreats') + ': ' + threat.SystemThreats.map(x => x.Name).join(', '));
             if (threat.Severity) this.createParagraph(this.translate.instant('properties.Severity') + ': ' + this.translate.instant(ThreatSeverityUtil.ToString(threat.Severity)));
             if (threat.Likelihood) this.createParagraph(this.translate.instant('general.Likelihood') + ': ' + this.translate.instant(LowMediumHighNumberUtil.ToString(threat.Likelihood)));

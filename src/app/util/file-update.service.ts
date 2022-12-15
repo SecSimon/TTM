@@ -13,19 +13,21 @@ import { v4 as uuidv4 } from 'uuid';
 })
 export class FileUpdateService {
 
-  public static ProjectVersion = 5;
-  public static ConfigVersion = 3;
+  public static ProjectVersion = 6;
+  public static ConfigVersion = 4;
 
   private configUpdates = [
     this.configV2,
-    this.configV3
+    this.configV3,
+    this.configV4
   ];
 
   private projectUpdates = [
     this.projectV2,
     this.projectV3,
     this.projectV4,
-    this.projectV5
+    this.projectV5,
+    this.projectV6
   ];
 
   constructor(private messageService: MessagesService, private translate: TranslateService) { }
@@ -151,18 +153,26 @@ export class FileUpdateService {
     }
   }
 
+  private projectV6(file: IProjectFile) {
+    if (file['attackScenarios']) {
+      file.attackScenarios.forEach(x => {
+        if (x['Mapping'] && x['Mapping']['Threat']) FileUpdateService.renameKey(x['Mapping']['Threat'], 'ThreatOriginID', 'AttackVectorID');
+      });
+    }
+  }
+
   private configV2(file: IConfigFile) {
-    file.threatOrigins.forEach(origin => {
+    file.attackVectors.forEach(vector => {
       let res = [];
-      for (const [k, v] of Object.entries(origin['ThreatIntroduced'])) {
+      for (const [k, v] of Object.entries(vector['ThreatIntroduced'])) {
         if (v == true) res.push(k);
       }
-      origin['ThreatIntroduced'] = res;
+      vector['ThreatIntroduced'] = res;
       res = [];
-      for (const [k, v] of Object.entries(origin['ThreatExploited'])) {
+      for (const [k, v] of Object.entries(vector['ThreatExploited'])) {
         if (v == true) res.push(k);
       }
-      origin['ThreatExploited'] = res;
+      vector['ThreatExploited'] = res;
     });
 
     file.threatCategories.forEach(cat => {
@@ -193,6 +203,28 @@ export class FileUpdateService {
       file['controlGroups'].forEach(x => {
         FileUpdateService.renameKey(x, 'mitigationGroupIDs', 'controlGroupIDs');
         FileUpdateService.renameKey(x, 'mitigationIDs', 'controlIDs');
+      });
+    }
+  }
+
+  private configV4(file: IConfigFile) {
+    if (file['threatOrigins'] && file['threatOriginGroups']) {
+      FileUpdateService.renameKey(file, 'threatOriginGroups', 'attackVectorGroups');
+      FileUpdateService.renameKey(file, 'threatOrigins', 'attackVectors');
+
+      file['attackVectorGroups'].forEach(x => {
+        FileUpdateService.renameKey(x, 'threatOriginGroupIDs', 'attackVectorGroupIDs');
+        FileUpdateService.renameKey(x, 'threatOriginIDs', 'attackVectorIDs');
+      });
+    }
+    if (file['controls']) {
+      file.controls.forEach(x => {
+        FileUpdateService.renameKey(x, 'mitigatedThreatOriginIDs', 'mitigatedAttackVectorIDs');
+      });
+    }
+    if (file['threatRules']) {
+      file.threatRules.forEach(x => {
+        if (x['Mapping']) FileUpdateService.renameKey(x['Mapping'], 'ThreatOriginID', 'AttackVectorID');
       });
     }
   }

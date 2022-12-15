@@ -490,6 +490,10 @@ export class ProjectFile extends DatabaseBase {
     return false;
   }
 
+  public MoveItemCountermeasures(prevIndex: number, currIndex: number) {
+    this.moveItemInMap<Countermeasure>('countermeasureMap', prevIndex, currIndex);
+  }
+
   public GetMitigationProcess(ID: string) {
     return this.mitigationProcesses.find(x => x.ID == ID);
   }

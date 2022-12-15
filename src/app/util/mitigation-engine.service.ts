@@ -43,7 +43,7 @@ export class MitigationEngineService {
     let checkMappings = (attackScenarios: AttackScenario[]) => {
       let mitigations = cf.GetControls();
       attackScenarios.forEach(tm => {
-        let mits = mitigations.filter(x => x.MitigatedThreatOrigins.includes(tm.ThreatOrigin));
+        let mits = mitigations.filter(x => x.MitigatedAttackVectors.includes(tm.AttackVector));
         mits.push(...mitigations.filter(x => x.MitigatedThreatRules.includes(tm.ThreatRule)));
         
         mits.forEach(mit => {
@@ -74,7 +74,7 @@ export class MitigationEngineService {
       });
     };
 
-    let attackScenarios = pf.GetAttackScenarios().filter(x => x.ViewID == viewID && (x.ThreatOrigin || x.ThreatRule) && [MappingStates.New, MappingStates.Stable].includes(x.MappingState));
+    let attackScenarios = pf.GetAttackScenarios().filter(x => x.ViewID == viewID && (x.AttackVector || x.ThreatRule) && [MappingStates.New, MappingStates.Stable].includes(x.MappingState));
     checkMappings(attackScenarios);
 
     mappingsBefore.forEach(x => {

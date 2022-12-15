@@ -89,12 +89,12 @@ export class ResultsAnalysisComponent implements AfterViewInit {
     let myFilter = (data: AttackScenario, filter: string) => {
       let search = filter.trim().toLowerCase();
       let res = data.Name.toLowerCase().indexOf(search);
-      if (res == -1) res = data.ThreatOrigin.Name.toLowerCase().indexOf(search);
+      if (res == -1) res = data.AttackVector.Name.toLowerCase().indexOf(search);
       if (res == -1) res = this.GetTargets(data).toLowerCase().indexOf(search); 
       return res != -1;
     };
 
-    this.dataSourceThreats = new MatTableDataSource(val.filter(x => x.ThreatState != ThreatStates.NotApplicable));
+    this.dataSourceThreats = new MatTableDataSource(val.filter(x => ![ThreatStates.NotApplicable, ThreatStates.Duplicate].includes(x.ThreatState)));
     this.dataSourceThreats.sort = this.sortThreats;
     this.dataSourceThreats.sortingDataAccessor = mySort;
     this.dataSourceThreats.filterPredicate = myFilter;
@@ -132,7 +132,7 @@ export class ResultsAnalysisComponent implements AfterViewInit {
       return res != -1;
     };
 
-    this.dataSourceCountermeasures = new MatTableDataSource(val.filter(x => x.MitigationState != MitigationStates.NotApplicable));
+    this.dataSourceCountermeasures = new MatTableDataSource(val.filter(x => ![MitigationStates.NotApplicable, MitigationStates.Duplicate].includes(x.MitigationState)));
     this.dataSourceCountermeasures.sort = this.sortCountermeasures;
     this.dataSourceCountermeasures.sortingDataAccessor = mySort;
     this.dataSourceCountermeasures.filterPredicate = myFilter;
@@ -156,8 +156,8 @@ export class ResultsAnalysisComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     let setData = () => {
       setTimeout(() => {
-        this.AttackScenarios = this.dataService.Project.GetAttackScenarios().filter(x => x.MappingState != MappingStates.Removed && x.ThreatState != ThreatStates.NotApplicable);
-        this.Countermeasures = this.dataService.Project.GetCountermeasures().filter(x => x.MappingState != MappingStates.Removed && x.MitigationState != MitigationStates.NotApplicable);
+        this.AttackScenarios = this.dataService.Project.GetAttackScenarios().filter(x => x.MappingState != MappingStates.Removed && ![ThreatStates.NotApplicable, ThreatStates.Duplicate].includes(x.ThreatState));
+        this.Countermeasures = this.dataService.Project.GetCountermeasures().filter(x => x.MappingState != MappingStates.Removed && ![MitigationStates.NotApplicable, MitigationStates.Duplicate].includes(x.MitigationState));
       
         this.UpdateDiagrams();
       }, 10);
@@ -317,7 +317,7 @@ export class ResultsAnalysisComponent implements AfterViewInit {
     };
 
     LifeCycleUtil.GetKeys().forEach(lc => {
-      let mappings = allAttackScenarios.filter(x => x.ThreatOrigin?.ThreatExploited.includes(lc));
+      let mappings = allAttackScenarios.filter(x => x.AttackVector?.ThreatExploited.includes(lc));
       allAttackScenarios = allAttackScenarios.filter(x => !mappings.includes(x));
       let data: IStackedSeries = {
         name: translate.instant(LifeCycleUtil.ToString(lc)),

@@ -3,11 +3,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { MyDataComponent } from '../configuration/mydata/mydata.component';
-import { ThreatOriginComponent } from '../configuration/threat-origin/threat-origin.component';
+import { AttackVectorComponent } from '../configuration/attack-vector/attack-vector.component';
 import { ThreatRuleComponent } from '../configuration/threat-rule/threat-rule.component';
 import { MyData } from '../model/assets';
 import { DatabaseBase, DataReferencesUtil, INote, ViewElementBase } from '../model/database';
-import { AttackScenario, ICVSSEntry, IOwaspRREntry, ThreatOrigin, ThreatRule } from '../model/threat-model';
+import { AttackScenario, ICVSSEntry, IOwaspRREntry, AttackVector, ThreatRule } from '../model/threat-model';
 import { CountermeasureComponent } from '../modeling/countermeasure/countermeasure.component';
 import { MitigationProcessComponent } from '../modeling/mitigation-process/mitigation-process.component';
 import { AttackScenarioComponent } from '../modeling/attack-scenario/attack-scenario.component';
@@ -114,7 +114,7 @@ export class DialogService {
       hasResultFalse: isNew,
       resultFalseText: this.translate.instant('general.Cancel'),
       resultTrueEnabled: () => {
-        return !isNew || scenario.ThreatOrigin != null || scenario.ThreatCategories.length > 0;
+        return !isNew || scenario.AttackVector != null || scenario.ThreatCategories.length > 0;
       },
       initalTrue: false,
       component: AttackScenarioComponent,
@@ -141,37 +141,37 @@ export class DialogService {
     return this.OpenTwoOptionsDialog(data);
   }
 
-  public OpenAddThreatOriginDialog(origin: ThreatOrigin) {
+  public OpenAddAttackVectorDialog(vector: AttackVector) {
     let data: ITwoOptionDialogData = {
-      title: this.translate.instant('pages.config.threatOriginEditDialogTitle'),
+      title: this.translate.instant('pages.config.attackVectorEditDialogTitle'),
       resultTrueText: this.translate.instant('general.Add'),
       hasResultFalse: true,
       resultFalseText: this.translate.instant('general.Cancel'),
       resultTrueEnabled: () => {
-        return origin.Name?.length > 0 && this.dataService.Config.FindGroupOfThreatOrigin(origin) != null;
+        return vector.Name?.length > 0 && this.dataService.Config.FindGroupOfAttackVector(vector) != null;
       },
       initalTrue: false,
-      component: ThreatOriginComponent,
+      component: AttackVectorComponent,
       componentInputData: [
-        { Key: ThreatOrigin, Value: origin }
+        { Key: AttackVector, Value: vector }
       ]
     };
     return this.OpenTwoOptionsDialog(data);
   }
 
-  public OpenViewThreatOriginDialog(origin: ThreatOrigin, canEdit) {
+  public OpenViewAttackVectorDialog(vector: AttackVector, canEdit) {
     let edit = new MyBoolean();
     edit.Value = canEdit;
     let data: ITwoOptionDialogData = {
-      title: this.translate.instant('pages.config.threatOriginViewDialogTitle'),
+      title: this.translate.instant('pages.config.attackVectorViewDialogTitle'),
       resultTrueText: this.translate.instant('general.Close'),
       hasResultFalse: false,
       resultFalseText: '',
       resultTrueEnabled: () => true,
       initalTrue: true,
-      component: ThreatOriginComponent,
+      component: AttackVectorComponent,
       componentInputData: [
-        { Key: ThreatOrigin, Value: origin },
+        { Key: AttackVector, Value: vector },
         { Key: MyBoolean, Value: edit }
       ]
     };

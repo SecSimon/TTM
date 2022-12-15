@@ -19,10 +19,10 @@
     </mat-select>
   </mat-form-field>
   <mat-form-field appearance="fill" style="width: 100%;">
-    <mat-label>{{'properties.MitigatedThreatOrigins' | translate}}</mat-label>
-    <mat-select [(value)]="control.MitigatedThreatOrigins" multiple>
-      <mat-optgroup *ngFor="let group of GetAvailableThreatOriginGroups()" [label]="group.Name">
-        <mat-option *ngFor="let threat of group.ThreatOrigins" [value]="threat">
+    <mat-label>{{'properties.MitigatedAttackVectors' | translate}}</mat-label>
+    <mat-select [(value)]="control.MitigatedAttackVectors" multiple>
+      <mat-optgroup *ngFor="let group of GetAvailableAttackVectorGroups()" [label]="group.Name">
+        <mat-option *ngFor="let threat of group.AttackVectors" [value]="threat">
           {{threat.Name}}
         </mat-option>
       </mat-optgroup>
@@ -80,10 +80,10 @@
   </div>
   <br/>
   <mat-accordion class="expansion-panel-headers-align" style="pointer-events: initial;">
-    <mat-expansion-panel *ngFor="let threat of control.MitigatedThreatOrigins">
+    <mat-expansion-panel *ngFor="let threat of control.MitigatedAttackVectors">
       <mat-expansion-panel-header>
         <mat-panel-title>
-          {{'properties.MitigatedThreatOrigin' | translate}}
+          {{'properties.MitigatedAttackVector' | translate}}
         </mat-panel-title>
         <mat-panel-description>
           {{threat?.GetProperty('Name')}}
@@ -91,7 +91,7 @@
         </mat-panel-description>
       </mat-expansion-panel-header>
       <ng-template matExpansionPanelContent>
-        <app-threat-origin [canEdit]="false" [threatOrigin]="threat"></app-threat-origin>
+        <app-attack-vector [canEdit]="false" [attackVector]="threat"></app-attack-vector>
       </ng-template>
     </mat-expansion-panel>
     <mat-expansion-panel *ngFor="let threat of control.MitigatedThreatRules">

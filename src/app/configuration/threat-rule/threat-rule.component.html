@@ -10,20 +10,20 @@
   </mat-form-field>
   <div [class.disable]="!threatRule.IsActive">
     <mat-form-field appearance="fill" class="property-form-field">
-      <mat-label>{{'general.ThreatOrigin' | translate}}</mat-label>
-      <mat-select [(value)]="threatRule.ThreatOrigin" (selectionChange)="OnThreatOriginChanged($event.value)"  matTooltip="{{threatRule.ThreatOrigin?.Name}}" matTooltipShowDelay="1000">
+      <mat-label>{{'general.AttackVector' | translate}}</mat-label>
+      <mat-select [(value)]="threatRule.AttackVector" (selectionChange)="OnAttackVectorChanged($event.value)"  matTooltip="{{threatRule.AttackVector?.Name}}" matTooltipShowDelay="1000">
         <mat-option>{{'properties.selectNone' | translate}}</mat-option>
-        <mat-optgroup *ngFor="let group of GetThreatOriginGroups()" [label]="group.Name">
-          <mat-option *ngFor="let threat of group.ThreatOrigins" [value]="threat">
+        <mat-optgroup *ngFor="let group of GetAttackVectorGroups()" [label]="group.Name">
+          <mat-option *ngFor="let threat of group.AttackVectors" [value]="threat">
             {{threat.Name}}
           </mat-option>
         </mat-optgroup>
       </mat-select>
     </mat-form-field>
-    <button mat-icon-button style="vertical-align: super;" [disabled]="!threatRule.ThreatOrigin" (click)="EditThreatOrigin()" matTooltip="{{'general.Edit' | translate}}" matTooltipShowDelay="1000">
+    <button mat-icon-button style="vertical-align: super;" [disabled]="!threatRule.AttackVector" (click)="EditAttackVector()" matTooltip="{{'general.Edit' | translate}}" matTooltipShowDelay="1000">
       <mat-icon>edit</mat-icon>
     </button>
-    <button mat-icon-button style="vertical-align: super;" (click)="AddThreatOrigin()" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000">
+    <button mat-icon-button style="vertical-align: super;" (click)="AddAttackVector()" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000">
       <mat-icon>add</mat-icon>
     </button>
     <mat-form-field appearance="fill" style="width: 150px; margin-left: 10px;">
@@ -33,19 +33,19 @@
         <mat-option *ngFor="let type of GetSeverityTypes()" [value]="type">{{GetSeverityTypeName(type) | translate}}</mat-option>
       </mat-select>
     </mat-form-field>
-    <mat-accordion class="expansion-panel-headers-align" *ngIf="showThreatOrigin && threatRule.ThreatOrigin" style="pointer-events: initial;">
+    <mat-accordion class="expansion-panel-headers-align" *ngIf="showAttackVector && threatRule.AttackVector" style="pointer-events: initial;">
       <mat-expansion-panel style="margin-bottom: 20px;">
         <mat-expansion-panel-header>
           <mat-panel-title>
             {{'general.ThreatInfo' | translate}}
           </mat-panel-title>
           <mat-panel-description>
-            {{threatRule.ThreatOrigin.Name}}
+            {{threatRule.AttackVector.Name}}
             <mat-icon>info</mat-icon>
           </mat-panel-description>
         </mat-expansion-panel-header>
         <ng-template matExpansionPanelContent>
-          <app-threat-origin [canEdit]="false" [threatOrigin]="threatRule.ThreatOrigin"></app-threat-origin>
+          <app-attack-vector [canEdit]="false" [attackVector]="threatRule.AttackVector"></app-attack-vector>
         </ng-template>
       </mat-expansion-panel>
     </mat-accordion>
@@ -471,10 +471,10 @@
             <button mat-icon-button style="margin-left: auto; margin-right: 0px;" (click)="RemoveControl(mit)" matTooltip="{{'general.Remove' | translate}}" matTooltipShowDelay="1000"><mat-icon>remove</mat-icon></button>
             <button mat-icon-button style="margin-left: auto;" (click)="DeleteControl(mit)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000"><mat-icon>delete</mat-icon></button>
           </mat-list-item>
-          <ng-container *ngIf="GetOriginControls()?.length > 0">
+          <ng-container *ngIf="GetVectorControls()?.length > 0">
             <mat-divider></mat-divider>
-            <div mat-subheader>{{threatRule.ThreatOrigin.Name}} {{ 'general.Controls' | translate }}</div>
-            <mat-list-item *ngFor="let mit of GetOriginControls()" (click)="selectedControl = mit"
+            <div mat-subheader>{{threatRule.AttackVector.Name}} {{ 'general.Controls' | translate }}</div>
+            <mat-list-item *ngFor="let mit of GetVectorControls()" (click)="selectedControl = mit"
               [class.highlight-light]="selectedControl === mit && !theme.IsDarkMode" [class.highlight-dark]="selectedControl === mit && theme.IsDarkMode"
               matTooltip="{{mit.Name}}" matTooltipShowDelay="1000">
               <mat-icon mat-list-icon>security</mat-icon>

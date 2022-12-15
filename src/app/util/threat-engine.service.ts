@@ -59,7 +59,7 @@ export class ThreatEngineService {
             }
             else {
               const map = pf.CreateAttackScenario(diagram.ID, true);
-              map.SetMapping(rule.ThreatOrigin?.ID, rule.ThreatCategories.map(x => x.ID), m.target, m.elements, rule, null);
+              map.SetMapping(rule.AttackVector?.ID, rule.ThreatCategories.map(x => x.ID), m.target, m.elements, rule, null);
             }
           });
         });
@@ -81,13 +81,13 @@ export class ThreatEngineService {
           }
           else {
             let map = pf.CreateAttackScenario(diagram.ID, true);
-            map.SetMapping(rule.ThreatOrigin?.ID, rule.ThreatCategories.map(x => x.ID), appliedElements.length == 1 ? appliedElements[0] : null, appliedElements, rule, null);
+            map.SetMapping(rule.AttackVector?.ID, rule.ThreatCategories.map(x => x.ID), appliedElements.length == 1 ? appliedElements[0] : null, appliedElements, rule, null);
             // if (ruleType == RuleTypes.DFD) {
             //   // todo
-            //   map.SetMapping(rule.ThreatOrigin?.ID, rule.ThreatCategories.map(x => x.ID), appliedElements.length == 1 ? appliedElements[0] : null, appliedElements, rule, null);
+            //   map.SetMapping(rule.AttackVector?.ID, rule.ThreatCategories.map(x => x.ID), appliedElements.length == 1 ? appliedElements[0] : null, appliedElements, rule, null);
             // }
             // else {
-            //   map.SetMapping(rule.ThreatOrigin?.ID, rule.ThreatCategories.map(x => x.ID), null, appliedElements, rule, null);
+            //   map.SetMapping(rule.AttackVector?.ID, rule.ThreatCategories.map(x => x.ID), null, appliedElements, rule, null);
             // }
           }
         }
@@ -137,7 +137,7 @@ export class ThreatEngineService {
               if (rule.ComponentRestriction.DetailRestrictions.length == 1) {
                 quest = pf.Config.GetThreatQuestions().find(y => y.ComponentType.ID == component.Type.ID && y.Property.ID == rule.ComponentRestriction.DetailRestrictions[0].PropertyRest.ID);
               }
-              map.SetMapping(rule.ThreatOrigin?.ID, rule.ThreatCategories.map(x => x.ID), m.target, m.elements, rule, quest);
+              map.SetMapping(rule.AttackVector?.ID, rule.ThreatCategories.map(x => x.ID), m.target, m.elements, rule, quest);
             }
           });
         });
@@ -386,7 +386,7 @@ export class ThreatEngineService {
    */
   private checkForExistingMapping(rule: ThreatRule, target: ViewElementBase, targets: ViewElementBase[]): AttackScenario {
     return this.dataService.Project.GetAttackScenarios().find(x => {
-      let res = x.ThreatOrigin?.ID == rule.ThreatOrigin?.ID && x.ThreatRule?.ID == rule.ID && x.Target?.ID == target?.ID;
+      let res = x.AttackVector?.ID == rule.AttackVector?.ID && x.ThreatRule?.ID == rule.ID && x.Target?.ID == target?.ID;
       // if (rule.RuleType == RuleTypes.DFD && rule.RuleGenerationType == RuleGenerationTypes.EachElement) {
       //   res = res && x.Targets.length == 3 && x.Targets[0].ID == (target as DataFlow).Sender.ID && x.Targets[1].ID == (target as DataFlow).ID && x.Targets[2].ID == (target as DataFlow).Receiver.ID;
       // }

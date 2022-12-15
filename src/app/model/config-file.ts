@@ -2,7 +2,7 @@ import { StringExtension } from "../util/string-extension";
 import { MyComponentType, MyComponentTypeGroup, MyComponentTypeIDs } from "./component";
 import { DatabaseBase, IDatabaseBase, IDataReferences, IProperty } from "./database";
 import { ElementTypeIDs, ElementTypeUtil, Protocol, StencilThreatMnemonic, StencilType, StencilTypeTemplate } from "./dfd-model";
-import { ThreatCategory, ThreatCategoryGroup, ThreatQuestion, ThreatOrigin, ThreatOriginGroup, ThreatRule, ThreatRuleGroup, RuleTypes as ThreatRuleTypes } from "./threat-model";
+import { ThreatCategory, ThreatCategoryGroup, ThreatQuestion, AttackVector, AttackVectorGroup, ThreatRule, ThreatRuleGroup, RuleTypes as ThreatRuleTypes } from "./threat-model";
 
 import defaultConfig from "../../assets/default-config-file.json";
 import { AssetGroup, LowMediumHighNumber, MyData } from "./assets";
@@ -27,8 +27,8 @@ export interface IConfigFile extends IDatabaseBase {
   threatActors: {}[];
   threatCategoryGroups: {}[];
   threatCategories: {}[];
-  threatOriginGroups: {}[];
-  threatOrigins: {}[];
+  attackVectorGroups: {}[];
+  attackVectors: {}[];
   threatQuestions: {}[];
   threatRuleGroups: {}[];
   threatRules: {}[];
@@ -56,8 +56,8 @@ export class ConfigFile extends DatabaseBase {
   private threatActors: ThreatActor[] = [];
   private threatCategoryGroups: ThreatCategoryGroup[] = [];
   private threatCategoryMap = new Map<string, ThreatCategory>();
-  private threatOriginGroups: ThreatOriginGroup[] = [];
-  private threatOriginMap = new Map<string, ThreatOrigin>();
+  private attackVectorGroups: AttackVectorGroup[] = [];
+  private attackVectorMap = new Map<string, AttackVector>();
   private threatQuestionMap = new Map<string, ThreatQuestion>();
   private threatRuleGroups: ThreatRuleGroup[] = [];
   private threatRuleMap = new Map<string, ThreatRule>();
@@ -74,7 +74,7 @@ export class ConfigFile extends DatabaseBase {
   public ProjectFile: ProjectFile;
 
   public get AssetGroups(): AssetGroup { return this.GetAssetGroup(this.Data['assetGroupID']); }
-  public get ThreatLibrary(): ThreatOriginGroup { return this.GetThreatOriginGroup(this.Data['threatLibraryID']); }
+  public get ThreatLibrary(): AttackVectorGroup { return this.GetAttackVectorGroup(this.Data['threatLibraryID']); }
   public get DFDThreatRuleGroups(): ThreatRuleGroup { return this.GetThreatRuleGroup(this.Data['DFDthreatRuleGroupsID']); }
   public get StencilThreatRuleGroups(): ThreatRuleGroup { return this.GetThreatRuleGroup(this.Data['stencilThreatRuleGroupsID']); }
   public get ComponentThreatRuleGroups(): ThreatRuleGroup { return this.GetThreatRuleGroup(this.Data['componentThreatRuleGroupsID']); }
@@ -100,8 +100,8 @@ export class ConfigFile extends DatabaseBase {
   public GetThreatActors(): ThreatActor[] { return this.threatActors; }
   public GetThreatCategoryGroups(): ThreatCategoryGroup[] { return this.threatCategoryGroups; }
   public GetThreatCategories(): ThreatCategory[] { return Array.from(this.threatCategoryMap, ([k, v]) => v); }
-  public GetThreatOriginGroups(): ThreatOriginGroup[] { return this.threatOriginGroups; }
-  public GetThreatOrigins(): ThreatOrigin[] { return Array.from(this.threatOriginMap, ([k, v]) => v); }
+  public GetAttackVectorGroups(): AttackVectorGroup[] { return this.attackVectorGroups; }
+  public GetAttackVectors(): AttackVector[] { return Array.from(this.attackVectorMap, ([k, v]) => v); }
   public GetThreatQuestions(): ThreatQuestion[] { return Array.from(this.threatQuestionMap, ([k, v]) => v); }
   public GetThreatRuleGroups(): ThreatRuleGroup[] { return this.threatRuleGroups; }
   public GetThreatRules(): ThreatRule[] { return Array.from(this.threatRuleMap, ([k, v]) => v); }
@@ -118,7 +118,7 @@ export class ConfigFile extends DatabaseBase {
     if (!this.Data['Version']) this.Data['Version'] = FileUpdateService.ConfigVersion;
 
     if (!this.Data['threatLibraryID']) {
-      let lib = this.CreateThreatOriginGroup(null);
+      let lib = this.CreateAttackVectorGroup(null);
       lib.Name = 'Threat Library';
       this.Data['threatLibraryID'] = lib.ID; 
     }
@@ -432,54 +432,54 @@ export class ConfigFile extends DatabaseBase {
     return index >= 0;
   }
 
-  public GetThreatOriginGroup(ID: string) {
-    return this.threatOriginGroups.find(x => x.ID == ID);
+  public GetAttackVectorGroup(ID: string) {
+    return this.attackVectorGroups.find(x => x.ID == ID);
   }
 
-  public CreateThreatOriginGroup(parentGroup: ThreatOriginGroup): ThreatOriginGroup {
-    let res = new ThreatOriginGroup({}, this);
-    this.threatOriginGroups.push(res);
-    res.Name = StringExtension.FindUniqueName('Threat Group', this.threatOriginGroups.map(x => x.Name));
-    if (parentGroup != null) parentGroup.AddThreatOriginGroup(res);
+  public CreateAttackVectorGroup(parentGroup: AttackVectorGroup): AttackVectorGroup {
+    let res = new AttackVectorGroup({}, this);
+    this.attackVectorGroups.push(res);
+    res.Name = StringExtension.FindUniqueName('Attack Vector Group', this.attackVectorGroups.map(x => x.Name));
+    if (parentGroup != null) parentGroup.AddAttackVectorGroup(res);
     return res;
   }
 
-  public DeleteThreatOriginGroup(group: ThreatOriginGroup) {
-    const index = this.threatOriginGroups.indexOf(group);
+  public DeleteAttackVectorGroup(group: AttackVectorGroup) {
+    const index = this.attackVectorGroups.indexOf(group);
     if (index >= 0) {
       group.OnDelete(this.ProjectFile, this);
-      this.threatOriginGroups.splice(index, 1);
+      this.attackVectorGroups.splice(index, 1);
     }
     return index >= 0;
   }
 
-  public FindGroupOfThreatOriginGroup(group: ThreatOriginGroup): ThreatOriginGroup {
-    return this.threatOriginGroups.find(x => x.SubGroups.some(y => y.ID == group.ID));
+  public FindGroupOfAttackVectorGroup(group: AttackVectorGroup): AttackVectorGroup {
+    return this.attackVectorGroups.find(x => x.SubGroups.some(y => y.ID == group.ID));
   }
 
-  public GetThreatOrigin(ID: string) {
-    return this.threatOriginMap.get(ID);
+  public GetAttackVector(ID: string) {
+    return this.attackVectorMap.get(ID);
   }
 
-  public CreateThreatOrigin(group: ThreatOriginGroup): ThreatOrigin {
-    let res = new ThreatOrigin({}, this);
-    if (group) group.AddThreatOrigin(res);
-    this.threatOriginMap.set(res.ID, res);
-    res.Name = StringExtension.FindUniqueName('Threat Origin', this.GetThreatOrigins().map(x => x.Name));
+  public CreateAttackVector(group: AttackVectorGroup): AttackVector {
+    let res = new AttackVector({}, this);
+    if (group) group.AddAttackVector(res);
+    this.attackVectorMap.set(res.ID, res);
+    res.Name = StringExtension.FindUniqueName('Attack Vector', this.GetAttackVectors().map(x => x.Name));
     return res;
   }
 
-  public DeleteThreatOrigin(o: ThreatOrigin): boolean {
-    if (this.threatOriginMap.has(o.ID)) {
+  public DeleteAttackVector(o: AttackVector): boolean {
+    if (this.attackVectorMap.has(o.ID)) {
       o.OnDelete(this.ProjectFile, this);
-      this.threatOriginMap.delete(o.ID);
+      this.attackVectorMap.delete(o.ID);
       return true;
     }
     return false;
   }
 
-  public FindGroupOfThreatOrigin(o: ThreatOrigin): ThreatOriginGroup {
-    return this.threatOriginGroups.find(x => x.ThreatOrigins.some(y => y.ID == o.ID));
+  public FindGroupOfAttackVector(o: AttackVector): AttackVectorGroup {
+    return this.attackVectorGroups.find(x => x.AttackVectors.some(y => y.ID == o.ID));
   }
 
   public GetThreatQuestion(ID: string) {
@@ -684,8 +684,8 @@ export class ConfigFile extends DatabaseBase {
       threatActors: [],
       threatCategoryGroups: [],
       threatCategories: [],
-      threatOriginGroups: [],
-      threatOrigins: [],
+      attackVectorGroups: [],
+      attackVectors: [],
       threatQuestions: [],
       threatRuleGroups: [],
       threatRules: [],
@@ -710,8 +710,8 @@ export class ConfigFile extends DatabaseBase {
     this.threatActors.forEach(x => res.threatActors.push(x.ToJSON()));
     this.threatCategoryGroups.forEach(x => res.threatCategoryGroups.push(x.ToJSON()));
     this.threatCategoryMap.forEach(x => res.threatCategories.push(x.ToJSON()));
-    this.threatOriginGroups.forEach(x => res.threatOriginGroups.push(x.ToJSON()));
-    this.threatOriginMap.forEach(x => res.threatOrigins.push(x.ToJSON()));
+    this.attackVectorGroups.forEach(x => res.attackVectorGroups.push(x.ToJSON()));
+    this.attackVectorMap.forEach(x => res.attackVectors.push(x.ToJSON()));
     this.threatQuestionMap.forEach(x => res.threatQuestions.push(x.ToJSON()));
     this.threatRuleGroups.forEach(x => res.threatRuleGroups.push(x.ToJSON()));
     this.threatRuleMap.forEach(x => res.threatRules.push(x.ToJSON()));
@@ -739,8 +739,8 @@ export class ConfigFile extends DatabaseBase {
     val.threatActors?.forEach(x => res.threatActors.push(ThreatActor.FromJSON(x, res)));
     val.threatCategories.forEach(x => res.threatCategoryMap.set(x['ID'], ThreatCategory.FromJSON(x, res)));
     val.threatCategoryGroups.forEach(x => res.threatCategoryGroups.push(ThreatCategoryGroup.FromJSON(x, res)));
-    val.threatOriginGroups.forEach(x => res.threatOriginGroups.push(ThreatOriginGroup.FromJSON(x, res)));
-    val.threatOrigins.forEach(x => res.threatOriginMap.set(x['ID'], ThreatOrigin.FromJSON(x, res)));
+    val.attackVectorGroups.forEach(x => res.attackVectorGroups.push(AttackVectorGroup.FromJSON(x, res)));
+    val.attackVectors.forEach(x => res.attackVectorMap.set(x['ID'], AttackVector.FromJSON(x, res)));
     val.threatQuestions.forEach(x => res.threatQuestionMap.set(x['ID'], ThreatQuestion.FromJSON(x, res)));
     val.threatRuleGroups.forEach(x => res.threatRuleGroups.push(ThreatRuleGroup.FromJSON(x, res)));
     val.threatRules.forEach(x => res.threatRuleMap.set(x['ID'], ThreatRule.FromJSON(x, res)));

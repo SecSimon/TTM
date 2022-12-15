@@ -1,6 +1,18 @@
 {
   "asar": true,
   "productName": "TTModeler",
+  "fileAssociations": [
+    {
+      "ext": "ttmp",
+      "name": "TTModeler Project",
+      "role": "Editor"
+    },
+    {
+      "ext": "ttmc",
+      "name": "TTModeler Configuration",
+      "role": "Editor"
+    }
+  ],
   "directories": {
     "output": "release/"
   },

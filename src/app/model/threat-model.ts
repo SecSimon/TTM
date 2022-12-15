@@ -6,7 +6,7 @@ import { ConfigFile } from "./config-file";
 import { DatabaseBase, DataReferenceTypes, IDataReferences, IKeyValue, IProperty, PropertyEditTypes, ViewElementBase } from "./database";
 import { SystemThreat } from "./system-threat";
 import { ElementTypeIDs, ElementTypeUtil, StencilThreatMnemonic, StencilType } from "./dfd-model";
-import { Control, Countermeasure } from "./mitigations";
+import { Control, Countermeasure, MitigationStates } from "./mitigations";
 import { ProjectFile } from "./project-file";
 
 
@@ -72,9 +72,9 @@ export class ThreatCategory extends DatabaseBase {
   public FindReferences(pf: ProjectFile, cf: ConfigFile): IDataReferences[] {
     let res: IDataReferences[] = [];
 
-    // threat questions, threat origin, attack scenarios, threat rule
-    cf.GetThreatOrigins().filter(x => x.ThreatCategories?.includes(this)).forEach(x => {
-      res.push({ Type: DataReferenceTypes.RemoveThreatCategoryFromThreatOrigin, Param: x });
+    // threat questions, attack vector, attack scenarios, threat rule
+    cf.GetAttackVectors().filter(x => x.ThreatCategories?.includes(this)).forEach(x => {
+      res.push({ Type: DataReferenceTypes.RemoveThreatCategoryFromAttackVector, Param: x });
     });
     cf.GetThreatRules().filter(x => x.ThreatCategories?.includes(this)).forEach(x => {
       res.push({ Type: DataReferenceTypes.RemoveThreatCategoryFromThreatRule, Param: x });
@@ -99,7 +99,7 @@ export class ThreatCategory extends DatabaseBase {
         let cats = (ref.Param as AttackScenario).Mapping.Threat.ThreatCategoryIDs;
         cats.splice(cats.indexOf(ref.Param.ID), 1);
       }
-      else if (ref.Type == DataReferenceTypes.RemoveThreatCategoryFromThreatOrigin) {
+      else if (ref.Type == DataReferenceTypes.RemoveThreatCategoryFromAttackVector) {
         let cats = ref.Param.Data['threatCategorieIDs'];
         cats.splice(cats.indexOf(ref.Param.ID), 1);
       }
@@ -208,28 +208,28 @@ export class LifeCycleUtil {
   }
 }
 
-export enum ThreatOriginTypes {
+export enum AttackVectorTypes {
   Weakness = 1,
   AttackTechnique = 2
 }
 
-export class ThreatOriginTypesUtil {
-  public static GetTypes(): ThreatOriginTypes[] {
-    return [ThreatOriginTypes.Weakness, ThreatOriginTypes.AttackTechnique];
+export class AttackVectorTypesUtil {
+  public static GetTypes(): AttackVectorTypes[] {
+    return [AttackVectorTypes.Weakness, AttackVectorTypes.AttackTechnique];
   }
 
   public static GetTypeNames(): string[] {
     let res = [];
-    ThreatOriginTypesUtil.GetTypes().forEach(x => res.push(ThreatOriginTypesUtil.ToString(x)));
+    AttackVectorTypesUtil.GetTypes().forEach(x => res.push(AttackVectorTypesUtil.ToString(x)));
     return res;
   }
 
-  public static ToString(ot: ThreatOriginTypes): string {
+  public static ToString(ot: AttackVectorTypes): string {
     switch (ot) {
-      case ThreatOriginTypes.Weakness: return "general.Weakness";
-      case ThreatOriginTypes.AttackTechnique: return "general.AttackTechnique";
+      case AttackVectorTypes.Weakness: return "general.Weakness";
+      case AttackVectorTypes.AttackTechnique: return "general.AttackTechnique";
       default:
-        console.error('Missing Option Type in ThreatOriginTypes.ToString()')
+        console.error('Missing Option Type in AttackVectorTypes.ToString()')
         return 'Undefined';
     }
   }
@@ -337,18 +337,18 @@ export class ThreatSeverityUtil {
   }
 }
 
-export class ThreatOrigin extends DatabaseBase {
+export class AttackVector extends DatabaseBase {
   private config: ConfigFile;
 
   public get ThreatIntroduced(): string[] { return this.Data['ThreatIntroduced']; }
   public get ThreatExploited(): string[] { return this.Data['ThreatExploited']; }
   public get Adversaries(): string { return this.Data['Adversaries']; }
   public set Adversaries(val: string) { this.Data['Adversaries'] = val; }
-  public get OriginTypes(): ThreatOriginTypes[] { return this.Data['OriginTypes']; }
-  public set OriginTypes(val: ThreatOriginTypes[]) {
+  public get OriginTypes(): AttackVectorTypes[] { return this.Data['OriginTypes']; }
+  public set OriginTypes(val: AttackVectorTypes[]) {
     this.Data['OriginTypes'] = val;
-    if (val.includes(ThreatOriginTypes.Weakness) && !this.Weakness) this.Weakness = {} as IWeakness;
-    if (val.includes(ThreatOriginTypes.AttackTechnique) && !this.AttackTechnique) this.AttackTechnique = { CVSS: {} } as IAttackTechnique;
+    if (val.includes(AttackVectorTypes.Weakness) && !this.Weakness) this.Weakness = {} as IWeakness;
+    if (val.includes(AttackVectorTypes.AttackTechnique) && !this.AttackTechnique) this.AttackTechnique = { CVSS: {} } as IAttackTechnique;
   }
   public get ThreatCategories(): ThreatCategory[] {
     let res = [];
@@ -382,13 +382,13 @@ export class ThreatOrigin extends DatabaseBase {
   public FindReferences(pf: ProjectFile, cf: ConfigFile): IDataReferences[] {
     let res: IDataReferences[] = [];
 
-    cf.GetThreatRules().filter(x => x.ThreatOrigin?.ID == this.ID).forEach(x => {
+    cf.GetThreatRules().filter(x => x.AttackVector?.ID == this.ID).forEach(x => {
       res.push({ Type: DataReferenceTypes.DeleteThreatRule, Param: x });
     });
-    cf.GetControls().filter(x => x.MitigatedThreatOrigins.some(x => x.ID == this.ID)).forEach(x => {
-      res.push({ Type: DataReferenceTypes.RemoveThreatOriginFromControl, Param: x });
+    cf.GetControls().filter(x => x.MitigatedAttackVectors.some(x => x.ID == this.ID)).forEach(x => {
+      res.push({ Type: DataReferenceTypes.RemoveAttackVectorFromControl, Param: x });
     });
-    pf?.GetAttackScenarios().filter(x => x.ThreatOrigin?.ID == this.ID).forEach(x => {
+    pf?.GetAttackScenarios().filter(x => x.AttackVector?.ID == this.ID).forEach(x => {
       res.push( { Type: DataReferenceTypes.DeleteAttackScenario, Param: x });
     })
 
@@ -398,15 +398,15 @@ export class ThreatOrigin extends DatabaseBase {
   public OnDelete(pf: ProjectFile, cf: ConfigFile) {
     let refs = this.FindReferences(pf, cf);
 
-    let group = cf.FindGroupOfThreatOrigin(this);
-    if (group) group.RemoveThreatOrigin(this);
+    let group = cf.FindGroupOfAttackVector(this);
+    if (group) group.RemoveAttackVector(this);
 
     refs.forEach(ref => {
       if (ref.Type == DataReferenceTypes.DeleteThreatRule) {
         cf.DeleteThreatRule(ref.Param as ThreatRule);
       }
-      else if (ref.Type == DataReferenceTypes.RemoveThreatOriginFromControl) {
-        (ref.Param as Control).MitigatedThreatOrigins = (ref.Param as Control).MitigatedThreatOrigins.filter(x => x.ID != this.ID);
+      else if (ref.Type == DataReferenceTypes.RemoveAttackVectorFromControl) {
+        (ref.Param as Control).MitigatedAttackVectors = (ref.Param as Control).MitigatedAttackVectors.filter(x => x.ID != this.ID);
       }
       else if (ref.Type == DataReferenceTypes.DeleteAttackScenario) {
         pf.DeleteAttackScenario(ref.Param as AttackScenario);
@@ -414,22 +414,22 @@ export class ThreatOrigin extends DatabaseBase {
     });
   }
 
-  public static FromJSON(data, cf: ConfigFile): ThreatOrigin {
-    return new ThreatOrigin(data, cf);
+  public static FromJSON(data, cf: ConfigFile): AttackVector {
+    return new AttackVector(data, cf);
   }
 }
 
-export class ThreatOriginGroup extends DatabaseBase {
+export class AttackVectorGroup extends DatabaseBase {
   private config: ConfigFile;
 
-  public get SubGroups(): ThreatOriginGroup[] { 
+  public get SubGroups(): AttackVectorGroup[] { 
     let res = [];
-    this.Data['threatOriginGroupIDs'].forEach(id => res.push(this.config.GetThreatOriginGroup(id)));
+    this.Data['attackVectorGroupIDs'].forEach(id => res.push(this.config.GetAttackVectorGroup(id)));
     return res;
   }
-  public get ThreatOrigins(): ThreatOrigin[] { 
+  public get AttackVectors(): AttackVector[] { 
     let res = [];
-    this.Data['threatOriginIDs'].forEach(id => res.push(this.config.GetThreatOrigin(id)));
+    this.Data['attackVectorIDs'].forEach(id => res.push(this.config.GetAttackVector(id)));
     return res;
   }
 
@@ -437,35 +437,35 @@ export class ThreatOriginGroup extends DatabaseBase {
     super(data);
     this.config = cf;
 
-    if (!this.Data['threatOriginGroupIDs']) { this.Data['threatOriginGroupIDs'] = []; }
-    if (!this.Data['threatOriginIDs']) { this.Data['threatOriginIDs'] = []; }
+    if (!this.Data['attackVectorGroupIDs']) { this.Data['attackVectorGroupIDs'] = []; }
+    if (!this.Data['attackVectorIDs']) { this.Data['attackVectorIDs'] = []; }
   }
 
-  public AddThreatOriginGroup(group: ThreatOriginGroup) {
-    if (!this.SubGroups.includes(group)) this.Data['threatOriginGroupIDs'].push(group.ID);
+  public AddAttackVectorGroup(group: AttackVectorGroup) {
+    if (!this.SubGroups.includes(group)) this.Data['attackVectorGroupIDs'].push(group.ID);
   }
 
-  public RemoveThreatOriginGroup(group: ThreatOriginGroup) {
+  public RemoveAttackVectorGroup(group: AttackVectorGroup) {
     if (this.SubGroups.includes(group)) {
-      this.Data['threatOriginGroupIDs'].splice(this.Data['threatOriginGroupIDs'].indexOf(group.ID), 1);
+      this.Data['attackVectorGroupIDs'].splice(this.Data['attackVectorGroupIDs'].indexOf(group.ID), 1);
     }
   }
 
-  public AddThreatOrigin(origin: ThreatOrigin) {
-    if (!this.ThreatOrigins.includes(origin)) this.Data['threatOriginIDs'].push(origin.ID);
+  public AddAttackVector(vector: AttackVector) {
+    if (!this.AttackVectors.includes(vector)) this.Data['attackVectorIDs'].push(vector.ID);
   }
 
-  public RemoveThreatOrigin(origin: ThreatOrigin) {
-    if (this.ThreatOrigins.includes(origin)) {
-      this.Data['threatOriginIDs'].splice(this.Data['threatOriginIDs'].indexOf(origin.ID), 1);
+  public RemoveAttackVector(vector: AttackVector) {
+    if (this.AttackVectors.includes(vector)) {
+      this.Data['attackVectorIDs'].splice(this.Data['attackVectorIDs'].indexOf(vector.ID), 1);
     }
   }
 
   public FindReferences(pf: ProjectFile, cf: ConfigFile): IDataReferences[] {
     let res: IDataReferences[] = [];
 
-    this.SubGroups.forEach(x => res.push({ Type: DataReferenceTypes.DeleteThreatOriginGroup, Param: x }));
-    this.ThreatOrigins.forEach(x => res.push({ Type: DataReferenceTypes.DeleteThreatOrigin, Param: x }));
+    this.SubGroups.forEach(x => res.push({ Type: DataReferenceTypes.DeleteAttackVectorGroup, Param: x }));
+    this.AttackVectors.forEach(x => res.push({ Type: DataReferenceTypes.DeleteAttackVector, Param: x }));
 
     return res;
   }
@@ -473,21 +473,21 @@ export class ThreatOriginGroup extends DatabaseBase {
   public OnDelete(pf: ProjectFile, cf: ConfigFile) {
     let refs = this.FindReferences(pf, cf);
 
-    let group = cf.FindGroupOfThreatOriginGroup(this);
-    if (group) group.RemoveThreatOriginGroup(this);
+    let group = cf.FindGroupOfAttackVectorGroup(this);
+    if (group) group.RemoveAttackVectorGroup(this);
 
     refs.forEach(ref => {
-      if (ref.Type == DataReferenceTypes.DeleteThreatOrigin) {
-        cf.DeleteThreatOrigin(ref.Param as ThreatOrigin);
+      if (ref.Type == DataReferenceTypes.DeleteAttackVector) {
+        cf.DeleteAttackVector(ref.Param as AttackVector);
       }
-      else if (ref.Type == DataReferenceTypes.DeleteThreatOriginGroup) {
-        cf.DeleteThreatOriginGroup(ref.Param as ThreatOriginGroup);
+      else if (ref.Type == DataReferenceTypes.DeleteAttackVectorGroup) {
+        cf.DeleteAttackVectorGroup(ref.Param as AttackVectorGroup);
       }
     });
   }
 
-  public static FromJSON(data, cf: ConfigFile): ThreatOriginGroup {
-    return new ThreatOriginGroup(data, cf);
+  public static FromJSON(data, cf: ConfigFile): AttackVectorGroup {
+    return new AttackVectorGroup(data, cf);
   }
 }
 
@@ -525,8 +525,8 @@ export class OptionTypesUtil {
   }
 }
 
-export interface IThreatOriginCategoryMapping {
-  ThreatOriginID: string;
+export interface IThreatVectorCategoryMapping {
+  AttackVectorID: string;
   ThreatCategoryIDs: string[];
 }
 
@@ -987,11 +987,11 @@ export class ThreatRule extends DatabaseBase {
   public get RuleGenerationType(): RuleGenerationTypes { return this.Data['RuleGenerationType']; }
   public set RuleGenerationType(val: RuleGenerationTypes) { this.Data['RuleGenerationType'] = val; }
 
-  public get Mapping(): IThreatOriginCategoryMapping { return this.Data['Mapping']; }
-  public set Mapping(val: IThreatOriginCategoryMapping) { this.Data['Mapping'] = val; }
-  public get ThreatOrigin(): ThreatOrigin { return this.config.GetThreatOrigin(this.Mapping.ThreatOriginID); }
-  public set ThreatOrigin(val: ThreatOrigin) { 
-    this.Mapping.ThreatOriginID = val?.ID; 
+  public get Mapping(): IThreatVectorCategoryMapping { return this.Data['Mapping']; }
+  public set Mapping(val: IThreatVectorCategoryMapping) { this.Data['Mapping'] = val; }
+  public get AttackVector(): AttackVector { return this.config.GetAttackVector(this.Mapping.AttackVectorID); }
+  public set AttackVector(val: AttackVector) { 
+    this.Mapping.AttackVectorID = val?.ID; 
     if (val) this.Severity = val.Severity;
   }
   public get ThreatCategories(): ThreatCategory[] { return this.config.GetThreatCategories().filter(x => this.Mapping.ThreatCategoryIDs?.includes(x.ID)); }
@@ -1021,7 +1021,7 @@ export class ThreatRule extends DatabaseBase {
 
     if (this.Data['IsActive'] == null) this.Data['IsActive'] = true;
     if (this.Data['RuleGenerationType'] == null) this.Data['RuleGenerationType'] = RuleGenerationTypes.EachElement;
-    if (!this.Data['Mapping']) this.Data['Mapping'] = {} as IThreatOriginCategoryMapping;
+    if (!this.Data['Mapping']) this.Data['Mapping'] = {} as IThreatVectorCategoryMapping;
     if (!this.Data['overridenRuleIDs']) this.Data['overridenRuleIDs'] = [];
   }
 
@@ -1130,7 +1130,7 @@ export class ThreatRuleGroup extends DatabaseBase {
 }
 
 export interface IAttackScenario {
-  Threat: IThreatOriginCategoryMapping;
+  Threat: IThreatVectorCategoryMapping;
   RuleID: string; //ThreatRule
   QuestionID: string; //ThreatQuestion
 }
@@ -1146,12 +1146,13 @@ export enum ThreatStates {
   NotApplicable = 2,
   NeedsInvestigation = 3,
   Verified = 4,
-  Proven = 5
+  Proven = 5,
+  Duplicate = 6
 }
 
 export class ThreatStateUtil {
   public static GetThreatStates(): ThreatStates[] {
-    return [ThreatStates.NotSet, ThreatStates.NotApplicable, ThreatStates.NeedsInvestigation, ThreatStates.Verified, ThreatStates.Proven];
+    return [ThreatStates.NotSet, ThreatStates.NotApplicable, ThreatStates.NeedsInvestigation, ThreatStates.Verified, ThreatStates.Proven, ThreatStates.Duplicate];
   }
 
   public static ToString(state: ThreatStates): string {
@@ -1161,6 +1162,7 @@ export class ThreatStateUtil {
       case ThreatStates.NeedsInvestigation: return 'properties.threatstate.NeedsInvestigation';
       case ThreatStates.Verified: return 'properties.threatstate.Verified';
       case ThreatStates.Proven: return 'properties.threatstate.Proven';
+      case ThreatStates.Duplicate: return 'properties.threatstate.Duplicate';
       default:
         console.error('Missing State in ThreatStateUtil.ToString()', state)
         return 'Undefined';
@@ -1205,7 +1207,7 @@ export class AttackScenario extends DatabaseBase {
 
     let res = '';
     if (this.ThreatRule) res += this.ThreatRule.Name + ' on ';
-    else if (this.ThreatOrigin) res += this.ThreatOrigin.GetProperty('Name') + ' on ';
+    else if (this.AttackVector) res += this.AttackVector.GetProperty('Name') + ' on ';
     if (this.Target) res += this.Target.GetProperty('Name');
     else if (this.Targets) res += this.Targets.map(x => x.GetProperty('Name')).join(', ');
     return res;
@@ -1222,7 +1224,17 @@ export class AttackScenario extends DatabaseBase {
   public get MappingState(): MappingStates { return this.Data['MappingState']; }
   public set MappingState(val: MappingStates) { this.Data['MappingState'] = val; }
   public get ThreatState(): ThreatStates { return this.Data['ThreatState']; }
-  public set ThreatState(val: ThreatStates) { this.Data['ThreatState'] = Number(val); }
+  public set ThreatState(val: ThreatStates) { 
+    this.Data['ThreatState'] = Number(val);
+    if ([ThreatStates.NotApplicable, ThreatStates.Duplicate].includes(Number(val))) {
+      this.GetCountermeasures().forEach(x => {
+        if (x.AttackScenarios.length == 1 || x.AttackScenarios.every(y => [ThreatStates.NotApplicable, ThreatStates.Duplicate].includes(y.ThreatState) || y == this)) {
+          if (Number(val) == ThreatStates.Duplicate) x.MitigationState = MitigationStates.Duplicate;
+          else x.MitigationState = MitigationStates.NotApplicable;
+        }
+      });
+    }
+  }
   public get IsGenerated(): boolean { return this.Data['IsGenerated']; }
   public set IsGenerated(val: boolean) { this.Data['IsGenerated'] = val; }
   public get ScoreCVSS(): ICVSSEntry { return this.Data['ScoreCVSS']; }
@@ -1266,9 +1278,9 @@ export class AttackScenario extends DatabaseBase {
   public set Targets(val: ViewElementBase[]) { this.Data['targetIDs'] = val.map(x => x.ID); }
   public get Mapping(): IAttackScenario { return this.Data['Mapping']; }
   public set Mapping(val: IAttackScenario) { this.Data['Mapping'] = val; }
-  public get ThreatOrigin(): ThreatOrigin { return this.config.GetThreatOrigin(this.Mapping.Threat?.ThreatOriginID); }
-  public set ThreatOrigin(val: ThreatOrigin) { 
-    this.Mapping.Threat.ThreatOriginID = val.ID;
+  public get AttackVector(): AttackVector { return this.config.GetAttackVector(this.Mapping.Threat?.AttackVectorID); }
+  public set AttackVector(val: AttackVector) { 
+    this.Mapping.Threat.AttackVectorID = val.ID;
     if (val) this.ThreatCategories = val.ThreatCategories;
   }
   public get ThreatCategories(): ThreatCategory[] { return this.config.GetThreatCategories().filter(x => this.Mapping.Threat.ThreatCategoryIDs?.includes(x.ID)); }
@@ -1305,14 +1317,14 @@ export class AttackScenario extends DatabaseBase {
     if (!this.Data['linkedScenarioIDs']) this.Data['linkedScenarioIDs'] = [];
   }
 
-  public SetMapping(threatOriginID: string, categorieIDs: string[], target: ViewElementBase, elements: ViewElementBase[], rule: ThreatRule, question: ThreatQuestion) {
+  public SetMapping(attackVectorID: string, categorieIDs: string[], target: ViewElementBase, elements: ViewElementBase[], rule: ThreatRule, question: ThreatQuestion) {
     this.MappingState = MappingStates.New;
-    this.Mapping.Threat = { ThreatOriginID: threatOriginID, ThreatCategoryIDs: categorieIDs };
+    this.Mapping.Threat = { AttackVectorID: attackVectorID, ThreatCategoryIDs: categorieIDs };
     if (rule) {
       this.ThreatRule = rule;
       if (rule.Severity) this.Severity = rule.Severity;
-      else if (this.ThreatOrigin) this.Severity = this.ThreatOrigin.Severity;
-      if (rule.ThreatOrigin?.AttackTechnique?.CVSS) this.ScoreCVSS = JSON.parse(JSON.stringify(rule.ThreatOrigin.AttackTechnique.CVSS));
+      else if (this.AttackVector) this.Severity = this.AttackVector.Severity;
+      if (rule.AttackVector?.AttackTechnique?.CVSS) this.ScoreCVSS = JSON.parse(JSON.stringify(rule.AttackVector.AttackTechnique.CVSS));
     }
     if (question) this.ThreatQuestion = question;
     this.Name = null;

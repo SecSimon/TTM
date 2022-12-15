@@ -32,9 +32,9 @@
         <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'general.Control' | translate}} </th>
         <td mat-cell *matCellDef="let entry"> {{entry.Control?.GetProperty('Name')}} </td>
       </ng-container>
-      <ng-container matColumnDef="origins">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'general.Threats' | translate}} </th>
-        <td mat-cell *matCellDef="let entry"> {{GetThreatOrigins(entry)}} </td>
+      <ng-container matColumnDef="vectors">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'general.AttackVectors' | translate}} </th>
+        <td mat-cell *matCellDef="let entry"> {{GetAttackVectors(entry)}} </td>
       </ng-container>
       <ng-container matColumnDef="progress">
         <th mat-header-cell *matHeaderCellDef> {{'general.Progress' | translate}} </th>
@@ -56,7 +56,7 @@
       </ng-container>
   
       <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;" [class.selected-countermeasure]="IsCountermeasureSelected(row)" [class.removed-countermeasure]="IsCountermeasureRemoved(row) || IsCountermeasureNotApplying(row) || IsCountermeasureRejected(row)" 
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" [class.selected-countermeasure]="IsCountermeasureSelected(row)" [class.removed-countermeasure]="IsCountermeasureRemoved(row) || IsCountermeasureNotApplying(row) || IsCountermeasureRejected(row) || IsCountermeasureDuplicated(row)" 
         (click)="SelectCountermeasure(row)" (dblclick)="OnMappingDblClick(row, $event)" (contextmenu)="OpenContextMenu($event, row)">
       </tr>
       <tr class="mat-row" *matNoDataRow>
@@ -85,9 +85,9 @@
         <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'general.Control' | translate}} </th>
         <td mat-cell *matCellDef="let entry"> {{entry.Control?.GetProperty('Name')}} </td>
       </ng-container>
-      <ng-container matColumnDef="origins">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'general.Threats' | translate}} </th>
-        <td mat-cell *matCellDef="let entry"> {{GetThreatOrigins(entry)}} </td>
+      <ng-container matColumnDef="vectors">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'general.AttackVectors' | translate}} </th>
+        <td mat-cell *matCellDef="let entry"> {{GetAttackVectors(entry)}} </td>
       </ng-container>
       <ng-container matColumnDef="progress">
         <th mat-header-cell *matHeaderCellDef> {{'general.Progress' | translate}} </th>
@@ -108,7 +108,7 @@
         <td mat-cell *matCellDef="let entry"> {{GetTargets(entry)}} </td>
       </ng-container>
   
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;" [class.selected-countermeasure]="IsCountermeasureSelected(row)" [class.removed-countermeasure]="IsCountermeasureRemoved(row) || IsCountermeasureNotApplying(row)" 
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" [class.selected-countermeasure]="IsCountermeasureSelected(row)" [class.removed-countermeasure]="IsCountermeasureRemoved(row) || IsCountermeasureNotApplying(row)|| IsCountermeasureDuplicated(row)" 
         (click)="SelectCountermeasure(row)" (dblclick)="OnMappingDblClick(row, $event)" (contextmenu)="OpenContextMenu($event, row)">
       </tr>
     </table>

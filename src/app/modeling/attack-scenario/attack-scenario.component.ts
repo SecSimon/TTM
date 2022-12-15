@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Optional } from '@angular/core';
 import { LowMediumHighNumber, LowMediumHighNumberUtil } from '../../model/assets';
 import { Countermeasure, MitigationStates } from '../../model/mitigations';
-import { RiskStrategies, RiskStrategyUtil, ThreatCategoryGroup, AttackScenario, ThreatOriginGroup, ThreatSeverities, ThreatSeverityUtil, ThreatStates, ThreatStateUtil, ICVSSEntry, IOwaspRREntry } from '../../model/threat-model';
+import { RiskStrategies, RiskStrategyUtil, ThreatCategoryGroup, AttackScenario, AttackVectorGroup, ThreatSeverities, ThreatSeverityUtil, ThreatStates, ThreatStateUtil, ICVSSEntry, IOwaspRREntry } from '../../model/threat-model';
 import { DataService } from '../../util/data.service';
 import { DialogService } from '../../util/dialog.service';
 import { ThemeService } from '../../util/theme.service';
@@ -41,8 +41,8 @@ export class AttackScenarioComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  public GetThreatOriginGroups(): ThreatOriginGroup[] {
-    return this.dataService.Config.GetThreatOriginGroups().filter(x => x.ThreatOrigins.length > 0);
+  public GetAttackVectorGroups(): AttackVectorGroup[] {
+    return this.dataService.Config.GetAttackVectorGroups().filter(x => x.AttackVectors.length > 0);
   }
   public GetThreatCategoryGroups(): ThreatCategoryGroup[] {
     return this.dataService.Config.GetThreatCategoryGroups().filter(x => x.ThreatCategories.length > 0);
@@ -66,14 +66,14 @@ export class AttackScenarioComponent implements OnInit {
     if (this.attackScenario.Targets) return this.attackScenario.Targets.map(x => x.Name).join(', ');
   }
 
-  public AddThreatOrigin() {
-    let origin = this.dataService.Config.CreateThreatOrigin(null);
-    this.dialog.OpenAddThreatOriginDialog(origin).subscribe(res => {
+  public AddAttackVector() {
+    let vector = this.dataService.Config.CreateAttackVector(null);
+    this.dialog.OpenAddAttackVectorDialog(vector).subscribe(res => {
       if (res) {
-        this.attackScenario.ThreatOrigin = origin;
+        this.attackScenario.AttackVector = vector;
       }
       else {
-        this.dataService.Config.DeleteThreatOrigin(origin);
+        this.dataService.Config.DeleteAttackVector(vector);
       }
     });
   }
@@ -165,7 +165,7 @@ export class AttackScenarioComponent implements OnInit {
   public GetAttackScenarioGroups() {
     if (this.attackScenarioGroups == null) {
       this.attackScenarioGroups = [];
-      const scenariosByView = this.dataService.Project.GetAttackScenarios().filter(x => x.ThreatState != ThreatStates.NotApplicable).reduce((ubc, u) => ({
+      const scenariosByView = this.dataService.Project.GetAttackScenarios().filter(x => ![ThreatStates.NotApplicable, ThreatStates.Duplicate].includes(x.ThreatState) && x != this.attackScenario).reduce((ubc, u) => ({
         ...ubc,
         [u.ViewID]: [ ...(ubc[u.ViewID] || []), u ],
       }), {});
@@ -200,7 +200,7 @@ export class AttackScenarioComponent implements OnInit {
   }
 
   public GetPossibleCountermeasures() {
-    return this.dataService.Project.GetCountermeasures().filter(x => !x.AttackScenarios.includes(this.attackScenario) && ![MitigationStates.NotApplicable, MitigationStates.Rejected].includes(x.MitigationState));
+    return this.dataService.Project.GetCountermeasures().filter(x => !x.AttackScenarios.includes(this.attackScenario) && ![MitigationStates.NotApplicable, MitigationStates.Rejected, MitigationStates.Duplicate].includes(x.MitigationState));
   }
 
   public AddExistingCountermeasure(cm: Countermeasure) {

@@ -2,22 +2,22 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, Input, OnInit, Optional } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Control } from '../../model/mitigations';
-import { LifeCycle, LifeCycleUtil, RestrictionUtil, ThreatCategoryGroup, ThreatOrigin, ThreatOriginGroup, ThreatOriginTypes, ThreatOriginTypesUtil, ThreatQuestion, ThreatRule, ThreatSeverities, ThreatSeverityUtil } from '../../model/threat-model';
+import { LifeCycle, LifeCycleUtil, RestrictionUtil, ThreatCategoryGroup, AttackVector, AttackVectorGroup, AttackVectorTypes, AttackVectorTypesUtil, ThreatQuestion, ThreatRule, ThreatSeverities, ThreatSeverityUtil } from '../../model/threat-model';
 import { DataService } from '../../util/data.service';
 import { MyBoolean } from '../../util/dialog.service';
 import { ThemeService } from '../../util/theme.service';
 
 @Component({
-  selector: 'app-threat-origin',
-  templateUrl: './threat-origin.component.html',
-  styleUrls: ['./threat-origin.component.scss']
+  selector: 'app-attack-vector',
+  templateUrl: './attack-vector.component.html',
+  styleUrls: ['./attack-vector.component.scss']
 })
-export class ThreatOriginComponent implements OnInit {
-  private _threatOrigin;
+export class AttackVectorComponent implements OnInit {
+  private _attackVector;
 
-  public get threatOrigin(): ThreatOrigin { return this._threatOrigin; }
-  @Input() public set threatOrigin(val: ThreatOrigin) { 
-    this._threatOrigin = val;
+  public get attackVector(): AttackVector { return this._attackVector; }
+  @Input() public set attackVector(val: AttackVector) { 
+    this._attackVector = val;
     this.selectedControl = null;
   }
   @Input() public canEdit: boolean = true;
@@ -25,9 +25,9 @@ export class ThreatOriginComponent implements OnInit {
 
   public selectedControl: Control;
 
-  constructor(@Optional() origin: ThreatOrigin, @Optional() canEdit: MyBoolean, public theme: ThemeService, public dataService: DataService, private translate: TranslateService) { 
-    if (origin) {
-      this.threatOrigin = origin;
+  constructor(@Optional() vector: AttackVector, @Optional() canEdit: MyBoolean, public theme: ThemeService, public dataService: DataService, private translate: TranslateService) { 
+    if (vector) {
+      this.attackVector = vector;
       this.isShownInDialog = true;
     }
     if (canEdit != null) {
@@ -38,12 +38,12 @@ export class ThreatOriginComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  public GetThreatOriginTypes() {
-    return ThreatOriginTypesUtil.GetTypes();
+  public GetAttackVectorTypes() {
+    return AttackVectorTypesUtil.GetTypes();
   }
 
-  public GetThreatOriginTypeName(t: ThreatOriginTypes) {
-    return ThreatOriginTypesUtil.ToString(t);
+  public GetAttackVectorTypeName(t: AttackVectorTypes) {
+    return AttackVectorTypesUtil.ToString(t);
   }
 
   public LifeCycleChanged(arr: string[], lc) {
@@ -68,12 +68,12 @@ export class ThreatOriginComponent implements OnInit {
     return ThreatSeverityUtil.ToString(sev);
   }
 
-  public GetRootThreatOriginGroups(): ThreatOriginGroup[] {
+  public GetRootAttackVectorGroups(): AttackVectorGroup[] {
     return this.dataService.Config.ThreatLibrary.SubGroups;
   }
 
-  public GetThreatOriginGroup(): ThreatOriginGroup {
-    return this.dataService.Config.FindGroupOfThreatOrigin(this.threatOrigin);
+  public GetAttackVectorGroup(): AttackVectorGroup {
+    return this.dataService.Config.FindGroupOfAttackVector(this.attackVector);
   }
 
   public GetThreatCategoryGroups(): ThreatCategoryGroup[] {
@@ -81,7 +81,7 @@ export class ThreatOriginComponent implements OnInit {
   }
 
   public GetThreatRules(): ThreatRule[] {
-    return this.dataService.Config.GetThreatRules().filter(x => x.ThreatOrigin?.ID == this.threatOrigin.ID);
+    return this.dataService.Config.GetThreatRules().filter(x => x.AttackVector?.ID == this.attackVector.ID);
   }
 
   public GetThreatRestriction(rule: ThreatRule): string {
@@ -89,21 +89,21 @@ export class ThreatOriginComponent implements OnInit {
   }
 
   public GetPossibleControls() {
-    return this.dataService.Config.GetControls().filter(x => !x.MitigatedThreatOrigins.includes(this.threatOrigin));
+    return this.dataService.Config.GetControls().filter(x => !x.MitigatedAttackVectors.includes(this.attackVector));
   }
 
   public AddExistingControl(mit: Control) {
-    mit.AddMitigatedThreatOrigin(this.threatOrigin);
+    mit.AddMitigatedAttackVector(this.attackVector);
   }
 
   public AddControl() {
     let mit = this.dataService.Config.CreateControl(this.dataService.Config.ControlLibrary);
-    mit.AddMitigatedThreatOrigin(this.threatOrigin);
+    mit.AddMitigatedAttackVector(this.attackVector);
     this.selectedControl = mit;
   }
 
   public RemoveControl(mit: Control) {
-    mit.RemoveMitigatedThreatOrigin(this.threatOrigin);
+    mit.RemoveMitigatedAttackVector(this.attackVector);
     if (mit == this.selectedControl) this.selectedControl = null;
   }
 
@@ -113,16 +113,16 @@ export class ThreatOriginComponent implements OnInit {
   }
 
   public GetControls(): Control[] {
-    return this.dataService.Config.GetControls().filter(x => x.MitigatedThreatOrigins.includes(this.threatOrigin));
+    return this.dataService.Config.GetControls().filter(x => x.MitigatedAttackVectors.includes(this.attackVector));
   }
 
   public OnGroupChanged(event) {
-    let group = this.dataService.Config.GetThreatOriginGroup(event.value);
-    let curr = this.dataService.Config.FindGroupOfThreatOrigin(this.threatOrigin);
+    let group = this.dataService.Config.GetAttackVectorGroup(event.value);
+    let curr = this.dataService.Config.FindGroupOfAttackVector(this.attackVector);
     if (curr) {
-      curr.RemoveThreatOrigin(this.threatOrigin);
+      curr.RemoveAttackVector(this.attackVector);
     }
-    group.AddThreatOrigin(this.threatOrigin);
+    group.AddAttackVector(this.attackVector);
   }
 
   public dropControl(event: CdkDragDrop<string[]>, selectedArray) {

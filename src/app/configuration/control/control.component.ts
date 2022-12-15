@@ -2,7 +2,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, Input, OnInit, Optional } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { IMitigationTip, Control } from '../../model/mitigations';
-import { LifeCycle, LifeCycleUtil, RuleTypes, ThreatOriginGroup, ThreatRuleGroup } from '../../model/threat-model';
+import { LifeCycle, LifeCycleUtil, RuleTypes, AttackVectorGroup, ThreatRuleGroup } from '../../model/threat-model';
 import { INavigationNode } from '../../shared/components/nav-tree/nav-tree.component';
 import { DataService } from '../../util/data.service';
 import { DialogService } from '../../util/dialog.service';
@@ -21,7 +21,7 @@ export class ControlComponent implements OnInit {
   public get control(): Control { return this._control; }
   @Input() public set control(val: Control) { 
     this._control = val;
-    this.threatOriginGroups = null;
+    this.attackVectorGroups = null;
     this.selectedMitigationTip = null;
   }
   @Input() public canEdit: boolean = true;
@@ -40,14 +40,14 @@ export class ControlComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  private threatOriginGroups = null;
-  public GetAvailableThreatOriginGroups() {
-    if (this.threatOriginGroups != null) return this.threatOriginGroups;
+  private attackVectorGroups = null;
+  public GetAvailableAttackVectorGroups() {
+    if (this.attackVectorGroups != null) return this.attackVectorGroups;
 
-    this.threatOriginGroups = [];
-    let pushSubGroups = (group: ThreatOriginGroup) => {
-      if (group.ThreatOrigins?.length > 0) {
-        this.threatOriginGroups.push({ Name: group.Name, ThreatOrigins: group.ThreatOrigins });
+    this.attackVectorGroups = [];
+    let pushSubGroups = (group: AttackVectorGroup) => {
+      if (group.AttackVectors?.length > 0) {
+        this.attackVectorGroups.push({ Name: group.Name, AttackVectors: group.AttackVectors });
       }
       if (group.SubGroups?.length > 0) {
         group.SubGroups.forEach(x => pushSubGroups(x));
@@ -55,7 +55,7 @@ export class ControlComponent implements OnInit {
     };
     pushSubGroups(this.dataService.Config.ThreatLibrary);
 
-    return this.threatOriginGroups;
+    return this.attackVectorGroups;
   }
 
   private threatRuleGroups = null;

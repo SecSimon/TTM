@@ -99,20 +99,20 @@ export enum DataReferenceTypes {
   DeleteMyComponentType,
   DeleteComponent,
   DeleteThreatCategory,
-  DeleteThreatOrigin,
-  DeleteThreatOriginGroup,
+  DeleteAttackVector,
+  DeleteAttackVectorGroup,
 
   // Protocol References
   RemoveFromStencilProtocolStack,
   RemoveFromElementProtocolStack,
 
   // Threat Model
-  RemoveThreatCategoryFromThreatOrigin,
+  RemoveThreatCategoryFromAttackVector,
   RemoveThreatCategoryFromThreatRule,
   RemoveThreatCategoryFromAttackScenario,
   RemoveThreatCategoryFromThreatMnemonic,
   RemoveThreatQuestionFromComponent,
-  RemoveThreatOriginFromControl,
+  RemoveAttackVectorFromControl,
 
   RemoveSystemThreatFromAttackScenario,
 

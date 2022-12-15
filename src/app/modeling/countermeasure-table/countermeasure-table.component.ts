@@ -46,7 +46,7 @@ export class CountermeasureTableComponent implements OnInit {
       if (sortHeaderId == 'state') return data.MappingState; 
       if (sortHeaderId == 'type') return data.IsGenerated ? 1 : 0; 
       if (sortHeaderId == 'control') return data.Control?.Name;
-      if (sortHeaderId == 'origins') return this.GetThreatOrigins(data);
+      if (sortHeaderId == 'vectors') return this.GetAttackVectors(data);
       if (sortHeaderId == 'status') return data.MappingState;  
       if (sortHeaderId == 'targets') return this.GetTargets(data);
       console.error('Missing sorting header'); 
@@ -55,17 +55,17 @@ export class CountermeasureTableComponent implements OnInit {
       let search = filter.trim().toLowerCase();
       let res = data.Name.toLowerCase().indexOf(search);
       if (res == -1) res = data.Control.Name.toLowerCase().indexOf(search);
-      if (res == -1) res = this.GetThreatOrigins(data).toLowerCase().indexOf(search);
+      if (res == -1) res = this.GetAttackVectors(data).toLowerCase().indexOf(search);
       if (res == -1) res = this.GetTargets(data).toLowerCase().indexOf(search);
       return res != -1;
     };
 
-    this.dataSourceActive = new MatTableDataSource(val.filter(x => x.MitigationState != MitigationStates.NotApplicable));
+    this.dataSourceActive = new MatTableDataSource(val.filter(x => ![MitigationStates.NotApplicable, MitigationStates.Rejected, MitigationStates.Duplicate].includes(x.MitigationState)));
     this.dataSourceActive.sort = this.sort;
     this.dataSourceActive.sortingDataAccessor = mySort;
     this.dataSourceActive.filterPredicate = myFilter;
 
-    this.dataSourceNA = new MatTableDataSource(val.filter(x => x.MitigationState == MitigationStates.NotApplicable));
+    this.dataSourceNA = new MatTableDataSource(val.filter(x => [MitigationStates.NotApplicable, MitigationStates.Rejected, MitigationStates.Duplicate].includes(x.MitigationState)));
     this.dataSourceNA.sort = this.sort;
     this.dataSourceNA.sortingDataAccessor = mySort;
     this.dataSourceNA.filterPredicate = myFilter;
@@ -83,7 +83,7 @@ export class CountermeasureTableComponent implements OnInit {
   public get selectedNode(): INavigationNode { return this._selectedNode; }
   @Input() public set selectedNode(val: INavigationNode) {
     this._selectedNode = val;
-    this.displayedColumns = ['state', 'number', 'type', 'name', 'control', 'origins', 'targets', 'progress', 'status'];
+    this.displayedColumns = ['state', 'number', 'type', 'name', 'control', 'vectors', 'targets', 'progress', 'status'];
     this.RefreshCountermeasures();
   }
   @Input() public set selectedObject(val: ViewElementBase) {
@@ -178,6 +178,10 @@ export class CountermeasureTableComponent implements OnInit {
     return mit.MitigationState == MitigationStates.Rejected;
   }
 
+  public IsCountermeasureDuplicated(mit: Countermeasure) {
+    return mit.MitigationState == MitigationStates.Duplicate;
+  }
+
   public SelectCountermeasure(mit: Countermeasure) {
     this.selectedCountermeasures = [mit];
 
@@ -247,8 +251,8 @@ export class CountermeasureTableComponent implements OnInit {
     else return 'general.Manual';
   }
 
-  public GetThreatOrigins(entry: Countermeasure) {
-    return entry.ThreatOrigins.map(x => x.GetProperty('Name')).join(', ');
+  public GetAttackVectors(entry: Countermeasure) {
+    return entry.AttackVectors.map(x => x.GetProperty('Name')).join(', ');
   }
 
   public GetTargets(entry: Countermeasure) {

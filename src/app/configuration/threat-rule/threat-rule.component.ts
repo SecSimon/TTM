@@ -6,7 +6,7 @@ import { MyComponentType } from '../../model/component';
 import { IProperty, PropertyEditTypes } from '../../model/database';
 import { ElementTypeIDs, ElementTypeUtil, Protocol, StencilType } from '../../model/dfd-model';
 import { Control } from '../../model/mitigations';
-import { RestrictionUtil, IDetailRestriction, IPropertyRestriction, RestrictionTypes, RestrictionTypesUtil, RuleTypes, ThreatCategoryGroup, ThreatOriginGroup, ThreatRule, RuleGenerationTypsUtil as RuleGenerationTypesUtil, RuleGenerationTypes, ThreatOrigin, PropertyComparisonTypes, ThreatRuleGroup, ThreatSeverities, ThreatSeverityUtil } from '../../model/threat-model';
+import { RestrictionUtil, IDetailRestriction, IPropertyRestriction, RestrictionTypes, RestrictionTypesUtil, RuleTypes, ThreatCategoryGroup, AttackVectorGroup, ThreatRule, RuleGenerationTypsUtil as RuleGenerationTypesUtil, RuleGenerationTypes, AttackVector, PropertyComparisonTypes, ThreatRuleGroup, ThreatSeverities, ThreatSeverityUtil } from '../../model/threat-model';
 import { INavigationNode } from '../../shared/components/nav-tree/nav-tree.component';
 import { DataService } from '../../util/data.service';
 import { DialogService } from '../../util/dialog.service';
@@ -38,7 +38,7 @@ export class ThreatRuleComponent implements OnInit {
   }
   @Input() public canEdit: boolean = true;
   @Input() public canEditName: boolean = false;
-  @Input() public showThreatOrigin = true;
+  @Input() public showAttackVector = true;
   
   public get selectedStencilType(): StencilType { 
     if (this.threatRule?.StencilRestriction?.stencilTypeID) { return this.dataService.Config.GetStencilType(this.threatRule.StencilRestriction.stencilTypeID); }
@@ -65,12 +65,12 @@ export class ThreatRuleComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  public OnThreatOriginChanged(origin: ThreatOrigin) {
-    this.threatRule.ThreatCategories = origin?.ThreatCategories;
+  public OnAttackVectorChanged(Vector: AttackVector) {
+    this.threatRule.ThreatCategories = Vector?.ThreatCategories;
   }
 
-  public GetThreatOriginGroups(): ThreatOriginGroup[] {
-    return this.dataService.Config.GetThreatOriginGroups().filter(x => x.ThreatOrigins.length > 0);
+  public GetAttackVectorGroups(): AttackVectorGroup[] {
+    return this.dataService.Config.GetAttackVectorGroups().filter(x => x.AttackVectors.length > 0);
   }
   public GetThreatCategoryGroups(): ThreatCategoryGroup[] {
     return this.dataService.Config.GetThreatCategoryGroups().filter(x => x.ThreatCategories.length > 0);
@@ -141,19 +141,19 @@ export class ThreatRuleComponent implements OnInit {
     return !ElementTypeUtil.IsPhysical(this.selectedStencilType.ElementTypeID);
   }
 
-  public EditThreatOrigin() {
-    this.dialog.OpenViewThreatOriginDialog(this.threatRule.ThreatOrigin, true);
+  public EditAttackVector() {
+    this.dialog.OpenViewAttackVectorDialog(this.threatRule.AttackVector, true);
   }
 
-  public AddThreatOrigin() {
-    let origin = this.dataService.Config.CreateThreatOrigin(null);
-    this.dialog.OpenAddThreatOriginDialog(origin).subscribe(res => {
+  public AddAttackVector() {
+    let vector = this.dataService.Config.CreateAttackVector(null);
+    this.dialog.OpenAddAttackVectorDialog(vector).subscribe(res => {
       if (res) {
-        this.threatRule.ThreatOrigin = origin;
-        this.threatRule.ThreatCategories = origin.ThreatCategories;
+        this.threatRule.AttackVector = vector;
+        this.threatRule.ThreatCategories = vector.ThreatCategories;
       }
       else {
-        this.dataService.Config.DeleteThreatOrigin(origin);
+        this.dataService.Config.DeleteAttackVector(vector);
       }
     });
   }
@@ -447,16 +447,16 @@ export class ThreatRuleComponent implements OnInit {
     return this.dataService.Config.GetControls().filter(x => x.MitigatedThreatRules.includes(this.threatRule));
   }
 
-  public GetOriginControls(): Control[] {
-    if (this.threatRule.ThreatOrigin) {
-      return this.dataService.Config.GetControls().filter(x => x.MitigatedThreatOrigins.includes(this.threatRule.ThreatOrigin));
+  public GetVectorControls(): Control[] {
+    if (this.threatRule.AttackVector) {
+      return this.dataService.Config.GetControls().filter(x => x.MitigatedAttackVectors.includes(this.threatRule.AttackVector));
     }
     return null;
   }
 
   public GetPossibleControls() {
     let res = this.dataService.Config.GetControls().filter(x => !x.MitigatedThreatRules.includes(this.threatRule));
-    if (this.threatRule.ThreatOrigin) res = res.filter(x => !x.MitigatedThreatOrigins.includes(this.threatRule.ThreatOrigin));
+    if (this.threatRule.AttackVector) res = res.filter(x => !x.MitigatedAttackVectors.includes(this.threatRule.AttackVector));
     return res;
   }
 

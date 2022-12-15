@@ -48,7 +48,7 @@ export class ThreatTableComponent implements OnInit {
       if (sortHeaderId == 'number') return Number(data.Number);
       if (sortHeaderId == 'state') return data.MappingState; 
       if (sortHeaderId == 'type') return data.IsGenerated ? 1 : 0; 
-      if (sortHeaderId == 'origin') return data.ThreatOrigin.Name; 
+      if (sortHeaderId == 'vector') return data.AttackVector.Name; 
       if (sortHeaderId == 'status') return data.ThreatState; 
       if (sortHeaderId == 'categories') return this.GetThreatCategories(data); 
       if (sortHeaderId == 'target') return data.Target.Name;
@@ -59,19 +59,19 @@ export class ThreatTableComponent implements OnInit {
     let myFilter = (data: AttackScenario, filter: string) => {
       let search = filter.trim().toLowerCase();
       let res = data.Name.toLowerCase().indexOf(search);
-      if (res == -1) res = data.ThreatOrigin.Name.toLowerCase().indexOf(search);
+      if (res == -1) res = data.AttackVector.Name.toLowerCase().indexOf(search);
       if (res == -1) res = this.GetThreatCategories(data).toLowerCase().indexOf(search);
       if (res == -1) res = this.GetTargets(data).toLowerCase().indexOf(search); 
       if (res == -1) res = data.ThreatRule.Name.toLowerCase().indexOf(search);
       return res != -1;
     };
 
-    this.dataSourceActive = new MatTableDataSource(val.filter(x => x.ThreatState != ThreatStates.NotApplicable));
+    this.dataSourceActive = new MatTableDataSource(val.filter(x => ![ThreatStates.NotApplicable, ThreatStates.Duplicate].includes(x.ThreatState)));
     this.dataSourceActive.sort = this.sort;
     this.dataSourceActive.sortingDataAccessor = mySort;
     this.dataSourceActive.filterPredicate = myFilter;
 
-    this.dataSourceNA = new MatTableDataSource(val.filter(x => x.ThreatState == ThreatStates.NotApplicable));
+    this.dataSourceNA = new MatTableDataSource(val.filter(x => [ThreatStates.NotApplicable, ThreatStates.Duplicate].includes(x.ThreatState)));
     this.dataSourceNA.sort = this.sort;
     this.dataSourceNA.sortingDataAccessor = mySort;
     this.dataSourceNA.filterPredicate = myFilter;
@@ -89,7 +89,7 @@ export class ThreatTableComponent implements OnInit {
   public get selectedNode(): INavigationNode { return this._selectedNode; }
   @Input() public set selectedNode(val: INavigationNode) {
     this._selectedNode = val;
-    this.displayedColumns = ['state', 'number', 'type', 'name', 'origin', 'target'];
+    this.displayedColumns = ['state', 'number', 'type', 'name', 'vector', 'target'];
     if (this._selectedNode?.data instanceof HWDFDiagram) {
       this.displayedColumns.push('elements');
     }
@@ -186,7 +186,7 @@ export class ThreatTableComponent implements OnInit {
   }
 
   public IsThreatNotApplying(threat: AttackScenario) {
-    return threat.ThreatState == ThreatStates.NotApplicable;
+    return [ThreatStates.NotApplicable, ThreatStates.Duplicate].includes(threat.ThreatState);
   }
 
   public SelectThreat(threat) {

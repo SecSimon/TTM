@@ -1,4 +1,4 @@
-import {app, BrowserWindow, screen, Menu} from 'electron';
+import {app, BrowserWindow, screen, Menu, ipcMain, dialog} from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
 
@@ -76,7 +76,18 @@ function createWindow(): BrowserWindow {
   temp.push({
     label: 'File',
     submenu: [
-      { label: 'Save', accelerator: 'Ctrl+S', click: () => { win.webContents.send('onsave'); } },
+      { label: 'Save', accelerator: 'Ctrl+S', click: () => { win.webContents.send('OnSave'); } },
+      { label: 'Download Project', click: () => { win.webContents.send('OnDownloadProject'); } },
+      { label: 'Import Project', click: () => { 
+          dialog.showOpenDialog(win, { filters: [ { extensions: ['ttmp'], name: 'TTModeler Project' }], properties: [ 'openFile' ] }).then(result => {
+            if (result.filePaths.length >= 1) {
+              let data = fs.readFileSync(result.filePaths[0], 'utf-8');
+              win.webContents.send('OnImportFile', data, result.filePaths[0]);
+            }
+          });
+        } 
+      },
+      { label: 'Close Project', click: () => { win.webContents.send('OnCloseProject'); } },
       { role: 'quit', label: '&Quit', accelerator: 'Ctrl+Q', click: () => { app.quit(); } }
     ]
   });
@@ -92,6 +103,14 @@ function createWindow(): BrowserWindow {
 
   const menu = Menu.buildFromTemplate(temp);
   Menu.setApplicationMenu(menu);
+
+  if (process.argv.length >= 2) {
+    let openFilePath = process.argv[1];
+    let data = fs.readFileSync(openFilePath, 'utf-8');
+    ipcMain.on('OnMyReady', () => {
+      win.webContents.send('OnImportFile', data, openFilePath);
+    });
+  }
 
   return win;
 }

@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ThreatOriginComponent } from './threat-origin.component';
+import { AttackVectorComponent } from './attack-vector.component';
 
-describe('ThreatOriginComponent', () => {
-  let component: ThreatOriginComponent;
-  let fixture: ComponentFixture<ThreatOriginComponent>;
+describe('AttackVectorComponent', () => {
+  let component: AttackVectorComponent;
+  let fixture: ComponentFixture<AttackVectorComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ThreatOriginComponent ]
+      declarations: [ AttackVectorComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ThreatOriginComponent);
+    fixture = TestBed.createComponent(AttackVectorComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -15,7 +15,7 @@
             <td>
               {{quest.Question}} 
               <mat-icon *ngIf="quest.Description?.length>0" [matTooltip]="quest.Description" style="vertical-align: middle;">info</mat-icon>
-              <button mat-icon-button *ngIf="GetAssociatedThreatOrigins(quest)?.length>0" matTooltip="{{'pages.modeling.stack.questiondialog.moreDetails' | translate}}" (click)="OpenThreatOrigins(quest)">
+              <button mat-icon-button *ngIf="GetAssociatedAttackVectors(quest)?.length>0" matTooltip="{{'pages.modeling.stack.questiondialog.moreDetails' | translate}}" (click)="OpenAttackVectors(quest)">
                 <mat-icon>pageview</mat-icon>
               </button>
             </td>

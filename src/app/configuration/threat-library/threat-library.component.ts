@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { ThreatOriginGroup, ThreatOrigin } from '../../model/threat-model';
+import { AttackVectorGroup, AttackVector } from '../../model/threat-model';
 import { NavTreeBase } from '../../shared/components/nav-tree/nav-tree-base';
 import { INavigationNode } from '../../shared/components/nav-tree/nav-tree.component';
 import { DataService } from '../../util/data.service';
@@ -14,8 +14,8 @@ import { ThemeService } from '../../util/theme.service';
 })
 export class ThreatLibraryComponent extends NavTreeBase implements OnInit {
 
-  public get selectedThreatOriginGroup(): ThreatOriginGroup { return (this.selectedNode?.data instanceof ThreatOriginGroup ? this.selectedNode.data : null); }
-  public get selectedThreatOrigin(): ThreatOrigin { return (this.selectedNode?.data instanceof ThreatOrigin ? this.selectedNode.data : null); }
+  public get selectedAttackVectorGroup(): AttackVectorGroup { return (this.selectedNode?.data instanceof AttackVectorGroup ? this.selectedNode.data : null); }
+  public get selectedAttackVector(): AttackVector { return (this.selectedNode?.data instanceof AttackVector ? this.selectedNode.data : null); }
 
   constructor(public theme: ThemeService, public dataService: DataService, private dialog: DialogService, private translate: TranslateService) {
     super();
@@ -32,18 +32,18 @@ export class ThreatLibraryComponent extends NavTreeBase implements OnInit {
     const prevNodes = this.Nodes;
     this.Nodes = [];
 
-    let createOrigin = (origin: ThreatOrigin, group: ThreatOriginGroup, groupNode: INavigationNode, groupNodes: INavigationNode[]): INavigationNode => {
+    let createVector = (vector: AttackVector, group: AttackVectorGroup, groupNode: INavigationNode, groupNodes: INavigationNode[]): INavigationNode => {
       let node: INavigationNode = {
-        name: () => origin.Name,
+        name: () => vector.Name,
         canSelect: true,
-        data: origin,
+        data: vector,
         canRename: true,
-        onRename: (val: string) => { origin.Name = val; },
+        onRename: (val: string) => { vector.Name = val; },
         canDelete: true,
         onDelete: () => { 
-          this.dialog.OpenDeleteObjectDialog(origin).subscribe(res => {
+          this.dialog.OpenDeleteObjectDialog(vector).subscribe(res => {
             if (res) {
-              this.dataService.Config.DeleteThreatOrigin(origin);
+              this.dataService.Config.DeleteAttackVector(vector);
               if (this.selectedNode == node) this.selectedNode = null;
               this.createNodes();
             }
@@ -51,8 +51,8 @@ export class ThreatLibraryComponent extends NavTreeBase implements OnInit {
         },
         canDuplicate: true,
         onDuplicate: () => {
-          let cp = this.dataService.Config.CreateThreatOrigin(group);
-          cp.CopyFrom(origin.Data);
+          let cp = this.dataService.Config.CreateAttackVector(group);
+          cp.CopyFrom(vector.Data);
           cp.Name = cp.Name + '-Copy';
           this.createNodes();
           this.selectedNode = this.FindNodeOfObject(cp);
@@ -60,17 +60,17 @@ export class ThreatLibraryComponent extends NavTreeBase implements OnInit {
         },
         canMoveUpDown: true,
         onMoveUp: () => {
-          let arr = group.Data['threatOriginIDs'];
-          if (arr.findIndex(x => x == origin.ID) != 0) {
-            let idx = arr.findIndex(x => x == origin.ID);
+          let arr = group.Data['attackVectorIDs'];
+          if (arr.findIndex(x => x == vector.ID) != 0) {
+            let idx = arr.findIndex(x => x == vector.ID);
             arr.splice(idx, 0, arr.splice(idx-1, 1)[0]);
             groupNode.children.splice(idx, 0, groupNode.children.splice(idx-1, 1)[0]);
           }
         },
         onMoveDown: () => {
-          let arr = group.Data['threatOriginIDs'];
-          if (arr.findIndex(x => x == origin.ID) != arr.length-1) {
-            let idx = arr.findIndex(x => x == origin.ID);
+          let arr = group.Data['attackVectorIDs'];
+          if (arr.findIndex(x => x == vector.ID) != arr.length-1) {
+            let idx = arr.findIndex(x => x == vector.ID);
             arr.splice(idx, 0, arr.splice(idx+1, 1)[0]);
             groupNode.children.splice(idx, 0, groupNode.children.splice(idx+1, 1)[0]);
           }
@@ -80,26 +80,26 @@ export class ThreatLibraryComponent extends NavTreeBase implements OnInit {
           return groupNodes.filter(x => x != groupNode);
         },
         onMoveToGroup: (newGroup: INavigationNode) => {
-          let arrName = 'threatOriginIDs';
-          group.Data[arrName].splice(group.Data[arrName].indexOf(origin.ID), 1);
-          newGroup.data.Data[arrName].push(origin.ID);
+          let arrName = 'attackVectorIDs';
+          group.Data[arrName].splice(group.Data[arrName].indexOf(vector.ID), 1);
+          newGroup.data.Data[arrName].push(vector.ID);
           this.createNodes();
         }
       };
       return node;
     };
 
-    let createGroup = (group: ThreatOriginGroup, parentGroup: ThreatOriginGroup, parentGroupNode: INavigationNode, groupNodes: INavigationNode[]): INavigationNode => {
+    let createGroup = (group: AttackVectorGroup, parentGroup: AttackVectorGroup, parentGroupNode: INavigationNode, groupNodes: INavigationNode[]): INavigationNode => {
       let g: INavigationNode = {
         name: () => group.Name,
         canSelect: true,
         data: group,
         canAdd: true,
-        addOptions: [this.translate.instant('general.Group'), this.translate.instant('general.ThreatOrigin')],
+        addOptions: [this.translate.instant('general.Group'), this.translate.instant('general.AttackVector')],
         onAdd: (val: string) => {
           let newObj = null;
-          if (val == this.translate.instant('general.Group')) { newObj = this.dataService.Config.CreateThreatOriginGroup(group); }
-          else { newObj = this.dataService.Config.CreateThreatOrigin(group); }
+          if (val == this.translate.instant('general.Group')) { newObj = this.dataService.Config.CreateAttackVectorGroup(group); }
+          else { newObj = this.dataService.Config.CreateAttackVector(group); }
 
           this.createNodes();
           setTimeout(() => {
@@ -113,7 +113,7 @@ export class ThreatLibraryComponent extends NavTreeBase implements OnInit {
         onDelete: () => { 
           this.dialog.OpenDeleteObjectDialog(group).subscribe(res => {
             if (res) {
-              this.dataService.Config.DeleteThreatOriginGroup(group); 
+              this.dataService.Config.DeleteAttackVectorGroup(group); 
               if (this.selectedNode == g) this.selectedNode = null;
               this.createNodes();
             }
@@ -122,7 +122,7 @@ export class ThreatLibraryComponent extends NavTreeBase implements OnInit {
         children: [],
         canMoveUpDown: true,
         onMoveUp: () => {
-          let arr = parentGroup.Data['threatOriginGroupIDs'];
+          let arr = parentGroup.Data['attackVectorGroupIDs'];
           if (arr.findIndex(x => x == group.ID) != 0) {
             let idx = arr.findIndex(x => x == group.ID);
             arr.splice(idx, 0, arr.splice(idx-1, 1)[0]);
@@ -130,7 +130,7 @@ export class ThreatLibraryComponent extends NavTreeBase implements OnInit {
           }
         },
         onMoveDown: () => {
-          let arr = parentGroup.Data['threatOriginGroupIDs'];
+          let arr = parentGroup.Data['attackVectorGroupIDs'];
           if (arr.findIndex(x => x == group.ID) != arr.length-1) {
             let idx = arr.findIndex(x => x == group.ID);
             arr.splice(idx, 0, arr.splice(idx+1, 1)[0]);
@@ -142,7 +142,7 @@ export class ThreatLibraryComponent extends NavTreeBase implements OnInit {
           return groupNodes.filter(x => x != g && x != parentGroupNode);
         },
         onMoveToGroup: (newGroup: INavigationNode) => {
-          let arrName = 'threatOriginGroupIDs';
+          let arrName = 'attackVectorGroupIDs';
           parentGroup.Data[arrName].splice(parentGroup.Data[arrName].indexOf(group.ID), 1);
           newGroup.data.Data[arrName].push(group.ID);
           this.createNodes();
@@ -154,7 +154,7 @@ export class ThreatLibraryComponent extends NavTreeBase implements OnInit {
         g.children.push(subGroup);
       });
 
-      group.ThreatOrigins.forEach(x => g.children.push(createOrigin(x, group, g, groupNodes)));
+      group.AttackVectors.forEach(x => g.children.push(createVector(x, group, g, groupNodes)));
 
       groupNodes.push(g);
       return g;

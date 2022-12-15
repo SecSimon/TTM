@@ -12,17 +12,17 @@
   <mat-icon color="warn" *ngIf="!attackScenario.RuleStillApplies" style="margin-left: 5px;" matTooltip="{{'pages.modeling.attackscenario.ruleNotApplyingAnymore' | translate}}">sync_problem</mat-icon>
   <br/>
   <mat-form-field appearance="fill" class="property-form-field">
-    <mat-label>{{'general.Threat' | translate}}</mat-label>
-    <mat-select [(value)]="attackScenario.ThreatOrigin" matTooltip="{{attackScenario.ThreatOrigin?.Name}}" matTooltipShowDelay="1000">
+    <mat-label>{{'general.AttackVector' | translate}}</mat-label>
+    <mat-select [(value)]="attackScenario.AttackVector" matTooltip="{{attackScenario.AttackVector?.Name}}" matTooltipShowDelay="1000">
       <mat-option>{{'properties.selectNone' | translate}}</mat-option>
-      <mat-optgroup *ngFor="let group of GetThreatOriginGroups()" [label]="group.Name">
-        <mat-option *ngFor="let threat of group.ThreatOrigins" [value]="threat">
+      <mat-optgroup *ngFor="let group of GetAttackVectorGroups()" [label]="group.Name">
+        <mat-option *ngFor="let threat of group.AttackVectors" [value]="threat">
           {{threat.Name}}
         </mat-option>
       </mat-optgroup>
     </mat-select>
   </mat-form-field>
-  <button mat-icon-button style="vertical-align: super;" (click)="AddThreatOrigin()">
+  <button mat-icon-button style="vertical-align: super;" (click)="AddAttackVector()">
     <mat-icon>add</mat-icon>
   </button>
   <br/>
@@ -30,9 +30,13 @@
     <mat-label>{{ 'general.Target' | translate }}</mat-label>
     <input matInput [spellcheck]="dataService.HasSpellCheck" [value]="attackScenario.Target?.Name" matTooltip="{{attackScenario.Target?.GetProperty('Name')}}" matTooltipShowDelay="1000"/>
   </mat-form-field>
-  <mat-form-field appearance="fill" class="disable" style="margin-left: 10px; width: calc(100% - 300px - 15px)">
+  <mat-form-field appearance="fill" class="disable" style="margin-left: 10px; width: calc(100% - 600px - 25px)">
     <mat-label>{{ 'general.Targets' | translate }}</mat-label>
     <input matInput [spellcheck]="dataService.HasSpellCheck" [value]="GetTargetsNames()"/>
+  </mat-form-field>
+  <mat-form-field appearance="fill" class="property-form-field disable" style="margin-left: 10px;">
+    <mat-label>{{ 'general.Diagram' | translate }}</mat-label>
+    <input matInput [spellcheck]="dataService.HasSpellCheck" [value]="attackScenario.GetDiagram()?.Name" matTooltip="{{attackScenario.GetDiagram()?.Name}}" matTooltipShowDelay="1000"/>
   </mat-form-field>
   <mat-form-field appearance="fill" style="width: 100%;">
     <mat-label>{{'general.ThreatCategories' | translate}}</mat-label>
@@ -160,18 +164,18 @@
     </div>
   </div>
   <mat-accordion class="expansion-panel-headers-align" style="pointer-events: initial;">
-    <mat-expansion-panel *ngIf="attackScenario.ThreatOrigin">
+    <mat-expansion-panel *ngIf="attackScenario.AttackVector">
       <mat-expansion-panel-header>
         <mat-panel-title>
           {{'general.ThreatInfo' | translate}}
         </mat-panel-title>
         <mat-panel-description>
-          {{attackScenario.ThreatOrigin.Name}}
+          {{attackScenario.AttackVector.Name}}
           <mat-icon>info</mat-icon>
         </mat-panel-description>
       </mat-expansion-panel-header>
       <ng-template matExpansionPanelContent>
-        <app-threat-origin [canEdit]="false" [threatOrigin]="attackScenario.ThreatOrigin"></app-threat-origin>
+        <app-attack-vector [canEdit]="false" [attackVector]="attackScenario.AttackVector"></app-attack-vector>
       </ng-template>
     </mat-expansion-panel>
     <mat-expansion-panel *ngIf="attackScenario.ThreatQuestion">

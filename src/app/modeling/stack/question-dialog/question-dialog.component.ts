@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MyComponent } from '../../../model/component';
-import { OptionTypes, OptionTypesUtil, RuleTypes, ThreatOrigin, ThreatQuestion } from '../../../model/threat-model';
+import { OptionTypes, OptionTypesUtil, RuleTypes, AttackVector, ThreatQuestion } from '../../../model/threat-model';
 import { DataService } from '../../../util/data.service';
 import { DialogService } from '../../../util/dialog.service';
 
@@ -53,10 +53,10 @@ export class QuestionDialogComponent implements OnInit {
     this.selectedComponent.SetProperty(quest.Property?.ID, change['Value']);
   }
 
-  public OpenThreatOrigins(quest: ThreatQuestion) {
-    let tos = this.GetAssociatedThreatOrigins(quest);
+  public OpenAttackVectors(quest: ThreatQuestion) {
+    let tos = this.GetAssociatedAttackVectors(quest);
     tos.forEach(x => {
-      this.dialog.OpenViewThreatOriginDialog(x, false);
+      this.dialog.OpenViewAttackVectorDialog(x, false);
     });
   }
 
@@ -85,13 +85,13 @@ export class QuestionDialogComponent implements OnInit {
     return 0;
   }
 
-  public GetAssociatedThreatOrigins(quest: ThreatQuestion): ThreatOrigin[] {
-    let res: ThreatOrigin[] = [];
+  public GetAssociatedAttackVectors(quest: ThreatQuestion): AttackVector[] {
+    let res: AttackVector[] = [];
 
     if (quest.Property != null) {
       let rules = this.dataService.Config.GetThreatRules().filter(x => x.RuleType == RuleTypes.Component && x.ComponentRestriction.componentTypeID == this.selectedComponent.Type.ID);
       rules = rules.filter(x => x.ComponentRestriction.DetailRestrictions.some(y => y.PropertyRest.ID == quest.Property.ID));
-      res.push(...rules.filter(x => x.ThreatOrigin != null).map(x => x.ThreatOrigin));
+      res.push(...rules.filter(x => x.AttackVector != null).map(x => x.AttackVector));
     }
 
     return res;
