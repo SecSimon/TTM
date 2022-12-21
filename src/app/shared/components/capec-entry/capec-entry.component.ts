@@ -21,17 +21,17 @@ export class CapecEntryComponent implements OnInit {
   }
 
   public OpenCAPEC() {
-    window.open('https://capec.mitre.org/data/definitions/' + this.capecID.toString() +'.html', '_blank');
+    window.open(CapecEntryComponent.GetURL(this.capecID), '_blank');
   }
 
   public GetCAPECTitle() {
-    if (!this.GetCAPEDEntry()) return null;
+    if (!CapecEntryComponent.GetCAPEDEntry(this.capecID)) return null;
     return 'CAPEC-' + capecDict[this.capecID]['ID'] + ': ' + capecDict[this.capecID]['Name'] + ' (' + capecDict[this.capecID]['Status'] + ')'
   }
 
   public GetCAPECProperty(prop: string) {
-    if (!this.GetCAPEDEntry()) return null;
-    let res = this.GetCAPEDEntry()[prop];
+    if (!CapecEntryComponent.GetCAPEDEntry(this.capecID)) return null;
+    let res = CapecEntryComponent.GetCAPEDEntry(this.capecID)[prop];
     if (res == null) return '';
     if (typeof res === 'object' && res !== null) {
       if (res['p'] != null) {
@@ -46,12 +46,8 @@ export class CapecEntryComponent implements OnInit {
     return res;
   }
 
-  public GetCAPEDEntry() {
-    return capecDict[this.capecID];
-  }
-
   public GetCAPECConsequences(): {}[] {
-    if (!this.GetCAPEDEntry()) return null;
+    if (!CapecEntryComponent.GetCAPEDEntry(this.capecID)) return null;
     if (capecDict[this.capecID]['Common_Consequences']) {
       if (Array.isArray(capecDict[this.capecID]['Common_Consequences']['Consequence'])) {
         return capecDict[this.capecID]['Common_Consequences']['Consequence'];
@@ -69,5 +65,13 @@ export class CapecEntryComponent implements OnInit {
       return (obj as string[]).join('\n');
     }
     else return obj;
+  }
+
+  public static GetCAPEDEntry(id) {
+    return capecDict[id];
+  }
+
+  public static GetURL(id: string|number): string {
+    return 'https://capec.mitre.org/data/definitions/' + id.toString() +'.html';
   }
 }

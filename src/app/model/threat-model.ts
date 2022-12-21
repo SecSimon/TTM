@@ -1354,11 +1354,15 @@ export class AttackScenario extends DatabaseBase {
     return this.project.GetView(this.ViewID);
   }
 
+  public GetLongName(): string {
+    return 'AS' + this.Number + ') ' + this.Name;
+  }
+
   public FindReferences(pf: ProjectFile, cf: ConfigFile): IDataReferences[] {
     let res: IDataReferences[] = [];
 
-    pf?.GetCountermeasures().filter(x => x.AttackScenarios.includes(this)).forEach(x => res.push({ Type: DataReferenceTypes.RemoveAttackScenarioFromAttackScenario, Param: x }));
-    pf?.GetAttackScenarios().filter(x => x.LinkedScenarios.includes(this)).forEach(x => res.push({ Type: DataReferenceTypes.DeleteAssetGroup, Param: x }));
+    pf?.GetCountermeasures().filter(x => x.AttackScenarios.includes(this)).forEach(x => res.push({ Type: DataReferenceTypes.RemoveAttackScenarioFromCountermeasure, Param: x }));
+    pf?.GetAttackScenarios().filter(x => x.LinkedScenarios.includes(this)).forEach(x => res.push({ Type: DataReferenceTypes.RemoveAttackScenarioFromAttackScenario, Param: x }));
     return res;
   }
 

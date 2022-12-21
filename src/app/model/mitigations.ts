@@ -320,6 +320,10 @@ export class Countermeasure extends DatabaseBase {
     return this.project.GetView(this.ViewID);
   }
 
+  public GetLongName(): string {
+    return 'CM' + this.Number + ') ' + this.Name;
+  }
+
   public CleanUpReferences() {
     let mappings = this.AttackScenarios;
     for (let i = mappings.length-1; i >= 0; i--) {
@@ -406,6 +410,10 @@ export class MitigationProcess extends DatabaseBase {
     if (this.Progress == null) this.Progress = 0;
     if (!this.Data['Tasks']) this.Data['Tasks'] = [];
     if (!this.Data['Notes']) this.Data['Notes'] = [];
+  }
+
+  public GetLongName(): string {
+    return 'MP' + this.Number + ') ' + this.Name;
   }
 
   public FindReferences(pf: ProjectFile, cf: ConfigFile): IDataReferences[] {

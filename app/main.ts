@@ -112,6 +112,11 @@ function createWindow(): BrowserWindow {
     });
   }
 
+  ipcMain.on('OnCloseApp', () => {
+    console.log('exit');
+    app.exit();
+  });
+
   return win;
 }
 

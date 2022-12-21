@@ -21,7 +21,7 @@ export class CweEntryComponent implements OnInit {
   }
 
   public OpenCWE() {
-    window.open('https://cwe.mitre.org/data/definitions/' + this.cweID.toString() +'.html', '_blank');
+    window.open(CweEntryComponent.GetURL(this.cweID), '_blank');
   }
 
   public GetCWETitle() {
@@ -57,5 +57,9 @@ export class CweEntryComponent implements OnInit {
       return (obj as string[]).join('\n');
     }
     else return obj;
+  }
+
+  public static GetURL(id: string|number): string {
+    return 'https://cwe.mitre.org/data/definitions/' + id.toString() +'.html';
   }
 }

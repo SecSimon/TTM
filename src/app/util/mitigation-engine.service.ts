@@ -50,7 +50,7 @@ export class MitigationEngineService {
           let targets: ViewElementBase[];
           if (tm.Target) targets = [tm.Target];
           else targets = tm.Targets;
-          const existing = pf.GetCountermeasures().find(x => x.Control == mit && (x.Targets.includes(tm.Target) || x.Targets.some(x => tm.Targets.includes(x))));
+          const existing = pf.GetCountermeasures().find(x => x.Control == mit && (x.AttackScenarios.includes(tm) || (x.Targets.includes(tm.Target) || x.Targets.some(x => tm.Targets.includes(x)))));
           if (existing) {
             existing.MappingState = MappingStates.Stable;
             mappingsBefore.splice(mappingsBefore.findIndex(x => x.ID == existing.ID), 1); // remove from list as this mapping still applies
@@ -92,13 +92,14 @@ export class MitigationEngineService {
             i--;
           }
         }
-        for (let i = 0; i < detail.attackScenarioIDs.length; i++) {
-          if (detail.attackScenarioIDs[i]) {
-            detail.map.RemoveAttackScenario(detail.attackScenarioIDs[i]);
-            detail.attackScenarioIDs.splice(i, 1);
-            i--;
-          }
-        }
+        // cannot be done because of manually mapping countermeasures
+        // for (let i = 0; i < detail.attackScenarioIDs.length; i++) {
+        //   if (detail.attackScenarioIDs[i]) {
+        //     detail.map.RemoveAttackScenario(detail.attackScenarioIDs[i]);
+        //     detail.attackScenarioIDs.splice(i, 1);
+        //     i--;
+        //   }
+        // }
         if (detail.targetIDs.length > 0 || detail.attackScenarioIDs.length > 0) {
           detail.map.CleanUpReferences();
         }

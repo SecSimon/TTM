@@ -199,7 +199,7 @@ export class MitigationOverviewComponent extends SideNavBase implements OnInit {
       canSelect: false,
       children: []
     };
-    pf.GetCountermeasures().filter(x => x.MitigationProcess == null && ![MitigationStates.NotApplicable, MitigationStates.Rejected, MitigationStates.Duplicate].includes(x.MitigationState)).forEach(x => na.children.push(createMapping(x, na)));
+    pf.GetCountermeasuresApplicable().filter(x => x.MitigationProcess == null).forEach(x => na.children.push(createMapping(x, na)));
     if (na.children.length > 0) root.children.push(na);
 
     let rej: INavigationNode = {
@@ -208,7 +208,7 @@ export class MitigationOverviewComponent extends SideNavBase implements OnInit {
       children: [],
       isExpanded: false
     };
-    pf.GetCountermeasures().filter(x => x.MitigationProcess == null && [MitigationStates.NotApplicable, MitigationStates.Rejected, MitigationStates.Duplicate].includes(x.MitigationState)).forEach(x => rej.children.push(createMapping(x, rej)));
+    pf.GetCountermeasuresNotApplicable().filter(x => x.MitigationProcess == null).forEach(x => rej.children.push(createMapping(x, rej)));
     if (rej.children.length > 0) root.children.push(rej);
 
     pf.GetMitigationProcesses().forEach(x => root.children.push(createProcess(x, root)));

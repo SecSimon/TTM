@@ -152,7 +152,7 @@ export class CountermeasureTableComponent implements OnInit {
       let elements: ViewElementBase[] = null;
       if (this.selectedNode.data instanceof Diagram) elements = this.selectedNode.data.Elements.GetChildrenFlat();
       else if (this.selectedNode.data instanceof MyComponentStack) elements = this.selectedNode.data.GetChildrenFlat();
-      this.dialog.OpenCountermeasureDialog(entry, false, elements, this.Countermeasures);
+      this.dialog.OpenCountermeasureDialog(entry, false, elements, [...this.dataSourceActive.data, ...this.dataSourceNA.data]);
     }
   }
 

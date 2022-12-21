@@ -113,14 +113,24 @@ export class OwaspRREntryComponent implements OnInit {
   }
 
   public GetURL() {
-    return 'https://owasp-risk-rating.com/?vector=(' + this.GetVector() + ')';
+    return OwaspRREntryComponent.GetURL(this.entry);
   }
 
   public GetVector(): string {
-    if (this.entry) {
+    return OwaspRREntryComponent.GetVector(this.entry);
+  }
+
+  public static GetURL(entry: IOwaspRREntry) {
+    let vec = OwaspRREntryComponent.GetVector(entry);
+    if (vec) return 'https://owasp-risk-rating.com/?vector=(' + vec + ')';
+    return null;
+  }
+
+  public static GetVector(entry: IOwaspRREntry) {
+    if (entry) {
       let vec = '';
-      Object.keys(this.entry).forEach(k => {
-        if (this.entry[k] && k.length <= 3) vec += '/' + k + ':' + this.entry[k];
+      Object.keys(entry).forEach(k => {
+        if (entry[k] && k.length <= 3) vec += '/' + k + ':' + entry[k];
       });
       return vec;
     }

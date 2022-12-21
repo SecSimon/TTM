@@ -12,7 +12,7 @@ import { INavigationNode } from '../../shared/components/nav-tree/nav-tree.compo
 import { DialogService } from '../../util/dialog.service';
 import { DataChangedTypes, ViewElementBase } from '../../model/database';
 import { TranslateService } from '@ngx-translate/core';
-import { Control, Countermeasure } from '../../model/mitigations';
+import { Control, Countermeasure, MitigationStates } from '../../model/mitigations';
 
 @Component({
   selector: 'app-threat-table',
@@ -147,18 +147,18 @@ export class ThreatTableComponent implements OnInit {
   public RefreshThreats() {
     setTimeout(() => {
       this.AttackScenarios = [];
-    if (this._selectedNode?.data) {
-      if (this._selectedNode?.data instanceof Diagram) {
-        this.AttackScenarios = this.threatEngine.GenerateDiagramThreats(this._selectedNode.data);
+      if (this._selectedNode?.data) {
+        if (this._selectedNode?.data instanceof Diagram) {
+          this.AttackScenarios = this.threatEngine.GenerateDiagramThreats(this._selectedNode.data);
+        }
+        else if (this._selectedNode?.data instanceof MyComponentStack) {
+          this.AttackScenarios = this.threatEngine.GenerateStackThreats(this._selectedNode.data);
+        }
       }
-      else if (this._selectedNode?.data instanceof MyComponentStack) {
-        this.AttackScenarios = this.threatEngine.GenerateStackThreats(this._selectedNode.data);
-      }
-    }
 
-    this.threatCountChanged.emit(this.AttackScenarios.length);
-    
-    this.isCalculatingThreats = false;
+      this.threatCountChanged.emit(this.AttackScenarios.length);
+      this.countermeasureCounts = {};
+      this.isCalculatingThreats = false;
     }, 10);
   }
 
@@ -167,7 +167,7 @@ export class ThreatTableComponent implements OnInit {
       this.OnViewCountermeasures(entry);
     }
     else {
-      this.dialog.OpenAttackScenarioDialog(entry, false, this.AttackScenarios);
+      this.dialog.OpenAttackScenarioDialog(entry, false, [...this.dataSourceActive.data, ...this.dataSourceNA.data]);
     }
   }
 
@@ -205,6 +205,7 @@ export class ThreatTableComponent implements OnInit {
       if (!result) {
         this.dataService.Project.DeleteCountermeasure(map);
       }
+      this.countermeasureCounts[entry.ID] = null;
     });
   }
 
@@ -215,7 +216,9 @@ export class ThreatTableComponent implements OnInit {
   }
 
   public GetPossibleCountermeasures(entry: AttackScenario) {
-    return this.dataService.Project.GetCountermeasures().filter(x => !x.AttackScenarios.includes(entry));
+    return this.dataService.Project.GetCountermeasuresApplicable().filter(x => !x.AttackScenarios.includes(entry)).sort((a,b) => {
+      return a.GetDiagram().Name.localeCompare(b.GetDiagram().Name);
+    });
   }
 
   public OnViewCountermeasures(entry: AttackScenario) {

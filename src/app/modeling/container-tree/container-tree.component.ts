@@ -67,7 +67,7 @@ export class ContainerTreeComponent implements OnInit {
   public GetNodeThreats(node: ViewElementBase): number {
     if (this.threatMap.has(node.ID)) return this.threatMap.get(node.ID);
 
-    const count = this.dataService.Project.GetAttackScenarios().filter(x => x.Target == node || (x.Targets?.includes(node))).length;
+    const count = this.dataService.Project.GetAttackScenariosApplicable().filter(x => x.Target == node || (x.Targets?.includes(node))).length;
     this.threatMap.set(node.ID, count);
     return count;
   }

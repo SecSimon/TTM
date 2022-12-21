@@ -9,11 +9,11 @@ import { DFDContainer, DFDContainerRef, DFDElement, DFDElementRef } from "./dfd-
 import { CtxDiagram, Diagram, DiagramTypes, HWDFDiagram } from "./diagram";
 import { ObjImpact } from "./obj-impact";
 import { SystemThreat } from "./system-threat";
-import { ThreatCategory, AttackScenario } from "./threat-model";
+import { ThreatCategory, AttackScenario, ThreatStates } from "./threat-model";
 import { ThreatActor, ThreatSources } from "./threat-source";
 import { ContextElement, ContextElementRef, ContextElementTypes, Device, MobileApp, SystemContext, SystemContextContainerRef } from "./system-context";
 import { Checklist, ChecklistType } from "./checklist";
-import { Countermeasure, MitigationProcess } from "./mitigations";
+import { Countermeasure, MitigationProcess, MitigationStates } from "./mitigations";
 import { FileUpdateService } from "../util/file-update.service";
 import { ExportTemplate } from "./export-template";
 
@@ -126,7 +126,11 @@ export class ProjectFile extends DatabaseBase {
   public GetComponents(): MyComponent[] { return Array.from(this.componentMap, ([k, v]) => v); }
 
   public GetAttackScenarios(): AttackScenario[] { return Array.from(this.attackScenarioMap, ([k, v]) => v); }
+  public GetAttackScenariosApplicable(): AttackScenario[] { return this.GetAttackScenarios().filter(x => ![ThreatStates.NotApplicable, ThreatStates.Duplicate].includes(x.ThreatState)); }
+  public GetAttackScenariosNotApplicable(): AttackScenario[] { return this.GetAttackScenarios().filter(x => [ThreatStates.NotApplicable, ThreatStates.Duplicate].includes(x.ThreatState)); }
   public GetCountermeasures(): Countermeasure[] { return Array.from(this.countermeasureMap, ([k, v]) => v); }
+  public GetCountermeasuresApplicable(): Countermeasure[] { return this.GetCountermeasures().filter(x => ![MitigationStates.NotApplicable, MitigationStates.Rejected, MitigationStates.Duplicate].includes(x.MitigationState)); }
+  public GetCountermeasuresNotApplicable(): Countermeasure[] { return this.GetCountermeasures().filter(x => [MitigationStates.NotApplicable, MitigationStates.Rejected, MitigationStates.Duplicate].includes(x.MitigationState)); }
   public GetMitigationProcesses(): MitigationProcess[] { return this.mitigationProcesses; }
 
   public GetChecklists(): Checklist[] { return this.checklists; }

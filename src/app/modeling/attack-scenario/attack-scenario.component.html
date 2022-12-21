@@ -10,6 +10,10 @@
     </mat-select>
   </mat-form-field>
   <mat-icon color="warn" *ngIf="!attackScenario.RuleStillApplies" style="margin-left: 5px;" matTooltip="{{'pages.modeling.attackscenario.ruleNotApplyingAnymore' | translate}}">sync_problem</mat-icon>
+  <mat-form-field appearance="fill" style="width: 60px; float: right; margin-left: 10px;" class="disable">
+    <mat-label>{{ 'general.Number' | translate }}</mat-label>
+    <input matInput [(ngModel)]="attackScenario.Number" matTooltip="{{attackScenario.Number}}" matTooltipShowDelay="1000"/>
+  </mat-form-field>
   <br/>
   <mat-form-field appearance="fill" class="property-form-field">
     <mat-label>{{'general.AttackVector' | translate}}</mat-label>
@@ -30,7 +34,7 @@
     <mat-label>{{ 'general.Target' | translate }}</mat-label>
     <input matInput [spellcheck]="dataService.HasSpellCheck" [value]="attackScenario.Target?.Name" matTooltip="{{attackScenario.Target?.GetProperty('Name')}}" matTooltipShowDelay="1000"/>
   </mat-form-field>
-  <mat-form-field appearance="fill" class="disable" style="margin-left: 10px; width: calc(100% - 600px - 25px)">
+  <mat-form-field appearance="fill" class="disable" style="margin-left: 10px; width: calc(100% - 600px - 30px)">
     <mat-label>{{ 'general.Targets' | translate }}</mat-label>
     <input matInput [spellcheck]="dataService.HasSpellCheck" [value]="GetTargetsNames()"/>
   </mat-form-field>

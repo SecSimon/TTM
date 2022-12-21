@@ -479,13 +479,15 @@ export class DataService {
 
   public OnClose(event) {
     if (this.Project?.FileChanged || this.Config?.FileChanged) {
-      this.zone.run(() => this.OnCloseProject());
+      this.zone.run(() => {
+        this.OnCloseProject().then(() => {
+          if (this.electron.isElectron) this.electron.ipcRenderer.send('OnCloseApp');
+        });
+      });
       event.returnValue = false;
       return false;
     }
   }
-
-  first = false;
 
   private loadEncryptedProject(proj: IGHFile, projContent: IGHFileContent) {
     let pw = { 'pw': '' };

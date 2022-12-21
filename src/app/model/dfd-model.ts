@@ -416,10 +416,10 @@ export abstract class DFDElement extends ViewElementBase implements IElementType
       if (type.Properties) {
         type.Properties.forEach(x => {
           this.AddProperty((x.DisplayName == null ? x.ID : x.DisplayName), x.ID, x.Tooltip, x.HasGetter, x.Type, x.Editable);
-          if (this.Data[x.ID] == null) {
-            if (x.HasGetter) this[x.ID] = x.DefaultValue;
-            else this.Data[x.ID] = x.DefaultValue;
-          }
+          try {
+            if (x.HasGetter && this[x.ID] == null) { this[x.ID] = x.DefaultValue; }
+            else if (this.Data[x.ID] == null) this.Data[x.ID] = x.DefaultValue;
+          } catch { }
         });
       }
     }

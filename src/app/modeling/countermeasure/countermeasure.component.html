@@ -23,6 +23,10 @@
   <button mat-icon-button style="vertical-align: super;" (click)="AddMitigationProcess()">
     <mat-icon>add</mat-icon>
   </button>
+  <mat-form-field appearance="fill" style="width: 60px; float: right; margin-left: 10px;" class="disable">
+    <mat-label>{{ 'general.Number' | translate }}</mat-label>
+    <input matInput [(ngModel)]="countermeasure.Number" matTooltip="{{countermeasure.Number}}" matTooltipShowDelay="1000"/>
+  </mat-form-field>
   <br/>
   <mat-form-field appearance="fill" class="property-form-field">
     <mat-label>{{'general.Control' | translate}}</mat-label>

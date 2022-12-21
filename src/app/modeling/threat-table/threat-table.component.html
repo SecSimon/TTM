@@ -144,7 +144,7 @@
         <button mat-menu-item [matMenuTriggerFor]="existing">{{'general.Existing' | translate}}</button>
       </mat-menu>
       <mat-menu #existing="matMenu">
-        <button mat-menu-item *ngFor="let mit of GetPossibleCountermeasures(item)" (click)="AddExistingCountermeasure(item, mit)">{{mit.Name}}</button>
+        <button mat-menu-item *ngFor="let mit of GetPossibleCountermeasures(item)" (click)="AddExistingCountermeasure(item, mit)" matTooltip="{{mit.Name}}" matTooltipShowDelay="1000">{{mit.Name}}</button>
       </mat-menu> 
       <button mat-menu-item [disabled]="!item" (click)="OnViewCountermeasures(item)">
         <mat-icon>preview</mat-icon>

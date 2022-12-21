@@ -27,23 +27,29 @@ export class CvssEntryComponent implements OnInit {
   }
 
   public OpenCVSS() {
-    let vec = this.getVector();
-    if (vec) window.open('https://www.first.org/cvss/calculator/3.1#' + vec, '_blank');
+    const link = CvssEntryComponent.GetURL(this.entry);
+    if (link) window.open(link, '_blank');
   }
 
   public CalcScore() {
-    let vec = this.getVector();
+    let vec = CvssEntryComponent.GetVector(this.entry);
     if (vec && vec.length > 8) {
       const cvss = new Cvss(vec);
       this.Score = cvss.getBaseScore();
     }
   }
 
-  private getVector(): string {
-    if (this.entry) {
+  public static GetURL(entry: ICVSSEntry) {
+    let vec = CvssEntryComponent.GetVector(entry);
+    if (vec) return 'https://www.first.org/cvss/calculator/3.1#' + vec;
+    return null;
+  }
+
+  public static GetVector(entry: ICVSSEntry) {
+    if (entry) {
       let vec = 'CVSS:3.1';
-      Object.keys(this.entry).forEach(k => {
-        if (this.entry[k] && typeof this.entry[k] === 'string') vec += '/' + k + ':' + this.entry[k];
+      Object.keys(entry).forEach(k => {
+        if (entry[k] && typeof entry[k] === 'string') vec += '/' + k + ':' + entry[k];
       });
       return vec;
     }

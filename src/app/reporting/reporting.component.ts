@@ -20,15 +20,15 @@ import { ResizedEvent } from 'angular-resize-event';
 import { DeviceAssetsComponent } from '../modeling/device-assets/device-assets.component';
 import { StackComponent } from '../modeling/stack/stack.component';
 import { AssetGroup, LowMediumHighNumberUtil } from '../model/assets';
-import { ImpactCategoryUtil, RiskStrategyUtil, AttackScenario, ThreatSeverityUtil, ThreatStateUtil } from '../model/threat-model';
+import { ImpactCategoryUtil, RiskStrategyUtil, AttackScenario, ThreatSeverityUtil, ThreatStateUtil, ThreatStates } from '../model/threat-model';
 import { DatabaseBase } from '../model/database';
-import { Countermeasure, MitigationProcessStateUtil, MitigationStateUtil } from '../model/mitigations';
+import { Countermeasure, MitigationProcessStateUtil, MitigationStates, MitigationStateUtil } from '../model/mitigations';
 import { ResultsChartComponent } from '../dashboard/results-chart/results-chart.component';
 import { ResultsAnalysisComponent } from '../dashboard/results-analysis/results-analysis.component';
 
 import { 
   AlignmentType,
-  Document, HeadingLevel,
+  Document, ExternalHyperlink, HeadingLevel,
   ImageRun, Packer,
   Paragraph,
   Table,
@@ -41,6 +41,10 @@ import {
 
 import html2canvas from 'html2canvas';
 import { ExportTemplate } from '../model/export-template';
+import { CvssEntryComponent } from '../shared/components/cvss-entry/cvss-entry.component';
+import { OwaspRREntryComponent } from '../shared/components/owasp-rr-entry/owasp-rr-entry.component';
+import { CapecEntryComponent } from '../shared/components/capec-entry/capec-entry.component';
+import { CweEntryComponent } from '../shared/components/cwe-entry/cwe-entry.component';
 
 @Component({
   selector: 'app-reporting',
@@ -135,6 +139,36 @@ export class ReportingComponent implements OnInit {
           this.createTable([diaData.xAxisLabel, ...diaData.results[0].series.map(x => x.name)], rows);
           this.createParagraph('');
         }
+      }
+
+      if (this.Project.GetSystemThreats().length > 0) {
+        this.createSubHeading(this.translate.instant('report.RiskOfSystemThreats'));
+        const scenarios = this.Project.GetAttackScenariosApplicable();
+        this.Project.GetSystemThreats().forEach(threat => {
+          const scens = scenarios.filter(x => x.SystemThreats.includes(threat));
+          scens.sort((a, b) => {
+            if (a.Risk >= 0 && b.Risk >= 0) return Number(a.Risk) > Number(b.Risk) ? -1 : (Number(a.Risk) == Number(b.Risk) ? 0 : 1);
+            if (a.Risk) return -1;
+            return 1;
+          });
+          if (scens.length > 0) {
+            const risks = scens.map(x => x.Risk).filter(x => x == x);
+            const risk = this.translate.instant(risks.length > 0 ? LowMediumHighNumberUtil.ToString(Math.max(...risks.map(x => Number(x)))) : 'report.UnknownRisk');
+            this.createParagraph(threat.Name + ' - ' + this.translate.instant('properties.Risk') + ': ' + risk);
+            const items = [];
+            scens.forEach(s => {
+              const descs = [];
+              if (s.ScoreCVSS && s.ScoreCVSS.Score > 0) descs.push(this.translate.instant('report.CvssScore') + ': ' + s.ScoreCVSS.Score.toFixed(1));
+              if (s.ScoreOwaspRR && s.ScoreOwaspRR.Score > 0) descs.push(this.translate.instant('report.OwaspRRScore') + ': ' + s.ScoreOwaspRR.Score.toFixed(1));
+              if (s.Risk) descs.push(this.translate.instant('properties.Risk') + ': ' + this.translate.instant(LowMediumHighNumberUtil.ToString(s.Risk)));
+              items.push(s.GetLongName() + ': ' + descs.join(', '));
+            });
+            this.createUL(items);
+          }
+          else {
+            this.createParagraph(threat.Name + ' - ' + this.translate.instant('report.UnknownRisk'));
+          }
+        });
       }
 
       // Detailed Results
@@ -289,30 +323,50 @@ export class ReportingComponent implements OnInit {
       this.Project.GetDFDiagrams().forEach(x => views.push(x));
       views = views.filter(x => !!x);
 
-      let threats: [string, AttackScenario[]][] = [];
+      let attackScenarios: [string, AttackScenario[]][] = [];
       views.forEach(view => {
-        threats.push([view.Name, this.Project.GetAttackScenarios().filter(x => x.ViewID == view.ID)]);
+        let as = this.Project.GetAttackScenariosApplicable().filter(x => x.ViewID == view.ID);
+        as.sort((a, b) => {
+          if (a.Risk >= 0 && b.Risk >= 0) return Number(a.Risk) > Number(b.Risk) ? -1 : (Number(a.Risk) == Number(b.Risk) ? 0 : 1);
+          if (a.Risk) return -1;
+          return 1;
+        });
+        attackScenarios.push([view.Name, as]);
       });
       
-      threats.forEach(x => {
+      attackScenarios.forEach(x => {
         if (x[1].length > 0) {
           this.createSubSubHeading(x[0]);
-          x[1].forEach(threat => {
-            this.createBoldParagraph(threat.Name);
-            this.createParagraph(this.translate.instant('properties.Status') + ': ' + this.translate.instant(ThreatStateUtil.ToString(threat.ThreatState)));
-            if (threat.SystemThreats?.length > 0) this.createParagraph(this.translate.instant('general.SystemThreats') + ': ' + threat.SystemThreats.map(x => x.Name).join(', '));
-            if (threat.Severity) this.createParagraph(this.translate.instant('properties.Severity') + ': ' + this.translate.instant(ThreatSeverityUtil.ToString(threat.Severity)));
-            if (threat.Likelihood) this.createParagraph(this.translate.instant('general.Likelihood') + ': ' + this.translate.instant(LowMediumHighNumberUtil.ToString(threat.Likelihood)));
-            if (threat.Risk) this.createParagraph(this.translate.instant('properties.Risk') + ': ' + this.translate.instant(LowMediumHighNumberUtil.ToString(threat.Risk)));
-            if (threat.RiskStrategy) this.createParagraph(this.translate.instant('properties.RiskStrategy') + ': ' + this.translate.instant(RiskStrategyUtil.ToString(threat.RiskStrategy)));
-            if (threat.RiskStrategyReason?.length > 0) this.createParagraph(this.translate.instant('properties.RiskStrategyReason') + ': ' + threat.RiskStrategyReason);
+          x[1].forEach(scenario => {
+            this.createBoldParagraph(scenario.GetLongName());
+            this.createParagraph(this.translate.instant('properties.Status') + ': ' + this.translate.instant(ThreatStateUtil.ToString(scenario.ThreatState)));
+            if (scenario.Description?.length > 0) this.createParagraph(this.translate.instant('properties.Description') + ': ' + scenario.Description);
+            if (scenario.SystemThreats?.length > 0) this.createParagraph(this.translate.instant('general.SystemThreats') + ': ' + scenario.SystemThreats.map(x => x.Name).join(', '));
+            if (scenario.AttackVector?.AttackTechnique?.CAPECID) this.createLink(this.translate.instant('properties.CAPECID') + ': ' + scenario.AttackVector.AttackTechnique.CAPECID.toString(), CapecEntryComponent.GetURL(scenario.AttackVector.AttackTechnique.CAPECID));
+            if (scenario.AttackVector?.Weakness?.CWEID) this.createLink(this.translate.instant('properties.CWEID') + ': ' + scenario.AttackVector.Weakness.CWEID.toString(), CweEntryComponent.GetURL(scenario.AttackVector.Weakness.CWEID));
+            if (scenario.ScoreCVSS && scenario.ScoreCVSS.Score) {
+              this.createParagraph(this.translate.instant('report.CvssScore') + ': ' + scenario.ScoreCVSS.Score.toFixed(1));
+              this.createLink(this.translate.instant('report.CvssVector') + ': ' + CvssEntryComponent.GetVector(scenario.ScoreCVSS), CvssEntryComponent.GetURL(scenario.ScoreCVSS));
+            }
+            if (scenario.ScoreOwaspRR && scenario.ScoreOwaspRR.Score) {
+              this.createParagraph(this.translate.instant('report.OwaspRRScore') + ': ' + scenario.ScoreOwaspRR.Score.toFixed(1));
+              this.createLink(this.translate.instant('report.OwaspRRVector') + ': ' + OwaspRREntryComponent.GetVector(scenario.ScoreOwaspRR), OwaspRREntryComponent.GetURL(scenario.ScoreOwaspRR));
+            }
+            if (scenario.Severity) this.createParagraph(this.translate.instant('properties.Severity') + ': ' + this.translate.instant(ThreatSeverityUtil.ToString(scenario.Severity)));
+            if (scenario.Likelihood) this.createParagraph(this.translate.instant('general.Likelihood') + ': ' + this.translate.instant(LowMediumHighNumberUtil.ToString(scenario.Likelihood)));
+            if (scenario.Risk) this.createParagraph(this.translate.instant('properties.Risk') + ': ' + this.translate.instant(LowMediumHighNumberUtil.ToString(scenario.Risk)));
+            if (scenario.RiskStrategy) this.createParagraph(this.translate.instant('properties.RiskStrategy') + ': ' + this.translate.instant(RiskStrategyUtil.ToString(scenario.RiskStrategy)));
+            if (scenario.RiskStrategyReason?.length > 0) this.createParagraph(this.translate.instant('properties.RiskStrategyReason') + ': ' + scenario.RiskStrategyReason);
+            if (scenario.GetCountermeasures()?.length > 0) this.createParagraph(this.translate.instant('general.Countermeasures') + ': ' + scenario.GetCountermeasures().map(x => x.GetLongName()).join(', '));
+            this.createParagraph('');
           });
         }
       });
 
       let measures: [string, Countermeasure[]][] = [];
       views.forEach(view => {
-        measures.push([view.Name, this.Project.GetCountermeasures().filter(x => x.ViewID == view.ID)]);
+        let cms = this.Project.GetCountermeasuresApplicable().filter(x => x.ViewID == view.ID);
+        measures.push([view.Name, cms]);
       });
 
       // countermeasures
@@ -320,18 +374,22 @@ export class ReportingComponent implements OnInit {
       measures.forEach(x => {
         if (x[1].length > 0) {
           this.createSubSubHeading(x[0]);
-          x[1].forEach(mit => {
-            this.createBoldParagraph(mit.Name);
-            if (mit.MitigationState) this.createParagraph(this.translate.instant('properties.Status') + ': ' + this.translate.instant(MitigationStateUtil.ToString(mit.MitigationState)));
-            if (mit.MitigationProcess) this.createParagraph(this.translate.instant('general.MitigationProcess') + ': ' + mit.MitigationProcess.Name);
+          x[1].forEach(cm => {
+            this.createBoldParagraph(cm.GetLongName());
+            if (cm.MitigationState) this.createParagraph(this.translate.instant('properties.Status') + ': ' + this.translate.instant(MitigationStateUtil.ToString(cm.MitigationState)));
+            if (cm.Description?.length > 0) this.createParagraph(this.translate.instant('properties.Description') + ': ' + cm.Description);
+            if (cm.MitigationProcess) this.createParagraph(this.translate.instant('general.MitigationProcess') + ': ' + cm.MitigationProcess.GetLongName());
+            this.createParagraph(this.translate.instant('pages.modeling.countermeasure.mitigatedThreats') + ': ' + cm.AttackScenarios.map(x => x.GetLongName()).join(', '));
+            this.createParagraph('');
           });
         }
       });
 
       this.createSubHeading(this.translate.instant('general.MitigationProcesses'));
       this.Project.GetMitigationProcesses().forEach(process => {
-        this.createSubSubHeading(process.Name);
+        this.createSubSubHeading(process.GetLongName());
         if (process.MitigationProcessState) this.createParagraph(this.translate.instant('properties.Status') + ': ' + this.translate.instant(MitigationProcessStateUtil.ToString(process.MitigationProcessState)));
+        if (process.Description?.length > 0) this.createParagraph(this.translate.instant('properties.Description') + ': ' + process.Description);
         if (process.Tasks?.length > 0) {
           this.createParagraph(this.translate.instant('general.Tasks'));
           this.createUL(process.Tasks.map(x => (x.IsChecked ? this.translate.instant('general.Done') : this.translate.instant('general.DoneNot')) + ': ' + x.Note));
@@ -340,6 +398,7 @@ export class ReportingComponent implements OnInit {
           this.createParagraph(this.translate.instant('general.Notes'));
           this.createUL(process.Notes.map(x => new Date(Number(x.Date)).toLocaleDateString() + ' - ' + x.Author + ': ' + x.Note));
         }
+        this.createParagraph('');
       });
 
       // finish: remove old HTML report
@@ -562,6 +621,34 @@ export class ReportingComponent implements OnInit {
     const p = document.createElement('p');
     p.appendChild(bold);
     return p;
+  }
+
+  private createLink(text: string, url: string) {
+    this.docxBuffer.push(this.createDocxLink(text, url));
+    this.htmlBuffer.push(this.createHtmlLink(text, url));
+  }
+
+  private createDocxLink(text: string, url: string): Paragraph {
+    return new Paragraph({
+      children: [
+        new ExternalHyperlink({
+            children: [
+                new TextRun({
+                    text: text,
+                    style: "Hyperlink",
+                }),
+            ],
+            link: url,
+        }),
+    ]
+    });
+  }
+
+  private createHtmlLink(text: string, url: string): HTMLElement {
+    const a = this.createHtmlElement('a', text) as HTMLAnchorElement;  
+    a.href = url;
+    a.target = '_blank';
+    return a;
   }
 
   private createTable(th: string[], rows: string[][]) {

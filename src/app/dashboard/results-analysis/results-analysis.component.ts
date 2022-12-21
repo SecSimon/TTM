@@ -20,7 +20,7 @@ enum DiaColors {
   Green = '#339900',
   Yellow = '#FFCC00',
   Red = '#FF2417',
-  DarkRed = '#400000'
+  DarkRed = '#8a0f0f'
 }
 
 export interface IDiagramData {
@@ -132,7 +132,7 @@ export class ResultsAnalysisComponent implements AfterViewInit {
       return res != -1;
     };
 
-    this.dataSourceCountermeasures = new MatTableDataSource(val.filter(x => ![MitigationStates.NotApplicable, MitigationStates.Duplicate].includes(x.MitigationState)));
+    this.dataSourceCountermeasures = new MatTableDataSource(val.filter(x => ![MitigationStates.NotApplicable, MitigationStates.Rejected, MitigationStates.Duplicate].includes(x.MitigationState)));
     this.dataSourceCountermeasures.sort = this.sortCountermeasures;
     this.dataSourceCountermeasures.sortingDataAccessor = mySort;
     this.dataSourceCountermeasures.filterPredicate = myFilter;
@@ -156,8 +156,8 @@ export class ResultsAnalysisComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     let setData = () => {
       setTimeout(() => {
-        this.AttackScenarios = this.dataService.Project.GetAttackScenarios().filter(x => x.MappingState != MappingStates.Removed && ![ThreatStates.NotApplicable, ThreatStates.Duplicate].includes(x.ThreatState));
-        this.Countermeasures = this.dataService.Project.GetCountermeasures().filter(x => x.MappingState != MappingStates.Removed && ![MitigationStates.NotApplicable, MitigationStates.Duplicate].includes(x.MitigationState));
+        this.AttackScenarios = this.dataService.Project.GetAttackScenariosApplicable().filter(x => x.MappingState != MappingStates.Removed);
+        this.Countermeasures = this.dataService.Project.GetCountermeasuresApplicable().filter(x => x.MappingState != MappingStates.Removed);
       
         this.UpdateDiagrams();
       }, 10);
@@ -513,12 +513,18 @@ export class ResultsAnalysisComponent implements AfterViewInit {
 
   public ResetNumbers(item) {
     let maps: any[] = [];
-    if (item instanceof AttackScenario) maps = this.dataService.Project.GetAttackScenarios();
-    else if (item instanceof Countermeasure) maps = this.dataService.Project.GetCountermeasures();
-
-    maps.sort((a, b) => {
-      return Number(a.Number) - Number(b.Number);
-    });
+    if (item instanceof AttackScenario) {
+      maps = [
+        ...this.dataService.Project.GetAttackScenariosApplicable().sort((a, b) => { return Number(a.Number) - Number(b.Number); }),
+        ...this.dataService.Project.GetAttackScenariosNotApplicable().sort((a, b) => { return Number(a.Number) - Number(b.Number); }),
+      ];
+    }
+    else if (item instanceof Countermeasure) {
+      maps = [
+        ...this.dataService.Project.GetCountermeasuresApplicable().sort((a, b) => { return Number(a.Number) - Number(b.Number); }),
+        ...this.dataService.Project.GetCountermeasuresNotApplicable().sort((a, b) => { return Number(a.Number) - Number(b.Number); }),
+      ];
+    }
 
     for (let i = 0; i < maps.length; i++) {
       maps[i].Number = (i+1).toString();

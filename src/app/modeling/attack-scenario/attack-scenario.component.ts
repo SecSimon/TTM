@@ -165,7 +165,7 @@ export class AttackScenarioComponent implements OnInit {
   public GetAttackScenarioGroups() {
     if (this.attackScenarioGroups == null) {
       this.attackScenarioGroups = [];
-      const scenariosByView = this.dataService.Project.GetAttackScenarios().filter(x => ![ThreatStates.NotApplicable, ThreatStates.Duplicate].includes(x.ThreatState) && x != this.attackScenario).reduce((ubc, u) => ({
+      const scenariosByView = this.dataService.Project.GetAttackScenariosApplicable().filter(x => x != this.attackScenario).reduce((ubc, u) => ({
         ...ubc,
         [u.ViewID]: [ ...(ubc[u.ViewID] || []), u ],
       }), {});
@@ -200,7 +200,7 @@ export class AttackScenarioComponent implements OnInit {
   }
 
   public GetPossibleCountermeasures() {
-    return this.dataService.Project.GetCountermeasures().filter(x => !x.AttackScenarios.includes(this.attackScenario) && ![MitigationStates.NotApplicable, MitigationStates.Rejected, MitigationStates.Duplicate].includes(x.MitigationState));
+    return this.dataService.Project.GetCountermeasuresApplicable().filter(x => !x.AttackScenarios.includes(this.attackScenario));
   }
 
   public AddExistingCountermeasure(cm: Countermeasure) {
