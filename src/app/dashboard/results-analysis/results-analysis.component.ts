@@ -183,7 +183,7 @@ export class ResultsAnalysisComponent implements AfterViewInit {
     let dia3 = ResultsAnalysisComponent.CreateThreatPerLifecycleDiagram(this.dataService.Project, this.translate, this.theme.IsDarkMode, this.isBlueColorScheme, wid, hei);
     let dia4 = ResultsAnalysisComponent.CreateThreatPerTypeDiagram(this.dataService.Project, this.translate, this.theme.IsDarkMode, this.isBlueColorScheme, wid, hei);
 
-    this.diagrams = [dia1, dia2, dia3, dia4];
+    this.diagrams = [dia1, dia3, dia4, dia2];
   }
 
   public UpdateDiagramsDelayed() {
@@ -196,7 +196,7 @@ export class ResultsAnalysisComponent implements AfterViewInit {
 
   public static CreateThreatSummaryDiagram(pf: ProjectFile, translate: TranslateService, isDarkmode: boolean, isBlueColorScheme: boolean, wid, hei): IDiagramData {
     let diagramValues: IStackedSeries[] = [];
-    let allAttackScnearios = pf.GetAttackScenarios();
+    let allAttackScnearios = pf.GetAttackScenariosApplicable();
     let getSeries = (mappings: AttackScenario[]): ISerie[] => {
       let res: ISerie[] = [];
       allAttackScnearios = allAttackScnearios.filter(x => !mappings.includes(x));
@@ -210,21 +210,21 @@ export class ResultsAnalysisComponent implements AfterViewInit {
     pf.GetDevices().forEach(dev => {
       let data: IStackedSeries = {
         name: dev.GetProperty('Name'),
-        series: getSeries(dev.GetAttackScenarios())
+        series: getSeries(dev.GetAttackScenariosApplicable())
       };
       diagramValues.push(data);
     });
     pf.GetMobileApps().forEach(app => {
       let data: IStackedSeries = {
         name: app.GetProperty('Name'),
-        series: getSeries(app.GetAttackScenarios())
+        series: getSeries(app.GetAttackScenariosApplicable())
       };
       diagramValues.push(data);
     });
-    pf.GetDiagrams().filter(x => x.DiagramType == DiagramTypes.DataFlow).forEach(dfd => {
+    pf.GetDFDiagrams().forEach(dfd => {
       let data: IStackedSeries = {
         name: dfd.GetProperty('Name'),
-        series: getSeries(pf.GetAttackScenarios().filter(x => x.ViewID == dfd.ID))
+        series: getSeries(pf.GetAttackScenariosApplicable().filter(x => x.ViewID == dfd.ID))
       };
       diagramValues.push(data);
     });
@@ -251,7 +251,7 @@ export class ResultsAnalysisComponent implements AfterViewInit {
 
   public static CreateCountermeasureSummaryDiagram(pf: ProjectFile, translate: TranslateService, isDarkmode: boolean, isBlueColorScheme: boolean, wid, hei): IDiagramData {
     let diagramValues: IStackedSeries[] = [];
-    let allCountermeasures = pf.GetCountermeasures();
+    let allCountermeasures = pf.GetCountermeasuresApplicable();
     let getSeries = (mappings: Countermeasure[]): ISerie[] => {
       let res: ISerie[] = [];
       allCountermeasures = allCountermeasures.filter(x => !mappings.includes(x));
@@ -264,21 +264,21 @@ export class ResultsAnalysisComponent implements AfterViewInit {
     pf.GetDevices().forEach(dev => {
       let data: IStackedSeries = {
         name: dev.GetProperty('Name'),
-        series: getSeries(dev.GetCountermeasures())
+        series: getSeries(dev.GetCountermeasuresApplicable())
       };
       diagramValues.push(data);
     });
     pf.GetMobileApps().forEach(app => {
       let data: IStackedSeries = {
         name: app.GetProperty('Name'),
-        series: getSeries(app.GetCountermeasures())
+        series: getSeries(app.GetCountermeasuresApplicable())
       };
       diagramValues.push(data);
     });
-    pf.GetDiagrams().filter(x => x.DiagramType == DiagramTypes.DataFlow).forEach(dfd => {
+    pf.GetDFDiagrams().forEach(dfd => {
       let data: IStackedSeries = {
         name: dfd.GetProperty('Name'),
-        series: getSeries(pf.GetCountermeasures().filter(x => x.ViewID == dfd.ID))
+        series: getSeries(pf.GetCountermeasuresApplicable().filter(x => x.ViewID == dfd.ID))
       };
       diagramValues.push(data);
     });
@@ -305,7 +305,7 @@ export class ResultsAnalysisComponent implements AfterViewInit {
 
   public static CreateThreatPerLifecycleDiagram(pf: ProjectFile, translate: TranslateService, isDarkmode: boolean, isBlueColorScheme: boolean, wid, hei): IDiagramData {
     let diagramValues: IStackedSeries[] = [];
-    let allAttackScenarios = pf.GetAttackScenarios();
+    let allAttackScenarios = pf.GetAttackScenariosApplicable();
     let getSeries = (mappings: AttackScenario[]): ISerie[] => {
       let res: ISerie[] = [];
       allAttackScenarios = allAttackScenarios.filter(x => !mappings.includes(x));
@@ -346,7 +346,7 @@ export class ResultsAnalysisComponent implements AfterViewInit {
 
   public static CreateThreatPerTypeDiagram(pf: ProjectFile, translate: TranslateService, isDarkmode: boolean, isBlueColorScheme: boolean, wid, hei): IDiagramData {
     let diagramValues: IStackedSeries[] = [];
-    let allAttackScenarios = pf.GetAttackScenarios();
+    let allAttackScenarios = pf.GetAttackScenariosApplicable();
     let getSeries = (mappings: AttackScenario[]): ISerie[] => {
       let res: ISerie[] = [];
       allAttackScenarios = allAttackScenarios.filter(x => !mappings.includes(x));
@@ -378,7 +378,7 @@ export class ResultsAnalysisComponent implements AfterViewInit {
     };
     diagramValues.push(data);
 
-    let dfdViewIDs = pf.GetDiagrams().filter(x => x.DiagramType == DiagramTypes.DataFlow).map(x => x.ID);
+    let dfdViewIDs = pf.GetDFDiagrams().map(x => x.ID);
     data = {
       name: translate.instant('general.DataFlow'),
       series: getSeries(allAttackScenarios.filter(x => dfdViewIDs.includes(x.ViewID)))

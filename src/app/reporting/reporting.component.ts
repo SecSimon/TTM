@@ -45,6 +45,7 @@ import { CvssEntryComponent } from '../shared/components/cvss-entry/cvss-entry.c
 import { OwaspRREntryComponent } from '../shared/components/owasp-rr-entry/owasp-rr-entry.component';
 import { CapecEntryComponent } from '../shared/components/capec-entry/capec-entry.component';
 import { CweEntryComponent } from '../shared/components/cwe-entry/cwe-entry.component';
+import { StringExtension } from '../util/string-extension';
 
 @Component({
   selector: 'app-reporting',
@@ -104,13 +105,15 @@ export class ReportingComponent implements OnInit {
     this.initializeReportDOCX().then(async () => {
       // Executive Summary
       this.createHeading(this.translate.instant('report.ExecutiveSummary'));
-      this.createParagraph(this.translate.instant('report.SUC') + ': ' + [...this.Project.GetDevices(), ...this.Project.GetMobileApps()].map(x => x.Name).join(', '));
+      this.createParagraph(StringExtension.Format(this.translate.instant('report.SUC'), this.Project.GetDevices().map(x => x.Name).join(', '), this.Project.GetMobileApps().map(x => x.Name).join(', ')));
+      this.createParagraph(StringExtension.Format(this.translate.instant('report.UseCaseUC'), this.Project.GetDFDiagrams().map(x => x.Name).join(', ')));
+      this.createParagraph('');
       this.createParagraph(this.translate.instant('report.IdentifiedSystemThreats') + ': ');
       this.createUL(this.Project.GetSystemThreats().map(x => x.Name));
 
       this.createParagraph('');
       // charts / tables
-      let charts = [ResultsAnalysisComponent.CreateThreatSummaryDiagram, ResultsAnalysisComponent.CreateCountermeasureSummaryDiagram, ResultsAnalysisComponent.CreateThreatPerLifecycleDiagram, ResultsAnalysisComponent.CreateThreatPerTypeDiagram];
+      let charts = [ResultsAnalysisComponent.CreateThreatSummaryDiagram, ResultsAnalysisComponent.CreateThreatPerLifecycleDiagram, ResultsAnalysisComponent.CreateThreatPerTypeDiagram, ResultsAnalysisComponent.CreateCountermeasureSummaryDiagram];
       for (let i = 0; i < charts.length; i++) {
         const diaData = charts[i](this.Project, this.translate, false, false, 600, 400);
         if (this.ShowCharts) {
@@ -143,6 +146,8 @@ export class ReportingComponent implements OnInit {
 
       if (this.Project.GetSystemThreats().length > 0) {
         this.createSubHeading(this.translate.instant('report.RiskOfSystemThreats'));
+        this.createParagraph(this.translate.instant('report.systemThreatsExplanation'));
+        this.createParagraph('');
         const scenarios = this.Project.GetAttackScenariosApplicable();
         this.Project.GetSystemThreats().forEach(threat => {
           const scens = scenarios.filter(x => x.SystemThreats.includes(threat));
@@ -153,7 +158,8 @@ export class ReportingComponent implements OnInit {
           });
           if (scens.length > 0) {
             const risks = scens.map(x => x.Risk).filter(x => x == x);
-            const risk = this.translate.instant(risks.length > 0 ? LowMediumHighNumberUtil.ToString(Math.max(...risks.map(x => Number(x)))) : 'report.UnknownRisk');
+            const maxRisk = Math.max(...risks.map(x => Number(x)));
+            const risk = this.translate.instant(maxRisk > 0 ? LowMediumHighNumberUtil.ToString(maxRisk) : 'report.UnknownRisk');
             this.createParagraph(threat.Name + ' - ' + this.translate.instant('properties.Risk') + ': ' + risk);
             const items = [];
             scens.forEach(s => {
@@ -168,10 +174,13 @@ export class ReportingComponent implements OnInit {
           else {
             this.createParagraph(threat.Name + ' - ' + this.translate.instant('report.UnknownRisk'));
           }
+          
+          this.createParagraph('');
         });
       }
 
       // Detailed Results
+      this.createParagraph('');
       this.createHeading(this.translate.instant('report.DetailedResults'));
       // All steps
       this.createSubHeading(this.ttmService.Stages[0].steps[0].name);
@@ -231,22 +240,24 @@ export class ReportingComponent implements OnInit {
       // threat sources
       this.createSubHeading(this.translate.instant('general.ThreatSources'));
       this.Project.GetThreatSources().Sources.forEach(src => {
-        this.createSubSubHeading(src.Name);
+        this.createBoldParagraph(src.Name);
         if (src.Motive.length > 0) {
           this.createParagraph(this.translate.instant('properties.Motive') + ':');
           this.createUL(src.Motive);
         }
         this.createParagraph(this.translate.instant('general.Likelihood') + ': ' + this.translate.instant(LowMediumHighNumberUtil.ToString(src.Likelihood)));
+        this.createParagraph('');
       });
 
-      // device threats
+      // system threats
       this.createSubHeading(this.translate.instant('general.SystemThreats'));
       this.Project.GetSystemThreats().forEach(threat => {
-        this.createSubSubHeading(threat.Name);
+        this.createBoldParagraph(threat.Name);
         if (threat.ThreatCategory) this.createParagraph(this.translate.instant('general.ThreatCategory') + ': ' + threat.ThreatCategory.Name);
         if (threat.Description?.length > 0) this.createParagraph(this.translate.instant('properties.consequencesImpact') + ': ' + threat.Description);
         if (threat.AffectedAssetObjects?.length > 0) this.createParagraph(this.translate.instant('report.AffectedAssets') + ': ' + threat.AffectedAssetObjects.map(x => x.Name).join(', '));
         this.createParagraph(this.translate.instant('properties.Impact') + ': ' + this.translate.instant(LowMediumHighNumberUtil.ToString(threat.Impact)) + ' (' +  threat.ImpactCats.map(x => this.translate.instant(ImpactCategoryUtil.ToString(x))).join(', ') + ')');
+        this.createParagraph('');
       });
 
       // models
@@ -317,6 +328,8 @@ export class ReportingComponent implements OnInit {
 
       // risk
       this.createSubHeading(this.ttmService.Stages[2].steps[0].name);
+      this.createParagraph(this.translate.instant('report.riskAssessmentExplanation'));
+      this.createParagraph('');
       let views: DatabaseBase[] = [this.Project.GetSysContext().ContextDiagram, this.Project.GetSysContext().UseCaseDiagram];
       this.Project.GetDevices().forEach(x => views.push(...[x.HardwareDiagram, x.SoftwareStack, x.ProcessStack]));
       this.Project.GetMobileApps().forEach(x => views.push(...[x.SoftwareStack, x.ProcessStack]));
@@ -371,6 +384,8 @@ export class ReportingComponent implements OnInit {
 
       // countermeasures
       this.createSubHeading(this.ttmService.Stages[2].steps[1].name);
+      this.createParagraph(this.translate.instant('report.countermeasuresExplanation'));
+      this.createParagraph('');
       measures.forEach(x => {
         if (x[1].length > 0) {
           this.createSubSubHeading(x[0]);
@@ -386,9 +401,11 @@ export class ReportingComponent implements OnInit {
       });
 
       this.createSubHeading(this.translate.instant('general.MitigationProcesses'));
+      this.createParagraph(this.translate.instant('report.mitigationProcessExplanation'));
+      this.createParagraph('');
       this.Project.GetMitigationProcesses().forEach(process => {
-        this.createSubSubHeading(process.GetLongName());
-        if (process.MitigationProcessState) this.createParagraph(this.translate.instant('properties.Status') + ': ' + this.translate.instant(MitigationProcessStateUtil.ToString(process.MitigationProcessState)));
+        this.createBoldParagraph(process.GetLongName());
+        if (process.MitigationProcessState) this.createParagraph(this.translate.instant('properties.Status') + ': ' + this.translate.instant(MitigationProcessStateUtil.ToString(process.MitigationProcessState)) + ' (' + this.translate.instant('general.Progress') + ': ' + process.Progress.toFixed(0) +  '%)');
         if (process.Description?.length > 0) this.createParagraph(this.translate.instant('properties.Description') + ': ' + process.Description);
         if (process.Tasks?.length > 0) {
           this.createParagraph(this.translate.instant('general.Tasks'));
@@ -397,6 +414,9 @@ export class ReportingComponent implements OnInit {
         if (process.Notes?.length > 0) {
           this.createParagraph(this.translate.instant('general.Notes'));
           this.createUL(process.Notes.map(x => new Date(Number(x.Date)).toLocaleDateString() + ' - ' + x.Author + ': ' + x.Note));
+        }
+        if (process.Countermeasures.length > 0) {
+          this.createParagraph(this.translate.instant('general.Countermeasures') + ': ' + process.Countermeasures.map(x => x.GetLongName()).join(', '));
         }
         this.createParagraph('');
       });
@@ -423,6 +443,36 @@ export class ReportingComponent implements OnInit {
       creator: this.dataService.UserDisplayName,
       description: this.dataService.Project.Description,
       title: this.dataService.Project.GetProjectName(),
+      styles: {
+        default: {
+          document: {
+            run: {
+              font: 'Calibri',
+            }
+          },
+          heading1: {
+            paragraph: {
+              spacing: {
+                before: 120
+              }
+            }
+          },
+          heading2: {
+            paragraph: {
+              spacing: {
+                before: 120
+              }
+            }
+          },
+          heading3: {
+            paragraph: {
+              spacing: {
+                before: 120
+              }
+            }
+          }
+        }
+      },
       sections: [
         {
           children: this.docxBuffer
@@ -488,7 +538,9 @@ export class ReportingComponent implements OnInit {
           }),
           this.createDocxParagraph(this.translate.instant('report.for')),
           this.createDocxTitle(this.Project.GetProjectName()),
-          this.createDocxParagraph(this.GetDate().toLocaleDateString() + ', ' + 'Version ' + this.Project.UserVersion)
+          this.createParagraph(''),
+          this.createDocxParagraph(this.GetDate().toLocaleDateString() + ', ' + 'Version ' + this.Project.UserVersion),
+          this.createParagraph('')
         ];
 
         resolve();
@@ -820,7 +872,9 @@ export class ReportingComponent implements OnInit {
     return img;
   }
 
-  private getDiagramImage(diagram: Diagram): any[] {
+  private getDiagramImage(diagramOrig: Diagram): any[] {
+    // work with copy of diagram
+    const diagram = Diagram.FromJSON(JSON.parse(JSON.stringify(diagramOrig.ToJSON())), this.Project, this.Project.Config);
     const width = this.docWidth;
     const height = 500;
     const div = document.createElement('div');

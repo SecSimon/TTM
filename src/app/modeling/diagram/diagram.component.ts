@@ -891,6 +891,22 @@ export abstract class CanvasBase {
 
     this.Canvas.getObjects().forEach(x => this.fireScaling(x));
 
+    // bug fix: flow anchor black after report
+    // this.Canvas.getObjects().forEach(obj => {
+    //   if (obj['_objects']) {
+    //     obj['_objects'].filter(x => x[CProps.myType] == CTypes.FlowAnchor).forEach(x => {
+    //       if (x['_objects'] && x['_objects'].length == 3) {
+    //         x['_objects'][1]['stroke'] = this.theme.Primary;
+    //         x['_objects'][2]['stroke'] = this.theme.Primary;
+    //       }
+    //     });
+    //   }
+    // });
+    // this.Canvas.getObjects().filter(x => [CTypes.DataFlowCircle, CTypes.DataFlowPoint].includes(x[CProps.myType])).forEach(x => {
+    //   x['stroke'] = this.theme.Primary;
+    //   x['fill'] = this.theme.Primary;
+    // });
+
     this.Canvas.requestRenderAll();
   }
 

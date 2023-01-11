@@ -119,10 +119,10 @@ export class ProjectFile extends DatabaseBase {
   public GetContextElements(): ContextElement[] { return Array.from(this.contextElementMap, ([k, v]) => v); }
   public GetDFDElements(): DFDElement[] { return Array.from(this.dfdElementMap, ([k, v]) => v); }
   public GetDiagrams(): Diagram[] { return this.diagrams; }
+  public GetDFDiagrams(): Diagram[] { return this.diagrams.filter(x => x.DiagramType == DiagramTypes.DataFlow); }
   public GetStacks(): MyComponentStack[] { return this.stacks; }
   public GetDevices(): Device[] { return this.GetContextElements().filter(x => x.Type == ContextElementTypes.Device && x instanceof Device) as Device[]; }
   public GetMobileApps(): MobileApp[] { return this.GetContextElements().filter(x => x.Type == ContextElementTypes.MobileApp && x instanceof MobileApp) as MobileApp[]; }
-  public GetDFDiagrams(): Diagram[] { return this.diagrams.filter(x => x.DiagramType == DiagramTypes.DataFlow); }
   public GetComponents(): MyComponent[] { return Array.from(this.componentMap, ([k, v]) => v); }
 
   public GetAttackScenarios(): AttackScenario[] { return Array.from(this.attackScenarioMap, ([k, v]) => v); }

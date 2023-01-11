@@ -314,28 +314,28 @@ export class Device extends ContextElement {
     }
   }
 
-  public GetAttackScenarios(): AttackScenario[] {
+  public GetAttackScenariosApplicable(): AttackScenario[] {
     let res: AttackScenario[] = [];
 
-    this.project.GetAttackScenarios().filter(x => x.ViewID == this.project.GetSysContext().ContextDiagram.ID).filter(x => x.Targets.includes(this)).forEach(x => res.push(x));
+    this.project.GetAttackScenariosApplicable().filter(x => x.ViewID == this.project.GetSysContext().ContextDiagram.ID).filter(x => x.Targets.includes(this)).forEach(x => res.push(x));
     let ucRef = this.project.GetContextElementRefs().filter(x => x.Ref.ID == this.ID).find(x => this.project.FindDiagramOfElement(x.ID)?.ID == this.project.GetSysContext().UseCaseDiagram.ID);
-    if (ucRef) this.project.GetAttackScenarios().filter(x => x.ViewID == this.project.GetSysContext().UseCaseDiagram.ID).filter(x => x.Targets.includes(ucRef)).forEach(x => res.push(x));
-    if (this.HardwareDiagram) res.push(...this.project.GetAttackScenarios().filter(x => x.ViewID == this.HardwareDiagram.ID));
-    if (this.SoftwareStack) res.push(...this.project.GetAttackScenarios().filter(x => x.ViewID == this.SoftwareStack.ID));
-    if (this.ProcessStack) res.push(...this.project.GetAttackScenarios().filter(x => x.ViewID == this.ProcessStack.ID));
+    if (ucRef) this.project.GetAttackScenariosApplicable().filter(x => x.ViewID == this.project.GetSysContext().UseCaseDiagram.ID).filter(x => x.Targets.includes(ucRef)).forEach(x => res.push(x));
+    if (this.HardwareDiagram) res.push(...this.project.GetAttackScenariosApplicable().filter(x => x.ViewID == this.HardwareDiagram.ID));
+    if (this.SoftwareStack) res.push(...this.project.GetAttackScenariosApplicable().filter(x => x.ViewID == this.SoftwareStack.ID));
+    if (this.ProcessStack) res.push(...this.project.GetAttackScenariosApplicable().filter(x => x.ViewID == this.ProcessStack.ID));
 
     return res;
   }
 
-  public GetCountermeasures(): Countermeasure[] {
+  public GetCountermeasuresApplicable(): Countermeasure[] {
     let res: Countermeasure[] = [];
 
     this.project.GetCountermeasures().filter(x => x.ViewID == this.project.GetSysContext().ContextDiagram.ID).filter(x => x.Targets.includes(this)).forEach(x => res.push(x));
     let ucRef = this.project.GetContextElementRefs().filter(x => x.Ref.ID == this.ID).find(x => this.project.FindDiagramOfElement(x.ID)?.ID == this.project.GetSysContext().UseCaseDiagram.ID);
-    if (ucRef) this.project.GetCountermeasures().filter(x => x.ViewID == this.project.GetSysContext().UseCaseDiagram.ID).filter(x => x.Targets.includes(ucRef)).forEach(x => res.push(x));
-    if (this.HardwareDiagram) res.push(...this.project.GetCountermeasures().filter(x => x.ViewID == this.HardwareDiagram.ID));
-    if (this.SoftwareStack) res.push(...this.project.GetCountermeasures().filter(x => x.ViewID == this.SoftwareStack.ID));
-    if (this.ProcessStack) res.push(...this.project.GetCountermeasures().filter(x => x.ViewID == this.ProcessStack.ID));
+    if (ucRef) this.project.GetCountermeasuresApplicable().filter(x => x.ViewID == this.project.GetSysContext().UseCaseDiagram.ID).filter(x => x.Targets.includes(ucRef)).forEach(x => res.push(x));
+    if (this.HardwareDiagram) res.push(...this.project.GetCountermeasuresApplicable().filter(x => x.ViewID == this.HardwareDiagram.ID));
+    if (this.SoftwareStack) res.push(...this.project.GetCountermeasuresApplicable().filter(x => x.ViewID == this.SoftwareStack.ID));
+    if (this.ProcessStack) res.push(...this.project.GetCountermeasuresApplicable().filter(x => x.ViewID == this.ProcessStack.ID));
 
     return res;
   }
@@ -772,26 +772,26 @@ export class MobileApp extends ContextElement {
     }
   }
 
-  public GetAttackScenarios(): AttackScenario[] {
+  public GetAttackScenariosApplicable(): AttackScenario[] {
     let res: AttackScenario[] = [];
 
-    this.project.GetAttackScenarios().filter(x => x.ViewID == this.project.GetSysContext().ContextDiagram.ID).filter(x => x.Targets.includes(this)).forEach(x => res.push(x));
+    this.project.GetAttackScenariosApplicable().filter(x => x.ViewID == this.project.GetSysContext().ContextDiagram.ID).filter(x => x.Targets.includes(this)).forEach(x => res.push(x));
     let ucRef = this.project.GetContextElementRefs().filter(x => x.Ref.ID == this.ID).find(x => this.project.FindDiagramOfElement(x.ID)?.ID == this.project.GetSysContext().UseCaseDiagram.ID);
-    if (ucRef) this.project.GetAttackScenarios().filter(x => x.ViewID == this.project.GetSysContext().UseCaseDiagram.ID).filter(x => x.Targets.includes(ucRef)).forEach(x => res.push(x));
-    if (this.SoftwareStack) res.push(...this.project.GetAttackScenarios().filter(x => x.ViewID == this.SoftwareStack.ID));
-    if (this.ProcessStack) res.push(...this.project.GetAttackScenarios().filter(x => x.ViewID == this.ProcessStack.ID));
+    if (ucRef) this.project.GetAttackScenariosApplicable().filter(x => x.ViewID == this.project.GetSysContext().UseCaseDiagram.ID).filter(x => x.Targets.includes(ucRef)).forEach(x => res.push(x));
+    if (this.SoftwareStack) res.push(...this.project.GetAttackScenariosApplicable().filter(x => x.ViewID == this.SoftwareStack.ID));
+    if (this.ProcessStack) res.push(...this.project.GetAttackScenariosApplicable().filter(x => x.ViewID == this.ProcessStack.ID));
 
     return res;
   }
 
-  public GetCountermeasures(): Countermeasure[] {
+  public GetCountermeasuresApplicable(): Countermeasure[] {
     let res: Countermeasure[] = [];
 
-    this.project.GetCountermeasures().filter(x => x.ViewID == this.project.GetSysContext().ContextDiagram.ID).filter(x => x.Targets.includes(this)).forEach(x => res.push(x));
+    this.project.GetCountermeasuresApplicable().filter(x => x.ViewID == this.project.GetSysContext().ContextDiagram.ID).filter(x => x.Targets.includes(this)).forEach(x => res.push(x));
     let ucRef = this.project.GetContextElementRefs().filter(x => x.Ref.ID == this.ID).find(x => this.project.FindDiagramOfElement(x.ID)?.ID == this.project.GetSysContext().UseCaseDiagram.ID);
-    if (ucRef) this.project.GetCountermeasures().filter(x => x.ViewID == this.project.GetSysContext().UseCaseDiagram.ID).filter(x => x.Targets.includes(ucRef)).forEach(x => res.push(x));
-    if (this.SoftwareStack) res.push(...this.project.GetCountermeasures().filter(x => x.ViewID == this.SoftwareStack.ID));
-    if (this.ProcessStack) res.push(...this.project.GetCountermeasures().filter(x => x.ViewID == this.ProcessStack.ID));
+    if (ucRef) this.project.GetCountermeasuresApplicable().filter(x => x.ViewID == this.project.GetSysContext().UseCaseDiagram.ID).filter(x => x.Targets.includes(ucRef)).forEach(x => res.push(x));
+    if (this.SoftwareStack) res.push(...this.project.GetCountermeasuresApplicable().filter(x => x.ViewID == this.SoftwareStack.ID));
+    if (this.ProcessStack) res.push(...this.project.GetCountermeasuresApplicable().filter(x => x.ViewID == this.ProcessStack.ID));
 
     return res;
   }
