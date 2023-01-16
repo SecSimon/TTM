@@ -145,12 +145,14 @@ export class ReportingComponent implements OnInit {
           });
         }
         else {
-          let rows = [];
-          diaData.results.forEach(row => {
-            rows.push([row.name, ...row.series.map(x => x.value)]);
-          });
-          this.createTable([diaData.xAxisLabel, ...diaData.results[0].series.map(x => x.name)], rows);
-          this.createParagraph('');
+          if (diaData.results?.length > 0) {
+            let rows = [];
+            diaData.results.forEach(row => {
+              rows.push([row.name, ...row.series.map(x => x.value)]);
+            });
+            this.createTable([diaData.xAxisLabel, ...diaData.results[0].series.map(x => x.name)], rows);
+            this.createParagraph('');
+          }
         }
       }
 

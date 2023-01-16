@@ -208,6 +208,15 @@ export class FileUpdateService {
   }
 
   private configV4(file: IConfigFile) {
+    if (file['attackVectorGroups']) {
+      console.log('Failed previous update');
+      if (file['controls']) {
+        file.controls.forEach(x => {
+          FileUpdateService.renameKey(x, 'mitigatedattackVectorIDs', 'mitigatedAttackVectorIDs');
+        });
+      }
+      return;
+    }
     if (file['threatOrigins'] && file['threatOriginGroups']) {
       FileUpdateService.renameKey(file, 'threatOriginGroups', 'attackVectorGroups');
       FileUpdateService.renameKey(file, 'threatOrigins', 'attackVectors');
