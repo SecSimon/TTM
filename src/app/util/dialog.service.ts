@@ -6,7 +6,7 @@ import { MyDataComponent } from '../configuration/mydata/mydata.component';
 import { AttackVectorComponent } from '../configuration/attack-vector/attack-vector.component';
 import { ThreatRuleComponent } from '../configuration/threat-rule/threat-rule.component';
 import { MyData } from '../model/assets';
-import { DatabaseBase, DataReferencesUtil, INote, ViewElementBase } from '../model/database';
+import { DatabaseBase, DataReferencesUtil, INote, IProperty, ViewElementBase } from '../model/database';
 import { AttackScenario, ICVSSEntry, IOwaspRREntry, AttackVector, ThreatRule } from '../model/threat-model';
 import { CountermeasureComponent } from '../modeling/countermeasure/countermeasure.component';
 import { MitigationProcessComponent } from '../modeling/mitigation-process/mitigation-process.component';
@@ -24,6 +24,8 @@ import { NotesComponent } from '../shared/components/notes/notes.component';
 import { LocalStorageService, LocStorageKeys } from './local-storage.service';
 import { CvssEntryComponent } from '../shared/components/cvss-entry/cvss-entry.component';
 import { OwaspRREntryComponent } from '../shared/components/owasp-rr-entry/owasp-rr-entry.component';
+import { RenameDialogComponent, IRenameDialogData } from '../shared/components/rename-dialog/rename-dialog.component';
+import { TagChartsComponent } from '../dashboard/tag-charts/tag-charts.component';
 
 export class MyBoolean {
   public Value: boolean;
@@ -401,5 +403,24 @@ export class DialogService {
       this.locStorage.Set(LocStorageKeys.COOKIE_CONSENT, JSON.stringify(res));
     });
     return dialogRef;
+  }
+
+  public OpenRenameDialog(obj: DatabaseBase, prop: IProperty) {
+    const data: IRenameDialogData = { Object: obj, Property: prop };
+    const dialogRef = this.dialog.open(RenameDialogComponent, { data: data });
+    return dialogRef;
+  }
+
+  public OpenTagChartsDialog() {
+    let data: ITwoOptionDialogData = {
+      title: this.translate.instant('dialog.tagcharts.title'),
+      resultTrueText: this.translate.instant('general.Close'),
+      hasResultFalse: false,
+      resultFalseText: '',
+      resultTrueEnabled: () => true,
+      initalTrue: true,
+      component: TagChartsComponent
+    };
+    return this.OpenTwoOptionsDialog(data, true, '700px');
   }
 }

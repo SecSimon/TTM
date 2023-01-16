@@ -5,7 +5,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { TranslateService } from '@ngx-translate/core';
 import { DiagramTypes } from '../../model/diagram';
 import { Countermeasure, MitigationStates, MitigationStateUtil } from '../../model/mitigations';
-import { AttackScenario, ThreatStates, MappingStates, ThreatSeverityUtil, LifeCycleUtil, ThreatStateUtil, ThreatSeverities } from '../../model/threat-model';
+import { AttackScenario, ThreatStates, MappingStates, ThreatSeverityUtil, LifeCycleUtil, ThreatStateUtil, ThreatSeverities, ImpactCategoryUtil } from '../../model/threat-model';
 import { DataService } from '../../util/data.service';
 import { DialogService } from '../../util/dialog.service';
 import { LocalStorageService, LocStorageKeys } from '../../util/local-storage.service';
@@ -13,6 +13,7 @@ import { LocalStorageService, LocStorageKeys } from '../../util/local-storage.se
 import { LowMediumHighNumberUtil, LowMediumHighNumber } from '../../model/assets';
 import { ThemeService } from '../../util/theme.service';
 import { ProjectFile } from '../../model/project-file';
+import { MyTagChart, TagChartTypes } from '../../model/my-tags';
 
 enum DiaColors {
   Black = '#000000',
@@ -179,11 +180,17 @@ export class ResultsAnalysisComponent implements AfterViewInit {
     let wid = (document.getElementById('diagramContainer').clientWidth - 20 - 3*10) / 4;
 
     let dia1 = ResultsAnalysisComponent.CreateThreatSummaryDiagram(this.dataService.Project, this.translate, this.theme.IsDarkMode, this.isBlueColorScheme, wid, hei);
-    let dia2 = ResultsAnalysisComponent.CreateCountermeasureSummaryDiagram(this.dataService.Project, this.translate, this.theme.IsDarkMode, this.isBlueColorScheme, wid, hei);
-    let dia3 = ResultsAnalysisComponent.CreateThreatPerLifecycleDiagram(this.dataService.Project, this.translate, this.theme.IsDarkMode, this.isBlueColorScheme, wid, hei);
+    let dia3 = ResultsAnalysisComponent.CreateCountermeasureSummaryDiagram(this.dataService.Project, this.translate, this.theme.IsDarkMode, this.isBlueColorScheme, wid, hei);
+    let dia5 = ResultsAnalysisComponent.CreateThreatPerLifecycleDiagram(this.dataService.Project, this.translate, this.theme.IsDarkMode, this.isBlueColorScheme, wid, hei);
     let dia4 = ResultsAnalysisComponent.CreateThreatPerTypeDiagram(this.dataService.Project, this.translate, this.theme.IsDarkMode, this.isBlueColorScheme, wid, hei);
+    let dia2 = ResultsAnalysisComponent.CreateRiskSummaryDiagram(this.dataService.Project, this.translate, this.theme.IsDarkMode, this.isBlueColorScheme, wid, hei);
+    let dia6 = ResultsAnalysisComponent.CreateThreatPerImpactCatDiagram(this.dataService.Project, this.translate, this.theme.IsDarkMode, this.isBlueColorScheme, wid, hei);
 
-    this.diagrams = [dia1, dia3, dia4, dia2];
+    let res = [];
+    this.dataService.Project.GetMyTagCharts().forEach(x => {
+      res.push(ResultsAnalysisComponent.CreateTagDiagram(this.dataService.Project, this.translate, this.theme.IsDarkMode, this.isBlueColorScheme, wid, hei, x));
+    });
+    this.diagrams = [...res, dia1, dia2, dia3, dia4, dia5, dia6];
   }
 
   public UpdateDiagramsDelayed() {
@@ -194,12 +201,66 @@ export class ResultsAnalysisComponent implements AfterViewInit {
     }, 3000);
   }
 
+  public static CreateTagDiagram(pf: ProjectFile, translate: TranslateService, isDarkmode: boolean, isBlueColorScheme: boolean, wid, hei, chart: MyTagChart): IDiagramData {
+    let diagramValues: IStackedSeries[] = [];
+
+    let getServeritySeries = (scenarios: AttackScenario[]): ISerie[] => {
+      let res: ISerie[] = [];
+      res.push({ name: translate.instant('properties.threatstate.NotSet'), value: scenarios.filter(x => !ThreatSeverityUtil.GetTypesDashboard().includes(x.Severity)).length });
+      ThreatSeverityUtil.GetTypesDashboard().forEach(sev => {
+        res.push({ name: translate.instant(ThreatSeverityUtil.ToString(sev)), value: scenarios.filter(x => x.Severity == sev).length });
+      });
+      return res;
+    };
+    let getRiskSeries = (scenarios: AttackScenario[]): ISerie[] => {
+      let res: ISerie[] = [];
+      res.push({ name: translate.instant('properties.threatstate.NotSet'), value: scenarios.filter(x => x.Risk == null).length });
+      LowMediumHighNumberUtil.GetKeys().forEach(risk => {
+        res.push({ name: translate.instant(LowMediumHighNumberUtil.ToString(risk)), value: scenarios.filter(x => x.Risk == risk).length });
+      });
+      return res;
+    };
+    let getCountermeasureSeries = (mappings: Countermeasure[]): ISerie[] => {
+      let res: ISerie[] = [];
+      MitigationStateUtil.GetMitigationStates().filter(x => x != MitigationStates.NotApplicable).forEach(state => {
+        res.push({ name: translate.instant(MitigationStateUtil.ToString(state)), value: mappings.filter(x => x.MitigationState == state).length });
+      });
+      return res;
+    };
+
+    chart.MyTags.forEach(tag => {
+      let series: ISerie[];
+      if (chart.Type == TagChartTypes.Severity) series = getServeritySeries(pf.GetAttackScenariosApplicable().filter(x => x.MyTags.includes(tag)));
+      else if (chart.Type == TagChartTypes.Risk) series = getRiskSeries(pf.GetAttackScenariosApplicable().filter(x => x.MyTags.includes(tag)));
+      else series = getCountermeasureSeries(pf.GetCountermeasuresApplicable().filter(x => x.MyTags.includes(tag)));
+      let data: IStackedSeries = {
+        name: tag.GetProperty('Name'),
+        series: series
+      };
+      diagramValues.push(data);
+    });
+
+    diagramValues = diagramValues.filter(x => !x.series.every(y => y.value == 0));
+
+    let schema = [ResultsAnalysisComponent.getNeutral(isDarkmode), DiaColors.Green, DiaColors.Yellow, DiaColors.Red, DiaColors.DarkRed];
+    if (chart.Type == TagChartTypes.Countermeasure) schema = [DiaColors.DarkRed, ResultsAnalysisComponent.getNeutral(isDarkmode), DiaColors.Red, DiaColors.Yellow, DiaColors.Green];
+
+    let dia: IDiagramData = {
+      results: diagramValues,
+      view: [wid, hei],
+      scheme: isBlueColorScheme ? 'air' : { domain: schema },
+      xAxisLabel: chart.Name,
+      yAxisLabel: translate.instant('pages.dashboard.NumberOfThreats')
+    };
+    return dia;
+  }
+
   public static CreateThreatSummaryDiagram(pf: ProjectFile, translate: TranslateService, isDarkmode: boolean, isBlueColorScheme: boolean, wid, hei): IDiagramData {
     let diagramValues: IStackedSeries[] = [];
-    let allAttackScnearios = pf.GetAttackScenariosApplicable();
+    let allAttackScenarios = pf.GetAttackScenariosApplicable();
     let getSeries = (mappings: AttackScenario[]): ISerie[] => {
       let res: ISerie[] = [];
-      allAttackScnearios = allAttackScnearios.filter(x => !mappings.includes(x));
+      allAttackScenarios = allAttackScenarios.filter(x => !mappings.includes(x));
       res.push({ name: translate.instant('properties.threatstate.NotSet'), value: mappings.filter(x => !ThreatSeverityUtil.GetTypesDashboard().includes(x.Severity)).length });
       ThreatSeverityUtil.GetTypesDashboard().forEach(sev => {
         res.push({ name: translate.instant(ThreatSeverityUtil.ToString(sev)), value: mappings.filter(x => x.Severity == sev).length });
@@ -229,10 +290,10 @@ export class ResultsAnalysisComponent implements AfterViewInit {
       diagramValues.push(data);
     });
 
-    if (allAttackScnearios.length > 0) {
+    if (allAttackScenarios.length > 0) {
       let data: IStackedSeries = {
         name: translate.instant('general.Other'),
-        series: getSeries(allAttackScnearios)
+        series: getSeries(allAttackScenarios)
       };
       diagramValues.push(data);
     }
@@ -244,6 +305,61 @@ export class ResultsAnalysisComponent implements AfterViewInit {
       view: [wid, hei],
       scheme: isBlueColorScheme ? 'air' : { domain: [ResultsAnalysisComponent.getNeutral(isDarkmode), DiaColors.Green, DiaColors.Yellow, DiaColors.Red, DiaColors.DarkRed] },
       xAxisLabel: translate.instant('pages.dashboard.ThreatSummary'),
+      yAxisLabel: translate.instant('pages.dashboard.NumberOfThreats')
+    };
+    return dia;
+  }
+
+  public static CreateRiskSummaryDiagram(pf: ProjectFile, translate: TranslateService, isDarkmode: boolean, isBlueColorScheme: boolean, wid, hei): IDiagramData {
+    let diagramValues: IStackedSeries[] = [];
+    let allAttackScenarios = pf.GetAttackScenariosApplicable();
+    let getSeries = (scenarios: AttackScenario[]): ISerie[] => {
+      let res: ISerie[] = [];
+      allAttackScenarios = allAttackScenarios.filter(x => !scenarios.includes(x));
+      res.push({ name: translate.instant('properties.threatstate.NotSet'), value: scenarios.filter(x => x.Risk == null).length });
+      LowMediumHighNumberUtil.GetKeys().forEach(risk => {
+        res.push({ name: translate.instant(LowMediumHighNumberUtil.ToString(risk)), value: scenarios.filter(x => x.Risk == risk).length });
+      });
+      return res;
+    };
+
+    pf.GetDevices().forEach(dev => {
+      let data: IStackedSeries = {
+        name: dev.GetProperty('Name'),
+        series: getSeries(dev.GetAttackScenariosApplicable())
+      };
+      diagramValues.push(data);
+    });
+    pf.GetMobileApps().forEach(app => {
+      let data: IStackedSeries = {
+        name: app.GetProperty('Name'),
+        series: getSeries(app.GetAttackScenariosApplicable())
+      };
+      diagramValues.push(data);
+    });
+    pf.GetDFDiagrams().forEach(dfd => {
+      let data: IStackedSeries = {
+        name: dfd.GetProperty('Name'),
+        series: getSeries(pf.GetAttackScenariosApplicable().filter(x => x.ViewID == dfd.ID))
+      };
+      diagramValues.push(data);
+    });
+
+    if (allAttackScenarios.length > 0) {
+      let data: IStackedSeries = {
+        name: translate.instant('general.Other'),
+        series: getSeries(allAttackScenarios)
+      };
+      diagramValues.push(data);
+    }
+
+    diagramValues = diagramValues.filter(x => !x.series.every(y => y.value == 0));
+
+    let dia: IDiagramData = {
+      results: diagramValues,
+      view: [wid, hei],
+      scheme: isBlueColorScheme ? 'air' : { domain: [ResultsAnalysisComponent.getNeutral(isDarkmode), DiaColors.Green, DiaColors.Yellow, DiaColors.Red] },
+      xAxisLabel: translate.instant('pages.dashboard.RiskSummary'),
       yAxisLabel: translate.instant('pages.dashboard.NumberOfThreats')
     };
     return dia;
@@ -402,10 +518,49 @@ export class ResultsAnalysisComponent implements AfterViewInit {
     };
     return dia;
   }
+
+  public static CreateThreatPerImpactCatDiagram(pf: ProjectFile, translate: TranslateService, isDarkmode: boolean, isBlueColorScheme: boolean, wid, hei): IDiagramData {
+    let diagramValues: IStackedSeries[] = [];
+    let allAttackScenarios = pf.GetAttackScenariosApplicable();
+    let getSeries = (scenarios: AttackScenario[]): ISerie[] => {
+      let res: ISerie[] = [];
+      res.push({ name: translate.instant('properties.threatstate.NotSet'), value: scenarios.filter(x => !ThreatSeverityUtil.GetTypesDashboard().includes(x.Severity)).length });
+      ThreatSeverityUtil.GetTypesDashboard().forEach(sev => {
+        res.push({ name: translate.instant(ThreatSeverityUtil.ToString(sev)), value: scenarios.filter(x => x.Severity == sev).length });
+      });
+      return res;
+    };
+
+    ImpactCategoryUtil.GetKeys().forEach(cat => {
+      let scenarios = allAttackScenarios.filter(x => x.SystemThreats.some(y => y.ImpactCats.includes(cat)));
+      let data: IStackedSeries = {
+        name: translate.instant(ImpactCategoryUtil.ToString(cat)),
+        series: getSeries(scenarios)
+      };
+      diagramValues.push(data);
+    });
+
+    diagramValues = diagramValues.filter(x => !x.series.every(y => y.value == 0));
+
+    let dia: IDiagramData = {
+      results: diagramValues,
+      view: [wid, hei],
+      scheme: isBlueColorScheme ? 'air' : { domain: [ResultsAnalysisComponent.getNeutral(isDarkmode), DiaColors.Green, DiaColors.Yellow, DiaColors.Red, DiaColors.DarkRed] },
+      xAxisLabel: translate.instant('pages.dashboard.ThreatPerImpactCategory'),
+      yAxisLabel: translate.instant('pages.dashboard.NumberOfThreats')
+    };
+    return dia;
+  }
   
   private static getNeutral(isDarkMode: boolean) {
     if (isDarkMode) return DiaColors.White;
     return DiaColors.Black;
+  }
+
+  public OpenTagCharts() {
+    this.dialog.OpenTagChartsDialog().subscribe(() => {
+      this.UpdateDiagrams();
+    });
   }
 
   public GetSplitSize(splitter: number, gutter: number, defaultSize: number) {

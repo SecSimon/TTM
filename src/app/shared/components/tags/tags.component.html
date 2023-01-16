@@ -1,0 +1,32 @@
+<mat-form-field *ngIf="tagableElement" style="width: 100%;" appearance="fill">
+  <mat-label>{{ 'general.Tags' | translate }}</mat-label>
+  <mat-chip-list #chipList>
+    <mat-chip *ngFor="let tag of tagableElement.MyTags" [ngStyle]="{'background-color': tag.Color}" selected (removed)="RemoveTag(tag)" (click)="OnChipClick(picker)">
+      {{tag.Name}}
+      <button matChipRemove>
+        <mat-icon>cancel</mat-icon>
+      </button>
+      <input matInput [ngxMatColorPicker]="picker" type="color" [(ngModel)]="tag.ColorPicker" style="width: 0px; visibility: hidden;">
+      <ngx-mat-color-picker #picker [color]="'primary'"></ngx-mat-color-picker>
+    </mat-chip>
+    <input placeholder="{{'properties.newTag' | translate}}" #tagInput [formControl]="tagCtrl" [matAutocomplete]="auto" [matChipInputFor]="chipList" [matChipInputSeparatorKeyCodes]="separatorKeysCodes" (matChipInputTokenEnd)="AddTag($event)">
+  </mat-chip-list>
+  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="SelectedTag($event)">
+    <mat-option *ngFor="let tag of filteredTags | async" [value]="tag">
+      <mat-icon style="margin-right: 5px;" [style.color]="tag.Color">circle</mat-icon>
+      {{tag.Name}}
+      <button style="float: right;" mat-icon-button (click)="DeleteTag(tag, $event)">
+        <mat-icon>delete</mat-icon>
+      </button>
+      <button style="float: right;" mat-icon-button (click)="EditTag(tag, $event)">
+        <mat-icon>edit</mat-icon>
+      </button>
+      <button style="float: right;" mat-icon-button (click)="TagDown(tag, $event)">
+        <mat-icon>arrow_downward</mat-icon>
+      </button>
+      <button style="float: right;" mat-icon-button (click)="TagUp(tag, $event)">
+        <mat-icon>arrow_upward</mat-icon>
+      </button>
+    </mat-option>
+  </mat-autocomplete>
+</mat-form-field>

@@ -92,7 +92,8 @@ export class DataService {
   private config: ConfigFile;
 
   constructor(private locStorage: LocalStorageService, private isLoading: IsLoadingService, private http: HttpClient, private router: Router, private clipboard: Clipboard,
-    private dialog: MatDialog, private messagesService: MessagesService, private translate: TranslateService, private fileUpdate: FileUpdateService, private zone: NgZone, private electron: ElectronService) { 
+    private dialog: MatDialog, private messagesService: MessagesService, private translate: TranslateService, private fileUpdate: FileUpdateService, private zone: NgZone, 
+    private electron: ElectronService) { 
     this.restoreUserAccount();
     if (this.UserMode == UserModes.LoggedIn) {
       this.retrieveRepositories();
@@ -109,7 +110,7 @@ export class DataService {
 
         if (currArr.length == tagArr.length) {
           for (let i = 0; i < currArr.length; i++) {
-            if (tagArr[i] > currArr[i]) return true;
+            if (Number(tagArr[i]) > Number(currArr[i])) return true;
           }
         }
 
@@ -183,8 +184,26 @@ export class DataService {
   }
   public set Project(val: ProjectFile) {
     if (this.project != val) {
+      const isNewVersion = (tag: string): boolean => {
+        const currArr = versionFile.version.replace('v', '').split('.');
+        const tagArr = tag.replace('v', '').split('.');
+
+        if (currArr.length == tagArr.length) {
+          for (let i = 0; i < currArr.length; i++) {
+            if (Number(tagArr[i]) > Number(currArr[i])) return true;
+          }
+        }
+
+        return false;
+      };
+
+      if (val && val.TTModelerVersion && isNewVersion(val.TTModelerVersion)) {
+        this.messagesService.Error(StringExtension.Format(this.translate.instant('messages.error.newerFileVersion'), val.TTModelerVersion));
+        val = null;
+      }
       this.project = val;
       if (val) {
+        val.TTModelerVersion = versionFile.version;
         this.Config = val.Config;
         this.Config.ProjectFile = val;
         this.project.DataChanged.subscribe(() => {
@@ -521,12 +540,14 @@ export class DataService {
       let updated = this.fileUpdate.UpdateProjectFile(json);
       json['Data']['Name'] = name;
       this.Project = ProjectFile.FromJSON(json);
-      this.Project.FileChanged = updated;
-      this.Config = this.Project.Config;
-      this.selectedGHConfig = null;
-      if (this.KeepUserSignedIn && this.selectedGHProject) this.locStorage.Set(LocStorageKeys.GH_LAST_PROJECT, JSON.stringify({ owner: this.GetRepoOfFile(this.SelectedGHProject).owner, repoId: this.SelectedGHProject.repoId, path: this.SelectedGHProject.path, sha: this.SelectedGHProject.sha }));
-      this.addProjectToHistory(this.SelectedGHProject);
-      this.messagesService.Success('messages.success.loadProject', name);
+      if (this.Project) {
+        this.Project.FileChanged = updated;
+        this.Config = this.Project.Config;
+        this.selectedGHConfig = null;
+        if (this.KeepUserSignedIn && this.selectedGHProject) this.locStorage.Set(LocStorageKeys.GH_LAST_PROJECT, JSON.stringify({ owner: this.GetRepoOfFile(this.SelectedGHProject).owner, repoId: this.SelectedGHProject.repoId, path: this.SelectedGHProject.path, sha: this.SelectedGHProject.sha }));
+        this.addProjectToHistory(this.SelectedGHProject);
+        this.messagesService.Success('messages.success.loadProject', name);
+      }
     } 
     catch (error) {
       this.messagesService.Error(error);

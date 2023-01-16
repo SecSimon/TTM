@@ -13,13 +13,18 @@
         <div *ngFor="let dia of diagrams; first as isFirst" [style.marginLeft]="isFirst ? '0' : '10px'">
           <app-results-chart style="height: 400px;" [diagram]="dia"></app-results-chart>
         </div>
+        <div style="display: flex;">
+          <button mat-button (click)="OpenTagCharts()">
+            <mat-icon>add_circle</mat-icon>
+          </button>
+        </div>
       </div>
     </div>
   </as-split-area>
   <as-split-area [size]="GetSplitSize(1, 1, $any('*'))" [order]=2 [class.bg-color-light3]="!theme.IsDarkMode" [class.bg-color-dark3]="theme.IsDarkMode">
     <as-split direction="horizontal" unit="percent" [gutterSize]="3" [restrictMove]="true" (dragEnd)="OnSplitSizeChange($event, 2)">
       <as-split-area [size]="GetSplitSize(2, 0, 50)" [order]=1 [class.bg-color-light3]="!theme.IsDarkMode" [class.bg-color-dark3]="theme.IsDarkMode">
-        <span style="margin-left: 5px; margin-top: 2px;">{{'pages.dashboard.ThreatOverview' | translate}}</span>
+        <span style="margin-left: 5px; margin-top: 2px;">{{'pages.dashboard.ThreatOverview' | translate}}: {{AttackScenarios.length}} {{'general.AttackScenarios' | translate}}</span>
         <input matInput [spellcheck]="dataService.HasSpellCheck" class="filterInput" (keyup)="ApplyThreatFilter($event)" placeholder="{{'pages.modeling.search' | translate}}" [class.bg-color-light2]="!theme.IsDarkMode" [class.bg-color-dark2]="theme.IsDarkMode" [style.color]="theme.IsDarkMode ? 'white' : 'black'"/>
         <table mat-table #threattable="matSort" style="width: 100%;" matSort [dataSource]="dataSourceThreats" matSortActive="number" matSortDirection="asc" matSortDisableClear [class.bg-color-light3]="!theme.IsDarkMode" [class.bg-color-dark3]="theme.IsDarkMode">
           <ng-container matColumnDef="number">
@@ -74,7 +79,7 @@
         </table>
       </as-split-area>
       <as-split-area [size]="GetSplitSize(2, 1, $any('*'))" [order]=2 [class.bg-color-light3]="!theme.IsDarkMode" [class.bg-color-dark3]="theme.IsDarkMode">
-        <span style="margin-left: 5px; margin-top: 2px;">{{'pages.dashboard.CountermeasureOverview' | translate}}</span>
+        <span style="margin-left: 5px; margin-top: 2px;">{{'pages.dashboard.CountermeasureOverview' | translate}}: {{Countermeasures.length}} {{'general.Countermeasures' | translate}}</span>
         <input matInput [spellcheck]="dataService.HasSpellCheck" class="filterInput" (keyup)="ApplyCountermeasureFilter($event)" placeholder="{{'pages.modeling.search' | translate}}" [class.bg-color-light2]="!theme.IsDarkMode" [class.bg-color-dark2]="theme.IsDarkMode" [style.color]="theme.IsDarkMode ? 'white' : 'black'"/>
         <table mat-table #countermeasuretable="matSort" style="width: 100%;" matSort [dataSource]="dataSourceCountermeasures" matSortActive="number" matSortDirection="asc" matSortDisableClear [class.bg-color-light3]="!theme.IsDarkMode" [class.bg-color-dark3]="theme.IsDarkMode">
           <ng-container matColumnDef="number">

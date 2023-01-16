@@ -1,5 +1,6 @@
 import { ConfigFile } from "./config-file";
 import { DatabaseBase, DataReferenceTypes, IDataReferences, INote, ViewElementBase } from "./database";
+import { MyTag } from "./my-tags";
 import { ProjectFile } from "./project-file";
 import { LifeCycle, MappingStates, AttackScenario, AttackVector, ThreatRule } from "./threat-model";
 
@@ -272,6 +273,13 @@ export class Countermeasure extends DatabaseBase {
     return this.AttackScenarios?.map(x => x?.AttackVector).filter(x => x).filter((value, index, self) => self.indexOf(value) === index);
   }
 
+  public get MyTags(): MyTag[] { 
+    let res: MyTag[] = [];
+    this.Data['myTagIDs'].forEach(x => res.push(this.project.GetMyTag(x)));
+    return res;
+  }
+  public set MyTags(val: MyTag[]) { this.Data['myTagIDs'] = val?.map(x => x.ID); }
+
   constructor(data, pf: ProjectFile, cf: ConfigFile) {
     super(data);
     this.project = pf;
@@ -279,6 +287,7 @@ export class Countermeasure extends DatabaseBase {
 
     if (!this.Data['attackScenarioIDs']) this.Data['attackScenarioIDs'] = [];
     if (!this.Data['MitigationState']) this.MitigationState = MitigationStates.NotSet;
+    if (!this.Data['myTagIDs']) this.Data['myTagIDs'] = [];
   }
 
   public SetMapping(control: Control, targets: ViewElementBase[], mappings: AttackScenario[]) {
@@ -316,12 +325,25 @@ export class Countermeasure extends DatabaseBase {
     }
   }
 
+  public AddMyTag(tag: MyTag) {
+    if (!this.MyTags.includes(tag)) {
+      this.Data['myTagIDs'].push(tag.ID);
+    }
+  }
+
+  public RemoveMyTag(id: string) {
+    const index = this.Data['myTagIDs'].indexOf(id); 
+    if (index >= 0) {
+      this.Data['myTagIDs'].splice(index, 1);
+    }
+  }
+
   public GetDiagram() {
     return this.project.GetView(this.ViewID);
   }
 
   public GetLongName(): string {
-    return 'CM' + this.Number + ') ' + this.Name;
+    return 'CM' + this.Number + ') ' + this.Name + ' (' + (this.Targets?.map(x => x.Name).join(', ')) + ')';
   }
 
   public CleanUpReferences() {

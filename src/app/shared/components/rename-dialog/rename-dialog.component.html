@@ -1,0 +1,12 @@
+<h2 mat-dialog-title>{{'dialog.rename.title' | translate}}</h2>
+<mat-dialog-content>
+  <mat-form-field class="example-form-field" appearance="fill">
+    <input matInput type="text" [(ngModel)]="Value">
+    <button *ngIf="Value" matSuffix mat-icon-button (click)="Value=''">
+      <mat-icon>close</mat-icon>
+    </button>
+  </mat-form-field>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button cdkFocusInitial [mat-dialog-close]="true">{{'general.Close' | translate}}</button>
+</mat-dialog-actions>

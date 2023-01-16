@@ -50,6 +50,8 @@ import { AngularSplitModule } from 'angular-split';
 import { AngularResizeEventModule } from 'angular-resize-event';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 
+import { MAT_COLOR_FORMATS, NgxMatColorPickerModule, NGX_MAT_COLOR_FORMATS } from '@angular-material-components/color-picker';
+
 import { SideNavComponent } from './components/side-nav/side-nav.component';
 import { StatusBarComponent } from './components/status-bar/status-bar.component';
 import { SaveDialogComponent } from './components/save-dialog/save-dialog.component';
@@ -66,6 +68,8 @@ import { ModelInfoComponent } from './components/model-info/model-info.component
 import { NotesComponent } from './components/notes/notes.component';
 import { LocalDatePipe, LocalDateTimePipe, LocalizationService } from '../util/localization.service';
 import { OwaspRREntryComponent } from './components/owasp-rr-entry/owasp-rr-entry.component';
+import { RenameDialogComponent } from './components/rename-dialog/rename-dialog.component';
+import { TagsComponent } from './components/tags/tags.component';
 
 @NgModule({
   declarations: [
@@ -73,7 +77,7 @@ import { OwaspRREntryComponent } from './components/owasp-rr-entry/owasp-rr-entr
     StatusBarComponent, SideNavComponent, SaveDialogComponent, PasswordDialogComponent, MessagesDialogComponent, 
     TwoOptionsDialogComponent, CweEntryComponent, CapecEntryComponent, NavTreeComponent, CvssEntryComponent, OwaspRREntryComponent,
     ProgressTrackerComponent, ModelInfoComponent, NotesComponent, 
-    LocalDatePipe, LocalDateTimePipe
+    LocalDatePipe, LocalDateTimePipe, RenameDialogComponent, TagsComponent
   ],
   imports: [
     CommonModule, 
@@ -87,6 +91,7 @@ import { OwaspRREntryComponent } from './components/owasp-rr-entry/owasp-rr-entr
     AngularSplitModule,
     AngularResizeEventModule,
     NgxChartsModule,
+    NgxMatColorPickerModule,
   
     ClipboardModule,
     CdkTableModule,
@@ -136,6 +141,7 @@ import { OwaspRREntryComponent } from './components/owasp-rr-entry/owasp-rr-entr
     AngularSplitModule,
     AngularResizeEventModule,
     NgxChartsModule,
+    NgxMatColorPickerModule,
   
     ClipboardModule,
     CdkTableModule,
@@ -183,6 +189,7 @@ import { OwaspRREntryComponent } from './components/owasp-rr-entry/owasp-rr-entr
     NavTreeComponent,
     NotesComponent,
     ModelInfoComponent,
+    TagsComponent,
 
     LocalDatePipe,
     LocalDateTimePipe
@@ -192,7 +199,8 @@ import { OwaspRREntryComponent } from './components/owasp-rr-entry/owasp-rr-entr
       provide: LOCALE_ID, 
       deps: [LocalizationService],
       useFactory: (translate) => translate.Locale
-    }
+    },
+    { provide: MAT_COLOR_FORMATS, useValue: NGX_MAT_COLOR_FORMATS }
   ]
 })
 export class SharedModule {}

@@ -136,6 +136,8 @@ export enum DataReferenceTypes {
   RemoveRequirementTypeFromChecklistType,
   RemoveRequirementTypeFromChecklist,
   DeleteChecklist,
+
+  RemoveMyTagFromAttackScenario
 }
 
 export interface IDataReferences {

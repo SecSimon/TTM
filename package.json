@@ -1,6 +1,6 @@
 {
   "name": "ttmodeler",
-  "version": "0.3.10",
+  "version": "0.3.11",
   "description": "Thing Threat Modeler for Internet of Things Devices",
   "homepage": "https://www.simon-liebl.de/TTM",
   "author": {
@@ -42,6 +42,7 @@
     "lint": "ng lint"
   },
   "dependencies": {
+    "@angular-material-components/color-picker": "8.0.0",
     "@angular/animations": "14.2.6",
     "@angular/cdk": "14.2.5",
     "@angular/common": "14.2.6",

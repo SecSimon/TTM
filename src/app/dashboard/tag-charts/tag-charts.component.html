@@ -1,0 +1,43 @@
+<div class="row" style="margin-bottom: 10px;">
+  <div class="column1">
+    <mat-list cdkDropList (cdkDropListDropped)="dropChart($event)" class="prop-list reorder-list" [class.prop-list-light]="!theme.IsDarkMode" [class.prop-list-dark]="theme.IsDarkMode">
+      <div mat-subheader>{{ 'dialog.tagcharts.Charts' | translate }} 
+        <button mat-icon-button style="margin-left: 15px;" (click)="AddChart()" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000"><mat-icon>add</mat-icon></button>
+      </div>
+      <mat-list-item *ngFor="let chart of charts" (click)="selectedChart = chart" cdkDrag
+        [class.highlight-light]="selectedChart === chart && !theme.IsDarkMode" [class.highlight-dark]="selectedChart === chart && theme.IsDarkMode"
+        matTooltip="{{chart.Name}}" matTooltipShowDelay="1000">
+        <mat-icon mat-list-icon>chevron_right</mat-icon>
+        <div mat-line style="pointer-events: initial;">{{chart.Name | translate}}</div>
+        <button mat-icon-button style="margin-left: auto;" (click)="DeleteChart(chart)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000"><mat-icon>delete</mat-icon></button>
+      </mat-list-item>
+    </mat-list>
+  </div>
+  <div class="column2">
+    <div style="margin: 10px 0 10px 10px;" *ngIf="selectedChart">
+      <mat-form-field appearance="fill" class="property-form-field">
+        <mat-label>{{ 'properties.Name' | translate }}</mat-label>
+        <input matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="selectedChart.Name" matTooltip="{{selectedChart.Name}}" matTooltipShowDelay="1000"/>
+      </mat-form-field>
+      <mat-form-field class="property-form-field">
+        <mat-select [(ngModel)]="selectedChart.Type">
+          <mat-option *ngFor="let type of GetTypes()" [value]="type">{{GetTypeName(type) | translate}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-list cdkDropList (cdkDropListDropped)="dropTag($event)" class="prop-list reorder-list property-form-field" [class.prop-list-light]="!theme.IsDarkMode" [class.prop-list-dark]="theme.IsDarkMode">
+        <div mat-subheader>{{ 'general.Tags' | translate }} 
+          <button mat-icon-button style="margin-left: 15px;" [matMenuTriggerFor]="addMenu" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000"><mat-icon>add</mat-icon></button>
+          <mat-menu #addMenu="matMenu">
+            <button mat-menu-item *ngFor="let tag of GetPossibleTags()" (click)="AddTagToChart(tag)"><mat-icon style="margin-right: 5px;" [style.color]="tag.Color">circle</mat-icon> {{tag.Name}}</button>
+          </mat-menu>
+        </div>
+        <mat-list-item *ngFor="let tag of selectedChart.MyTags" cdkDrag
+          matTooltip="{{tag.Name}}" matTooltipShowDelay="1000">
+          <mat-icon mat-list-icon>chevron_right</mat-icon>
+          <div mat-line style="pointer-events: initial;">{{tag.Name | translate}}</div>
+          <button mat-icon-button style="margin-left: auto;" (click)="RemoveTag(tag)" matTooltip="{{'general.Remove' | translate}}" matTooltipShowDelay="1000"><mat-icon>remove</mat-icon></button>
+        </mat-list-item>
+      </mat-list>
+    </div>
+  </div>
+</div>

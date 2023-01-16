@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Optional } from '@angular/core';
 import { LowMediumHighNumber, LowMediumHighNumberUtil } from '../../model/assets';
-import { Countermeasure, MitigationStates } from '../../model/mitigations';
+import { Countermeasure } from '../../model/mitigations';
 import { RiskStrategies, RiskStrategyUtil, ThreatCategoryGroup, AttackScenario, AttackVectorGroup, ThreatSeverities, ThreatSeverityUtil, ThreatStates, ThreatStateUtil, ICVSSEntry, IOwaspRREntry } from '../../model/threat-model';
 import { DataService } from '../../util/data.service';
 import { DialogService } from '../../util/dialog.service';
@@ -12,11 +12,11 @@ import { ThemeService } from '../../util/theme.service';
   styleUrls: ['./attack-scenario.component.scss']
 })
 export class AttackScenarioComponent implements OnInit {
-  private _threatRule: AttackScenario;
+  private _attackScenario: AttackScenario;
 
-  public get attackScenario(): AttackScenario { return this._threatRule; }
+  public get attackScenario(): AttackScenario { return this._attackScenario; }
   @Input() public set attackScenario(val: AttackScenario) { 
-    this._threatRule = val;
+    this._attackScenario = val;
     this.sysThreatGroups = null;
     if (val) {
       this.countermeasures = val.GetCountermeasures();

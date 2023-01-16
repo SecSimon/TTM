@@ -66,6 +66,7 @@
     <mat-label>{{ 'properties.Description' | translate }}</mat-label>
     <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="2" cdkAutosizeMaxRows="5" [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="attackScenario.Description"></textarea>
   </mat-form-field>
+  <app-tags [tagableElement]="attackScenario"></app-tags>
   {{'general.RiskAssessment' | translate}} 
   <button mat-icon-button [matMenuTriggerFor]="raMenu" matTooltip="{{'general.More' | translate}}" matTooltipShowDelay="1000">
     <mat-icon>more_vert</mat-icon>

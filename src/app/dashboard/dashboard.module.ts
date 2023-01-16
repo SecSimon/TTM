@@ -8,10 +8,11 @@ import { SharedModule } from '../shared/shared.module';
 import { DashboardComponent } from './dashboard.component';
 import { ResultsChartComponent } from './results-chart/results-chart.component';
 import { ResultsAnalysisComponent } from './results-analysis/results-analysis.component';
+import { TagChartsComponent } from './tag-charts/tag-charts.component';
 
 
 @NgModule({
-  declarations: [DashboardComponent, ResultsChartComponent, ResultsAnalysisComponent],
+  declarations: [DashboardComponent, ResultsChartComponent, ResultsAnalysisComponent, TagChartsComponent],
   imports: [
     CommonModule,
     SharedModule,

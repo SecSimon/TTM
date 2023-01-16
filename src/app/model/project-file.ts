@@ -16,6 +16,7 @@ import { Checklist, ChecklistType } from "./checklist";
 import { Countermeasure, MitigationProcess, MitigationStates } from "./mitigations";
 import { FileUpdateService } from "../util/file-update.service";
 import { ExportTemplate } from "./export-template";
+import { MyTag, MyTagChart as MyTagChart } from "./my-tags";
 
 export interface IProjectFile extends IDatabaseBase {
   charSope: {};
@@ -40,6 +41,8 @@ export interface IProjectFile extends IDatabaseBase {
 
   checklists: {}[];
 
+  tags: {}[];
+  tagCharts: {}[];
   exportTemplates: {}[];
 
   config: {};
@@ -78,9 +81,13 @@ export class ProjectFile extends DatabaseBase {
 
   private checklists: Checklist[] = [];
 
+  private myTags: MyTag[] = [];
+  private myTagCharts: MyTagChart[] = [];
   private exportTemplates: ExportTemplate[] = [];
 
   public get Version(): number { return this.Data['Version']; }
+  public get TTModelerVersion(): string { return this.Data['TTModelerVersion']; }
+  public set TTModelerVersion(val: string) { this.Data['TTModelerVersion'] = val; }
   public get ProgressTracker() { return this.Data['ProgressTracker']; }
   public get ProgressStep(): number { return this.Data['ProgressStep']; }
   public set ProgressStep(val: number) { this.Data['ProgressStep'] = val; }
@@ -135,6 +142,8 @@ export class ProjectFile extends DatabaseBase {
 
   public GetChecklists(): Checklist[] { return this.checklists; }
 
+  public GetMyTags(): MyTag[] { return this.myTags; }
+  public GetMyTagCharts(): MyTagChart[] { return this.myTagCharts; }
   public GetExportTemplates(): ExportTemplate[] { return this.exportTemplates; }
 
   public get Config(): ConfigFile { return this.config; }
@@ -564,6 +573,46 @@ export class ProjectFile extends DatabaseBase {
     return index >= 0;
   }
 
+  public GetMyTag(ID: string) {
+    return this.myTags.find(x => x.ID == ID);
+  }
+
+  public CreateMyTag(): MyTag {
+    let tag = new MyTag({}, this, this.Config);
+    tag.Name = StringExtension.FindUniqueName('Tag', this.GetMyTags().map(x => x.Name));
+    this.myTags.push(tag);
+    return tag;
+  }
+
+  public DeleteMyTag(tag: MyTag) {
+    const index = this.myTags.indexOf(tag);
+    if (index >= 0) {
+      tag.OnDelete(this, this.config);
+      this.myTags.splice(index, 1);
+    }
+    return index >= 0;
+  }
+
+  public GetMyTagChart(ID: string) {
+    return this.myTagCharts.find(x => x.ID == ID);
+  }
+
+  public CreateMyTagChart(): MyTagChart {
+    let chart = new MyTagChart({}, this, this.Config);
+    chart.Name = StringExtension.FindUniqueName('Tag Chart', this.GetMyTagCharts().map(x => x.Name));
+    this.myTagCharts.push(chart);
+    return chart;
+  }
+
+  public DeleteMyTagChart(chart: MyTagChart) {
+    const index = this.myTagCharts.indexOf(chart);
+    if (index >= 0) {
+      chart.OnDelete(this, this.config);
+      this.myTagCharts.splice(index, 1);
+    }
+    return index >= 0;
+  }
+
   public GetView(viewID: string) {
     let view: Diagram|MyComponentStack = this.GetDiagram(viewID);
     if (!view) view = this.GetStack(viewID);
@@ -604,6 +653,8 @@ export class ProjectFile extends DatabaseBase {
       countermeasures: [],
       mitigationProcesses: [],
       checklists: [],
+      tags: [],
+      tagCharts: [],
       exportTemplates: [],
       config: this.Config.ToJSON()
     };
@@ -623,6 +674,8 @@ export class ProjectFile extends DatabaseBase {
     this.mitigationProcesses.forEach(x => res.mitigationProcesses.push(x.ToJSON()));
 
     this.checklists.forEach(x => res.checklists.push(x.ToJSON()));
+    this.myTags.forEach(x => res.tags.push(x.ToJSON()));
+    this.myTagCharts.forEach(x => res.tagCharts.push(x.ToJSON()));
     this.exportTemplates.forEach(x => res.exportTemplates.push(x.ToJSON()));
 
     return res;
@@ -654,6 +707,8 @@ export class ProjectFile extends DatabaseBase {
 
     val.checklists?.forEach(x => res.checklists.push(Checklist.FromJSON(x, res, cf)));
 
+    val.tags?.forEach(x => res.myTags.push(MyTag.FromJSON(x, res, cf)));
+    val.tagCharts?.forEach(x => res.myTagCharts.push(MyTagChart.FromJSON(x, res, cf)));
     val.exportTemplates?.forEach(x => res.exportTemplates.push(ExportTemplate.FromJSON(x, res, cf)));
 
     res.GetDFDElements().forEach(ele => {

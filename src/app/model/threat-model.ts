@@ -8,6 +8,7 @@ import { SystemThreat } from "./system-threat";
 import { ElementTypeIDs, ElementTypeUtil, StencilThreatMnemonic, StencilType } from "./dfd-model";
 import { Control, Countermeasure, MitigationStates } from "./mitigations";
 import { ProjectFile } from "./project-file";
+import { ITagable, MyTag } from "./my-tags";
 
 
 export enum ImpactCategories {
@@ -1198,7 +1199,7 @@ export class RiskStrategyUtil {
 /**
  * Class for threats in project
  */
-export class AttackScenario extends DatabaseBase {
+export class AttackScenario extends DatabaseBase implements ITagable {
   private project: ProjectFile;
   private config: ConfigFile;
 
@@ -1305,6 +1306,13 @@ export class AttackScenario extends DatabaseBase {
   }
   public set LinkedScenarios(val: AttackScenario[]) { this.Data['linkedScenarioIDs'] = val?.map(x => x.ID); }
 
+  public get MyTags(): MyTag[] { 
+    let res: MyTag[] = [];
+    this.Data['myTagIDs'].forEach(x => res.push(this.project.GetMyTag(x)));
+    return res;
+  }
+  public set MyTags(val: MyTag[]) { this.Data['myTagIDs'] = val?.map(x => x.ID); }
+
   constructor(data, pf: ProjectFile, cf: ConfigFile) {
     super(data);
     this.project = pf;
@@ -1315,6 +1323,7 @@ export class AttackScenario extends DatabaseBase {
     if (!this.Data['ThreatState']) this.ThreatState = ThreatStates.NotSet;
     if (!this.Data['systemThreatIDs']) this.Data['systemThreatIDs'] = [];
     if (!this.Data['linkedScenarioIDs']) this.Data['linkedScenarioIDs'] = [];
+    if (!this.Data['myTagIDs']) this.Data['myTagIDs'] = [];
   }
 
   public SetMapping(attackVectorID: string, categorieIDs: string[], target: ViewElementBase, elements: ViewElementBase[], rule: ThreatRule, question: ThreatQuestion) {
@@ -1346,6 +1355,19 @@ export class AttackScenario extends DatabaseBase {
     }
   }
 
+  public AddMyTag(tag: MyTag) {
+    if (!this.MyTags.includes(tag)) {
+      this.Data['myTagIDs'].push(tag.ID);
+    }
+  }
+
+  public RemoveMyTag(id: string) {
+    const index = this.Data['myTagIDs'].indexOf(id); 
+    if (index >= 0) {
+      this.Data['myTagIDs'].splice(index, 1);
+    }
+  }
+
   public GetCountermeasures() {
     return this.project.GetCountermeasures().filter(x => x.AttackScenarios.includes(this));
   }
@@ -1355,7 +1377,7 @@ export class AttackScenario extends DatabaseBase {
   }
 
   public GetLongName(): string {
-    return 'AS' + this.Number + ') ' + this.Name;
+    return 'AS' + this.Number + ') ' + this.Name + ' (' + (this.Target ? this.Target.Name : this.Targets?.map(x => x.Name).join(', ')) + ')';
   }
 
   public FindReferences(pf: ProjectFile, cf: ConfigFile): IDataReferences[] {
