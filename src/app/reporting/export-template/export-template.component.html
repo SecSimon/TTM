@@ -10,11 +10,17 @@
       <mat-option *ngFor="let type of GetExportTypeValues()" [value]="type">{{GetExportTypeName(type) | translate}}</mat-option>
     </mat-select>
   </mat-form-field>
+  <mat-form-field appearance="fill" style="margin-left: 10px;" class="property-form-field" *ngIf="template.HasExportFilter">
+    <mat-label>{{'pages.reporting.exporttemplate.ExportFilter' | translate}}</mat-label>
+    <mat-select [(value)]="template.ExportFilter" matTooltip="{{GetExportFilterName(template.ExportFilter) | translate}}" matTooltipShowDelay="1000">
+      <mat-option *ngFor="let type of GetExportFilterValues()" [value]="type">{{GetExportFilterName(type) | translate}}</mat-option>
+    </mat-select>
+  </mat-form-field>
   <br/>
   <table [style.borderColor]="theme.IsDarkMode ? '#424242' : '#F5F5F5'">
     <tr [style.borderColor]="theme.IsDarkMode ? '#424242' : '#F5F5F5'">
       <th [style.borderColor]="theme.IsDarkMode ? '#424242' : '#F5F5F5'"></th>
-      <th *ngFor="let col of template.Template; index as i" [style.borderColor]="theme.IsDarkMode ? '#424242' : '#F5F5F5'">{{ 'pages.reporting.exporttemplate.Column' | translate }} {{i}}</th>
+      <th *ngFor="let col of template.Template; index as i" [style.borderColor]="theme.IsDarkMode ? '#424242' : '#F5F5F5'">{{ 'pages.reporting.exporttemplate.Column' | translate }} {{i}} <button mat-icon-button (click)="DeleteColumn(col)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000"><mat-icon>delete</mat-icon></button></th>
     </tr>
     <tr [style.borderColor]="theme.IsDarkMode ? '#424242' : '#F5F5F5'">
       <td [style.borderColor]="theme.IsDarkMode ? '#424242' : '#F5F5F5'">{{ 'pages.reporting.exporttemplate.Header' | translate}}</td>

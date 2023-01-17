@@ -124,7 +124,7 @@
             <h2>{{'pages.home.process' | translate}}</h2>
             <ng-container *ngIf="!HasCookieConsent">
               <div style="margin-bottom: 10px;">
-                {{'pages.home.video' | translate}}: <a href="https://youtu.be/VF5Msusf7ZU" target="_blank">YouTube</a>
+                {{'pages.home.video' | translate}}: <a href="https://youtube.com/playlist?list=PLSMRtuVN409fB35RLljjg3jNkVJbLIP1u" target="_blank">YouTube</a>
                 <br/>
               </div>
             </ng-container>
@@ -165,6 +165,7 @@
                 <mat-action-row>
                   <button mat-button color="primary" (click)="PrevProcessStep()">{{'tour.prev' | translate}}</button>
                   <button mat-button color="primary" (click)="NextProcessStep()" *ngIf="!isLast">{{'tour.next' | translate}}</button>
+                  <button mat-button color="primary" (click)="ProgressTracker()" *ngIf="isLast">{{'tour.progressTracker' | translate}}</button>
                   <button mat-button color="primary" (click)="NextProcessStep()" *ngIf="isLast">{{'tour.end' | translate}}</button>
                 </mat-action-row>
               </mat-expansion-panel>

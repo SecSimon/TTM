@@ -331,9 +331,6 @@ export class ThreatSeverityUtil {
       case ThreatSeverities.Medium: return 'properties.threatseverity.Medium';
       case ThreatSeverities.High: return 'properties.threatseverity.High';
       case ThreatSeverities.Critical: return 'properties.threatseverity.Critical';
-      default:
-        console.error('Missing Option Type in ThreatSeverityUtil.ToString()')
-        return 'Undefined';
     }
   }
 }

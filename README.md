@@ -4,6 +4,8 @@
 
 A new threat modeling tool available as GitHub page and deskop application.
 
+Watch an introduction video on [YouTube](https://youtube.com/playlist?list=PLSMRtuVN409fB35RLljjg3jNkVJbLIP1u).
+
 ## How to use TTModeler
 
 TTModeler is hosted on [simon-liebl.de/TTM](https://www.simon-liebl.de/TTM) and uses GitHub as data storage.

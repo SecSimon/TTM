@@ -32,7 +32,7 @@ export class HomeComponent implements OnInit {
   constructor(private router: Router, private route: ActivatedRoute, private theme: ThemeService, public dataService: DataService, private dialogService: DialogService,
     private locStorage: LocalStorageService, public tourService: TourService, private translate: TranslateService, private electronService: ElectronService, 
     private ttmService: TTMService, private sanitizer: DomSanitizer) {
-      this.VideoURL = this.sanitizer.bypassSecurityTrustResourceUrl('https://www.youtube-nocookie.com/embed/VF5Msusf7ZU');
+      this.VideoURL = this.sanitizer.bypassSecurityTrustResourceUrl('https://www.youtube-nocookie.com/embed/videoseries?list=PLSMRtuVN409fB35RLljjg3jNkVJbLIP1u');
     }
 
   ngOnInit(): void {
@@ -107,5 +107,10 @@ export class HomeComponent implements OnInit {
 
   public PrevProcessStep() {
     this.processStep--;
+  }
+
+  public ProgressTracker() {
+    this.NextProcessStep();
+    this.dialogService.OpenProgresstrackerDialog();
   }
 }
