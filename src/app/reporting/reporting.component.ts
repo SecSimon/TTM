@@ -20,9 +20,8 @@ import { ResizedEvent } from 'angular-resize-event';
 import { DeviceAssetsComponent } from '../modeling/device-assets/device-assets.component';
 import { StackComponent } from '../modeling/stack/stack.component';
 import { AssetGroup, LowMediumHighNumberUtil } from '../model/assets';
-import { ImpactCategoryUtil, RiskStrategyUtil, AttackScenario, ThreatSeverityUtil, ThreatStateUtil, ThreatStates } from '../model/threat-model';
-import { DatabaseBase } from '../model/database';
-import { Countermeasure, MitigationProcessStateUtil, MitigationStates, MitigationStateUtil } from '../model/mitigations';
+import { ImpactCategoryUtil, RiskStrategyUtil, ThreatSeverityUtil, ThreatStateUtil } from '../model/threat-model';
+import { MitigationProcessStateUtil, MitigationStateUtil } from '../model/mitigations';
 import { ResultsChartComponent } from '../dashboard/results-chart/results-chart.component';
 import { ResultsAnalysisComponent } from '../dashboard/results-analysis/results-analysis.component';
 
@@ -31,10 +30,12 @@ import {
   Document, ExternalHyperlink, HeadingLevel,
   ImageRun, Packer,
   Paragraph,
+  ShadingType,
   Table,
   TableBorders,
   TableCell,
   TableRow,
+  TextDirection,
   TextRun,
   VerticalAlign
 } from 'docx';
@@ -79,6 +80,14 @@ export class ReportingComponent implements OnInit {
     this.locStorage.Set(LocStorageKeys.PAGE_REPORTING_DIAGRAM_SHOW_GRID, String(val));
   }
 
+  public get ShowFirstTwoSteps(): boolean {
+    let res = this.locStorage.Get(LocStorageKeys.PAGE_REPORTING_SHOW_FIRST_STEPS);
+    return res == 'true';
+  };
+  public set ShowFirstTwoSteps(val: boolean) {
+    this.locStorage.Set(LocStorageKeys.PAGE_REPORTING_SHOW_FIRST_STEPS, String(val));
+  }
+
   public Project: ProjectFile;
   public Dia: CtxCanvas|HWDFCanvas;
 
@@ -93,6 +102,8 @@ export class ReportingComponent implements OnInit {
           queryParams: { origin: 'reporting' }
         });
       } 
+
+      if (this.locStorage.Get(LocStorageKeys.PAGE_REPORTING_SHOW_FIRST_STEPS) == null) this.ShowFirstTwoSteps = true;
     }
 
   ngOnInit(): void {
@@ -114,6 +125,11 @@ export class ReportingComponent implements OnInit {
       this.createParagraph('');
       this.createParagraph(StringExtension.Format(this.translate.instant('report.scenariosAndMeasures'), this.Project.GetAttackScenariosApplicable().length.toString(), this.Project.GetCountermeasuresApplicable().length.toString()));
       this.createParagraph('');
+
+      this.createParagraph(this.translate.instant('report.riskAssessment'));
+      this.createRiskTable();
+      this.createParagraph('');
+
       // charts / tables
       let charts = [];
       let chartsData = [];
@@ -172,14 +188,14 @@ export class ReportingComponent implements OnInit {
           if (scens.length > 0) {
             const risks = scens.map(x => x.Risk).filter(x => x == x);
             const maxRisk = Math.max(...risks.map(x => Number(x)));
-            const risk = this.translate.instant(maxRisk > 0 ? LowMediumHighNumberUtil.ToString(maxRisk) : 'report.UnknownRisk');
+            const risk = this.translate.instant(maxRisk > 0 ? ThreatSeverityUtil.ToString(maxRisk) : 'report.UnknownRisk');
             this.createParagraph(threat.Name + ' - ' + this.translate.instant('properties.Risk') + ': ' + risk);
             const items = [];
             scens.forEach(s => {
               const descs = [];
               if (s.ScoreCVSS && s.ScoreCVSS.Score > 0) descs.push(this.translate.instant('report.CvssScore') + ': ' + s.ScoreCVSS.Score.toFixed(1));
               if (s.ScoreOwaspRR && s.ScoreOwaspRR.Score > 0) descs.push(this.translate.instant('report.OwaspRRScore') + ': ' + s.ScoreOwaspRR.Score.toFixed(1));
-              if (s.Risk) descs.push(this.translate.instant('properties.Risk') + ': ' + this.translate.instant(LowMediumHighNumberUtil.ToString(s.Risk)));
+              if (s.Risk) descs.push(this.translate.instant('properties.Risk') + ': ' + this.translate.instant(ThreatSeverityUtil.ToString(s.Risk)));
               items.push(s.GetLongName() + ': ' + descs.join(', '));
             });
             this.createUL(items);
@@ -220,8 +236,11 @@ export class ReportingComponent implements OnInit {
               this.createLink(this.translate.instant('report.OwaspRRVector') + ': ' + OwaspRREntryComponent.GetVector(scenario.ScoreOwaspRR), OwaspRREntryComponent.GetURL(scenario.ScoreOwaspRR));
             }
             if (scenario.Severity) this.createParagraph(this.translate.instant('properties.Severity') + ': ' + this.translate.instant(ThreatSeverityUtil.ToString(scenario.Severity)));
+            if (scenario.SeverityReason?.length > 0) this.createParagraph(this.translate.instant('properties.SeverityReason') + ': ' + scenario.SeverityReason);
             if (scenario.Likelihood) this.createParagraph(this.translate.instant('general.Likelihood') + ': ' + this.translate.instant(LowMediumHighNumberUtil.ToString(scenario.Likelihood)));
-            if (scenario.Risk) this.createParagraph(this.translate.instant('properties.Risk') + ': ' + this.translate.instant(LowMediumHighNumberUtil.ToString(scenario.Risk)));
+            if (scenario.LikelihoodReason?.length > 0) this.createParagraph(this.translate.instant('properties.LikelihoodReason') + ': ' + scenario.LikelihoodReason);
+            if (scenario.Risk) this.createParagraph(this.translate.instant('properties.Risk') + ': ' + this.translate.instant(ThreatSeverityUtil.ToString(scenario.Risk)));
+            if (scenario.RiskReason?.length > 0) this.createParagraph(this.translate.instant('properties.RiskReason') + ': ' + scenario.RiskReason);
             if (scenario.RiskStrategy) this.createParagraph(this.translate.instant('properties.RiskStrategy') + ': ' + this.translate.instant(RiskStrategyUtil.ToString(scenario.RiskStrategy)));
             if (scenario.RiskStrategyReason?.length > 0) this.createParagraph(this.translate.instant('properties.RiskStrategyReason') + ': ' + scenario.RiskStrategyReason);
             if (scenario.GetCountermeasures()?.length > 0) this.createParagraph(this.translate.instant('general.Countermeasures') + ': ' + scenario.GetCountermeasures().map(x => x.GetLongName()).join(', '));
@@ -249,20 +268,22 @@ export class ReportingComponent implements OnInit {
       this.createParagraph('');
       this.createHeading(this.translate.instant('report.DetailedResults'));
       // All steps
-      this.createSubHeading(this.ttmService.Stages[0].steps[0].name);
-      this.Project.GetCharScope().StepProperties.forEach(prop => {
-        if (this.Project.GetCharScope()[prop].length > 0) {
-          this.createSubSubHeading(this.translate.instant('pages.modeling.charscope.' + prop));
-          this.createUL(this.Project.GetCharScope()[prop]);
-        }
-      });
-      this.createSubHeading(this.ttmService.Stages[0].steps[1].name);
-      this.Project.GetObjImpact().StepProperties.forEach(prop => {
-        if (this.Project.GetObjImpact()[prop].length > 0) {
-          this.createSubSubHeading(this.translate.instant('pages.modeling.objimpact.' + prop));
-          this.createUL(this.Project.GetObjImpact()[prop]);
-        }
-      });
+      if (this.ShowFirstTwoSteps) {
+        this.createSubHeading(this.ttmService.Stages[0].steps[0].name);
+        this.Project.GetCharScope().StepProperties.forEach(prop => {
+          if (this.Project.GetCharScope()[prop].length > 0) {
+            this.createSubSubHeading(this.translate.instant('pages.modeling.charscope.' + prop));
+            this.createUL(this.Project.GetCharScope()[prop]);
+          }
+        });
+        this.createSubHeading(this.ttmService.Stages[0].steps[1].name);
+        this.Project.GetObjImpact().StepProperties.forEach(prop => {
+          if (this.Project.GetObjImpact()[prop].length > 0) {
+            this.createSubSubHeading(this.translate.instant('pages.modeling.objimpact.' + prop));
+            this.createUL(this.Project.GetObjImpact()[prop]);
+          }
+        });
+      }
 
       this.createSubHeading(this.ttmService.Stages[0].steps[2].name);
       this.createSubSubHeading(this.translate.instant('report.SysInterationDia'));
@@ -278,9 +299,10 @@ export class ReportingComponent implements OnInit {
       this.Project.GetDevices().forEach(x => assets.push([x.Name, x.AssetGroup]));
       this.Project.GetMobileApps().forEach(x => assets.push([x.Name, x.AssetGroup]));
       assets = assets.filter(x => x[1] != null);
+      const assetsCount = assets.filter(x => x[1].IsActive).length;
       for (let i = 0; i < assets.length; i++) {
         if (assets[i][1].IsActive) {
-          this.createSubSubHeading(assets[i][0]);
+          if (assetsCount > 1) this.createSubSubHeading(assets[i][0]);
           const assetComp = this.viewContainerRef.createComponent(DeviceAssetsComponent);
           assetComp.instance.assetGroup = assets[i][1];
           assetComp.instance.hideButtons = true;
@@ -331,8 +353,9 @@ export class ReportingComponent implements OnInit {
       // models
       // hardware
       this.createSubHeading(this.ttmService.Stages[1].steps[1].name);
+      const devCount = this.Project.GetDevices().length;
       this.Project.GetDevices().forEach(x => {
-        this.createSubSubHeading(x.Name);
+        if (devCount > 1) this.createSubSubHeading(x.Name);
         this.createDiagram(x.HardwareDiagram);
         printSenariosAndMeasures(x.HardwareDiagram.ID);
       });
@@ -340,9 +363,10 @@ export class ReportingComponent implements OnInit {
       // software
       this.createSubHeading(this.ttmService.Stages[1].steps[2].name);
       let stacks = [...this.Project.GetDevices(), ...this.Project.GetMobileApps()];
+      let stackCount = stacks.map(x => x.SoftwareStack).filter(x => x != null && x.GetChildrenFlat().length > 0).length;
       for (let i = 0; i < stacks.length; i++) {
         if (stacks[i].SoftwareStack?.GetChildrenFlat().length > 0) {
-          this.createSubSubHeading(stacks[i].Name);
+          if (stackCount > 1) this.createSubSubHeading(stacks[i].Name);
           const stackComp = this.viewContainerRef.createComponent(StackComponent);
           stackComp.instance.stack = stacks[i].SoftwareStack;
           stackComp.instance.elRef.nativeElement.style.color = 'black';
@@ -376,9 +400,10 @@ export class ReportingComponent implements OnInit {
 
       // processes
       this.createSubHeading(this.ttmService.Stages[1].steps[4].name);
+      stackCount = stacks.map(x => x.ProcessStack).filter(x => x != null && x.GetChildrenFlat().length > 0).length;
       for (let i = 0; i < stacks.length; i++) {
         if (stacks[i].ProcessStack?.GetChildrenFlat().length > 0) {
-          this.createSubSubHeading(stacks[i].Name);
+          if (stackCount > 1) this.createSubSubHeading(stacks[i].Name);
           const stackComp = this.viewContainerRef.createComponent(StackComponent);
           stackComp.instance.stack = stacks[i].ProcessStack;
           stackComp.instance.elRef.nativeElement.style.color = 'black';
@@ -778,6 +803,158 @@ export class ReportingComponent implements OnInit {
         c.style.padding = '0 5px';
       });
       tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+    return table;
+  }
+
+  private createRiskTable() {
+    this.docxBuffer.push(this.createDocxRiskTable());
+    this.htmlBuffer.push(this.createHTMLRiskTable());
+  }
+
+  private createDocxRiskTable() {
+    const createCell = (txt, bold = false, dir = TextDirection.LEFT_TO_RIGHT_TOP_TO_BOTTOM, colSpan = 1, rowSpan = 1, color = '#FFFFFF') => {
+      const c = new TableCell({
+        children: [
+          new Paragraph({
+            children: [
+              new TextRun({
+                text:  txt.toString(),
+                bold: bold
+              })
+            ],
+            alignment: AlignmentType.CENTER
+          })
+        ],
+        shading: {
+          fill: color,
+          type: ShadingType.CLEAR,
+          color: "auto",
+        },
+        textDirection: dir,
+        columnSpan: colSpan,
+        rowSpan: rowSpan,
+      });
+
+      return c;
+    };
+
+    const rs = [];
+    // zeroth row
+    let tr = new TableRow({
+      children: [],
+    });
+    tr.addChildElement(createCell(''));
+    tr.addChildElement(createCell(''));
+    tr.addChildElement(createCell(this.translate.instant('properties.Severity'), true, TextDirection.LEFT_TO_RIGHT_TOP_TO_BOTTOM, 4));
+    rs.push(tr);
+    // first row
+    tr = new TableRow({
+      children: [],
+    });
+    let row = ['', '', 'Low', 'Medium', 'High', 'Critical'];
+    row.forEach(x => {
+      tr.addChildElement(createCell(x.length > 0 ? this.translate.instant('properties.threatseverity.' + x) : ''))
+    });
+    rs.push(tr);
+    // second row
+    tr = new TableRow({
+      children: [],
+    });
+    tr.addChildElement(createCell(this.translate.instant('general.Likelihood'), true, TextDirection.BOTTOM_TO_TOP_LEFT_TO_RIGHT, 1, 3));
+    row = ['High', 'Medium', 'High', 'Critical', 'Critical'];
+    let styles = ['#FFFFFF', '#fcff2f', '#fe0000', '#cb0000', '#cb0000'];
+    for (let i = 0; i < row.length; i++) {
+      tr.addChildElement(createCell(row[i].length > 0 ? this.translate.instant('properties.threatseverity.' + row[i]) : '', false, TextDirection.LEFT_TO_RIGHT_TOP_TO_BOTTOM, 1, 1, styles[i]));
+    }
+    rs.push(tr);
+    // third row
+    tr = new TableRow({
+      children: [],
+    });
+    row = ['Medium', 'Low', 'Medium', 'High', 'Critical'];
+    styles = ['#FFFFFF', '#34ff34', '#fcff2f', '#fe0000', '#cb0000'];
+    for (let i = 0; i < row.length; i++) {
+      tr.addChildElement(createCell(row[i].length > 0 ? this.translate.instant('properties.threatseverity.' + row[i]) : '', false, TextDirection.LEFT_TO_RIGHT_TOP_TO_BOTTOM, 1, 1, styles[i]));
+    }
+    rs.push(tr);
+    // fourth row
+    tr = new TableRow({
+      children: [],
+    });
+    row = ['Low', 'Low', 'Low', 'Medium', 'High'];
+    styles = ['#FFFFFF', '#34ff34', '#34ff34', '#fcff2f', '#fe0000'];
+    for (let i = 0; i < row.length; i++) {
+      tr.addChildElement(createCell(row[i].length > 0 ? this.translate.instant('properties.threatseverity.' + row[i]) : '', false, TextDirection.LEFT_TO_RIGHT_TOP_TO_BOTTOM, 1, 1, styles[i]));
+    }
+    rs.push(tr);
+
+    const table = new Table({
+      rows: rs,
+      borders: TableBorders.NONE
+    });
+
+    return table;
+  }
+
+  private createHTMLRiskTable() {
+    const table = document.createElement('table');
+    table.style.borderSpacing = '5px';
+    const tbody = document.createElement('tbody');
+    // zeroth row
+    let tr = document.createElement('tr');
+    tr.appendChild(this.createHtmlElement('td', ''));
+    tr.appendChild(this.createHtmlElement('td', ''));
+    let c = this.createHtmlElement('td', '');
+    c.appendChild(this.createHtmlElement('strong', this.translate.instant('properties.Severity')));
+    (c as HTMLTableCellElement).colSpan = 4;
+    tr.appendChild(c);
+    tbody.appendChild(tr);
+    // first row
+    tr = document.createElement('tr');
+    let row = ['', '', 'Low', 'Medium', 'High', 'Critical'];
+    row.forEach(x => {
+      let c = this.createHtmlElement('td', x.length > 0 ? this.translate.instant('properties.threatseverity.' + x) : '');
+      tr.appendChild(c);
+    });
+    tbody.appendChild(tr);
+    // second row
+    tr = document.createElement('tr');
+    c = this.createHtmlElement('td', '');
+    c.appendChild(this.createHtmlElement('strong', this.translate.instant('general.Likelihood')));
+    (c as HTMLTableCellElement).rowSpan = 3;
+    tr.appendChild(c);
+    row = ['High', 'Medium', 'High', 'Critical', 'Critical'];
+    let styles = ['transparent', '#fcff2f', '#fe0000', '#cb0000', '#cb0000'];
+    for (let i = 0; i < row.length; i++) {
+      let c = this.createHtmlElement('td', this.translate.instant('properties.threatseverity.' + row[i]));
+      c.style.backgroundColor = styles[i];
+      tr.appendChild(c);
+    }
+    tbody.appendChild(tr);
+    // third row
+    tr = document.createElement('tr');
+    row = ['Medium', 'Low', 'Medium', 'High', 'Critical'];
+    styles = ['transparent', '#34ff34', '#fcff2f', '#fe0000', '#cb0000'];
+    for (let i = 0; i < row.length; i++) {
+      let c = this.createHtmlElement('td', this.translate.instant('properties.threatseverity.' + row[i]));
+      c.style.backgroundColor = styles[i];
+      tr.appendChild(c);
+    }
+    tbody.appendChild(tr);
+    // fourth row
+    tr = document.createElement('tr');
+    row = ['Low', 'Low', 'Low', 'Medium', 'High']
+    styles = ['transparent', '#34ff34', '#34ff34', '#fcff2f', '#fe0000'];
+    for (let i = 0; i < row.length; i++) {
+      let c = this.createHtmlElement('td', this.translate.instant('properties.threatseverity.' + row[i]));
+      c.style.backgroundColor = styles[i];
+      tr.appendChild(c);
+    }
+    tbody.appendChild(tr);
+    Array.from(tbody.children).forEach(tr => {
+      Array.from(tr.children).forEach(x => (x as HTMLTableCellElement).style.textAlign = 'center');
     });
     table.appendChild(tbody);
     return table;

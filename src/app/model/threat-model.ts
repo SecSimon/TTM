@@ -1241,10 +1241,16 @@ export class AttackScenario extends DatabaseBase implements ITagable {
   public set ScoreOwaspRR(val: IOwaspRREntry) { this.Data['ScoreOwaspRR'] = val; }
   public get Severity(): ThreatSeverities { return this.Data['Severity']; }
   public set Severity(val: ThreatSeverities) { this.Data['Severity'] = val; }
+  public get SeverityReason(): string { return this.Data['SeverityReason']; }
+  public set SeverityReason(val: string) { this.Data['SeverityReason'] = val; }
   public get Likelihood(): LowMediumHighNumber { return this.Data['Likelihood']; }
   public set Likelihood(val: LowMediumHighNumber) { this.Data['Likelihood'] = val; }
-  public get Risk(): LowMediumHighNumber { return this.Data['Risk']; }
-  public set Risk(val: LowMediumHighNumber) { this.Data['Risk'] = val; }
+  public get LikelihoodReason(): string { return this.Data['LikelihoodReason']; }
+  public set LikelihoodReason(val: string) { this.Data['LikelihoodReason'] = val; }
+  public get Risk(): ThreatSeverities { return this.Data['Risk']; }
+  public set Risk(val: ThreatSeverities) { this.Data['Risk'] = val; }
+  public get RiskReason(): string { return this.Data['RiskReason']; }
+  public set RiskReason(val: string) { this.Data['RiskReason'] = val; }
   public get RiskStrategy(): RiskStrategies { return this.Data['RiskStrategy']; }
   public set RiskStrategy(val: RiskStrategies) { this.Data['RiskStrategy'] = val; }
   public get RiskStrategyReason(): string { return this.Data['RiskStrategyReason']; }

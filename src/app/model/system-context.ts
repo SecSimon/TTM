@@ -263,6 +263,7 @@ export class Device extends ContextElement {
     }
 
     this.CreateSoftwareStack();
+    if (pf.GetDevices().length == 0) this.CreateProcessStack();
 
     if (!this.Data['checklistIDs']) this.Data['checklistIDs'] = [];
 

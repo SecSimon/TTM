@@ -215,8 +215,8 @@ export class ResultsAnalysisComponent implements AfterViewInit {
     let getRiskSeries = (scenarios: AttackScenario[]): ISerie[] => {
       let res: ISerie[] = [];
       res.push({ name: translate.instant('properties.threatstate.NotSet'), value: scenarios.filter(x => x.Risk == null).length });
-      LowMediumHighNumberUtil.GetKeys().forEach(risk => {
-        res.push({ name: translate.instant(LowMediumHighNumberUtil.ToString(risk)), value: scenarios.filter(x => x.Risk == risk).length });
+      ThreatSeverityUtil.GetTypesDashboard().forEach(risk => {
+        res.push({ name: translate.instant(ThreatSeverityUtil.ToString(risk)), value: scenarios.filter(x => x.Risk == risk).length });
       });
       return res;
     };
@@ -317,8 +317,8 @@ export class ResultsAnalysisComponent implements AfterViewInit {
       let res: ISerie[] = [];
       allAttackScenarios = allAttackScenarios.filter(x => !scenarios.includes(x));
       res.push({ name: translate.instant('properties.threatstate.NotSet'), value: scenarios.filter(x => x.Risk == null).length });
-      LowMediumHighNumberUtil.GetKeys().forEach(risk => {
-        res.push({ name: translate.instant(LowMediumHighNumberUtil.ToString(risk)), value: scenarios.filter(x => x.Risk == risk).length });
+      ThreatSeverityUtil.GetTypesDashboard().forEach(risk => {
+        res.push({ name: translate.instant(ThreatSeverityUtil.ToString(risk)), value: scenarios.filter(x => x.Risk == risk).length });
       });
       return res;
     };

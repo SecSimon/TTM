@@ -29,6 +29,11 @@
                     {{'pages.reporting.showGrid' | translate}}
                   </mat-slide-toggle>
                 </button>
+                <button mat-menu-item>
+                  <mat-slide-toggle color="primary" [(ngModel)]="ShowFirstTwoSteps" (click)="$event.stopPropagation()">
+                    {{'pages.reporting.showFristTwoSteps' | translate}}
+                  </mat-slide-toggle>
+                </button>
               </mat-menu>
               <mat-progress-spinner *ngIf="IsReportGenerating" style="display: inline; margin-left: 5px;" [diameter]="25" mode="indeterminate"></mat-progress-spinner>
               <button mat-raised-button [disabled]="!IsReportGenerated" color="primary" style="margin-left: 50px;" (click)="SaveHTML()">{{'pages.reporting.DownloadHTML' | translate}}</button>

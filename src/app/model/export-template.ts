@@ -106,8 +106,11 @@ export enum ExportAttackScenarioProperties {
   ScoreCVSS = 'ScoreCVSS',
   ScoreOwaspRR = 'ScoreOwaspRR',
   Severity = 'Severity',
+  SeverityReason = 'SeverityReason',
   Likelihood = 'Likelihood',
+  LikelihoodReason = 'LikelihoodReason',
   Risk = 'Risk',
+  RiskReason = 'RiskReason',
   RiskStrategy = 'RiskStrategy',
   RiskStrategyReason = 'RiskStrategyReason',
   Countermeasures = 'Countermeasures'
@@ -118,8 +121,8 @@ export class ExportAttackScenarioPropertyUtil {
     return [ExportAttackScenarioProperties.Number, ExportAttackScenarioProperties.ThreatState, ExportAttackScenarioProperties.AttackVector, ExportAttackScenarioProperties.Targets, 
       ExportAttackScenarioProperties.Diagram, ExportAttackScenarioProperties.ThreatCategories,
       ExportAttackScenarioProperties.SystemThreats, ExportAttackScenarioProperties.ScoreCVSS, ExportAttackScenarioProperties.ScoreOwaspRR, ExportAttackScenarioProperties.Severity,
-      ExportAttackScenarioProperties.Likelihood, ExportAttackScenarioProperties.Risk, ExportAttackScenarioProperties.RiskStrategy, ExportAttackScenarioProperties.RiskStrategyReason,
-      ExportAttackScenarioProperties.Countermeasures];
+      ExportAttackScenarioProperties.SeverityReason, ExportAttackScenarioProperties.Likelihood, ExportAttackScenarioProperties.LikelihoodReason, ExportAttackScenarioProperties.Risk, 
+      ExportAttackScenarioProperties.RiskReason, ExportAttackScenarioProperties.RiskStrategy, ExportAttackScenarioProperties.RiskStrategyReason, ExportAttackScenarioProperties.Countermeasures];
   }
 
   public static GetValues(key: string, entry, translate: TranslateService): string[] {
@@ -147,8 +150,8 @@ export class ExportAttackScenarioPropertyUtil {
         if (val) return ExportUtil.wrap(translate, ThreatSeverityUtil.ToString(val.Score));
         return ExportUtil.wrap(translate, val);
       }
-      else if (key == ExportAttackScenarioProperties.Severity) return myToString(ThreatSeverityUtil.ToString);
-      else if ([ExportAttackScenarioProperties.Likelihood, ExportAttackScenarioProperties.Risk].includes(key as ExportAttackScenarioProperties)) return myToString(LowMediumHighNumberUtil.ToString);
+      else if ([ExportAttackScenarioProperties.Severity, ExportAttackScenarioProperties.Risk].includes(key as ExportAttackScenarioProperties)) return myToString(ThreatSeverityUtil.ToString);
+      else if ([ExportAttackScenarioProperties.Likelihood].includes(key as ExportAttackScenarioProperties)) return myToString(LowMediumHighNumberUtil.ToString);
       else if (key == ExportAttackScenarioProperties.RiskStrategy) return myToString(RiskStrategyUtil.ToString);
       else if (key == ExportAttackScenarioProperties.Diagram) return ExportUtil.wrap(translate, entry.GetDiagram()['Name']);
       else if (key == ExportAttackScenarioProperties.Countermeasures) {
@@ -170,8 +173,11 @@ export class ExportAttackScenarioPropertyUtil {
       case ExportAttackScenarioProperties.ScoreCVSS: return "CVSS Score";
       case ExportAttackScenarioProperties.ScoreOwaspRR: return "OWASP RR Score";
       case ExportAttackScenarioProperties.Severity: return "properties.Severity";
+      case ExportAttackScenarioProperties.SeverityReason: return "properties.SeverityReason";
       case ExportAttackScenarioProperties.Likelihood: return "general.Likelihood";
+      case ExportAttackScenarioProperties.LikelihoodReason: return "properties.LikelihoodReason";
       case ExportAttackScenarioProperties.Risk: return "properties.Risk";
+      case ExportAttackScenarioProperties.RiskReason: return "properties.RiskReason";
       case ExportAttackScenarioProperties.RiskStrategy: return "properties.RiskStrategy";
       case ExportAttackScenarioProperties.RiskStrategyReason: return "properties.RiskStrategyReason";
       case ExportAttackScenarioProperties.Countermeasures: return "general.Countermeasures";
@@ -227,7 +233,7 @@ export class ExportCountermeasurePropertyUtil {
         return ExportUtil.wrap(translate, ThreatSeverityUtil.ToString(Math.max(...entry['AttackScenarios']?.map(x => x.Severity).filter(x => x && x > 0))));
       } 
       else if ([ExportCountermeasureProperties.MaxRisk].includes(key as ExportCountermeasureProperties)) {
-        return ExportUtil.wrap(translate, LowMediumHighNumberUtil.ToString(Math.max(...entry['AttackScenarios']?.map(x => x.Risk).filter(x => x && x > 0))));
+        return ExportUtil.wrap(translate, ThreatSeverityUtil.ToString(Math.max(...entry['AttackScenarios']?.map(x => x.Risk).filter(x => x && x > 0))));
       } 
     }
     return ExportUtil.wrap(translate, ExportCommonPropertyUtil.GetValue(key, entry));
@@ -287,7 +293,7 @@ export class ExportMitigationProcessPropertyUtil {
         return ExportUtil.wrap(translate, ThreatSeverityUtil.ToString(Math.max(...entry['Countermeasures']?.map(x => x.AttackScenarios).flat().map(x => x.Severity).filter(x => x && x > 0))));
       } 
       else if ([ExportMitigationProcessProperties.MaxRisk].includes(key as ExportMitigationProcessProperties)) {
-        return ExportUtil.wrap(translate, LowMediumHighNumberUtil.ToString(Math.max(...entry['Countermeasures']?.map(x => x.AttackScenarios).flat().map(x => x.Risk).filter(x => x && x > 0))));
+        return ExportUtil.wrap(translate, ThreatSeverityUtil.ToString(Math.max(...entry['Countermeasures']?.map(x => x.AttackScenarios).flat().map(x => x.Risk).filter(x => x && x > 0))));
       } 
       else if (key == ExportMitigationProcessProperties.ProcessState) return myToString(MitigationProcessStateUtil.ToString);
       else if (key == ExportMitigationProcessProperties.Progress) return ExportUtil.wrap(translate, ExportCommonPropertyUtil.GetValue(key, entry) + '%');

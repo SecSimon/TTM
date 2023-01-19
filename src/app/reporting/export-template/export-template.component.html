@@ -20,7 +20,11 @@
   <table [style.borderColor]="theme.IsDarkMode ? '#424242' : '#F5F5F5'">
     <tr [style.borderColor]="theme.IsDarkMode ? '#424242' : '#F5F5F5'">
       <th [style.borderColor]="theme.IsDarkMode ? '#424242' : '#F5F5F5'"></th>
-      <th *ngFor="let col of template.Template; index as i" [style.borderColor]="theme.IsDarkMode ? '#424242' : '#F5F5F5'">{{ 'pages.reporting.exporttemplate.Column' | translate }} {{i}} <button mat-icon-button (click)="DeleteColumn(col)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000"><mat-icon>delete</mat-icon></button></th>
+      <th *ngFor="let col of template.Template; index as i" [style.borderColor]="theme.IsDarkMode ? '#424242' : '#F5F5F5'">
+        {{ 'pages.reporting.exporttemplate.Column' | translate }} {{i}} 
+        <button mat-icon-button style="width: 25px;" (click)="AddColumn(i)" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000"><mat-icon>add</mat-icon></button>
+        <button mat-icon-button style="width: 25px;" (click)="DeleteColumn(col)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000"><mat-icon>delete</mat-icon></button>
+      </th>
     </tr>
     <tr [style.borderColor]="theme.IsDarkMode ? '#424242' : '#F5F5F5'">
       <td [style.borderColor]="theme.IsDarkMode ? '#424242' : '#F5F5F5'">{{ 'pages.reporting.exporttemplate.Header' | translate}}</td>

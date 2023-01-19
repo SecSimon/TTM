@@ -121,18 +121,22 @@ export class AttackScenarioComponent implements OnInit {
 
   public CalculateRisk() {
     if (this.attackScenario.Severity != null && this.attackScenario.Likelihood != null) {
-      let sev = 1;
-      if (this.attackScenario.Severity == ThreatSeverities.High) sev = 0.8;
-      else if (this.attackScenario.Severity == ThreatSeverities.Medium) sev = 0.5;
-      else if (this.attackScenario.Severity == ThreatSeverities.Low) sev = 0.1;
-      else if (this.attackScenario.Severity == ThreatSeverities.None) sev = 0;
-      let like = 100;
-      if (this.attackScenario.Likelihood == LowMediumHighNumber.Medium) like = 50;
-      else if (this.attackScenario.Likelihood == LowMediumHighNumber.Low) like = 10;
-      const val = sev * like;
-      let risk = LowMediumHighNumber.Low;
-      if (val >= 50) risk = LowMediumHighNumber.High;
-      else if (val >= 10) risk = LowMediumHighNumber.Medium;
+      const like = this.attackScenario.Likelihood;
+      const sev = this.attackScenario.Severity;
+      let risk = ThreatSeverities.Critical;
+      if (like == LowMediumHighNumber.High) {
+        if (sev == ThreatSeverities.Medium) risk = ThreatSeverities.High;
+        else if (sev == ThreatSeverities.Low) risk = ThreatSeverities.Medium;
+      }
+      else if (like == LowMediumHighNumber.Medium) {
+        risk = sev;
+      }
+      else if (like == LowMediumHighNumber.Low) {
+        risk = ThreatSeverities.Low;
+        if (sev == ThreatSeverities.High) risk = ThreatSeverities.Medium;
+        else if (sev == ThreatSeverities.Critical) risk = ThreatSeverities.High;
+      }
+
       this.attackScenario.Risk = risk;
     }
   }
@@ -184,8 +188,11 @@ export class AttackScenarioComponent implements OnInit {
     if (scenario.ScoreCVSS) this.attackScenario.ScoreCVSS = JSON.parse(JSON.stringify(scenario.ScoreCVSS));
     if (scenario.ScoreOwaspRR) this.attackScenario.ScoreOwaspRR = JSON.parse(JSON.stringify(scenario.ScoreOwaspRR));
     this.attackScenario.Severity = scenario.Severity;
+    this.attackScenario.SeverityReason = scenario.SeverityReason;
     this.attackScenario.Likelihood = scenario.Likelihood;
+    this.attackScenario.LikelihoodReason = scenario.LikelihoodReason;
     this.attackScenario.Risk = scenario.Risk;
+    this.attackScenario.RiskReason = scenario.RiskReason;
     this.attackScenario.RiskStrategy = scenario.RiskStrategy;
     this.attackScenario.RiskStrategyReason = scenario.RiskStrategyReason;
     this.OnLinkScenario(scenario);

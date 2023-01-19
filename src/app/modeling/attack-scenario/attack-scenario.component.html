@@ -107,33 +107,63 @@
       <mat-icon>delete</mat-icon>
     </button>
   </mat-form-field>
-  <mat-form-field appearance="fill" style="width: 150px; margin-left: 30px;">
+  <mat-form-field appearance="fill" style="width: 190px; margin-left: 30px;">
     <mat-label>{{ 'properties.Severity' | translate }}</mat-label>
     <mat-select [(value)]="attackScenario.Severity" (selectionChange)="CalculateRisk()">
       <mat-option>{{'properties.selectNone' | translate}}</mat-option>
       <mat-option *ngFor="let type of GetSeverityTypes()" [value]="type">{{GetSeverityTypeName(type) | translate}}</mat-option>
     </mat-select>
+    <button matSuffix mat-icon-button *ngIf="attackScenario.SeverityReason == null" (click)="attackScenario.SeverityReason = ''; $event.stopPropagation()">
+      <mat-icon>edit_note</mat-icon>
+    </button>
+    <button matSuffix mat-icon-button *ngIf="attackScenario.SeverityReason != null" (click)="attackScenario.SeverityReason = null; $event.stopPropagation()">
+      <mat-icon>playlist_remove</mat-icon>
+    </button>
   </mat-form-field>
-  <mat-form-field appearance="fill" style="width: 150px; margin-left: 10px;">
+  <mat-form-field appearance="fill" style="width: 190px; margin-left: 10px;">
     <mat-label>{{ 'general.Likelihood' | translate }}</mat-label>
     <mat-select [(value)]="attackScenario.Likelihood" (selectionChange)="CalculateRisk()">
       <mat-option>{{'properties.selectNone' | translate}}</mat-option>
       <mat-option *ngFor="let type of GetLMHValues()" [value]="type">{{GetLMHName(type) | translate}}</mat-option>
     </mat-select>
+    <button matSuffix mat-icon-button *ngIf="attackScenario.LikelihoodReason == null" (click)="attackScenario.LikelihoodReason = ''; $event.stopPropagation()">
+      <mat-icon>edit_note</mat-icon>
+    </button>
+    <button matSuffix mat-icon-button *ngIf="attackScenario.LikelihoodReason != null" (click)="attackScenario.LikelihoodReason = null; $event.stopPropagation()">
+      <mat-icon>playlist_remove</mat-icon>
+    </button>
   </mat-form-field>
-  <mat-form-field appearance="fill" style="width: 150px; margin-left: 10px;">
+  <mat-form-field appearance="fill" style="width: 190px; margin-left: 10px;">
     <mat-label>{{ 'properties.Risk' | translate }}</mat-label>
     <mat-select [(value)]="attackScenario.Risk">
       <mat-option>{{'properties.selectNone' | translate}}</mat-option>
-      <mat-option *ngFor="let type of GetLMHValues()" [value]="type">{{GetLMHName(type) | translate}}</mat-option>
+      <mat-option *ngFor="let type of GetSeverityTypes()" [value]="type">{{GetSeverityTypeName(type) | translate}}</mat-option>
     </mat-select>
+    <button matSuffix mat-icon-button *ngIf="attackScenario.RiskReason == null" (click)="attackScenario.RiskReason = ''; $event.stopPropagation()">
+      <mat-icon>edit_note</mat-icon>
+    </button>
+    <button matSuffix mat-icon-button *ngIf="attackScenario.RiskReason != null" (click)="attackScenario.RiskReason = null; $event.stopPropagation()">
+      <mat-icon>playlist_remove</mat-icon>
+    </button>
   </mat-form-field>
-  <mat-form-field appearance="fill" style="width: 150px; margin-left: 10px;">
+  <mat-form-field appearance="fill" style="width: 190px; margin-left: 10px;">
     <mat-label>{{ 'properties.RiskStrategy' | translate }}</mat-label>
     <mat-select [(value)]="attackScenario.RiskStrategy">
       <mat-option>{{'properties.selectNone' | translate}}</mat-option>
       <mat-option *ngFor="let type of GetRiskStrategies()" [value]="type">{{GetRiskStrategyName(type) | translate}}</mat-option>
     </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="fill" style="width: 100%;" *ngIf="attackScenario.SeverityReason != null">
+    <mat-label>{{ 'properties.SeverityReason' | translate }}</mat-label>
+    <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="2" cdkAutosizeMaxRows="5" [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="attackScenario.SeverityReason"></textarea>
+  </mat-form-field>
+  <mat-form-field appearance="fill" style="width: 100%;" *ngIf="attackScenario.LikelihoodReason != null">
+    <mat-label>{{ 'properties.LikelihoodReason' | translate }}</mat-label>
+    <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="2" cdkAutosizeMaxRows="5" [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="attackScenario.LikelihoodReason"></textarea>
+  </mat-form-field>
+  <mat-form-field appearance="fill" style="width: 100%;" *ngIf="attackScenario.RiskReason != null">
+    <mat-label>{{ 'properties.RiskReason' | translate }}</mat-label>
+    <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="2" cdkAutosizeMaxRows="5" [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="attackScenario.RiskReason"></textarea>
   </mat-form-field>
   <mat-form-field appearance="fill" style="width: 100%;">
     <mat-label>{{ 'properties.RiskStrategyReason' | translate }}</mat-label>
@@ -152,7 +182,7 @@
             <button mat-menu-item *ngFor="let cm of GetPossibleCountermeasures()" (click)="AddExistingCountermeasure(cm)">{{cm.Name}}</button>
           </mat-menu>
         </div>
-        <mat-list-item *ngFor="let cm of countermeasures" (click)="selectedCountermeasure = cm" cdkDrag
+        <mat-list-item *ngFor="let cm of countermeasures" (click)="selectedCountermeasure = cm"
           [class.highlight-light]="selectedCountermeasure === cm && !theme.IsDarkMode" [class.highlight-dark]="selectedCountermeasure === cm && theme.IsDarkMode"
           matTooltip="{{cm.Name}}" matTooltipShowDelay="1000">
           <mat-icon mat-list-icon>chevron_right</mat-icon>

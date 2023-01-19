@@ -126,6 +126,10 @@ export class ExportTemplateComponent implements OnInit {
     }
   }
 
+  public AddColumn(i) {
+    this.template.Template.splice(i+1, 0, {name: '', value: null});
+  }
+
   public DeleteColumn(col: IExportCell) {
     const index = this.template.Template.indexOf(col);
     if (index >= 0) {
