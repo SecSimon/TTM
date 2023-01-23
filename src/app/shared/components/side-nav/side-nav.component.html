@@ -105,6 +105,10 @@
           <mat-icon>speaker_notes_off</mat-icon>
           <span>{{'side-nav.messages' | translate}}</span>
         </button>
+        <button mat-menu-item (click)="OpenYouTubePlaylist()">
+          <mat-icon>help</mat-icon>
+          <span>{{'side-nav.YouTubePlaylist' | translate}}</span>
+        </button>
       </mat-menu>
       <mat-menu #languages="matMenu">
         <button mat-menu-item>

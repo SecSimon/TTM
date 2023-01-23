@@ -182,6 +182,10 @@ export class MitigationStateUtil {
     return [MitigationStates.NotSet, MitigationStates.NotApplicable, MitigationStates.Rejected, MitigationStates.NeedsInvestigation, MitigationStates.MitigationStarted, MitigationStates.Implemented, MitigationStates.Duplicate];
   }
 
+  public static GetDashboardMitigationStates(): MitigationStates[] {
+    return [MitigationStates.NotSet, MitigationStates.NeedsInvestigation, MitigationStates.MitigationStarted, MitigationStates.Implemented];
+  }
+
   public static ToString(state: MitigationStates): string {
     switch (state) {
       case MitigationStates.NotSet: return 'properties.mitigationstate.NotSet';

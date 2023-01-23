@@ -304,7 +304,7 @@ export class ResultsAnalysisComponent implements AfterViewInit {
       results: diagramValues,
       view: [wid, hei],
       scheme: isBlueColorScheme ? 'air' : { domain: [ResultsAnalysisComponent.getNeutral(isDarkmode), DiaColors.Green, DiaColors.Yellow, DiaColors.Red, DiaColors.DarkRed] },
-      xAxisLabel: translate.instant('pages.dashboard.ThreatSummary'),
+      xAxisLabel: translate.instant('pages.dashboard.ThreatOverview'),
       yAxisLabel: translate.instant('pages.dashboard.NumberOfThreats')
     };
     return dia;
@@ -358,7 +358,7 @@ export class ResultsAnalysisComponent implements AfterViewInit {
     let dia: IDiagramData = {
       results: diagramValues,
       view: [wid, hei],
-      scheme: isBlueColorScheme ? 'air' : { domain: [ResultsAnalysisComponent.getNeutral(isDarkmode), DiaColors.Green, DiaColors.Yellow, DiaColors.Red] },
+      scheme: isBlueColorScheme ? 'air' : { domain: [ResultsAnalysisComponent.getNeutral(isDarkmode), DiaColors.Green, DiaColors.Yellow, DiaColors.Red, DiaColors.DarkRed] },
       xAxisLabel: translate.instant('pages.dashboard.RiskSummary'),
       yAxisLabel: translate.instant('pages.dashboard.NumberOfThreats')
     };
@@ -371,7 +371,7 @@ export class ResultsAnalysisComponent implements AfterViewInit {
     let getSeries = (mappings: Countermeasure[]): ISerie[] => {
       let res: ISerie[] = [];
       allCountermeasures = allCountermeasures.filter(x => !mappings.includes(x));
-      MitigationStateUtil.GetMitigationStates().filter(x => x != MitigationStates.NotApplicable).forEach(state => {
+      MitigationStateUtil.GetDashboardMitigationStates().forEach(state => {
         res.push({ name: translate.instant(MitigationStateUtil.ToString(state)), value: mappings.filter(x => x.MitigationState == state).length });
       });
       return res;
@@ -412,8 +412,8 @@ export class ResultsAnalysisComponent implements AfterViewInit {
     let dia: IDiagramData = {
       results: diagramValues,
       view: [wid, hei],
-      scheme: isBlueColorScheme ? 'air' : { domain: [DiaColors.DarkRed, ResultsAnalysisComponent.getNeutral(isDarkmode), DiaColors.Red, DiaColors.Yellow, DiaColors.Green] },
-      xAxisLabel: translate.instant('pages.dashboard.CountermeasureSummary'),
+      scheme: isBlueColorScheme ? 'air' : { domain: [DiaColors.DarkRed, DiaColors.Red, DiaColors.Yellow, DiaColors.Green] },
+      xAxisLabel: translate.instant('pages.dashboard.CountermeasureOverview'),
       yAxisLabel: translate.instant('pages.dashboard.NumberOfCountermeasures')
     };
     return dia;

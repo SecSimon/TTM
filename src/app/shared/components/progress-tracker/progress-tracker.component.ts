@@ -20,7 +20,7 @@ export class ProgressTrackerComponent implements OnInit {
   private step: number = 0;
   private tracker = {};
 
-  public columnsToDisplay = ['check', 'desc', 'info'];
+  public columnsToDisplay = ['check', 'desc', 'video', 'info'];
   expandedActivity: ITTMActivity | null;
   public get Stages(): ITTMStage[] { return this.ttmService.Stages; }
 
@@ -78,7 +78,11 @@ export class ProgressTrackerComponent implements OnInit {
   }
 
   public OnEntryClick(entry: ITTMActivity) {
-    if (entry.desc?.length > 0) this.expandedActivity = this.expandedActivity === entry ? null : entry
+    if (entry.desc?.length > 0) this.expandedActivity = this.expandedActivity === entry ? null : entry;
+  }
+
+  public OnVideoClick(entry) {
+    window.open(entry.video, '_blank');
   }
 
   public SetProcessStep(index: number) {

@@ -95,6 +95,10 @@ export class SideNavComponent implements AfterViewInit {
     window.open(this.dataService.UserURL, '_blank');
   }
 
+  public OpenYouTubePlaylist() {
+    window.open('https://www.youtube.com/playlist?list=PLSMRtuVN409fB35RLljjg3jNkVJbLIP1u', '_blank');
+  }
+
   private hovered: string;
   public OnMouseEnter(route: string) { this.hovered = route; }
   public OnMouseLeave() { this.hovered = ''; }

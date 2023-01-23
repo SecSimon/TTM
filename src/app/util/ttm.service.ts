@@ -14,12 +14,14 @@ export interface ITTMStep {
   name: string;
   activities: ITTMActivity[];
   link?: string;
+  video?: string;
 }
 
 export interface ITTMActivity {
   name: string;
   desc: string;
   link?: string;
+  video?: string;
 }
 
 @Injectable({
@@ -100,7 +102,8 @@ export class TTMService {
               name: this.translate.instant('ttm.3.4.n'),
               desc: this.translate.instant('ttm.3.4.d'),
             }
-          ]
+          ],
+          video: 'https://youtu.be/P7-ca-gteXk'
         },
         {
           number: 4,
@@ -115,7 +118,8 @@ export class TTMService {
               name: this.translate.instant('ttm.4.2.n'),
               desc: this.translate.instant('ttm.4.2.d'),
             }
-          ]
+          ],
+          video: 'https://youtu.be/a6QiOJZrjS0'
         }
       ]
     };
@@ -143,7 +147,8 @@ export class TTMService {
               desc: this.translate.instant('ttm.5.3.d'),
               link: 'configuration'
             }
-          ]
+          ],
+          video: 'https://youtu.be/w6Z-trl4_SE'
         },
         {
           number: 6,
@@ -156,9 +161,10 @@ export class TTMService {
             },
             {
               name: this.translate.instant('ttm.6.2.n'),
-              desc: this.translate.instant('ttm.6.2.d'),
+              desc: this.translate.instant('ttm.6.2.d') + '\n' + 'https://youtu.be/MbrC1sGo6L8'
             }
-          ]
+          ],
+          video: 'https://youtu.be/dKDiEc7K2pY'
         },
         {
           number: 7,
@@ -171,9 +177,10 @@ export class TTMService {
             },
             {
               name: this.translate.instant('ttm.7.2.n'),
-              desc: this.translate.instant('ttm.7.2.d'),
+              desc: this.translate.instant('ttm.7.2.d') + '\n' + 'https://youtu.be/MbrC1sGo6L8'
             }
-          ]
+          ],
+          video: 'https://youtu.be/znWcbMUviGY'
         },
         {
           number: 8,
@@ -186,9 +193,10 @@ export class TTMService {
             },
             {
               name: this.translate.instant('ttm.8.2.n'),
-              desc: this.translate.instant('ttm.8.2.d'),
+              desc: this.translate.instant('ttm.8.2.d') + '\n' + 'https://youtu.be/MbrC1sGo6L8'
             }
-          ]
+          ],
+          video: 'https://youtu.be/dKDiEc7K2pY'
         },
         {
           number: 9,
@@ -201,9 +209,10 @@ export class TTMService {
             },
             {
               name: this.translate.instant('ttm.9.2.n'),
-              desc: this.translate.instant('ttm.9.2.d'),
+              desc: this.translate.instant('ttm.9.2.d') + '\n' + 'https://youtu.be/MbrC1sGo6L8'
             }
-          ]
+          ],
+          video: 'https://youtu.be/znWcbMUviGY'
         },
         {
           number: 10,
@@ -215,7 +224,7 @@ export class TTMService {
             },
             {
               name: this.translate.instant('ttm.10.2.n'),
-              desc: this.translate.instant('ttm.10.2.d'),
+              desc: this.translate.instant('ttm.10.2.d') + '\n' + 'https://youtu.be/MbrC1sGo6L8'
             }
           ]
         }
@@ -239,7 +248,8 @@ export class TTMService {
               name: this.translate.instant('ttm.11.2.n'),
               desc: this.translate.instant('ttm.11.2.d'),
             }
-          ]
+          ],
+          video: 'https://youtu.be/MbrC1sGo6L8'
         },
         {
           number: 12,
@@ -259,7 +269,8 @@ export class TTMService {
               name: this.translate.instant('ttm.12.3.n'),
               desc: this.translate.instant('ttm.12.3.d'),
             }
-          ]
+          ],
+          video: 'https://youtu.be/pFhpct9iGUc'
         }
       ]
     };
