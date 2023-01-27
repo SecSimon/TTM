@@ -127,7 +127,10 @@ export class ReportingComponent implements OnInit {
       this.createParagraph('');
 
       this.createParagraph(this.translate.instant('report.riskAssessment'));
+      this.createLink(this.translate.instant('report.FurtherInfoCVSS'), 'https://www.first.org/cvss/specification-document');
       this.createRiskTable();
+      this.createParagraph('');
+      this.createParagraph(this.translate.instant('report.riskStrategy'));
       this.createParagraph('');
 
       // charts / tables
@@ -138,7 +141,7 @@ export class ReportingComponent implements OnInit {
         chartsData.push(chart);
       });
 
-      charts.push(...[ResultsAnalysisComponent.CreateThreatSummaryDiagram, ResultsAnalysisComponent.CreateRiskSummaryDiagram, ResultsAnalysisComponent.CreateThreatPerTypeDiagram, ResultsAnalysisComponent.CreateThreatPerLifecycleDiagram, ResultsAnalysisComponent.CreateThreatPerImpactCatDiagram, ResultsAnalysisComponent.CreateCountermeasureSummaryDiagram]);
+      charts.push(...[ResultsAnalysisComponent.CreateSeveritySummaryDiagram, ResultsAnalysisComponent.CreateRiskSummaryDiagram, ResultsAnalysisComponent.CreateSeverityPerTypeDiagram, ResultsAnalysisComponent.CreateSeverityPerLifecycleDiagram, ResultsAnalysisComponent.CreateSeverityPerImpactCatDiagram, ResultsAnalysisComponent.CreateCountermeasureSummaryDiagram]);
       chartsData.push(...[null, null, null, null, null, null]);
       for (let i = 0; i < charts.length; i++) {
         const diaData = charts[i](this.Project, this.translate, false, false, 600, 400, chartsData[i]);
@@ -195,6 +198,7 @@ export class ReportingComponent implements OnInit {
               const descs = [];
               if (s.ScoreCVSS && s.ScoreCVSS.Score > 0) descs.push(this.translate.instant('report.CvssScore') + ': ' + s.ScoreCVSS.Score.toFixed(1));
               if (s.ScoreOwaspRR && s.ScoreOwaspRR.Score > 0) descs.push(this.translate.instant('report.OwaspRRScore') + ': ' + s.ScoreOwaspRR.Score.toFixed(1));
+              if (s.Likelihood) descs.push(this.translate.instant('general.Likelihood') + ': ' + this.translate.instant(LowMediumHighNumberUtil.ToString(s.Likelihood)));
               if (s.Risk) descs.push(this.translate.instant('properties.Risk') + ': ' + this.translate.instant(ThreatSeverityUtil.ToString(s.Risk)));
               items.push(s.GetLongName() + ': ' + descs.join(', '));
             });
@@ -212,9 +216,20 @@ export class ReportingComponent implements OnInit {
       const printSenariosAndMeasures = (viewID: string) => {
         const as = this.Project.GetAttackScenariosApplicable().filter(x => x.ViewID == viewID);
         as.sort((a, b) => {
-          if (a.Risk >= 0 && b.Risk >= 0) return Number(a.Risk) > Number(b.Risk) ? -1 : (Number(a.Risk) == Number(b.Risk) ? 0 : 1);
-          if (a.Risk) return -1;
-          return 1;
+          const checkVal = (a, b) => {
+            if (a >= 0 && b >= 0) {
+              return Number(a) > Number(b) ? -1 : (Number(a) < Number(b) ? 1 : 0);
+            }
+            if (a) return -1;
+            return 1;
+          };
+
+          let res = checkVal(a.Risk, b.Risk);
+          if (res == 0) res = checkVal(a.Severity, b.Severity);
+          if (res == 0) res = checkVal(a.ThreatState, b.ThreatState);
+          if (res == 0 && a.ScoreCVSS?.Score && b.ScoreCVSS?.Score) res = checkVal(a.ScoreCVSS, b.ScoreCVSS);
+          if (res == 0) res = checkVal(b.Number, a.Number);
+          return res;
         });
 
         if (as.length > 0) {
@@ -244,6 +259,7 @@ export class ReportingComponent implements OnInit {
             if (scenario.RiskStrategy) this.createParagraph(this.translate.instant('properties.RiskStrategy') + ': ' + this.translate.instant(RiskStrategyUtil.ToString(scenario.RiskStrategy)));
             if (scenario.RiskStrategyReason?.length > 0) this.createParagraph(this.translate.instant('properties.RiskStrategyReason') + ': ' + scenario.RiskStrategyReason);
             if (scenario.GetCountermeasures()?.length > 0) this.createParagraph(this.translate.instant('general.Countermeasures') + ': ' + scenario.GetCountermeasures().map(x => x.GetLongName()).join(', '));
+            if (scenario.LinkedScenarios?.length > 0) this.createParagraph(this.translate.instant('report.SeeAlso') + ': ' + scenario.LinkedScenarios.map(x => 'AS' + x.Number).join(', '));
             if (scenario.MyTags.length > 0) this.createParagraph(this.translate.instant('general.Tags') + ': ' + scenario.MyTags.map(x => x.Name).join(', '));
             this.createParagraph('');
           });
@@ -863,8 +879,8 @@ export class ReportingComponent implements OnInit {
       children: [],
     });
     tr.addChildElement(createCell(this.translate.instant('general.Likelihood'), true, TextDirection.BOTTOM_TO_TOP_LEFT_TO_RIGHT, 1, 3));
-    row = ['High', 'Medium', 'High', 'Critical', 'Critical'];
-    let styles = ['#FFFFFF', '#fcff2f', '#fe0000', '#cb0000', '#cb0000'];
+    row = ['High', 'Medium', 'High', 'High', 'Critical'];
+    let styles = ['#FFFFFF', '#fcff2f', '#fe0000', '#fe0000', '#cb0000'];
     for (let i = 0; i < row.length; i++) {
       tr.addChildElement(createCell(row[i].length > 0 ? this.translate.instant('properties.threatseverity.' + row[i]) : '', false, TextDirection.LEFT_TO_RIGHT_TOP_TO_BOTTOM, 1, 1, styles[i]));
     }
@@ -883,8 +899,8 @@ export class ReportingComponent implements OnInit {
     tr = new TableRow({
       children: [],
     });
-    row = ['Low', 'Low', 'Low', 'Medium', 'High'];
-    styles = ['#FFFFFF', '#34ff34', '#34ff34', '#fcff2f', '#fe0000'];
+    row = ['Low', 'Low', 'Medium', 'Medium', 'High'];
+    styles = ['#FFFFFF', '#34ff34', '#fcff2f', '#fcff2f', '#fe0000'];
     for (let i = 0; i < row.length; i++) {
       tr.addChildElement(createCell(row[i].length > 0 ? this.translate.instant('properties.threatseverity.' + row[i]) : '', false, TextDirection.LEFT_TO_RIGHT_TOP_TO_BOTTOM, 1, 1, styles[i]));
     }
@@ -925,8 +941,8 @@ export class ReportingComponent implements OnInit {
     c.appendChild(this.createHtmlElement('strong', this.translate.instant('general.Likelihood')));
     (c as HTMLTableCellElement).rowSpan = 3;
     tr.appendChild(c);
-    row = ['High', 'Medium', 'High', 'Critical', 'Critical'];
-    let styles = ['transparent', '#fcff2f', '#fe0000', '#cb0000', '#cb0000'];
+    row = ['High', 'Medium', 'High', 'High', 'Critical'];
+    let styles = ['transparent', '#fcff2f', '#fe0000', '#fe0000', '#cb0000'];
     for (let i = 0; i < row.length; i++) {
       let c = this.createHtmlElement('td', this.translate.instant('properties.threatseverity.' + row[i]));
       c.style.backgroundColor = styles[i];
@@ -945,8 +961,8 @@ export class ReportingComponent implements OnInit {
     tbody.appendChild(tr);
     // fourth row
     tr = document.createElement('tr');
-    row = ['Low', 'Low', 'Low', 'Medium', 'High']
-    styles = ['transparent', '#34ff34', '#34ff34', '#fcff2f', '#fe0000'];
+    row = ['Low', 'Low', 'Medium', 'Medium', 'High']
+    styles = ['transparent', '#34ff34', '#fcff2f', '#fcff2f', '#fe0000'];
     for (let i = 0; i < row.length; i++) {
       let c = this.createHtmlElement('td', this.translate.instant('properties.threatseverity.' + row[i]));
       c.style.backgroundColor = styles[i];

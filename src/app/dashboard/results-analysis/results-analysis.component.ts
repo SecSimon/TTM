@@ -3,7 +3,7 @@ import { MatMenuTrigger } from '@angular/material/menu';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { TranslateService } from '@ngx-translate/core';
-import { DiagramTypes } from '../../model/diagram';
+import { Diagram, DiagramTypes } from '../../model/diagram';
 import { Countermeasure, MitigationStates, MitigationStateUtil } from '../../model/mitigations';
 import { AttackScenario, ThreatStates, MappingStates, ThreatSeverityUtil, LifeCycleUtil, ThreatStateUtil, ThreatSeverities, ImpactCategoryUtil } from '../../model/threat-model';
 import { DataService } from '../../util/data.service';
@@ -14,6 +14,7 @@ import { LowMediumHighNumberUtil, LowMediumHighNumber } from '../../model/assets
 import { ThemeService } from '../../util/theme.service';
 import { ProjectFile } from '../../model/project-file';
 import { MyTagChart, TagChartTypes } from '../../model/my-tags';
+import { MyComponentTypeIDs } from '../../model/component';
 
 enum DiaColors {
   Black = '#000000',
@@ -179,12 +180,12 @@ export class ResultsAnalysisComponent implements AfterViewInit {
     hei = hei - 36 - 17 - 20 - 33 - 60; // h2, h4, margin?, legend, margin
     let wid = (document.getElementById('diagramContainer').clientWidth - 20 - 3*10) / 4;
 
-    let dia1 = ResultsAnalysisComponent.CreateThreatSummaryDiagram(this.dataService.Project, this.translate, this.theme.IsDarkMode, this.isBlueColorScheme, wid, hei);
+    let dia1 = ResultsAnalysisComponent.CreateSeveritySummaryDiagram(this.dataService.Project, this.translate, this.theme.IsDarkMode, this.isBlueColorScheme, wid, hei);
     let dia3 = ResultsAnalysisComponent.CreateCountermeasureSummaryDiagram(this.dataService.Project, this.translate, this.theme.IsDarkMode, this.isBlueColorScheme, wid, hei);
-    let dia5 = ResultsAnalysisComponent.CreateThreatPerLifecycleDiagram(this.dataService.Project, this.translate, this.theme.IsDarkMode, this.isBlueColorScheme, wid, hei);
-    let dia4 = ResultsAnalysisComponent.CreateThreatPerTypeDiagram(this.dataService.Project, this.translate, this.theme.IsDarkMode, this.isBlueColorScheme, wid, hei);
+    let dia5 = ResultsAnalysisComponent.CreateSeverityPerLifecycleDiagram(this.dataService.Project, this.translate, this.theme.IsDarkMode, this.isBlueColorScheme, wid, hei);
+    let dia4 = ResultsAnalysisComponent.CreateSeverityPerTypeDiagram(this.dataService.Project, this.translate, this.theme.IsDarkMode, this.isBlueColorScheme, wid, hei);
     let dia2 = ResultsAnalysisComponent.CreateRiskSummaryDiagram(this.dataService.Project, this.translate, this.theme.IsDarkMode, this.isBlueColorScheme, wid, hei);
-    let dia6 = ResultsAnalysisComponent.CreateThreatPerImpactCatDiagram(this.dataService.Project, this.translate, this.theme.IsDarkMode, this.isBlueColorScheme, wid, hei);
+    let dia6 = ResultsAnalysisComponent.CreateSeverityPerImpactCatDiagram(this.dataService.Project, this.translate, this.theme.IsDarkMode, this.isBlueColorScheme, wid, hei);
 
     let res = [];
     this.dataService.Project.GetMyTagCharts().forEach(x => {
@@ -255,7 +256,7 @@ export class ResultsAnalysisComponent implements AfterViewInit {
     return dia;
   }
 
-  public static CreateThreatSummaryDiagram(pf: ProjectFile, translate: TranslateService, isDarkmode: boolean, isBlueColorScheme: boolean, wid, hei): IDiagramData {
+  public static CreateSeveritySummaryDiagram(pf: ProjectFile, translate: TranslateService, isDarkmode: boolean, isBlueColorScheme: boolean, wid, hei): IDiagramData {
     let diagramValues: IStackedSeries[] = [];
     let allAttackScenarios = pf.GetAttackScenariosApplicable();
     let getSeries = (mappings: AttackScenario[]): ISerie[] => {
@@ -304,7 +305,7 @@ export class ResultsAnalysisComponent implements AfterViewInit {
       results: diagramValues,
       view: [wid, hei],
       scheme: isBlueColorScheme ? 'air' : { domain: [ResultsAnalysisComponent.getNeutral(isDarkmode), DiaColors.Green, DiaColors.Yellow, DiaColors.Red, DiaColors.DarkRed] },
-      xAxisLabel: translate.instant('pages.dashboard.ThreatOverview'),
+      xAxisLabel: translate.instant('pages.dashboard.SeverityOverview'),
       yAxisLabel: translate.instant('pages.dashboard.NumberOfThreats')
     };
     return dia;
@@ -359,7 +360,7 @@ export class ResultsAnalysisComponent implements AfterViewInit {
       results: diagramValues,
       view: [wid, hei],
       scheme: isBlueColorScheme ? 'air' : { domain: [ResultsAnalysisComponent.getNeutral(isDarkmode), DiaColors.Green, DiaColors.Yellow, DiaColors.Red, DiaColors.DarkRed] },
-      xAxisLabel: translate.instant('pages.dashboard.RiskSummary'),
+      xAxisLabel: translate.instant('pages.dashboard.RiskOverview'),
       yAxisLabel: translate.instant('pages.dashboard.NumberOfThreats')
     };
     return dia;
@@ -413,13 +414,13 @@ export class ResultsAnalysisComponent implements AfterViewInit {
       results: diagramValues,
       view: [wid, hei],
       scheme: isBlueColorScheme ? 'air' : { domain: [DiaColors.DarkRed, DiaColors.Red, DiaColors.Yellow, DiaColors.Green] },
-      xAxisLabel: translate.instant('pages.dashboard.CountermeasureOverview'),
+      xAxisLabel: translate.instant('pages.dashboard.MeasureOverview'),
       yAxisLabel: translate.instant('pages.dashboard.NumberOfCountermeasures')
     };
     return dia;
   }
 
-  public static CreateThreatPerLifecycleDiagram(pf: ProjectFile, translate: TranslateService, isDarkmode: boolean, isBlueColorScheme: boolean, wid, hei): IDiagramData {
+  public static CreateSeverityPerLifecycleDiagram(pf: ProjectFile, translate: TranslateService, isDarkmode: boolean, isBlueColorScheme: boolean, wid, hei): IDiagramData {
     let diagramValues: IStackedSeries[] = [];
     let allAttackScenarios = pf.GetAttackScenariosApplicable();
     let getSeries = (mappings: AttackScenario[]): ISerie[] => {
@@ -454,13 +455,13 @@ export class ResultsAnalysisComponent implements AfterViewInit {
       results: diagramValues,
       view: [wid, hei],
       scheme: isBlueColorScheme ? 'air' : { domain: [ResultsAnalysisComponent.getNeutral(isDarkmode), DiaColors.Green, DiaColors.Yellow, DiaColors.Red, DiaColors.DarkRed] },
-      xAxisLabel: translate.instant('pages.dashboard.ThreatPerLifecycle'),
+      xAxisLabel: translate.instant('pages.dashboard.SevertiyPerLifecycle'),
       yAxisLabel: translate.instant('pages.dashboard.NumberOfThreats')
     };
     return dia;
   }
 
-  public static CreateThreatPerTypeDiagram(pf: ProjectFile, translate: TranslateService, isDarkmode: boolean, isBlueColorScheme: boolean, wid, hei): IDiagramData {
+  public static CreateSeverityPerTypeDiagram(pf: ProjectFile, translate: TranslateService, isDarkmode: boolean, isBlueColorScheme: boolean, wid, hei): IDiagramData {
     let diagramValues: IStackedSeries[] = [];
     let allAttackScenarios = pf.GetAttackScenariosApplicable();
     let getSeries = (mappings: AttackScenario[]): ISerie[] => {
@@ -513,13 +514,13 @@ export class ResultsAnalysisComponent implements AfterViewInit {
       results: diagramValues,
       view: [wid, hei],
       scheme: isBlueColorScheme ? 'air' : { domain: [ResultsAnalysisComponent.getNeutral(isDarkmode), DiaColors.Green, DiaColors.Yellow, DiaColors.Red, DiaColors.DarkRed] },
-      xAxisLabel: translate.instant('pages.dashboard.ThreatPerType'),
+      xAxisLabel: translate.instant('pages.dashboard.SeverityPerType'),
       yAxisLabel: translate.instant('pages.dashboard.NumberOfThreats')
     };
     return dia;
   }
 
-  public static CreateThreatPerImpactCatDiagram(pf: ProjectFile, translate: TranslateService, isDarkmode: boolean, isBlueColorScheme: boolean, wid, hei): IDiagramData {
+  public static CreateSeverityPerImpactCatDiagram(pf: ProjectFile, translate: TranslateService, isDarkmode: boolean, isBlueColorScheme: boolean, wid, hei): IDiagramData {
     let diagramValues: IStackedSeries[] = [];
     let allAttackScenarios = pf.GetAttackScenariosApplicable();
     let getSeries = (scenarios: AttackScenario[]): ISerie[] => {
@@ -546,7 +547,7 @@ export class ResultsAnalysisComponent implements AfterViewInit {
       results: diagramValues,
       view: [wid, hei],
       scheme: isBlueColorScheme ? 'air' : { domain: [ResultsAnalysisComponent.getNeutral(isDarkmode), DiaColors.Green, DiaColors.Yellow, DiaColors.Red, DiaColors.DarkRed] },
-      xAxisLabel: translate.instant('pages.dashboard.ThreatPerImpactCategory'),
+      xAxisLabel: translate.instant('pages.dashboard.SeverityPerImpactCategory'),
       yAxisLabel: translate.instant('pages.dashboard.NumberOfThreats')
     };
     return dia;
@@ -575,13 +576,13 @@ export class ResultsAnalysisComponent implements AfterViewInit {
   }
 
   public OnMappingDblClick(entry, event = null) {
-    if (entry instanceof AttackScenario) this.dialog.OpenAttackScenarioDialog(entry, false, this.AttackScenarios);
+    if (entry instanceof AttackScenario) this.dialog.OpenAttackScenarioDialog(entry, false, this.dataSourceThreats.data);
     else if (entry instanceof Countermeasure) {
       if (event && event.target && this.displayedCountermeasureColumns[event.target.cellIndex] == 'progress' && entry.MitigationProcess) {
         this.dialog.OpenMitigationProcessDialog(entry.MitigationProcess, false);
       }
       else {
-        this.dialog.OpenCountermeasureDialog(entry, false, [], this.Countermeasures);
+        this.dialog.OpenCountermeasureDialog(entry, false, [], this.dataSourceCountermeasures.data);
       }
     }
   }
@@ -683,6 +684,125 @@ export class ResultsAnalysisComponent implements AfterViewInit {
 
     for (let i = 0; i < maps.length; i++) {
       maps[i].Number = (i+1).toString();
+    }
+  }
+
+  public ResetReorderNumbers(item) {
+    if (item instanceof AttackScenario) {
+      const asOrig = this.dataService.Project.GetAttackScenarios();
+      const asApp = this.dataService.Project.GetAttackScenariosApplicable();
+      const asNotApp = this.dataService.Project.GetAttackScenariosNotApplicable();
+
+      const mySort = (a: AttackScenario, b: AttackScenario) => {
+        const checkVal = (a, b) => {
+          if (a >= 0 && b >= 0) {
+            return Number(a) > Number(b) ? -1 : (Number(a) < Number(b) ? 1 : 0);
+          }
+          if (a) return -1;
+          return 1;
+        };
+
+        let res = 0;
+
+        if (a.ViewID != b.ViewID) {
+          const order = { 'CTX': 0, 'UC': 1, 'HW': 2, 'DF': 3 };
+          const viewA = this.dataService.Project.GetView(a.ViewID);
+          const viewB = this.dataService.Project.GetView(b.ViewID);
+          if (viewA instanceof Diagram && viewB instanceof Diagram) {
+            res = order[viewA.DiagramType] < order[viewB.DiagramType] ? -1 : (order[viewA.DiagramType] == order[viewB.DiagramType] ? 0 : 1);
+          }
+          else if (viewA instanceof Diagram) res = order[viewA.DiagramType] < 3 ? -1 : 1;
+          else if (viewB instanceof Diagram) res = order[viewB.DiagramType] < 3 ? 1 : -1;
+          else {
+            if (viewA.ComponentTypeID == viewB.ComponentTypeID) res = 0;
+            else if (viewA.ComponentTypeID == MyComponentTypeIDs.Software) res = -1;
+            else res = 1;
+          }
+
+          if (res == 0) res = viewA.Name.localeCompare(viewB.Name);
+        }
+
+        if (res == 0) res = checkVal(a.Risk, b.Risk);
+        if (res == 0) res = checkVal(a.Severity, b.Severity);
+        if (res == 0) res = checkVal(a.ThreatState, b.ThreatState);
+        if (res == 0 && a.ScoreCVSS?.Score && b.ScoreCVSS?.Score) res = checkVal(a.ScoreCVSS, b.ScoreCVSS);
+        else if (res == 0 && a.ScoreCVSS?.Score) res = -1;
+        else if (res == 0 && b.ScoreCVSS?.Score) res = 1;
+        if (res == 0 && a.Target && b.Target) res = a.Target.Name.localeCompare(b.Target.Name);
+        if (res == 0) {
+          res = checkVal(b.Number, a.Number);
+        }
+        return res;
+      };
+
+      asApp.sort((a, b) => mySort(a, b));
+      for (let i = 0; i < asApp.length; i++) {
+        this.dataService.Project.MoveItemAttackScenario(asOrig.indexOf(asApp[i]), i);
+        asApp[i].Number = (i+1).toString();
+      }
+      asNotApp.sort((a, b) => mySort(a, b));
+      for (let i = 0; i < asNotApp.length; i++) {
+        this.dataService.Project.MoveItemAttackScenario(asOrig.indexOf(asNotApp[i]), i);
+        asNotApp[i].Number = (asApp.length+i+1).toString();
+      }
+
+      this.AttackScenarios = this.dataService.Project.GetAttackScenariosApplicable().filter(x => x.MappingState != MappingStates.Removed);
+    }
+    else if (item instanceof Countermeasure) {
+      const cmOrig = this.dataService.Project.GetCountermeasures();
+      const cmApp = this.dataService.Project.GetCountermeasuresApplicable();
+      const cmNotApp = this.dataService.Project.GetCountermeasuresNotApplicable();
+
+      const mySort = (a: Countermeasure, b: Countermeasure) => {
+        const checkVal = (a, b) => {
+          if (a >= 0 && b >= 0) {
+            return Number(a) > Number(b) ? -1 : (Number(a) < Number(b) ? 1 : 0);
+          }
+          if (a) return -1;
+          return 1;
+        };
+
+        let res = 0;
+
+        if (a.ViewID != b.ViewID) {
+          const order = { 'CTX': 0, 'UC': 1, 'HW': 2, 'DF': 3 };
+          const viewA = this.dataService.Project.GetView(a.ViewID);
+          const viewB = this.dataService.Project.GetView(b.ViewID);
+          if (viewA instanceof Diagram && viewB instanceof Diagram) {
+            res = order[viewA.DiagramType] < order[viewB.DiagramType] ? -1 : (order[viewA.DiagramType] == order[viewB.DiagramType] ? 0 : 1);
+          }
+          else if (viewA instanceof Diagram) res = order[viewA.DiagramType] < 3 ? -1 : 1;
+          else if (viewB instanceof Diagram) res = order[viewB.DiagramType] < 3 ? 1 : -1;
+          else {
+            if (viewA.ComponentTypeID == viewB.ComponentTypeID) res = 0;
+            else if (viewA.ComponentTypeID == MyComponentTypeIDs.Software) res = -1;
+            else res = 1;
+          }
+
+          if (res == 0) res = viewA.Name.localeCompare(viewB.Name);
+        }
+
+        if (res == 0) res = checkVal(a.MitigationState, b.MitigationState);
+        if (res == 0 && a.Targets && b.Targets) res = a.Targets.map(x => x.Name).join(', ').localeCompare(b.Targets.map(x => x.Name).join(', '));
+        if (res == 0 && a.MitigationProcess && b.MitigationProcess) res = checkVal(a.MitigationProcess.Number, b.MitigationProcess.Number);
+        if (res == 0) {
+          res = checkVal(b.Number, a.Number);
+        }
+        return res;
+      };
+
+      cmApp.sort((a, b) => mySort(a, b));
+      for (let i = 0; i < cmApp.length; i++) {
+        this.dataService.Project.MoveItemCountermeasures(cmOrig.indexOf(cmApp[i]), i);
+        cmApp[i].Number = (i+1).toString();
+      }
+      cmNotApp.sort((a, b) => mySort(a, b));
+      for (let i = 0; i < cmNotApp.length; i++) {
+        this.dataService.Project.MoveItemCountermeasures(cmOrig.indexOf(cmNotApp[i]), i);
+        cmNotApp[i].Number = (cmApp.length+i+1).toString();
+      }
+
+      this.Countermeasures = this.dataService.Project.GetCountermeasuresApplicable().filter(x => x.MappingState != MappingStates.Removed);
     }
   }
 }

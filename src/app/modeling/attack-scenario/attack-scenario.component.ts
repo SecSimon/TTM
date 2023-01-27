@@ -124,17 +124,20 @@ export class AttackScenarioComponent implements OnInit {
       const like = this.attackScenario.Likelihood;
       const sev = this.attackScenario.Severity;
       let risk = ThreatSeverities.Critical;
-      if (like == LowMediumHighNumber.High) {
-        if (sev == ThreatSeverities.Medium) risk = ThreatSeverities.High;
-        else if (sev == ThreatSeverities.Low) risk = ThreatSeverities.Medium;
-      }
-      else if (like == LowMediumHighNumber.Medium) {
-        risk = sev;
-      }
-      else if (like == LowMediumHighNumber.Low) {
-        risk = ThreatSeverities.Low;
-        if (sev == ThreatSeverities.High) risk = ThreatSeverities.Medium;
-        else if (sev == ThreatSeverities.Critical) risk = ThreatSeverities.High;
+      if (sev == ThreatSeverities.None) risk = ThreatSeverities.None;
+      else {
+        if (like == LowMediumHighNumber.High) {
+          if ([ThreatSeverities.High, ThreatSeverities.Medium].includes(sev)) risk = ThreatSeverities.High;
+          else if (sev == ThreatSeverities.Low) risk = ThreatSeverities.Medium;
+        }
+        else if (like == LowMediumHighNumber.Medium) {
+          risk = sev;
+        }
+        else if (like == LowMediumHighNumber.Low) {
+          risk = ThreatSeverities.Low;
+          if ([ThreatSeverities.Medium, ThreatSeverities.High].includes(sev)) risk = ThreatSeverities.Medium;
+          else if (sev == ThreatSeverities.Critical) risk = ThreatSeverities.High;
+        }
       }
 
       this.attackScenario.Risk = risk;

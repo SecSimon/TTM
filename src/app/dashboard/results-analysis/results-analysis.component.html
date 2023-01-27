@@ -135,6 +135,10 @@
               <mat-icon>format_list_numbered</mat-icon>
               <span>{{'pages.modeling.threattable.resetNumbers' | translate}}</span>
             </button> 
+            <button mat-menu-item [disabled]="!item" (click)="ResetReorderNumbers(item)">
+              <mat-icon>format_list_numbered</mat-icon>
+              <span>{{'pages.modeling.threattable.resetReorderNumbers' | translate}}</span>
+            </button> 
           </ng-template> 
         </mat-menu> 
     </as-split>

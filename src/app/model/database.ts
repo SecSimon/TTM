@@ -6,7 +6,7 @@ import { DataService } from '../util/data.service';
 import { ConfigFile } from './config-file';
 import { Countermeasure } from './mitigations';
 import { ProjectFile } from './project-file';
-import { AttackScenario } from './threat-model';
+import { AttackScenario, RuleGenerationTypes } from './threat-model';
 
 export interface IKeyValue {
   Key: string|any;
@@ -86,6 +86,7 @@ export enum DataReferenceTypes {
   DeleteDataFlow,
   RemoveInterfaceReference,
   DeleteAttackScenario,
+  RemoveElementFromAttackScenario,
 
   // Context References
   DeleteContextFlow,
@@ -288,7 +289,14 @@ export abstract class ViewElementBase extends DatabaseBase {
 
   public FindReferences(pf: ProjectFile, cf: ConfigFile): IDataReferences[] {
     let refs: IDataReferences[] = [];
-    pf?.GetAttackScenarios().filter(x => x.Target == this || x.Targets?.includes(this)).forEach(x => refs.push({ Type: DataReferenceTypes.DeleteAttackScenario, Param: x }));
+    pf?.GetAttackScenarios().filter(x => x.Target == this || x.Targets?.includes(this)).forEach(x => {
+      if (x.ThreatRule && x.ThreatRule['RuleGenerationType'] == 2 && x.Target == null) {
+        refs.push({ Type: DataReferenceTypes.RemoveElementFromAttackScenario, Param: x });
+      }
+      else {
+        refs.push({ Type: DataReferenceTypes.DeleteAttackScenario, Param: x });
+      }
+    });
     pf?.GetCountermeasures().filter(x => x.Targets.includes(this)).forEach(x => refs.push({ Type: DataReferenceTypes.RemoveElementFromCountermeasure, Param: x }));
     return refs;
   }
@@ -297,6 +305,7 @@ export abstract class ViewElementBase extends DatabaseBase {
     let refs = this.FindReferences(pf, cf);
     refs.forEach(x => {
       if (x.Type == DataReferenceTypes.DeleteAttackScenario) pf.DeleteAttackScenario(x.Param as AttackScenario);
+      else if (x.Type == DataReferenceTypes.RemoveElementFromAttackScenario) (x.Param as AttackScenario).Targets = (x.Param as AttackScenario).Targets.filter(y => y != this);
       else if (x.Type == DataReferenceTypes.RemoveElementFromCountermeasure) (x.Param as Countermeasure).RemoveTarget(this.ID);
     });
   }

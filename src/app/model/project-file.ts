@@ -478,6 +478,10 @@ export class ProjectFile extends DatabaseBase {
     });
   }
 
+  public MoveItemAttackScenario(prevIndex: number, currIndex: number) {
+    this.moveItemInMap<AttackScenario>('attackScenarioMap', prevIndex, currIndex);
+  }
+
   public GetCountermeasure(ID: string) {
     return this.countermeasureMap.get(ID);
   }

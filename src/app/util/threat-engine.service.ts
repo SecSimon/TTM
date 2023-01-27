@@ -75,6 +75,22 @@ export class ThreatEngineService {
 
         if (appliedElements.length > 0) {
           let existing = this.checkForExistingMapping(rule, appliedElements.length == 1 ? appliedElements[0] : null, appliedElements);
+          if (!existing) {
+            // special case: one element removed from targets
+            existing = this.checkForExistingMappingWithUpdatedElements(rule, appliedElements.length == 1 ? appliedElements[0] : null, appliedElements);
+            if (existing) {
+              existing.Targets = appliedElements;
+              existing.GetCountermeasures().forEach(cm => {
+                let newTargets = [];
+                cm.AttackScenarios.forEach(x => {
+                  x.Targets.forEach(y => {
+                    if (!newTargets.includes(y)) newTargets.push(y);
+                  })
+                });
+                cm.Targets = newTargets;
+              });
+            }
+          }
           if (existing) {
             existing.MappingState = MappingStates.Stable;
             mappingsBefore.splice(mappingsBefore.findIndex(x => x.ID == existing.ID), 1); // remove from list as this mapping still applies
@@ -378,7 +394,7 @@ export class ThreatEngineService {
   };
 
   /**
-   * Check if there is a mapping for the given rule and element
+   * Check if there is a mapping for the given rule and element(s)
    * @param rule matching rule
    * @param target matching element
    * @param targets matching elements
@@ -386,7 +402,7 @@ export class ThreatEngineService {
    */
   private checkForExistingMapping(rule: ThreatRule, target: ViewElementBase, targets: ViewElementBase[]): AttackScenario {
     return this.dataService.Project.GetAttackScenarios().find(x => {
-      let res = x.AttackVector?.ID == rule.AttackVector?.ID && x.ThreatRule?.ID == rule.ID && x.Target?.ID == target?.ID;
+      let res = x.ThreatRule?.ID == rule.ID && x.Target?.ID == target?.ID;
       // if (rule.RuleType == RuleTypes.DFD && rule.RuleGenerationType == RuleGenerationTypes.EachElement) {
       //   res = res && x.Targets.length == 3 && x.Targets[0].ID == (target as DataFlow).Sender.ID && x.Targets[1].ID == (target as DataFlow).ID && x.Targets[2].ID == (target as DataFlow).Receiver.ID;
       // }
@@ -395,6 +411,32 @@ export class ThreatEngineService {
         if (res) {
           for (let i = 0; i < targets.length; i++) {
             res = res && targets[i].ID == x.Targets[i].ID;
+          }
+        }
+      }
+      return res;
+    });
+  }
+
+  /**
+   * Check if there is a mapping for the given rule and element(s) -> check if target was removed or added
+   * @param rule matching rule
+   * @param target matching element
+   * @param targets matching elements
+   * @returns AttackScenario if a mapping for this rule on this element has already been created 
+   */
+  private checkForExistingMappingWithUpdatedElements(rule: ThreatRule, target: ViewElementBase, targets: ViewElementBase[]): AttackScenario {
+    return this.dataService.Project.GetAttackScenarios().find(x => {
+      let res = x.ThreatRule?.ID == rule.ID && x.Target?.ID == target?.ID;
+      if (targets && res) {
+        if (targets.length > x.Targets.length) {
+          for (let i = 0; i < x.Targets.length; i++) {
+            res = res && targets.includes(x.Targets[i]);
+          }
+        }
+        else {
+          for (let i = 0; i < targets.length; i++) {
+            res = res && x.Targets.includes(targets[i]);
           }
         }
       }

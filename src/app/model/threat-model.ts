@@ -1284,7 +1284,7 @@ export class AttackScenario extends DatabaseBase implements ITagable {
   public set Mapping(val: IAttackScenario) { this.Data['Mapping'] = val; }
   public get AttackVector(): AttackVector { return this.config.GetAttackVector(this.Mapping.Threat?.AttackVectorID); }
   public set AttackVector(val: AttackVector) { 
-    this.Mapping.Threat.AttackVectorID = val.ID;
+    this.Mapping.Threat.AttackVectorID = val?.ID;
     if (val) this.ThreatCategories = val.ThreatCategories;
   }
   public get ThreatCategories(): ThreatCategory[] { return this.config.GetThreatCategories().filter(x => this.Mapping.Threat.ThreatCategoryIDs?.includes(x.ID)); }
@@ -1372,7 +1372,7 @@ export class AttackScenario extends DatabaseBase implements ITagable {
   }
 
   public GetCountermeasures() {
-    return this.project.GetCountermeasures().filter(x => x.AttackScenarios.includes(this));
+    return this.project.GetCountermeasuresApplicable().filter(x => x.AttackScenarios.includes(this));
   }
 
   public GetDiagram() {
