@@ -10759,7 +10759,7 @@
         "stencilTypeID": "c7598413-4382-43e9-9904-fd9d877eb7a9",
         "DetailRestrictions": [
           {
-            "IsOR": true,
+            "IsOR": false,
             "Layer": 0,
             "RestType": 3,
             "PropertyRest": {
@@ -10772,6 +10772,23 @@
                 "ID": "IsEncrypted",
                 "ComparisonType": "==",
                 "Value": false
+              }
+            }
+          },
+          {
+            "IsOR": true,
+            "Layer": 0,
+            "RestType": 3,
+            "PropertyRest": {
+              "ID": "",
+              "ComparisonType": "==",
+              "Value": null
+            },
+            "PhyElementRest": {
+              "Property": {
+                "ID": "IsMultipleWritable",
+                "ComparisonType": "==",
+                "Value": true
               }
             }
           }
@@ -11080,13 +11097,23 @@
         "stencilTypeID": "80aa0465-21e0-41bd-b521-84a346c5f54b",
         "DetailRestrictions": [
           {
-            "IsOR": true,
+            "IsOR": false,
             "Layer": 0,
             "RestType": 1,
             "PropertyRest": {
               "ID": "IsEncrypted",
               "ComparisonType": "==",
               "Value": false
+            }
+          },
+          {
+            "IsOR": true,
+            "Layer": 0,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "IsMultipleWritable",
+              "ComparisonType": "==",
+              "Value": true
             }
           }
         ]
