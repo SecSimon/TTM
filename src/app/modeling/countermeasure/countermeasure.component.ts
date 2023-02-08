@@ -83,4 +83,8 @@ export class CountermeasureComponent implements OnInit {
   public GetMitigationStateName(ms: MitigationStates) {
     return MitigationStateUtil.ToString(ms);
   }
+
+  public NumberAlreadyExists() {
+    return this.dataService.Project.GetCountermeasures().some(x => x.Number == this.countermeasure.Number && x.ID != this.countermeasure.ID);
+  }
 }

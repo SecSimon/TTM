@@ -10,9 +10,12 @@
     </mat-select>
   </mat-form-field>
   <mat-icon color="warn" *ngIf="!attackScenario.RuleStillApplies" style="margin-left: 5px;" matTooltip="{{'pages.modeling.attackscenario.ruleNotApplyingAnymore' | translate}}">sync_problem</mat-icon>
-  <mat-form-field appearance="fill" style="width: 60px; float: right; margin-left: 10px;" class="disable">
+  <mat-form-field appearance="fill" style="width: 70px; float: right; margin-left: 10px;">
     <mat-label>{{ 'general.Number' | translate }}</mat-label>
-    <input matInput [(ngModel)]="attackScenario.Number" matTooltip="{{attackScenario.Number}}" matTooltipShowDelay="1000"/>
+    <input matInput type="number" min="0" [(ngModel)]="attackScenario.Number" required matTooltip="{{attackScenario.Number}}" matTooltipShowDelay="1000"/>
+    <mat-hint *ngIf="NumberAlreadyExists()" style="color: red;" class="alert alert-danger">
+      {{'messages.error.numberAlreadyExists' | translate}}
+    </mat-hint>
   </mat-form-field>
   <br/>
   <mat-form-field appearance="fill" class="property-form-field">

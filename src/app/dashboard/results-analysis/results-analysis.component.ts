@@ -91,9 +91,9 @@ export class ResultsAnalysisComponent implements AfterViewInit {
     let myFilter = (data: AttackScenario, filter: string) => {
       let search = filter.trim().toLowerCase();
       let res = data.Name.toLowerCase().indexOf(search);
-      if (res == -1) res = data.AttackVector.Name.toLowerCase().indexOf(search);
-      if (res == -1) res = this.GetTargets(data).toLowerCase().indexOf(search); 
-      return res != -1;
+      if (res == -1) res = data.AttackVector?.Name.toLowerCase().indexOf(search);
+      if (res == -1) res = this.GetTargets(data)?.toLowerCase().indexOf(search); 
+      return (res != null && res != -1);
     };
 
     this.dataSourceThreats = new MatTableDataSource(val.filter(x => ![ThreatStates.NotApplicable, ThreatStates.Duplicate].includes(x.ThreatState)));
@@ -129,9 +129,9 @@ export class ResultsAnalysisComponent implements AfterViewInit {
     let myFilter = (data: Countermeasure, filter: string) => {
       let search = filter.trim().toLowerCase();
       let res = data.Name.toLowerCase().indexOf(search);
-      if (res == -1) res = data.Control.Name.toLowerCase().indexOf(search);
-      if (res == -1) res = this.GetTargets(data).toLowerCase().indexOf(search);
-      return res != -1;
+      if (res == -1) res = data.Control?.Name.toLowerCase().indexOf(search);
+      if (res == -1) res = this.GetTargets(data)?.toLowerCase().indexOf(search);
+      return (res != null && res != -1);
     };
 
     this.dataSourceCountermeasures = new MatTableDataSource(val.filter(x => ![MitigationStates.NotApplicable, MitigationStates.Rejected, MitigationStates.Duplicate].includes(x.MitigationState)));

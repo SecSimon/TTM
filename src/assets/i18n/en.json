@@ -436,6 +436,7 @@
   "messages.error.githubpush": "Error during pushing data to GitHub",
   "messages.error.githubSHAmismatch": "Error during pushing data to GitHub: remote file is newer than local file",
   "messages.error.newerFileVersion": "Error during loading the file, as it was saved with a higher TTModeler version: {0}",
+  "messages.error.numberAlreadyExists": "Number already exists",
   "messages.erorr.updateFailedConfig": "Errror during updating the configuration file from version {0} to {1}",
   "messages.erorr.updateFailedProject": "Errror during updating the project file from version {0} to {1}",
   "messages.info.exchangeConfig": "Configuration exchange successful",

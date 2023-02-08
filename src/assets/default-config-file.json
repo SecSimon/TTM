@@ -2402,7 +2402,7 @@
     },
     {
       "ID": "02b94aae-efea-451e-a017-81be68db03d7",
-      "Name": "Logging",
+      "Name": "Log Management",
       "Description": "",
       "ComponentTypeID": 1,
       "IsActive": true,
@@ -2515,6 +2515,14 @@
           "DisplayName": "Warns User of Full Log File",
           "ID": "95b793b3-b68f-4533-9dc0-4e7d414effe3",
           "Tooltip": "Are users notified when the log file reaches its maximum size?",
+          "HasGetter": false,
+          "Editable": true,
+          "Type": "Check Box"
+        },
+        {
+          "DisplayName": "Has Time Synchronization",
+          "ID": "8643278b-1ab3-4359-9ab9-f3911bf336e6",
+          "Tooltip": "Does the system provide the ability to synchronize the system time?",
           "HasGetter": false,
           "Editable": true,
           "Type": "Check Box"
@@ -9372,6 +9380,29 @@
       "componentTypeID": "cdcdd88c-7ec2-4b18-8d72-bcb0e402ca5d",
       "Question": "If updates are not applied automatically: is there a process for notifying customers about a new update?",
       "propertyID": "7da73f3c-b3f6-4d35-ae19-c60ed655b14c"
+    },
+    {
+      "ID": "a5bb61b3-b5e1-4d10-a2ca-0bff5aed145e",
+      "Name": "Missing time synchronization",
+      "Description": "",
+      "ChangesPerOption": {
+        "general.Yes": {
+          "Active": true,
+          "Value": true
+        },
+        "general.No": {
+          "Active": true,
+          "Value": false
+        },
+        "general.N/A": {
+          "Active": true,
+          "Value": "undefined"
+        }
+      },
+      "OptionType": 1,
+      "componentTypeID": "02b94aae-efea-451e-a017-81be68db03d7",
+      "Question": "Does the system provide the ability to synchronize the system time?",
+      "propertyID": "8643278b-1ab3-4359-9ab9-f3911bf336e6"
     }
   ],
   "threatRuleGroups": [
@@ -9584,7 +9615,8 @@
         "1a54b8f3-ecd6-4704-9f6c-e05b7e948548",
         "105910c0-a5b5-4496-a2f7-99f11422e4b0",
         "8f8d0183-5a29-451a-bb84-df061c0728d4",
-        "b274e8f6-5a0f-4efc-bc4e-40210c2035ad"
+        "b274e8f6-5a0f-4efc-bc4e-40210c2035ad",
+        "ea3713af-49ae-4069-8353-78141725af6f"
       ]
     },
     {
@@ -17504,6 +17536,37 @@
         "DetailRestrictions": []
       },
       "Severity": 2
+    },
+    {
+      "ID": "ea3713af-49ae-4069-8353-78141725af6f",
+      "Name": "Missing time synchronization",
+      "Description": "A synchronized system time is necessary to correctly create and subsequently analyze logs.",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "f19e41bd-9fd9-4046-a195-28d441207fa0",
+          "c17cbe5c-3210-42fc-be1e-05f1f915865b"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 3,
+      "ComponentRestriction": {
+        "componentTypeID": "02b94aae-efea-451e-a017-81be68db03d7",
+        "DetailRestrictions": [
+          {
+            "IsOR": true,
+            "Layer": 0,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "8643278b-1ab3-4359-9ab9-f3911bf336e6",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          }
+        ]
+      },
+      "Severity": 2
     }
   ],
   "controls": [
@@ -18045,6 +18108,26 @@
           ]
         }
       ]
+    },
+    {
+      "ID": "bb8d07ff-b13e-437c-9483-bee76a98bb84",
+      "Name": "Anti-rollback protection",
+      "Description": "The goal of anti-rollback protection is to prevent downgrading of the device to an older version of its software, which has been deprecated due to security concerns.\n\nhttps://developer.trustedfirmware.org/w/tf_m/design/trusted_boot/rollback_protection/",
+      "mitigatedAttackVectorIDs": [],
+      "mitigatedThreatRuleIDs": [
+        "c6535534-7656-4819-93fe-19d9a78a9390"
+      ],
+      "MitigationTips": [
+        {
+          "Name": "Security counter",
+          "Description": "Implement an additional security counter, independently from the firmware version, to ensure anti-rollback protection. This allows downgrades to a version without bugs, for example, but prevents downgrades to vulnerable ones.  ",
+          "LifeCycles": [
+            "C",
+            "I",
+            "U"
+          ]
+        }
+      ]
     }
   ],
   "controlGroups": [
@@ -18079,7 +18162,8 @@
       "controlGroupIDs": [],
       "controlIDs": [
         "c943341c-b65c-4801-8d8e-d83d047ac0b7",
-        "9ed45808-7ffa-412a-ab29-84c0e738c8da"
+        "9ed45808-7ffa-412a-ab29-84c0e738c8da",
+        "bb8d07ff-b13e-437c-9483-bee76a98bb84"
       ]
     },
     {

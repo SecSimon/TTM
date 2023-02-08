@@ -234,7 +234,7 @@ export class ReportingComponent implements OnInit {
 
         if (as.length > 0) {
           this.createParagraph('');
-          this.createBoldParagraph(this.translate.instant('general.AttackScenarios'))
+          this.createSubSubSubHeading(this.translate.instant('general.AttackScenarios'))
           as.forEach(scenario => {
             this.createBoldParagraph(scenario.GetLongName());
             this.createParagraph(this.translate.instant('properties.Status') + ': ' + this.translate.instant(ThreatStateUtil.ToString(scenario.ThreatState)));
@@ -268,7 +268,7 @@ export class ReportingComponent implements OnInit {
         const cms = this.Project.GetCountermeasuresApplicable().filter(x => x.ViewID == viewID);
         if (cms.length > 0) {
           this.createParagraph('');
-          this.createBoldParagraph(this.translate.instant('general.Countermeasures'))
+          this.createSubSubSubHeading(this.translate.instant('general.Countermeasures'))
           cms.forEach(cm => {
             this.createBoldParagraph(cm.GetLongName());
             if (cm.MitigationState) this.createParagraph(this.translate.instant('properties.Status') + ': ' + this.translate.instant(MitigationStateUtil.ToString(cm.MitigationState)));
@@ -678,6 +678,22 @@ export class ReportingComponent implements OnInit {
 
   private createHtmlSubSubHeading(text: string): HTMLElement {
     return this.createHtmlElement('h4', text);
+  }
+
+  private createSubSubSubHeading(text: string) {
+    this.docxBuffer.push(this.createDocxSubSubSubHeading(text));
+    this.htmlBuffer.push(this.createHtmlSubSubSubHeading(text));
+  }
+
+  private createDocxSubSubSubHeading(text: string): Paragraph {
+    return new Paragraph({
+      text: text,
+      heading: HeadingLevel.HEADING_4
+    });
+  }
+
+  private createHtmlSubSubSubHeading(text: string): HTMLElement {
+    return this.createHtmlElement('h5', text);
   }
 
   private createParagraph(text: string) {

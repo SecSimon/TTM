@@ -113,7 +113,8 @@ export enum ExportAttackScenarioProperties {
   RiskReason = 'RiskReason',
   RiskStrategy = 'RiskStrategy',
   RiskStrategyReason = 'RiskStrategyReason',
-  Countermeasures = 'Countermeasures'
+  Countermeasures = 'Countermeasures',
+  MyTags = 'MyTags'
 }
 
 export class ExportAttackScenarioPropertyUtil {
@@ -122,7 +123,8 @@ export class ExportAttackScenarioPropertyUtil {
       ExportAttackScenarioProperties.Diagram, ExportAttackScenarioProperties.ThreatCategories,
       ExportAttackScenarioProperties.SystemThreats, ExportAttackScenarioProperties.ScoreCVSS, ExportAttackScenarioProperties.ScoreOwaspRR, ExportAttackScenarioProperties.Severity,
       ExportAttackScenarioProperties.SeverityReason, ExportAttackScenarioProperties.Likelihood, ExportAttackScenarioProperties.LikelihoodReason, ExportAttackScenarioProperties.Risk, 
-      ExportAttackScenarioProperties.RiskReason, ExportAttackScenarioProperties.RiskStrategy, ExportAttackScenarioProperties.RiskStrategyReason, ExportAttackScenarioProperties.Countermeasures];
+      ExportAttackScenarioProperties.RiskReason, ExportAttackScenarioProperties.RiskStrategy, ExportAttackScenarioProperties.RiskStrategyReason, ExportAttackScenarioProperties.Countermeasures,
+      ExportAttackScenarioProperties.MyTags];
   }
 
   public static GetValues(key: string, entry, translate: TranslateService): string[] {
@@ -133,7 +135,7 @@ export class ExportAttackScenarioPropertyUtil {
       return [''];
     };
     if (this.GetKeys().includes(key as ExportAttackScenarioProperties)) {
-      if ([ExportAttackScenarioProperties.Targets, ExportAttackScenarioProperties.ThreatCategories, ExportAttackScenarioProperties.SystemThreats].includes(key as ExportAttackScenarioProperties)) {
+      if ([ExportAttackScenarioProperties.Targets, ExportAttackScenarioProperties.ThreatCategories, ExportAttackScenarioProperties.SystemThreats, ExportAttackScenarioProperties.MyTags].includes(key as ExportAttackScenarioProperties)) {
         return ExportUtil.wrap(translate, entry[key]?.map(x => ExportCommonPropertyUtil.GetValue('Name', x)).join('; '));
       }
       else if ([ExportAttackScenarioProperties.AttackVector].includes(key as ExportAttackScenarioProperties)) {
@@ -181,6 +183,7 @@ export class ExportAttackScenarioPropertyUtil {
       case ExportAttackScenarioProperties.RiskStrategy: return "properties.RiskStrategy";
       case ExportAttackScenarioProperties.RiskStrategyReason: return "properties.RiskStrategyReason";
       case ExportAttackScenarioProperties.Countermeasures: return "general.Countermeasures";
+      case ExportAttackScenarioProperties.MyTags: return "general.Tags";
       default:
         console.error('Missing Prop in ExportAttackScenarioPropertyUtil.ToString()')
         return 'Undefined';
@@ -198,14 +201,15 @@ export enum ExportCountermeasureProperties {
   MaxSeverity = 'MaxSeverity',
   MaxRisk = 'MaxRisk',
   AttackVectors = 'AttackVectors',
-  MitigationProcess = 'MitigationProcess'
+  MitigationProcess = 'MitigationProcess',
+  MyTags = 'MyTags'
 }
 
 export class ExportCountermeasurePropertyUtil {
   public static GetKeys() {
     return [ExportCountermeasureProperties.Number, ExportCountermeasureProperties.MitigationProcess, ExportCountermeasureProperties.Control, ExportCountermeasureProperties.Targets, 
       ExportCountermeasureProperties.Diagram, ExportCountermeasureProperties.AttackScenarios, ExportCountermeasureProperties.MaxSeverity, ExportCountermeasureProperties.MaxRisk,
-      ExportCountermeasureProperties.AttackVectors, ExportCountermeasureProperties.MitigationProcess];
+      ExportCountermeasureProperties.AttackVectors, ExportCountermeasureProperties.MitigationProcess, ExportCountermeasureProperties.MyTags];
   }
 
   public static GetValues(key: string, entry, translate: TranslateService): string[] {
@@ -215,7 +219,7 @@ export class ExportCountermeasurePropertyUtil {
       return [''];
     };
     if (this.GetKeys().includes(key as ExportCountermeasureProperties)) {
-      if ([ExportCountermeasureProperties.Targets, ExportCountermeasureProperties.AttackVectors].includes(key as ExportCountermeasureProperties)) {
+      if ([ExportCountermeasureProperties.Targets, ExportCountermeasureProperties.AttackVectors, ExportCountermeasureProperties.MyTags].includes(key as ExportCountermeasureProperties)) {
         return ExportUtil.wrap(translate, entry[key]?.map(x => ExportCommonPropertyUtil.GetValue('Name', x)).join('; '));
       }
       else if ([ExportCountermeasureProperties.AttackScenarios].includes(key as ExportCountermeasureProperties)) {
@@ -251,6 +255,7 @@ export class ExportCountermeasurePropertyUtil {
       case ExportCountermeasureProperties.MaxRisk: return "exportprops.MaxRisk";
       case ExportCountermeasureProperties.AttackVectors: return "general.AttackVectors";
       case ExportCountermeasureProperties.MitigationProcess: return "general.MitigationProcess";
+      case ExportCountermeasureProperties.MyTags: return "general.Tags";
       default:
         console.error('Missing Prop in ExportCountermeasurePropertyUtil.ToString()')
         return 'Undefined';

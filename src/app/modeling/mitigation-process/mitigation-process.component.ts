@@ -1,9 +1,18 @@
-import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, EventEmitter, Input, OnInit, Optional, Output } from '@angular/core';
+import { FormControl, FormGroupDirective, NgForm } from '@angular/forms';
+import { ErrorStateMatcher } from '@angular/material/core';
 import { Countermeasure, MitigationProcess, MitigationProcessStates, MitigationProcessStateUtil, MitigationStates } from '../../model/mitigations';
 import { DataService } from '../../util/data.service';
 import { DialogService } from '../../util/dialog.service';
 import { ThemeService } from '../../util/theme.service';
+
+/** Error when invalid control is dirty, touched, or submitted. */
+export class MyErrorStateMatcher implements ErrorStateMatcher {
+  isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
+    const isSubmitted = form && form.submitted;
+    return !!(control && control.invalid && (control.dirty || control.touched || isSubmitted));
+  }
+}
 
 @Component({
   selector: 'app-mitigation-process',
@@ -79,5 +88,9 @@ export class MitigationProcessComponent implements OnInit {
 
   public GetMitigationProcessStateName(ms: MitigationProcessStates) {
     return MitigationProcessStateUtil.ToString(ms);
+  }
+
+  public NumberAlreadyExists() {
+    return this.dataService.Project.GetMitigationProcesses().some(x => x.Number == this.mitigationProcess.Number && x.ID != this.mitigationProcess.ID);
   }
 }

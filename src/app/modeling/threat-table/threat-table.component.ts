@@ -278,7 +278,7 @@ export class ThreatTableComponent implements OnInit {
 
   public GetCountermeasures(entry: AttackScenario) {
     if (this.countermeasureCounts[entry.ID] == null) {
-      const count = this.dataService.Project.GetCountermeasures().filter(x => x.AttackScenarios.includes(entry)).length;
+      const count = this.dataService.Project.GetCountermeasuresApplicable().filter(x => x.AttackScenarios.includes(entry)).length;
       if (count == 0) this.countermeasureCounts[entry.ID] = this.translate.instant('pages.modeling.threattable.noCountermeasure');
       else this.countermeasureCounts[entry.ID] = count.toString() + ' ' + this.translate.instant('pages.modeling.threattable.countermeasures');
     } 

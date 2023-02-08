@@ -256,4 +256,8 @@ export class AttackScenarioComponent implements OnInit {
   public EditAttackScenario(scenario: AttackScenario) {
     this.dialog.OpenAttackScenarioDialog(scenario, false, [this.attackScenario, ...this.attackScenario.LinkedScenarios]);
   }
+
+  public NumberAlreadyExists() {
+    return this.dataService.Project.GetAttackScenarios().some(x => x.Number == this.attackScenario.Number && x.ID != this.attackScenario.ID);
+  }
 }

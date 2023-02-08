@@ -1380,7 +1380,7 @@ export class AttackScenario extends DatabaseBase implements ITagable {
   }
 
   public GetLongName(): string {
-    return 'AS' + this.Number + ') ' + this.Name + ' (' + (this.Target ? this.Target.Name : this.Targets?.map(x => x.Name).join(', ')) + ')';
+    return 'AS' + this.Number + ') ' + this.Name + ' (' + (this.Target ? this.Target.GetProperty('Name') : this.Targets?.map(x => x.GetProperty('Name')).join(', ')) + ')';
   }
 
   public FindReferences(pf: ProjectFile, cf: ConfigFile): IDataReferences[] {
