@@ -436,6 +436,7 @@
   "messages.error.githubpush": "Fehler beim Upload von Daten auf GitHub",
   "messages.error.githubSHAmismatch": "Fehler beim Upload von Daten auf GitHub: Online-Datei ist neuer als die lokale Datei",
   "messages.error.newerFileVersion": "Fehler beim Laden der Datei, da sie mit einer höheren TTModeler-Version gespeichert wurde: {0}",
+  "messages.error.numberAlreadyExists": "Nummer existiert bereits",
   "messages.erorr.updateFailedConfig": "Fehler beim Updaten der Konfiguration von Version {0} zu {1}",
   "messages.erorr.updateFailedProject": "Fehler beim Updaten des Projekts von Version {0} zu {1}",
   "messages.info.exchangeConfig": "Austausch der Konfiguration erfolgreich",
