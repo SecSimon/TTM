@@ -19,7 +19,7 @@ import { NodeTypes } from '../modeling/modeling.component';
 import { ResizedEvent } from 'angular-resize-event';
 import { DeviceAssetsComponent } from '../modeling/device-assets/device-assets.component';
 import { StackComponent } from '../modeling/stack/stack.component';
-import { AssetGroup, LowMediumHighNumberUtil } from '../model/assets';
+import { AssetGroup, LowMediumHighNumberUtil, MyData } from '../model/assets';
 import { ImpactCategoryUtil, RiskStrategyUtil, ThreatSeverityUtil, ThreatStateUtil } from '../model/threat-model';
 import { MitigationProcessStateUtil, MitigationStateUtil } from '../model/mitigations';
 import { ResultsChartComponent } from '../dashboard/results-chart/results-chart.component';
@@ -119,8 +119,21 @@ export class ReportingComponent implements OnInit {
       this.createParagraph(StringExtension.Format(this.translate.instant('report.SUC'), this.Project.GetDevices().map(x => x.Name).join(', '), this.Project.GetMobileApps().map(x => x.Name).join(', ')));
       this.createParagraph(StringExtension.Format(this.translate.instant('report.UseCaseUC'), this.Project.GetDFDiagrams().map(x => x.Name).join(', ')));
       this.createParagraph('');
+      if (this.Project.Image) {
+        const getMeta = async (url) => {
+          const img = new Image();
+          img.src = url;
+          await img.decode();  
+          return img
+        };
+        
+        await getMeta(this.Project.Image).then(img => {
+          this.createImage(this.Project.Image, img.naturalWidth, img.naturalHeight);
+          this.createParagraph('');
+        });
+      }
       this.createParagraph(this.translate.instant('report.IdentifiedSystemThreats') + ': ');
-      this.createUL(this.Project.GetSystemThreats().map(x => x.Name));
+      this.createUL(this.Project.GetSystemThreats().map(x => x.GetLongName()));
 
       this.createParagraph('');
       this.createParagraph(StringExtension.Format(this.translate.instant('report.scenariosAndMeasures'), this.Project.GetAttackScenariosApplicable().length.toString(), this.Project.GetCountermeasuresApplicable().length.toString()));
@@ -189,10 +202,10 @@ export class ReportingComponent implements OnInit {
             return 1;
           });
           if (scens.length > 0) {
-            const risks = scens.map(x => x.Risk).filter(x => x == x);
+            const risks = scens.map(x => x.Risk).filter(x => x == x && x != null);
             const maxRisk = Math.max(...risks.map(x => Number(x)));
             const risk = this.translate.instant(maxRisk > 0 ? ThreatSeverityUtil.ToString(maxRisk) : 'report.UnknownRisk');
-            this.createParagraph(threat.Name + ' - ' + this.translate.instant('properties.Risk') + ': ' + risk);
+            this.createParagraph(threat.GetLongName() + ' - ' + this.translate.instant('properties.Risk') + ': ' + risk);
             const items = [];
             scens.forEach(s => {
               const descs = [];
@@ -205,7 +218,7 @@ export class ReportingComponent implements OnInit {
             this.createUL(items);
           }
           else {
-            this.createParagraph(threat.Name + ' - ' + this.translate.instant('report.UnknownRisk'));
+            this.createParagraph(threat.GetLongName() + ' - ' + this.translate.instant('report.UnknownRisk'));
           }
           
           this.createParagraph('');
@@ -242,6 +255,7 @@ export class ReportingComponent implements OnInit {
             if (scenario.SystemThreats?.length > 0) this.createParagraph(this.translate.instant('general.SystemThreats') + ': ' + scenario.SystemThreats.map(x => x.Name).join(', '));
             if (scenario.AttackVector?.AttackTechnique?.CAPECID) this.createLink(this.translate.instant('properties.CAPECID') + ': ' + scenario.AttackVector.AttackTechnique.CAPECID.toString(), CapecEntryComponent.GetURL(scenario.AttackVector.AttackTechnique.CAPECID));
             if (scenario.AttackVector?.Weakness?.CWEID) this.createLink(this.translate.instant('properties.CWEID') + ': ' + scenario.AttackVector.Weakness.CWEID.toString(), CweEntryComponent.GetURL(scenario.AttackVector.Weakness.CWEID));
+            if (scenario.GetAffectedAssetObjects().length > 0) this.createParagraph(this.translate.instant('report.AffectedAssets') + ': ' + scenario.GetAffectedAssetObjects().map(x => x.GetLongName()).join(', '));
             if (scenario.ScoreCVSS && scenario.ScoreCVSS.Score) {
               this.createParagraph(this.translate.instant('report.CvssScore') + ': ' + scenario.ScoreCVSS.Score.toFixed(1));
               this.createLink(this.translate.instant('report.CvssVector') + ': ' + CvssEntryComponent.GetVector(scenario.ScoreCVSS), CvssEntryComponent.GetURL(scenario.ScoreCVSS));
@@ -285,14 +299,14 @@ export class ReportingComponent implements OnInit {
       this.createHeading(this.translate.instant('report.DetailedResults'));
       // All steps
       if (this.ShowFirstTwoSteps) {
-        this.createSubHeading(this.ttmService.Stages[0].steps[0].name);
+        this.createSubHeading(this.ttmService.Stages[0].steps[0].name.replace('[Optional]', ''));
         this.Project.GetCharScope().StepProperties.forEach(prop => {
           if (this.Project.GetCharScope()[prop].length > 0) {
             this.createSubSubHeading(this.translate.instant('pages.modeling.charscope.' + prop));
             this.createUL(this.Project.GetCharScope()[prop]);
           }
         });
-        this.createSubHeading(this.ttmService.Stages[0].steps[1].name);
+        this.createSubHeading(this.ttmService.Stages[0].steps[1].name.replace('[Optional]', ''));
         this.Project.GetObjImpact().StepProperties.forEach(prop => {
           if (this.Project.GetObjImpact()[prop].length > 0) {
             this.createSubSubHeading(this.translate.instant('pages.modeling.objimpact.' + prop));
@@ -301,7 +315,7 @@ export class ReportingComponent implements OnInit {
         });
       }
 
-      this.createSubHeading(this.ttmService.Stages[0].steps[2].name);
+      this.createSubHeading(this.ttmService.Stages[0].steps[2].name.replace('[Optional]', ''));
       this.createSubSubHeading(this.translate.instant('report.SysInterationDia'));
       this.createDiagram(this.Project.GetSysContext().ContextDiagram);
       printSenariosAndMeasures(this.Project.GetSysContext().ContextDiagram.ID);
@@ -311,11 +325,14 @@ export class ReportingComponent implements OnInit {
 
       // asset identification
       this.createSubHeading(this.ttmService.Stages[0].steps[3].name);
+      this.createParagraph(this.translate.instant('report.identifiedAssets'));
       let assets: [string, AssetGroup][] = [['Assets', this.Project.GetProjectAssetGroup()]];
       this.Project.GetDevices().forEach(x => assets.push([x.Name, x.AssetGroup]));
       this.Project.GetMobileApps().forEach(x => assets.push([x.Name, x.AssetGroup]));
       assets = assets.filter(x => x[1] != null);
       const assetsCount = assets.filter(x => x[1].IsActive).length;
+      const assetTab = this.locStorage.Get(LocStorageKeys.PAGE_MODELING_ASSETS_TAB_INDEX);
+      this.locStorage.Set(LocStorageKeys.PAGE_MODELING_ASSETS_TAB_INDEX, '0');
       for (let i = 0; i < assets.length; i++) {
         if (assets[i][1].IsActive) {
           if (assetsCount > 1) this.createSubSubHeading(assets[i][0]);
@@ -340,13 +357,29 @@ export class ReportingComponent implements OnInit {
           await res.then((img) => {
             this.createImage(img[0], img[1], img[2]);
           });
+          const newAssets = [...assets[i][1].GetGroupsFlat().filter(x => x.IsNewAsset), ...assets[i][1].GetMyDataFlat().filter(x => x.IsNewAsset)];
+          newAssets.sort((a, b) => {
+            return Number(a.Number) > Number(b.Number) ? 1 : (a.Number == b.Name ? 0 : -1);
+          });
+          this.createUL(newAssets.map(x => {
+            let res = x.GetLongName();
+            if (x instanceof MyData) {
+              res += ' (' + this.translate.instant('properties.Sensitivity') + ': ' + this.translate.instant(LowMediumHighNumberUtil.ToString(x.Sensitivity)) + ')';
+            }
+            if (x.ImpactCats?.length > 0) {
+              res += ' (' + this.translate.instant('properties.ImpactCategories') + ': ' + x.ImpactCats.map(y => this.translate.instant(ImpactCategoryUtil.ToString(y))).join(', ') + ')';
+            }
+            return res;
+          }));
         }
       }
+      this.locStorage.Set(LocStorageKeys.PAGE_MODELING_ASSETS_TAB_INDEX, assetTab);
 
       // threat sources
       this.createSubHeading(this.translate.instant('general.ThreatSources'));
+      this.createParagraph(this.translate.instant('report.IdentifiedThreatSources') + ':');
       this.Project.GetThreatSources().Sources.forEach(src => {
-        this.createBoldParagraph(src.Name);
+        this.createBoldParagraph(src.GetLongName());
         if (src.Motive.length > 0) {
           this.createParagraph(this.translate.instant('properties.Motive') + ':');
           this.createUL(src.Motive);
@@ -358,7 +391,7 @@ export class ReportingComponent implements OnInit {
       // system threats
       this.createSubHeading(this.translate.instant('general.SystemThreats'));
       this.Project.GetSystemThreats().forEach(threat => {
-        this.createBoldParagraph(threat.Name);
+        this.createBoldParagraph(threat.GetLongName());
         if (threat.ThreatCategory) this.createParagraph(this.translate.instant('general.ThreatCategory') + ': ' + threat.ThreatCategory.Name);
         if (threat.Description?.length > 0) this.createParagraph(this.translate.instant('properties.consequencesImpact') + ': ' + threat.Description);
         if (threat.AffectedAssetObjects?.length > 0) this.createParagraph(this.translate.instant('report.AffectedAssets') + ': ' + threat.AffectedAssetObjects.map(x => x.Name).join(', '));

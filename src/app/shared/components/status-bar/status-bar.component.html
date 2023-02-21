@@ -10,7 +10,10 @@
     <button mat-icon-button class="msgBtn" style="margin-left: 20px;"  (click)="dialogService.OpenModelInfoDialog()">
       <mat-icon class="iconBtn">source</mat-icon>  <span [style.color]="dataService.Project?.FileChanged ? 'yellow' : 'white'">{{dataService.Project?.Name}}</span>
     </button>
-    <button mat-icon-button tourAnchor="save-file" class="msgBtn" style="margin-left: 5px;" matTooltip="{{'general.Save' | translate}}" matTooltipShowDelay="1000" (click)="dataService.OpenSaveProjectDialog('')">
+    <button mat-icon-button class="msgBtn" style="margin-left: 5px;" matTooltip="{{'status-bar.ConsistencyCheck' | translate}}" matTooltipShowDelay="1000" (click)="dataService.ManualConsistencyCheck()">
+      <mat-icon class="iconBtn">flaky</mat-icon> 
+    </button>
+    <button mat-icon-button tourAnchor="save-file" class="msgBtn" matTooltip="{{'general.Save' | translate}}" matTooltipShowDelay="1000" (click)="dataService.OpenSaveProjectDialog('')">
       <mat-icon class="iconBtn">save</mat-icon> 
     </button>
     <button mat-icon-button class="msgBtn" [disabled]="!dataService.CanSaveProject" matTooltip="{{'general.SaveAs' | translate}}" matTooltipShowDelay="1000" (click)="dataService.OpenSaveProjectDialog('', true)">
@@ -24,7 +27,10 @@
     <button mat-icon-button class="msgBtn" style="margin-left: 20px;">
       <mat-icon class="iconBtn">source</mat-icon>  <span [style.color]="dataService.Config?.FileChanged ? 'yellow' : 'white'">{{dataService.SelectedGHConfig ? dataService.SelectedGHConfig.name : dataService.Config?.Name}}</span>
     </button>
-    <button mat-icon-button tourAnchor="save-file" class="msgBtn" style="margin-left: 5px;" [disabled]="!dataService.CanSaveConfig" matTooltip="{{'general.Save' | translate}}" matTooltipShowDelay="1000" (click)="dataService.OpenSaveConfigDialog('')">
+    <button mat-icon-button class="msgBtn" style="margin-left: 5px;" matTooltip="{{'status-bar.ConsistencyCheck' | translate}}" matTooltipShowDelay="1000" (click)="dataService.ManualConsistencyCheck()">
+      <mat-icon class="iconBtn">flaky</mat-icon> 
+    </button>
+    <button mat-icon-button tourAnchor="save-file" class="msgBtn" [disabled]="!dataService.CanSaveConfig" matTooltip="{{'general.Save' | translate}}" matTooltipShowDelay="1000" (click)="dataService.OpenSaveConfigDialog('')">
       <mat-icon class="iconBtn">save</mat-icon> 
     </button>
     <button mat-icon-button class="msgBtn" [disabled]="!dataService.CanSaveConfig" matTooltip="{{'general.SaveAs' | translate}}" matTooltipShowDelay="1000" (click)="dataService.OpenSaveConfigDialog('', true)">

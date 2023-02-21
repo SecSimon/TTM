@@ -194,49 +194,48 @@ export class StencilsComponent extends NavTreeBase implements OnInit {
     return res;
   }
 
-  public AutoCalcLayout() {
-    if (this.selectedTypeTemplate && this.selectedTypeTemplate.StencilTypes?.length > 0) {
-      let stencils = this.selectedTypeTemplate.StencilTypes;
-      let layouts = this.selectedTypeTemplate.Layout;
-      let entities = stencils.filter(x => x.ElementTypeID != ElementTypeIDs.PhyTrustArea && x.ElementTypeID != ElementTypeIDs.LogTrustArea);
+  public AddTemplateDFD() {
+    const temp = this.dataService.Config.CreateStencilTypeTemplate();
+    temp.Name = this.selectedType.Name + ' Module';
+    temp.CanEditInWhichDiagram = false;
+    temp.ListInHWDiagram = false;
+    temp.ListInUCDiagram = true;
+    temp.ListInElementTypeIDs = [];
+    const stencils = [];
+    stencils.push(this.dataService.Config.GetStencilTypes().find(x => x.ElementTypeID == ElementTypeIDs.LogProcessing && x.IsDefault == true));
+    stencils.push(this.dataService.Config.GetStencilTypes().find(x => x.ElementTypeID == ElementTypeIDs.LogDataStore && x.IsDefault == true));
+    stencils.push(this.dataService.Config.GetStencilTypes().find(x => x.ElementTypeID == ElementTypeIDs.PhyTrustArea && x.IsDefault == true));
+    temp.StencilTypes = stencils;
+    temp.Layout[0].name = this.selectedType.Name + ' Handler';
+    temp.Layout[0].x = 20;
+    temp.Layout[0].y = 40;
+    temp.Layout[1].name = this.selectedType.Name + ' Data Storage';
+    temp.Layout[1].x = 20;
+    temp.Layout[1].y = 200;
+    temp.Layout[2].name = this.selectedType.Name + ' Module';
+    temp.Layout[2].x = temp.Layout[2].y = 0;
+    temp.Layout[2].width = 180;
+    temp.Layout[2].height= 290;
+    this.selectedType.TemplateDFD = temp;
+    this.createNodes();
+    const type = this.selectedType;
+    setTimeout(() => {
+      this.selectedNode = this.FindNodeOfObject(type);
+    }, 100);
+  }
 
-      let calcCols = (cnt): number => {
-        if (cnt <= 4) return 2;
-        if (cnt <= 9) return 3;
-        return 4;
-      };
-      let calcRows = (cnt, cols): number => {
-        return Math.ceil(cnt/cols);
-      };
-
-      const marginX = 20, marginY = 40;
-      const offset = 20;
-      const wid = 140;
-      const hei = 75;
-      let cols = calcCols(entities.length);
-      let rows = calcRows(entities.length, cols);
-      for (let i = 0, row = 0, col = 0; i < stencils.length; i++) {
-        if (stencils[i].ElementTypeID != ElementTypeIDs.PhyTrustArea && stencils[i].ElementTypeID != ElementTypeIDs.LogTrustArea) {
-          layouts[i].x = marginX + col * (wid+offset);
-          layouts[i].y = marginY + row * (hei+offset);
-          col++;
-          if (col == cols) {
-            col = 0;
-            row++;
-          }
-        }
-        else {
-          // TA
-          layouts[i].x = layouts[i].y = 0;
-          layouts[i].width = 2 * marginX + cols * wid + (cols-1) * offset;
-          layouts[i].height = 2 * marginY + rows * hei + (rows-1) * offset;
-        }
+  public DeleteTemplate(template) {
+    this.dialog.OpenDeleteObjectDialog(template).subscribe(res => {
+      if (res) {
+        this.dataService.Config.DeleteStencilTypeTemplate(template);
+        this.createNodes();
       }
-    }
+    });
+    
   }
 
   public AddMnemonicLetter() {
-    this.selectedThreatMnemonic.Letters.push({ Name: StringExtension.FindUniqueName('Letter', this.selectedThreatMnemonic.Letters.map(x => x.Name)), Letter: '', Description: '', AffectedElementTypes: [], threatCategoryID: '' });
+    this.selectedThreatMnemonic.Letters.push({ Name: StringExtension.FindUniqueName('Letter', this.selectedThreatMnemonic.Letters.map(x => x.Name)), Letter: '', Description: '', AffectedElementTypes: [], threatCategoryID: '', ID: uuidv4() });
   }
 
   public DeleteMnemonicLetter(letter: IElementTypeThreat) {
@@ -254,13 +253,6 @@ export class StencilsComponent extends NavTreeBase implements OnInit {
         letter.AffectedElementTypes.splice(index, 1);
       }
     }
-  }
-
-  public GetElementTypes() {
-    let res: ElementTypeIDs[] = [];
-    if (this.selectedTypeTemplate.ListInHWDiagram) res.push(...[ElementTypeIDs.PhyProcessing, ElementTypeIDs.PhyDataStore, ElementTypeIDs.PhyExternalEntity, ElementTypeIDs.PhyTrustArea, ElementTypeIDs.PhysicalLink, ElementTypeIDs.Interface]);
-    if (this.selectedTypeTemplate.ListInUCDiagram) res.push(...[ElementTypeIDs.LogProcessing, ElementTypeIDs.LogDataStore, ElementTypeIDs.LogExternalEntity, ElementTypeIDs.LogTrustArea, ElementTypeIDs.PhysicalLink]);
-    return res;
   }
 
   public GetMnemonicElementTypes() {

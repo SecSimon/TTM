@@ -1,5 +1,5 @@
 import { ConfigFile } from "./config-file";
-import { DatabaseBase, DataReferenceTypes, IDataReferences, INote, ViewElementBase } from "./database";
+import { DatabaseBase, DataReferenceTypes, ICustomNumber, IDataReferences, INote, ViewElementBase } from "./database";
 import { MyTag } from "./my-tags";
 import { ProjectFile } from "./project-file";
 import { LifeCycle, MappingStates, AttackScenario, AttackVector, ThreatRule } from "./threat-model";
@@ -205,7 +205,7 @@ export class MitigationStateUtil {
 /**
  * Class for mitigations in project
  */
-export class Countermeasure extends DatabaseBase {
+export class Countermeasure extends DatabaseBase implements ICustomNumber {
   private project: ProjectFile;
   private config: ConfigFile;
 
@@ -223,7 +223,7 @@ export class Countermeasure extends DatabaseBase {
   }
 
   public get Number(): string { return this.Data['Number']; }
-  public set Number(val: string) { this.Data['Number'] = val; }
+  public set Number(val: string) { this.Data['Number'] = val ? String(val) : val; }
   public get ViewID(): string { return this.Data['ViewID']; } // ID of Diagram, ComponentStack
   public set ViewID(val: string) { this.Data['ViewID'] = val; }
   public get MappingState(): MappingStates { return this.Data['MappingState']; }
@@ -405,12 +405,12 @@ export class MitigationProcessStateUtil {
 /**
  * Class for tracking mitigations in project
  */
-export class MitigationProcess extends DatabaseBase {
+export class MitigationProcess extends DatabaseBase implements ICustomNumber {
   private project: ProjectFile;
   private config: ConfigFile;
 
   public get Number(): string { return this.Data['Number']; }
-  public set Number(val: string) { this.Data['Number'] = val; }
+  public set Number(val: string) { this.Data['Number'] = val ? String(val) : val; }
   public get Progress(): number { return this.Data['Progress']; }
   public set Progress(val: number) { this.Data['Progress'] = val; }  
   public get Tasks(): INote[] { return this.Data['Tasks']; }

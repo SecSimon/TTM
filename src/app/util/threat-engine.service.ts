@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
+import { MyData } from '../model/assets';
 import { MyComponent, MyComponentStack } from '../model/component';
 import { DatabaseBase, ViewElementBase } from '../model/database';
 import { DataFlow, DFDContainerRef, DFDElement, DFDElementRef, ElementTypeIDs, IElementTypeThreat } from '../model/dfd-model';
-import { CtxDiagram, Diagram, DiagramTypes, HWDFDiagram } from '../model/diagram';
+import { Diagram, DiagramTypes, HWDFDiagram } from '../model/diagram';
 import { FlowArrowPositions } from '../model/system-context';
-import { IPropertyRestriction, MappingStates, AttackScenario, RuleTypes, ITypeIDs, IDetailRestriction, RestrictionTypes, ThreatRule, RuleGenerationTypes, PropertyComparisonTypes, ThreatQuestion, ThreatStates } from '../model/threat-model';
+import { IPropertyRestriction, MappingStates, AttackScenario, RuleTypes, ITypeIDs, IDetailRestriction, RestrictionTypes, ThreatRule, RuleGenerationTypes, PropertyComparisonTypes, ThreatQuestion, ThreatStates, ThreatRuleGroup } from '../model/threat-model';
 import { DataService } from './data.service';
 import { DialogService } from './dialog.service';
 
@@ -39,18 +40,18 @@ export class ThreatEngineService {
     if (!diagram.Elements) return [];
     let pf = this.dataService.Project;
   
-    //console.log('gen threats');
     pf.GetAttackScenarios().filter(x => x.ViewID == diagram.ID && !x.IsGenerated).forEach(x => x.MappingState = MappingStates.Stable);
     let mappingsBefore = pf.GetAttackScenarios().filter(x => x.ViewID == diagram.ID && x.IsGenerated); // current threats
     mappingsBefore.forEach(x => x.RuleStillApplies = true);
     mappingsBefore.filter(x => x.MappingState == MappingStates.Removed).forEach(x => pf.DeleteAttackScenario(x)); // delete threats that are marked to remove
     mappingsBefore = mappingsBefore.filter(x => x.MappingState != MappingStates.Removed); // update current threats
 
-    let checkElements = (ruleType: RuleTypes, elements: DFDElement[]) => {
+    let checkElements = (allRules: ThreatRule[], elements: DFDElement[]) => {
       // rules for each element
+      let rules = allRules.filter(x => [RuleGenerationTypes.EachElement, RuleGenerationTypes.OnceForEachElement].includes(x.RuleGenerationType));
       elements.forEach(element => {
-        this.dataService.Config.GetThreatRules().filter(x => x.RuleType == ruleType && x.IsActive && [RuleGenerationTypes.EachElement, RuleGenerationTypes.OnceForEachElement].includes(x.RuleGenerationType)).forEach(rule => {
-          let matches = this.checkElementAgainstRule(rule, element, elements);
+        rules.forEach(rule => {
+          let matches = this.checkElementAgainstRule(rule, element, elements, diagram.Settings.GenerationAssetBased);
           matches.forEach(m => {
             let existing = this.checkForExistingMapping(rule, m.target, rule.RuleGenerationType == RuleGenerationTypes.EachElement ? m.elements : null);
             if (existing) {
@@ -59,17 +60,18 @@ export class ThreatEngineService {
             }
             else {
               const map = pf.CreateAttackScenario(diagram.ID, true);
-              map.SetMapping(rule.AttackVector?.ID, rule.ThreatCategories.map(x => x.ID), m.target, m.elements, rule, null);
+              map.SetMapping(rule.AttackVector?.ID, rule.ThreatCategories.map(x => x.ID), m.target, m.elements, rule, null, null, null);
             }
           });
         });
       });
 
       // rules for once for all elements
-      this.dataService.Config.GetThreatRules().filter(x => x.RuleType == ruleType && x.IsActive && x.RuleGenerationType == RuleGenerationTypes.OnceForAllElements).forEach(rule => {
+      rules = allRules.filter(x => x.RuleGenerationType == RuleGenerationTypes.OnceForAllElements);
+      rules.forEach(rule => {
         let appliedElements = [];
         elements.forEach(element => {
-          let res = this.checkElementAgainstRule(rule, element, elements);
+          let res = this.checkElementAgainstRule(rule, element, elements, diagram.Settings.GenerationAssetBased);
           res.forEach(x => appliedElements.push(...x.elements));
         });
 
@@ -97,7 +99,7 @@ export class ThreatEngineService {
           }
           else {
             let map = pf.CreateAttackScenario(diagram.ID, true);
-            map.SetMapping(rule.AttackVector?.ID, rule.ThreatCategories.map(x => x.ID), appliedElements.length == 1 ? appliedElements[0] : null, appliedElements, rule, null);
+            map.SetMapping(rule.AttackVector?.ID, rule.ThreatCategories.map(x => x.ID), appliedElements.length == 1 ? appliedElements[0] : null, appliedElements, rule, null, null, null);
             // if (ruleType == RuleTypes.DFD) {
             //   // todo
             //   map.SetMapping(rule.AttackVector?.ID, rule.ThreatCategories.map(x => x.ID), appliedElements.length == 1 ? appliedElements[0] : null, appliedElements, rule, null);
@@ -110,12 +112,56 @@ export class ThreatEngineService {
       });
     };
 
-    // Stencil threats
-    if ([DiagramTypes.Hardware, DiagramTypes.DataFlow].includes(diagram.DiagramType)) checkElements(RuleTypes.Stencil, (diagram as HWDFDiagram).Elements.GetChildrenFlat());
-    // DFD threats
-    if (diagram.DiagramType == DiagramTypes.DataFlow) checkElements(RuleTypes.DFD, (diagram as HWDFDiagram).Elements.GetChildrenFlat().filter(x => x.GetProperty('Type').ElementTypeID == ElementTypeIDs.DataFlow));
-    if (diagram.DiagramType == DiagramTypes.DataFlow) checkElements(RuleTypes.Protocol, (diagram as HWDFDiagram).Elements.GetChildrenFlat().filter(x => x.GetProperty('Type').ElementTypeID == ElementTypeIDs.DataFlow));
+    let allRules: ThreatRule[] = [];
+    if (diagram.Settings.GenerationThreatLibrary) allRules.push(...this.dataService.Config.GetThreatRules().filter(x => x.IsActive));
+    if (Object.keys(diagram.Settings.GenerationRules).length > 0) {
+      Object.keys(diagram.Settings.GenerationRules).forEach(groupID => {
+        const addRules = (group: ThreatRuleGroup) => {
+          allRules.push(...group.ThreatRules);
+          if (group.SubGroups) group.SubGroups.forEach(sg => addRules(sg));
+        };
 
+        addRules(this.dataService.Config.GetThreatRuleGroup(groupID));
+      });
+    }
+    // Stencil threats
+    if ([DiagramTypes.Hardware, DiagramTypes.DataFlow].includes(diagram.DiagramType)) checkElements(allRules.filter(x => x.RuleType == RuleTypes.Stencil), (diagram as HWDFDiagram).Elements.GetChildrenFlat().filter(x => !x.OutOfScope));
+    // DFD threats
+    if (diagram.DiagramType == DiagramTypes.DataFlow) checkElements(allRules.filter(x => x.RuleType == RuleTypes.DFD), (diagram as HWDFDiagram).Elements.GetChildrenFlat().filter(x => x.GetProperty('Type').ElementTypeID == ElementTypeIDs.DataFlow && !x.OutOfScope));
+    // Protocol threats
+    if (diagram.DiagramType == DiagramTypes.DataFlow) checkElements(allRules.filter(x => x.RuleType == RuleTypes.Protocol), (diagram as HWDFDiagram).Elements.GetChildrenFlat().filter(x => x.GetProperty('Type').ElementTypeID == ElementTypeIDs.DataFlow && !x.OutOfScope));  
+
+    if (Object.keys(diagram.Settings.GenerationMnemonics).length > 0 && [DiagramTypes.Hardware, DiagramTypes.DataFlow].includes(diagram.DiagramType)) {
+      const elements = (diagram as HWDFDiagram).Elements.GetChildrenFlat().filter(x => !x.OutOfScope);
+      Object.keys(diagram.Settings.GenerationMnemonics).map(x => this.dataService.Config.GetStencilThreatMnemonic(x)).forEach(mnemonic => {
+        elements.forEach(element => {
+          mnemonic.Letters.forEach(letter => {
+            let assetBasedFulfilled = true;
+            if (diagram.Settings.GenerationAssetBased) {
+              assetBasedFulfilled = false;
+              if (element.GetProperty('ProcessedData') && letter.threatCategoryID) {
+                const cat = this.dataService.Config.GetThreatCategory(letter.threatCategoryID);
+                assetBasedFulfilled = (element.GetProperty('ProcessedData') as MyData[]).some(x => x.ImpactCats.some(y => cat.ImpactCats.includes(y)));
+              }
+            }
+            if (letter.AffectedElementTypes.includes(element.Type.ElementTypeID) && assetBasedFulfilled) { // check if threat applies
+              const existings = pf.GetAttackScenarios().filter(x => x.Target?.ID == element.ID).filter(x => x.ThreatMnemonicLetterID == letter.ID);
+              if (existings.length > 0) {
+                existings.forEach(x => {
+                  x.MappingState = MappingStates.Stable;
+                  mappingsBefore.splice(mappingsBefore.findIndex(y => y.ID == x.ID), 1); // remove from list as this mapping still applies
+                });
+              }
+              else {
+                const map = pf.CreateAttackScenario(diagram.ID, true);
+                map.SetMapping(null, [mnemonic.GetThreatCategory(letter)?.ID], element, [element], null, null, mnemonic, letter);
+              }
+            }
+          });
+        });
+      });
+    }
+    
     mappingsBefore.forEach(x => {
       if (x.ThreatState == ThreatStates.NotSet) x.MappingState = MappingStates.Removed; // mark all mappings that does not apply anymore as to remove
       else x.RuleStillApplies = false;
@@ -140,7 +186,7 @@ export class ThreatEngineService {
       // rules for each element
       components.forEach(component => {
         this.dataService.Config.GetThreatRules().filter(x => x.IsActive && x.RuleType == RuleTypes.Component && x.RuleGenerationType == RuleGenerationTypes.EachElement).forEach(rule => {
-          let matches = this.checkElementAgainstRule(rule, component, components);
+          let matches = this.checkElementAgainstRule(rule, component, components, false);
           matches.forEach(m => {
             let existing = this.checkForExistingMapping(rule, m.target, m.elements);
             if (existing) {
@@ -153,14 +199,14 @@ export class ThreatEngineService {
               if (rule.ComponentRestriction.DetailRestrictions.length == 1) {
                 quest = pf.Config.GetThreatQuestions().find(y => y.ComponentType.ID == component.Type.ID && y.Property.ID == rule.ComponentRestriction.DetailRestrictions[0].PropertyRest.ID);
               }
-              map.SetMapping(rule.AttackVector?.ID, rule.ThreatCategories.map(x => x.ID), m.target, m.elements, rule, quest);
+              map.SetMapping(rule.AttackVector?.ID, rule.ThreatCategories.map(x => x.ID), m.target, m.elements, rule, quest, null, null);
             }
           });
         });
       });
     };
 
-    checkComponents(stack.GetChildren());
+    checkComponents(stack.GetChildren().filter(x => !x.OutOfScope));
 
     mappingsBefore.forEach(x => {
       if (x.ThreatState == ThreatStates.NotSet) x.MappingState = MappingStates.Removed; // mark all mappings that does not apply anymore as to remove
@@ -173,13 +219,8 @@ export class ThreatEngineService {
     if (element) {
       let dia = this.dataService.Project.FindDiagramOfElement(element.ID);
       let map = this.dataService.Project.CreateAttackScenario(dia.ID, false);
-      map.SetMapping('', [], element, [], null, null);
+      map.SetMapping('', [], element, [element], null, null, this.dataService.Config.GetStencilThreatMnemonics().find(x => x.Letters.some(y => y.ID == letter.ID)), letter);
       map.IsGenerated = false;
-      map.Name = letter.Name;
-      map.Description = letter.Description;
-      if (letter.threatCategoryID) {
-        map.ThreatCategories = [this.dataService.Config.GetThreatCategory(letter.threatCategoryID)];
-      }
       const dialogRef = this.dialog.OpenAttackScenarioDialog(map, true);
       dialogRef.subscribe(result => {
         if (!result) {
@@ -196,7 +237,7 @@ export class ThreatEngineService {
    * @param element element under investigation
    * @returns true if rule applies on element
    */
-  private checkElementAgainstRule(rule: ThreatRule, element: ViewElementBase, elements: ViewElementBase[]): IEvalResult[] {
+  private checkElementAgainstRule(rule: ThreatRule, element: ViewElementBase, elements: ViewElementBase[], assetBased: boolean): IEvalResult[] {
     if (rule.RuleType == RuleTypes.DFD) {
       let checkDataFlow = (df: DataFlow, nodeOffset: number, isReverse: boolean, isFirstSubPath: boolean = true): [boolean, boolean] => {
         const applyRev = isFirstSubPath && (rule.DFDRestriction.AppliesReverse || [FlowArrowPositions.Both, FlowArrowPositions.Initiator].includes(df.ArrowPos));
@@ -216,6 +257,14 @@ export class ThreatEngineService {
         }
         let restrictions: IDetailRestriction[] = rule.DFDRestriction?.NodeRestrictions;
         res = res && this.evalRestrictions(restrictions, rule.RuleType, df, nodeOffset);
+        if (res && assetBased) {
+          res = false;
+          if (element.GetProperty('ProcessedData') && rule.ThreatCategories) {
+            let cats = [];
+            rule.ThreatCategories.forEach(x => cats.push(...x.ImpactCats));
+            res = (element.GetProperty('ProcessedData') as MyData[]).some(x => x.ImpactCats.some(y => cats.includes(y)));
+          }
+        }
         return [res, isReverse];
       }
 
@@ -234,7 +283,7 @@ export class ThreatEngineService {
         let res: IEvalResult[] = [];
 
         let checkFurtherNodes = (startNode: DFDElement, nodes: ViewElementBase[], nodeOffset: number, isReverse: boolean) => {
-          let possibleFlows = elements.filter(x => x instanceof DataFlow).filter(x => (x as DataFlow).Sender?.ID == startNode.ID);
+          let possibleFlows = elements.filter(x => x instanceof DataFlow).filter(x => (x as DataFlow).Sender?.ID == startNode.ID && (x as DataFlow).Receiver?.ID != nodes[0].ID);
           possibleFlows.forEach(flow => {
             const dfCheck = checkDataFlow(flow as DataFlow, nodeOffset, isReverse, false);
             if (dfCheck[0]) {

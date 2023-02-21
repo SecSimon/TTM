@@ -228,7 +228,7 @@ export class DataService {
   }
 
   public get CanSaveConfig(): boolean {
-    return this.SelectedGHConfig != null && this.GetRepoOfFile(this.SelectedGHConfig).isWritable;
+    return (this.SelectedGHConfig == null && this.Config != null) || (this.SelectedGHConfig != null && this.GetRepoOfFile(this.SelectedGHConfig).isWritable);
   }
 
   public get HasUnsavedChanges(): boolean {
@@ -400,25 +400,27 @@ export class DataService {
 
   public OpenSaveProjectDialog(msg: string, saveAs: boolean = false) {
     return new Promise<void>((resolve, reject) => {
-      if (this.CanSaveProject) {
-        let data = { 'msg': msg };
-        if (!this.SelectedGHProject || saveAs) {
-          data['newProject'] = { name: '', configFile: null, path: '', repoId: null, isEncrypted: this.SelectedGHProject?.isEncrypted ? true : false, sha: null } as IGHFile;
-        }
-        if (this.SelectedGHProject?.isEncrypted) { data['removePW'] = false; }
-
-        const dialogRef = this.dialog.open(SaveDialogComponent, { hasBackdrop: false, data: data });
-        dialogRef.afterClosed().subscribe(res => {
-          if (res) {
-            this.SaveProject(data.msg, data['removePW'] != null ? data['removePW'] : false, data['pw'] != null ? data['pw'] : null, data['newProject'] ? data['newProject'] : null).then(() => resolve()).catch(() => reject());
+      this.ConsistencyCheck().then(x => {
+        if (this.CanSaveProject) {
+          let data = { 'msg': msg };
+          if (!this.SelectedGHProject || saveAs) {
+            data['newProject'] = { name: '', configFile: null, path: '', repoId: null, isEncrypted: this.SelectedGHProject?.isEncrypted ? true : false, sha: null } as IGHFile;
           }
-          else resolve();
-        });
-      }
-      else {
-        this.ExportFile(true);
-        resolve();
-      }
+          if (this.SelectedGHProject?.isEncrypted) { data['removePW'] = false; }
+  
+          const dialogRef = this.dialog.open(SaveDialogComponent, { hasBackdrop: false, data: data });
+          dialogRef.afterClosed().subscribe(res => {
+            if (res) {
+              this.SaveProject(data.msg, data['removePW'] != null ? data['removePW'] : false, data['pw'] != null ? data['pw'] : null, data['newProject'] ? data['newProject'] : null).then(() => resolve()).catch(() => reject());
+            }
+            else resolve();
+          });
+        }
+        else {
+          this.ExportFile(true);
+          resolve();
+        }
+      });
     });
   }
 
@@ -645,6 +647,7 @@ export class DataService {
 
   private loadConfigFile(name: string, json: any) {
     try {
+      json['Data']['Name'] = name;
       let updated = this.fileUpdate.UpdateConfigFile(json);
       this.Config = ConfigFile.FromJSON(json);
       this.Config.FileChanged = updated;
@@ -765,7 +768,10 @@ export class DataService {
       const fileName = fileInput.target.files[0].name;
       reader.onload = (e) => {
         const fileRes = reader.result;
-        const file = JSON.parse(fileRes.toString());
+        let file = JSON.parse(fileRes.toString());
+        if (!('content' in file) && !isProject) {
+          file = {'content': JSON.stringify(file) };
+        } 
         if ('content' in file) {
           this.importFile(file, fileName, isProject);
         }
@@ -948,6 +954,42 @@ export class DataService {
         this.closeConfig();
         resolve();
       }
+    });
+  }
+
+  public ConsistencyCheck() {
+    return new Promise<boolean>((resolve) => {
+      if (this.Project) {
+        const errors = this.Project.ConsistencyCheck(this.translate);
+        if (errors.length > 0) {
+          let msg = this.translate.instant('dialog.consistencycheck.desc') + ':\n\n';
+          msg += errors.join('\n');
+          let data: ITwoOptionDialogData = {
+            title: this.translate.instant('dialog.consistencycheck.title'),
+            textContent: msg,
+            resultTrueText: this.translate.instant('general.OK'),
+            hasResultFalse: false,
+            resultFalseText: '',
+            resultTrueEnabled: () => { return true; },
+            initalTrue: false
+          };
+          
+          const ref = this.dialog.open(TwoOptionsDialogComponent, { hasBackdrop: false, data: data });
+          ref.afterClosed().subscribe(x => resolve(false));
+        }
+        else {
+          resolve(true);
+        }
+      }
+      else {
+        resolve(true);
+      }
+    });
+  }
+
+  public ManualConsistencyCheck() {
+    this.ConsistencyCheck().then(res => {
+      if (res) this.messagesService.Success('messages.success.ConsistencyCheck')
     });
   }
 
@@ -1242,6 +1284,7 @@ export class DataService {
         this.unsavedChangesMinutes++;
         if (this.unsavedChangesMinutes % 5 == 0) {
           this.messagesService.Warning(StringExtension.Format(this.translate.instant('messages.warning.unsavedChanges'), this.unsavedChangesMinutes.toString()));
+          this.ConsistencyCheck();
         }
       }, 60*1000);
     }

@@ -19,6 +19,7 @@ import { INavigationNode } from '../../shared/components/nav-tree/nav-tree.compo
 import { faArrowsAltH, faLongArrowAltRight } from '@fortawesome/free-solid-svg-icons';
 import { LocalStorageService, LocStorageKeys } from '../../util/local-storage.service';
 import { TranslateService } from '@ngx-translate/core';
+import { ThreatRuleGroup } from '../../model/threat-model';
 
 interface IKeyValuePair {
   key: any;
@@ -395,7 +396,7 @@ export abstract class CanvasBase {
   public AddThreat() {
     if (this.SelectedElement) {
       let map = this.dataService.Project.CreateAttackScenario(this.Diagram.ID, false);
-      map.SetMapping('', [], this.SelectedElement, [this.SelectedElement], null, null);
+      map.SetMapping('', [], this.SelectedElement, [this.SelectedElement], null, null, null, null);
       map.IsGenerated = false;
       this.dialog.OpenAttackScenarioDialog(map, true).subscribe(result => {
         if (!result) {
@@ -2162,9 +2163,11 @@ export class HWDFCanvas extends CanvasBase {
     else if (dragDropData.stencilRef.templateID) {
       let template = this.dataService.Config.GetStencilTypeTemplate(dragDropData.stencilRef.templateID);
       for (let i = 0; i < template.StencilTypes.length; i++) {
-        element = this.createElement({ stencilRef: { name: template.StencilTypes[i].Name, stencilID: template.StencilTypes[i].ID } }, posX + template.Layout[i].x, posY + template.Layout[i].y) as DFDElement;
+        let name = template.Layout[i].name;
+        if (!name) name = template.StencilTypes[i].Name;
+        element = this.createElement({ stencilRef: { name: name, stencilID: template.StencilTypes[i].ID } }, posX + template.Layout[i].x, posY + template.Layout[i].y) as DFDElement;
         if (template.StencilTypes[i].ElementTypeID == ElementTypeIDs.PhyTrustArea || template.StencilTypes[i].ElementTypeID == ElementTypeIDs.LogTrustArea) {
-          element.Name = StringExtension.FindUniqueName(dragDropData.stencilRef.name, this.dataService.Project.GetDFDElements().map(x => x.Name));
+          element.Name = StringExtension.FindUniqueName(dragDropData.stencilRef.name, this.dataService.Project.GetDFDElements().filter(x => x != element).map(x => x.Name));
           let obj = this.getCanvasElementByID(element.ID);
           obj.set('scaleX', (template.Layout[i].width) / obj.width);
           obj.set('scaleY', (template.Layout[i].height) / obj.height);
@@ -3533,6 +3536,14 @@ export class DiagramComponent implements OnInit {
 
   public get IsContextDiagram(): boolean { return this.diagram instanceof CtxDiagram; }
 
+  public get HasMnemonics(): boolean {
+    return this.dataService.Config.GetStencilThreatMnemonics().length > 0;
+  }
+
+  public get HasThreatRuleGroups(): boolean {
+    return this.GetThreatRuleGroups()?.length > 0;
+  }
+
   public get selectedElement(): ViewElementBase { return this.Dia?.SelectedElement; }
   @Input() public set selectedElement(element: ViewElementBase) {
     if (this.Dia) this.Dia.SelectedElement = element;
@@ -3582,6 +3593,14 @@ export class DiagramComponent implements OnInit {
 
   public ShowSuggestedThreats() {
     this.dialog.OpenSuggestThreatsDialog(this.selectedElement as DFDElement);
+  }
+
+  public GetThreatRuleGroups(): ThreatRuleGroup[] {
+    let rules = this.dataService.Config.GetThreatRuleGroups().filter(x => x.ThreatRules?.length > 0);
+    if (this.diagram.Settings.GenerationThreatLibrary) {
+      rules = rules.filter(x => x.ThreatRules.every(y => !y.IsActive));
+    }
+    return rules
   }
 
   public OnResized(event: ResizedEvent, container) {

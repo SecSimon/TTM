@@ -6,6 +6,13 @@
       <mat-icon>close</mat-icon>
     </button>
   </mat-form-field>
+  <mat-form-field appearance="fill" style="width: 70px; float: right; margin-left: 10px;">
+    <mat-label>{{ 'general.Number' | translate }}</mat-label>
+    <input matInput type="number" min="0" [(ngModel)]="myData.Number" required matTooltip="{{myData.Number}}" matTooltipShowDelay="1000"/>
+    <mat-hint *ngIf="NumberAlreadyExists()" style="color: red;" class="alert alert-danger">
+      {{'messages.error.numberAlreadyExists' | translate}}
+    </mat-hint>
+  </mat-form-field>
   <br/>
   <mat-form-field appearance="fill" style="width: 100%;">
     <mat-label>{{'properties.Description' | translate}}</mat-label>
@@ -29,4 +36,10 @@
       </mat-optgroup>
     </mat-select>
   </mat-form-field>
+  <h3>{{'properties.ImpactCategories' | translate}}</h3>
+  <div style="margin-top: 10px; display: flex; flex-wrap: wrap;">
+    <table *ngFor="let impact of GetImpactCategories()" style="min-width: 200px;">
+      <tr><td><mat-checkbox color="primary" [checked]="myData.ImpactCats.includes(impact)" (change)="ImpactCatChanged(myData, impact)">{{GetImpactCategoryName(impact) | translate}}</mat-checkbox></td></tr>
+    </table>
+  </div>
 </div>

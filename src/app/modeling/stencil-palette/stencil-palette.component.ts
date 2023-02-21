@@ -156,6 +156,10 @@ export class StencilPaletteComponent implements OnInit {
     abbr = 'IF';
     this.stencilBuffer[abbr] = {};
     initElements(abbr, NodeTypes.Hardware, [ElementTypeIDs.Interface]);
+    // templates for DFD
+    this.stencilBuffer[abbr][NodeTypes.Dataflow] = [];
+    const ifStencils = this.dataService.Config.GetStencilTypes().filter(x => x.ElementTypeID == ElementTypeIDs.Interface && x.TemplateDFD != null);
+    this.dataService.Config.GetStencilTypeTemplates().filter(x => x.ListInUCDiagram && x.StencilTypes.length > 0 && ifStencils.some(y => y.TemplateDFD == x)).forEach(x => this.stencilBuffer[abbr][NodeTypes.Dataflow].push({ templateID: x.ID, name: x.Name}));
 
     // Templates
     abbr = 'ST';

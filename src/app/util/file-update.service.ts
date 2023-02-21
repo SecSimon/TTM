@@ -13,13 +13,14 @@ import { v4 as uuidv4 } from 'uuid';
 })
 export class FileUpdateService {
 
-  public static ProjectVersion = 6;
-  public static ConfigVersion = 4;
+  public static ProjectVersion = 7;
+  public static ConfigVersion = 5;
 
   private configUpdates = [
     this.configV2,
     this.configV3,
-    this.configV4
+    this.configV4,
+    this.configV5
   ];
 
   private projectUpdates = [
@@ -27,14 +28,15 @@ export class FileUpdateService {
     this.projectV3,
     this.projectV4,
     this.projectV5,
-    this.projectV6
+    this.projectV6,
+    this.projectV7
   ];
 
   constructor(private messageService: MessagesService, private translate: TranslateService) { }
 
   public UpdateProjectFile(file: IProjectFile): boolean {
     let res = this.UpdateConfigFile(file.config as IConfigFile);
-    if (res) res = this.updateFile(file, false);
+    res = res || this.updateFile(file, false);
     return res;
   }
 
@@ -161,6 +163,44 @@ export class FileUpdateService {
     }
   }
 
+  private projectV7(file: IProjectFile) {
+    if (file.threatActors) {
+      for (let i = 0; i < file.threatActors.length; i++) {
+        file.threatActors[i]['Number'] = (i+1).toString();
+      }
+    }
+    if (file.systemThreats) {
+      for (let i = 0; i < file.systemThreats.length; i++) {
+        file.systemThreats[i]['Number'] = (i+1).toString();
+      }
+    }
+    if (file.assetGroups) {
+      let num = 1;
+      file.assetGroups.forEach(group => {
+        const configMatch = file.config['assetGroups'].find(x => x['Name'] == group['Name']);
+        group['IsNewAsset'] = !configMatch;
+        if (group['IsNewAsset']) {
+          group['Number'] = num.toString();
+          num += 1;
+        }
+
+        if (group['associatedDataIDs']) {
+          group['associatedDataIDs'].forEach(dataID => {
+            const data = file.myData.find(x => x['ID'] == dataID);
+            if (data) {
+              const configMatch = file.config['myData'].find(x => x['Name'] == data['Name']);
+              data['IsNewAsset'] = !configMatch;
+              if (data['IsNewAsset']) {
+                data['Number'] = num.toString();
+                num += 1;
+              }
+            }
+          });
+        }
+      });
+    }
+  }
+
   private configV2(file: IConfigFile) {
     file.attackVectors.forEach(vector => {
       let res = [];
@@ -234,6 +274,20 @@ export class FileUpdateService {
     if (file['threatRules']) {
       file.threatRules.forEach(x => {
         if (x['Mapping']) FileUpdateService.renameKey(x['Mapping'], 'ThreatOriginID', 'AttackVectorID');
+      });
+    }
+  }
+
+  private configV5(file: IConfigFile) {
+    if (file.stencilThreatMnemonics) {
+      file.stencilThreatMnemonics.forEach(mnemonic => {
+        if (mnemonic['Letters']) {
+          mnemonic['Letters'].forEach(letter => {
+            if (letter['ID'] == null) {
+              letter['ID'] = uuidv4();
+            }
+          });
+        }
       });
     }
   }

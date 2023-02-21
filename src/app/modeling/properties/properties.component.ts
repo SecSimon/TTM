@@ -5,7 +5,6 @@ import { DatabaseBase, IProperty, ViewElementBase } from '../../model/database';
 import { DataFlowEntity, DFDElement, ElementTypeIDs, IElementTypeThreat, StencilType } from '../../model/dfd-model';
 import { Diagram, DiagramTypes } from '../../model/diagram';
 import { Device, DeviceInterfaceNameUtil, FlowArrowPositions, FlowArrowPositionUtil, FlowLineTypes, FlowLineTypeUtil, FlowTypes, FlowTypeUtil, SystemUseCase } from '../../model/system-context';
-import { ImpactCategoryUtil } from '../../model/threat-model';
 import { DataService } from '../../util/data.service';
 import { DialogService } from '../../util/dialog.service';
 import { ThemeService } from '../../util/theme.service';
@@ -45,7 +44,7 @@ export class PropertiesComponent implements OnInit {
   public openQuestionnaire = new EventEmitter<MyComponent>();
 
   @Output()
-  public openDiagram = new EventEmitter<Diagram>();
+  public openDiagram = new EventEmitter<{diagram: Diagram, element: ViewElementBase}>();
 
   constructor(public theme: ThemeService, public dataService: DataService, private dialog: DialogService, private threatEngine: ThreatEngineService) { }
 
@@ -132,7 +131,11 @@ export class PropertiesComponent implements OnInit {
 
   public OnDiagramReference(prop: IProperty) {
     let id = this.selectedObject.GetProperty(prop.ID);
-    if (id) this.openDiagram.emit(this.dataService.Project.GetDiagram(id));
+    if (id) {
+      let ele = null;
+      if (this.selectedObject['Ref']) ele = this.selectedObject['Ref'];
+      this.openDiagram.emit({diagram: this.dataService.Project.GetDiagram(id), element: ele});
+    }
   }
 
   public GetAvailableDataFlowDiagrams() {
@@ -257,7 +260,7 @@ export class PropertiesComponent implements OnInit {
     dia.Name = (this.selectedObject as SystemUseCase).Name;
     (this.selectedObject as SystemUseCase).DataFlowDiagramID = dia.ID;
     setTimeout(() => {
-      this.openDiagram.emit(this.dataService.Project.GetDiagram(dia.ID));
+      this.openDiagram.emit({diagram: this.dataService.Project.GetDiagram(dia.ID), element: null });
     }, 500);
   }
 

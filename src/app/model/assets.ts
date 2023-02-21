@@ -1,5 +1,5 @@
 import { ConfigFile } from "./config-file";
-import { DatabaseBase, DataReferenceTypes, IDataReferences, PropertyEditTypes } from "./database";
+import { DatabaseBase, DataReferenceTypes, ICustomNumber, IDataReferences, PropertyEditTypes } from "./database";
 import { ProjectFile } from "./project-file";
 import { ImpactCategories, ImpactCategoryUtil } from "./threat-model";
 
@@ -23,14 +23,19 @@ export class LowMediumHighNumberUtil {
   }
 }
 
-export class MyData extends DatabaseBase {
+export class MyData extends DatabaseBase implements ICustomNumber {
   private config: ConfigFile;
   private project: ProjectFile;
 
   public get IsProjectData(): boolean { return this.project != null; }
 
+  public get Number(): string { return this.Data['Number']; }
+  public set Number(val: string) { this.Data['Number'] = val ? String(val) : val; }
+  public get IsNewAsset(): boolean { return this.Data['IsNewAsset']; }
+  public set IsNewAsset(val: boolean) { this.Data['IsNewAsset'] = val; }
+
   public get Sensitivity(): LowMediumHighNumber { return this.Data['Sensitivity']; }
-  public set Sensitivity(val: LowMediumHighNumber) { this.Data['Sensitivity'] = val; }
+  public set Sensitivity(val: LowMediumHighNumber) { this.Data['Sensitivity'] = val ? Number(val) : val; }
 
   public get ImpactCats(): ImpactCategories[] { return this.Data['ImpactCats']; }
 
@@ -46,6 +51,10 @@ export class MyData extends DatabaseBase {
   public FindAssetGroup(): AssetGroup {
     if (this.project) return this.project.GetAssetGroups().find(x => x.AssociatedData.includes(this));
     else return this.config.GetAssetGroups().find(x => x.AssociatedData.includes(this));
+  }
+
+  public GetLongName(): string {
+    return 'A' + this.Number + ') ' + this.Name;
   }
 
   public FindReferences(pf: ProjectFile, cf: ConfigFile): IDataReferences[] {
@@ -72,7 +81,7 @@ export class MyData extends DatabaseBase {
   }
 }
 
-export class AssetGroup extends DatabaseBase {
+export class AssetGroup extends DatabaseBase implements ICustomNumber {
   
   public static Icon: string = 'account_balance';
 
@@ -89,6 +98,11 @@ export class AssetGroup extends DatabaseBase {
     if (val && this.Parent) this.Parent.IsActive = val;
     else if (!val) this.SubGroups.forEach(x => x.IsActive = val);
   }
+
+  public get Number(): string { return this.Data['Number']; }
+  public set Number(val: string) { this.Data['Number'] = val ? String(val) : val; }
+  public get IsNewAsset(): boolean { return this.Data['IsNewAsset']; }
+  public set IsNewAsset(val: boolean) { this.Data['IsNewAsset'] = val; }
 
   public get SubGroups(): AssetGroup[] { 
     let res = [];
@@ -159,6 +173,10 @@ export class AssetGroup extends DatabaseBase {
     });
 
     return res;
+  }
+
+  public GetLongName(): string {
+    return 'A' + this.Number + ') ' + this.Name;
   }
 
   public FindReferences(pf: ProjectFile, cf: ConfigFile): IDataReferences[] {

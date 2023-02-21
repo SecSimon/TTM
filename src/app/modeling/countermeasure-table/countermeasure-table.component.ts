@@ -54,9 +54,9 @@ export class CountermeasureTableComponent implements OnInit {
     let myFilter = (data: Countermeasure, filter: string) => {
       let search = filter.trim().toLowerCase();
       let res = data.Name.toLowerCase().indexOf(search);
-      if (res == -1) res = data.Control.Name.toLowerCase().indexOf(search);
-      if (res == -1) res = this.GetAttackVectors(data).toLowerCase().indexOf(search);
-      if (res == -1) res = this.GetTargets(data).toLowerCase().indexOf(search);
+      if (res == -1 && data.Control) res = data.Control.Name.toLowerCase().indexOf(search);
+      if (res == -1 && this.GetAttackVectors(data)) res = this.GetAttackVectors(data).toLowerCase().indexOf(search);
+      if (res == -1 && this.GetTargets(data)) res = this.GetTargets(data).toLowerCase().indexOf(search);
       return res != -1;
     };
 

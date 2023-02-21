@@ -1,6 +1,5 @@
-import { StringExtension } from "../util/string-extension";
 import { ConfigFile } from "./config-file";
-import { DatabaseBase, DataReferenceTypes, IContainer, IDataReferences, ViewElementBase } from "./database";
+import { DatabaseBase, DataReferenceTypes, IContainer, IDataReferences, IKeyValue } from "./database";
 import { DFDContainer, DFDElement } from "./dfd-model";
 import { ProjectFile } from "./project-file";
 import { SystemContextContainer } from "./system-context";
@@ -10,6 +9,13 @@ export enum DiagramTypes {
   DataFlow = 'DF',
   Context = 'CTX',
   UseCase = 'UC'
+}
+
+export interface IDiagramSettings {
+  GenerationThreatLibrary: boolean;
+  GenerationAssetBased: boolean;
+  GenerationMnemonics: {};
+  GenerationRules: {};
 }
 
 export abstract class Diagram extends DatabaseBase {
@@ -33,11 +39,18 @@ export abstract class Diagram extends DatabaseBase {
   public get DiagramType(): DiagramTypes { return this.Data['DiagramType']; }
   public set DiagramType(val: DiagramTypes) { this.Data['DiagramType'] = val; }
 
+  public get Settings(): IDiagramSettings { return this.Data['Settings']; }
+  public set Settings(val: IDiagramSettings) { this.Data['Settings'] = val; }
+
   public abstract get Elements(): IContainer;
 
   constructor(data: {}, pf: ProjectFile, cf: ConfigFile) {
     super(data);
     this.project = pf;
+
+    if (!this.Settings) {
+      this.Settings = { GenerationThreatLibrary: true, GenerationAssetBased: false, GenerationMnemonics: {}, GenerationRules: {} };
+    }
   }
 
   public static FromJSON(data, pf: ProjectFile, cf: ConfigFile): Diagram {

@@ -210,6 +210,20 @@
         </div>
       </div>
     </mat-expansion-panel>
+    <mat-expansion-panel expanded="true" *ngIf="NodeType == 'dataflow'">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Interface
+        </mat-panel-title>
+        <mat-panel-description>
+          <mat-icon>sync_alt</mat-icon>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <div style="display: flex; flex-wrap: wrap;">
+        <div draggable="true" (dragstart)="onDrag($event, stencilRef)" (dragend)="onDragEnd()" class="draggable-element" *ngFor="let stencilRef of InterfaceStencils" matTooltip="{{GetStencilRefToolTip(stencilRef)}}" matTooltipShowDelay="1000"><div class="process element-base element-small" [style.border-color]="theme.Accent">{{stencilRef.name}}</div></div>
+      </div>
+    </mat-expansion-panel>
 
     <mat-expansion-panel expanded="true">
       <mat-expansion-panel-header>

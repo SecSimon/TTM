@@ -56,4 +56,8 @@ export class ThreatSourcesComponent implements OnInit {
   public GetLMHName(type: LowMediumHighNumber) {
     return LowMediumHighNumberUtil.ToString(type);
   }
+
+  public NumberAlreadyExists() {
+    return this.dataService.Project.GetThreatActors().some(x => x.Number == this.selectedSource.Number && x.ID != this.selectedSource.ID);
+  }
 }

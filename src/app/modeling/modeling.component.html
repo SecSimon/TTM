@@ -41,7 +41,7 @@
                     <app-obj-impact style="height: 100%;" [objImpact]="tab.nav.data" *ngIf="IsObjImpact(tab.nav)"></app-obj-impact>
                     <app-threat-sources style="height: 100%;" [threatSources]="tab.nav.data" *ngIf="IsThreatSource(tab.nav)"></app-threat-sources>
                     <app-threat-identification style="height: 100%;" *ngIf="IsThreatIdentification(tab.nav)"></app-threat-identification>
-                    <app-device-assets style="height: 100%;" [assetGroup]="tab.nav.data" [selectedObject]="selectedObject" (selectionChanged)="selectedObject = $event" *ngIf="IsAssetGroup(tab.nav)"></app-device-assets>
+                    <app-device-assets style="height: 100%;" [assetGroup]="tab.nav.data" [selectedObject]="selectedObject" (selectionChanged)="selectedObject = $event" *ngIf="IsAssetGroup(tab.nav)" (openDiagram)="OnOpenDiagram($event)"></app-device-assets>
                     <app-diagram style="height: 100%;" [selectedNode]="selectedNode" [diagram]="tab.nav.data" [selectedElement]="selectedObject" (selectionChanged)="selectedObject = $event" (navTreeChanged)="createNodes()" *ngIf="IsDiagram(tab.nav)"></app-diagram>
                     <app-stack #compStack style="height: 100%;" [stack]="tab.nav.data" [selectedComponent]="selectedComponent" (selectionChanged)="selectedObject = $event" *ngIf="IsMyComponentStack(tab.nav)"></app-stack>
                     <app-checklist style="height: 100%;" [checklist]="tab.nav.data" *ngIf="IsChecklist(tab.nav)"></app-checklist>

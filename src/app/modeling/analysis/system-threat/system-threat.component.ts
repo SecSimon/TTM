@@ -43,4 +43,8 @@ export class SystemThreatComponent implements OnInit {
   public GetImpactCategoryName(cat: ImpactCategories) {
     return ImpactCategoryUtil.ToString(cat);
   }
+
+  public NumberAlreadyExists() {
+    return this.dataService.Project.GetSystemThreats().some(x => x.Number == this.systemThreat.Number && x.ID != this.systemThreat.ID);
+  }
 }

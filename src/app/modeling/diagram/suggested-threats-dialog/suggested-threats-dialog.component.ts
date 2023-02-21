@@ -27,18 +27,18 @@ export class SuggestedThreatsDialogComponent implements OnInit {
   }
 
   public AddThreat(letter: IElementTypeThreat) {
-    this.hasThreatBuffer[letter.Name] = true;
+    this.hasThreatBuffer[letter.ID] = true;
     this.threatEngine.AddMnemonicThreat(this.element, letter).subscribe(res => {
-      if (!res) this.hasThreatBuffer[letter.Name] = null;
+      if (!res) this.hasThreatBuffer[letter.ID] = null;
     });
   }
 
   private hasThreatBuffer = {};
   public HasThreat(letter: IElementTypeThreat) {
-    if (this.hasThreatBuffer[letter.Name] == null) {
-      this.hasThreatBuffer[letter.Name] = this.dataService.Project.GetAttackScenarios().filter(x => x.Target == this.element).filter(x => x.ThreatCategories.includes(this.dataService.Config.GetThreatCategory(letter.threatCategoryID))).length > 0;
+    if (this.hasThreatBuffer[letter.ID] == null) {
+      this.hasThreatBuffer[letter.ID] = this.dataService.Project.GetAttackScenarios().filter(x => x.Target == this.element).filter(x => x.ThreatMnemonicLetterID == letter.ID).length > 0;
     }
-    return this.hasThreatBuffer[letter.Name];
+    return this.hasThreatBuffer[letter.ID];
   }
 
   public SetStep(index: number) {

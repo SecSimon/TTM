@@ -22,9 +22,10 @@ import { ChecklistsComponent } from './checklists/checklists.component';
 import { ThreatSourcesComponent } from './threat-sources/threat-sources.component';
 import { ThreatActorComponent } from './threat-actor/threat-actor.component';
 import { WarningDialogComponent } from './warning-dialog/warning-dialog.component';
+import { StencilTypeTemplateComponent } from './stencils/stencil-type-template/stencil-type-template.component';
 
 @NgModule({
-  declarations: [ConfigurationComponent, StencilsComponent, ThreatCategoriesComponent, ComponentsComponent, ThreatLibraryComponent, RulesComponent, ThreatRuleComponent, AttackVectorComponent, ThreatQuestionComponent, AssetsComponent, MyDataComponent, ThreatCategoryComponent, ControlsComponent, ControlComponent, ChecklistsComponent, ThreatSourcesComponent, ThreatActorComponent, WarningDialogComponent],
+  declarations: [ConfigurationComponent, StencilsComponent, ThreatCategoriesComponent, ComponentsComponent, ThreatLibraryComponent, RulesComponent, ThreatRuleComponent, AttackVectorComponent, ThreatQuestionComponent, AssetsComponent, MyDataComponent, ThreatCategoryComponent, ControlsComponent, ControlComponent, ChecklistsComponent, ThreatSourcesComponent, ThreatActorComponent, WarningDialogComponent, StencilTypeTemplateComponent],
   imports: [
     CommonModule,
     SharedModule,

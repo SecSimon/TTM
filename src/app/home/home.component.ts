@@ -11,6 +11,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { ITTMStage, TTMService } from '../util/ttm.service';
 import { ElectronService } from '../core/services';
 import { DialogService } from '../util/dialog.service';
+import { MatDialog } from '@angular/material/dialog';
+import { LanguageDialogComponent } from './Dialogs/language-dialog/language-dialog.component';
 
 @Component({
   selector: 'app-home',
@@ -29,7 +31,7 @@ export class HomeComponent implements OnInit {
     return false;
   }
 
-  constructor(private router: Router, private route: ActivatedRoute, private theme: ThemeService, public dataService: DataService, private dialogService: DialogService,
+  constructor(private router: Router, private route: ActivatedRoute, private theme: ThemeService, public dataService: DataService, private dialogService: DialogService, private dialog: MatDialog,
     private locStorage: LocalStorageService, public tourService: TourService, private translate: TranslateService, private electronService: ElectronService, 
     private ttmService: TTMService, private sanitizer: DomSanitizer) {
       this.VideoURL = this.sanitizer.bypassSecurityTrustResourceUrl('https://www.youtube-nocookie.com/embed/videoseries?list=PLSMRtuVN409fB35RLljjg3jNkVJbLIP1u');
@@ -50,31 +52,39 @@ export class HomeComponent implements OnInit {
     }
 
     this.translate.get('tour.change-settings.title').subscribe(() => {
+      const startTourGetConsent = () => {
+        this.tourService.initialize([
+          createStep('change-settings'),
+          createStep('message-history'),
+          createStep('save-file'),
+          createStep('set-progress')
+        ]);
+
+        if ([UserModes.LoggedIn, UserModes.Guest].includes(this.dataService.UserMode)) {
+          let wcs = this.locStorage.Get(LocStorageKeys.WELCOME_TOUR_STARTED);
+          if (!wcs) {
+            this.tourService.start();
+            this.locStorage.Set(LocStorageKeys.WELCOME_TOUR_STARTED, JSON.stringify(true));
+          }
+        }
+
+        let consent = this.locStorage.Get(LocStorageKeys.COOKIE_CONSENT);
+        if (consent == null) this.dialogService.OpenCookieConsentDialog();
+      };
       // wait until translate service is available
       let lang = this.locStorage.Get(LocStorageKeys.LANGUAGE);
       if (!lang || lang.length == 0) {
         // this.dialog.open(WelcomeDialogComponent);
         // skip welcome, set language
-        if ((navigator.language || navigator.languages).includes('de')) this.locStorage.Set(LocStorageKeys.LANGUAGE, 'de');
-        else this.locStorage.Set(LocStorageKeys.LANGUAGE, 'en');
+        // if ((navigator.language || navigator.languages).includes('de')) this.locStorage.Set(LocStorageKeys.LANGUAGE, 'de');
+        // else this.locStorage.Set(LocStorageKeys.LANGUAGE, 'en');
+        this.dialog.open(LanguageDialogComponent).afterClosed().subscribe(x => {
+          startTourGetConsent();
+        });
       }
-
-      this.tourService.initialize([
-        createStep('change-settings'),
-        createStep('message-history'),
-        createStep('save-file'),
-        createStep('set-progress')
-      ]);
-      if ([UserModes.LoggedIn, UserModes.Guest].includes(this.dataService.UserMode)) {
-        let wcs = this.locStorage.Get(LocStorageKeys.WELCOME_TOUR_STARTED);
-        if (!wcs) {
-          this.tourService.start();
-          this.locStorage.Set(LocStorageKeys.WELCOME_TOUR_STARTED, JSON.stringify(true));
-        }
+      else {
+        startTourGetConsent();
       }
-
-      let consent = this.locStorage.Get(LocStorageKeys.COOKIE_CONSENT);
-      if (consent == null) this.dialogService.OpenCookieConsentDialog();
     });
 
     let dest = 'modeling';

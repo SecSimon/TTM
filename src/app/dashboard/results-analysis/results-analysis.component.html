@@ -69,7 +69,7 @@
             </td>
           </ng-container>
       
-          <tr mat-header-row *matHeaderRowDef="displayedThreatColumns; sticky: true"></tr>
+          <tr mat-header-row style="height: 30px;" *matHeaderRowDef="displayedThreatColumns; sticky: true"></tr>
           <tr mat-row *matRowDef="let row; columns: displayedThreatColumns;" [class.selected-entry]="IsThreatSelected(row)"
             (click)="SelectThreat(row)" (dblclick)="OnMappingDblClick(row, $event)" (contextmenu)="OpenContextMenu($event, row)">
           </tr>
@@ -113,7 +113,7 @@
             </td>
           </ng-container>
       
-          <tr mat-header-row *matHeaderRowDef="displayedCountermeasureColumns; sticky: true"></tr>
+          <tr mat-header-row style="height: 30px;" *matHeaderRowDef="displayedCountermeasureColumns; sticky: true"></tr>
           <tr mat-row *matRowDef="let row; columns: displayedCountermeasureColumns;" [class.selected-entry]="IsCountermeasureSelected(row)"
             (click)="SelectCountermeasure(row)" (dblclick)="OnMappingDblClick(row, $event)" (contextmenu)="OpenContextMenu($event, row)">
           </tr>

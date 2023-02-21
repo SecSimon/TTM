@@ -34,6 +34,26 @@
   }
 }
 
+.referenceTable {
+  margin: 10px;
+  table, th, td {
+    border: 1px solid;
+    border-collapse: collapse;
+  }
+}
+
+.refDiagramColumn {
+  max-width: 150px;
+}
+
+.buttonAsText {
+  background: none;
+  border: none;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
 .highlight-light { 
   background-color: rgba(0,0,0,0.1); 
   .mat-icon {

@@ -85,6 +85,10 @@ export class AssetsComponent extends NavTreeBase implements OnInit {
     return ImpactCategoryUtil.ToString(cat);
   }
 
+  public NumberAlreadyExists() {
+    return this.dataService.Project.GetNewAssets().some(x => x.Number == this.selectedAssetGroup.Number && x.ID != this.selectedAssetGroup.ID);
+  }
+
   private createNodes() {
     const prevNodes = this.Nodes;
     this.Nodes = [];
@@ -148,12 +152,9 @@ export class AssetsComponent extends NavTreeBase implements OnInit {
         }
       };
 
-      if (this.isProject) {
-        const configMath = this.dataService.Config.AssetGroups.GetGroupsFlat().find(x => x.Name == group.Name && x.Parent != null && x.Parent?.Name == group.Parent?.Name);
-        if (!configMath) {
-          g.icon = 'add_circle_outline';
-          g.iconAlignLeft = true;
-        }
+      if (this.isProject && group.IsNewAsset) {
+        g.icon = 'add_circle_outline';
+        g.iconAlignLeft = true;
       }
 
       if (g.isExpanded == null && !group.IsActive) g.isExpanded = false;

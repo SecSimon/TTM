@@ -92,7 +92,7 @@ export class StackComponent implements OnInit {
     if (!item) item = this.selectedComponent;
     if (item) {
       let map = this.dataService.Project.CreateAttackScenario(this.stack.ID, false);
-      map.SetMapping('', [], item, [item], null, null);
+      map.SetMapping('', [], item, [item], null, null, null, null);
       map.IsGenerated = false;
       this.dialogService.OpenAttackScenarioDialog(map, true).subscribe(result => {
         if (!result) {

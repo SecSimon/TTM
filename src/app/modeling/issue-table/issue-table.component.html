@@ -13,7 +13,7 @@
       <td mat-cell *matCellDef="let entry"> {{entry.Element?.Name}} </td>
     </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+    <tr mat-header-row style="height: 30px;" *matHeaderRowDef="displayedColumns; sticky: true"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;" [class.selected-issue]="IsIssueSelected(row)" (click)="SelectIssue(row)">
     </tr>
     <tr class="mat-row" *matNoDataRow>

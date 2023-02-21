@@ -3,7 +3,7 @@
     "ID": "3bf9addd-53b8-4d01-9971-7128326f856d",
     "Name": "Default Configuration",
     "Description": "",
-    "Version": 4,
+    "Version": 5,
     "threatLibraryID": "e17870ae-2c37-435c-a284-8df90ff7a5f0",
     "DFDthreatRuleGroupsID": "1d995fc2-d7a5-4f46-ae16-954b8603b7fe",
     "assetGroupID": "58e45260-36fa-43d7-ac37-198dcce12952",
@@ -1071,7 +1071,8 @@
       "ElementTypeID": 61,
       "IsDefault": false,
       "Properties": [],
-      "ID": "f9209f6d-3f5b-4e72-8c03-75531058d0f2"
+      "ID": "f9209f6d-3f5b-4e72-8c03-75531058d0f2",
+      "templateDFDID": "ffd00d05-c506-4bf9-af35-0b0f56234515"
     },
     {
       "Name": "SPI",
@@ -1079,7 +1080,8 @@
       "ElementTypeID": 61,
       "IsDefault": false,
       "Properties": [],
-      "ID": "c4967596-a83f-4530-84a6-afe75fec1a7b"
+      "ID": "c4967596-a83f-4530-84a6-afe75fec1a7b",
+      "templateDFDID": "0d2497f5-d83a-44ac-91ca-6453a7a0e2b4"
     },
     {
       "Name": "USB",
@@ -1106,7 +1108,8 @@
           "DefaultValue": true
         }
       ],
-      "ID": "111a5819-f53f-4a8d-81df-6b756a20efe7"
+      "ID": "111a5819-f53f-4a8d-81df-6b756a20efe7",
+      "templateDFDID": "054dd0d3-961a-4f18-9aee-92ac1b515392"
     },
     {
       "Name": "Ethernet",
@@ -1114,7 +1117,8 @@
       "ElementTypeID": 61,
       "IsDefault": false,
       "Properties": [],
-      "ID": "58e0c62c-e5b7-4e9f-9f8a-f8150cf18930"
+      "ID": "58e0c62c-e5b7-4e9f-9f8a-f8150cf18930",
+      "templateDFDID": "fad91fd1-0a2b-4ab0-a069-5362948e5f47"
     },
     {
       "ID": "4edf4a31-e828-4933-9a87-779083e7167e",
@@ -1138,7 +1142,8 @@
           "Key": "IsWireless",
           "Value": true
         }
-      ]
+      ],
+      "templateDFDID": "5135733f-bcb2-459e-a84b-048c832f5616"
     },
     {
       "Name": "WiFi",
@@ -1171,7 +1176,8 @@
           "Value": true
         }
       ],
-      "ID": "59f2fd67-bc38-4447-9c14-d9306283bbe9"
+      "ID": "59f2fd67-bc38-4447-9c14-d9306283bbe9",
+      "templateDFDID": "1ad7afbf-59a5-41ec-905e-621602e17ea6"
     },
     {
       "Name": "Bluetooth",
@@ -1213,7 +1219,8 @@
           "Value": true
         }
       ],
-      "ID": "2460a6c9-40e5-44c7-b133-10c6654efd18"
+      "ID": "2460a6c9-40e5-44c7-b133-10c6654efd18",
+      "templateDFDID": "f6abd33c-f527-4621-9a09-1ee5466aee01"
     },
     {
       "Name": "PROFIBUS",
@@ -1221,7 +1228,8 @@
       "ElementTypeID": 61,
       "IsDefault": false,
       "Properties": [],
-      "ID": "b7057a19-76b2-4cf5-9d7a-e3335079fa5f"
+      "ID": "b7057a19-76b2-4cf5-9d7a-e3335079fa5f",
+      "templateDFDID": "0d96e10f-fddd-4855-9efa-e2480847866a"
     },
     {
       "Name": "Internet Area",
@@ -1469,24 +1477,6 @@
       ]
     },
     {
-      "ID": "6970555e-8c1f-466b-add7-35babed4a7fa",
-      "Name": "RFID Tag",
-      "Description": "",
-      "IsDefault": false,
-      "Properties": [
-        {
-          "DisplayName": "Has EPC",
-          "ID": "edc587ce-e8d8-4340-9e42-d90627777c62",
-          "Tooltip": "Has Electronic Product Code (EPC)",
-          "HasGetter": false,
-          "Editable": true,
-          "Type": "Check Box",
-          "DefaultValue": true
-        }
-      ],
-      "ElementTypeID": 51
-    },
-    {
       "ID": "2d7223ec-7361-4f2a-bfea-d6c437e9a4f4",
       "Name": "Key File",
       "Description": "",
@@ -1537,14 +1527,6 @@
       ]
     },
     {
-      "ID": "c628fae9-68f2-4abc-886c-3fc103048e9f",
-      "Name": "GPS Tracker",
-      "Description": "",
-      "IsDefault": false,
-      "Properties": [],
-      "ElementTypeID": 51
-    },
-    {
       "ID": "0a168b12-fc9a-411c-bbf0-59599d0181f8",
       "Name": "Cloud Service",
       "Description": "",
@@ -1567,6 +1549,34 @@
       "IsDefault": false,
       "Properties": [],
       "ElementTypeID": 31
+    },
+    {
+      "ID": "de170dec-af60-4cc7-8daf-946b3fa53132",
+      "Name": "RFID",
+      "Description": "",
+      "IsDefault": false,
+      "Properties": [
+        {
+          "DisplayName": "Has EPC",
+          "ID": "355ded09-e3ae-41f7-8bbb-3fa0870e35a6",
+          "Tooltip": "Has Electronic Product Code (EPC)",
+          "HasGetter": false,
+          "Editable": true,
+          "Type": "Check Box",
+          "DefaultValue": true
+        }
+      ],
+      "ElementTypeID": 61,
+      "templateDFDID": "090e631e-a7e9-43be-9f36-e03da6e8e5c0"
+    },
+    {
+      "ID": "840b5bd1-b250-427c-bf56-5ddf826382ff",
+      "Name": "GPS",
+      "Description": "",
+      "IsDefault": false,
+      "Properties": [],
+      "ElementTypeID": 61,
+      "templateDFDID": "0981c2a9-a7a2-4497-b60e-076a7bfa8860"
     }
   ],
   "stencilTypeTemplates": [
@@ -1592,37 +1602,443 @@
           "y": 40,
           "canEditSize": false,
           "width": 340,
-          "height": 250
+          "height": 250,
+          "name": "Microprocessor"
         },
         {
           "x": 180,
           "y": 40,
           "canEditSize": false,
           "width": 0,
-          "height": 0
+          "height": 0,
+          "name": "SRAM"
         },
         {
           "x": 20,
           "y": 135,
           "canEditSize": false,
           "width": 0,
-          "height": 0
+          "height": 0,
+          "name": "FLASH"
         },
         {
           "x": 180,
           "y": 135,
           "canEditSize": false,
           "width": 0,
-          "height": 0
+          "height": 0,
+          "name": "JTAG"
         },
         {
           "x": 0,
           "y": 0,
           "canEditSize": true,
           "width": 340,
-          "height": 250
+          "height": 250,
+          "name": "Chip"
         }
-      ]
+      ],
+      "CanEditInWhichDiagram": true
+    },
+    {
+      "ID": "ffd00d05-c506-4bf9-af35-0b0f56234515",
+      "Name": "CAN Module",
+      "Description": "",
+      "ListInHWDiagram": true,
+      "ListInElementTypeIDs": [],
+      "Layout": [
+        {
+          "name": "CAN Handler",
+          "x": 20,
+          "y": 40,
+          "canEditSize": false,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "name": "CAN Data Storage",
+          "x": 20,
+          "y": 200,
+          "canEditSize": false,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "name": "CAN Module",
+          "x": 0,
+          "y": 0,
+          "canEditSize": true,
+          "width": 180,
+          "height": 290
+        }
+      ],
+      "stencilTypeIDs": [
+        "e0b99432-98a6-4e32-86d7-ca5f58897cc2",
+        "c7598413-4382-43e9-9904-fd9d877eb7a9",
+        "edd93ea1-6122-492c-bbef-332ecf0113b3"
+      ],
+      "CanEditInWhichDiagram": false,
+      "ListInUCDiagram": true
+    },
+    {
+      "ID": "054dd0d3-961a-4f18-9aee-92ac1b515392",
+      "Name": "USB Module",
+      "Description": "",
+      "ListInHWDiagram": true,
+      "ListInElementTypeIDs": [],
+      "Layout": [
+        {
+          "name": "USB Handler",
+          "x": 20,
+          "y": 40,
+          "canEditSize": false,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "name": "USB Data Storage",
+          "x": 20,
+          "y": 200,
+          "canEditSize": false,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "name": "USB Module",
+          "x": 0,
+          "y": 0,
+          "canEditSize": true,
+          "width": 180,
+          "height": 290
+        }
+      ],
+      "stencilTypeIDs": [
+        "e0b99432-98a6-4e32-86d7-ca5f58897cc2",
+        "c7598413-4382-43e9-9904-fd9d877eb7a9",
+        "edd93ea1-6122-492c-bbef-332ecf0113b3"
+      ],
+      "CanEditInWhichDiagram": false,
+      "ListInUCDiagram": true
+    },
+    {
+      "ID": "0d2497f5-d83a-44ac-91ca-6453a7a0e2b4",
+      "Name": "SPI Module",
+      "Description": "",
+      "ListInHWDiagram": true,
+      "ListInElementTypeIDs": [],
+      "Layout": [
+        {
+          "name": "SPI Handler",
+          "x": 20,
+          "y": 40,
+          "canEditSize": false,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "name": "SPI Data Storage",
+          "x": 20,
+          "y": 200,
+          "canEditSize": false,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "name": "SPI Module",
+          "x": 0,
+          "y": 0,
+          "canEditSize": true,
+          "width": 180,
+          "height": 290
+        }
+      ],
+      "stencilTypeIDs": [
+        "e0b99432-98a6-4e32-86d7-ca5f58897cc2",
+        "c7598413-4382-43e9-9904-fd9d877eb7a9",
+        "edd93ea1-6122-492c-bbef-332ecf0113b3"
+      ],
+      "CanEditInWhichDiagram": false,
+      "ListInUCDiagram": true
+    },
+    {
+      "ID": "5135733f-bcb2-459e-a84b-048c832f5616",
+      "Name": "RF Module",
+      "Description": "",
+      "ListInHWDiagram": true,
+      "ListInElementTypeIDs": [],
+      "Layout": [
+        {
+          "name": "RF Module Handler",
+          "x": 20,
+          "y": 40,
+          "canEditSize": false,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "name": "RF Module Data Storage",
+          "x": 20,
+          "y": 200,
+          "canEditSize": false,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "name": "RF Module",
+          "x": 0,
+          "y": 0,
+          "canEditSize": true,
+          "width": 180,
+          "height": 290
+        }
+      ],
+      "stencilTypeIDs": [
+        "e0b99432-98a6-4e32-86d7-ca5f58897cc2",
+        "c7598413-4382-43e9-9904-fd9d877eb7a9",
+        "edd93ea1-6122-492c-bbef-332ecf0113b3"
+      ],
+      "CanEditInWhichDiagram": false,
+      "ListInUCDiagram": true
+    },
+    {
+      "ID": "1ad7afbf-59a5-41ec-905e-621602e17ea6",
+      "Name": "WiFi Module",
+      "Description": "",
+      "ListInHWDiagram": true,
+      "ListInElementTypeIDs": [],
+      "Layout": [
+        {
+          "name": "WiFi Handler",
+          "x": 20,
+          "y": 40,
+          "canEditSize": false,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "name": "WiFi Data Storage",
+          "x": 20,
+          "y": 200,
+          "canEditSize": false,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "name": "WiFi Module",
+          "x": 0,
+          "y": 0,
+          "canEditSize": true,
+          "width": 180,
+          "height": 290
+        }
+      ],
+      "stencilTypeIDs": [
+        "e0b99432-98a6-4e32-86d7-ca5f58897cc2",
+        "c7598413-4382-43e9-9904-fd9d877eb7a9",
+        "edd93ea1-6122-492c-bbef-332ecf0113b3"
+      ],
+      "CanEditInWhichDiagram": false,
+      "ListInUCDiagram": true
+    },
+    {
+      "ID": "f6abd33c-f527-4621-9a09-1ee5466aee01",
+      "Name": "Bluetooth Module",
+      "Description": "",
+      "ListInHWDiagram": true,
+      "ListInElementTypeIDs": [],
+      "Layout": [
+        {
+          "name": "Bluetooth Handler",
+          "x": 20,
+          "y": 40,
+          "canEditSize": false,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "name": "Bluetooth Data Storage",
+          "x": 20,
+          "y": 200,
+          "canEditSize": false,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "name": "Bluetooth Module",
+          "x": 0,
+          "y": 0,
+          "canEditSize": true,
+          "width": 180,
+          "height": 290
+        }
+      ],
+      "stencilTypeIDs": [
+        "e0b99432-98a6-4e32-86d7-ca5f58897cc2",
+        "c7598413-4382-43e9-9904-fd9d877eb7a9",
+        "edd93ea1-6122-492c-bbef-332ecf0113b3"
+      ],
+      "CanEditInWhichDiagram": false,
+      "ListInUCDiagram": true
+    },
+    {
+      "ID": "0d96e10f-fddd-4855-9efa-e2480847866a",
+      "Name": "PROFIBUS Module",
+      "Description": "",
+      "ListInHWDiagram": true,
+      "ListInElementTypeIDs": [],
+      "Layout": [
+        {
+          "name": "PROFIBUS Handler",
+          "x": 20,
+          "y": 40,
+          "canEditSize": false,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "name": "PROFIBUS Data Storage",
+          "x": 20,
+          "y": 200,
+          "canEditSize": false,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "name": "PROFIBUS Module",
+          "x": 0,
+          "y": 0,
+          "canEditSize": true,
+          "width": 180,
+          "height": 290
+        }
+      ],
+      "stencilTypeIDs": [
+        "e0b99432-98a6-4e32-86d7-ca5f58897cc2",
+        "c7598413-4382-43e9-9904-fd9d877eb7a9",
+        "edd93ea1-6122-492c-bbef-332ecf0113b3"
+      ],
+      "CanEditInWhichDiagram": false,
+      "ListInUCDiagram": true
+    },
+    {
+      "ID": "090e631e-a7e9-43be-9f36-e03da6e8e5c0",
+      "Name": "RFID Module",
+      "Description": "",
+      "ListInHWDiagram": true,
+      "ListInElementTypeIDs": [],
+      "Layout": [
+        {
+          "name": "RFID Handler",
+          "x": 20,
+          "y": 40,
+          "canEditSize": false,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "name": "RFID Data Storage",
+          "x": 20,
+          "y": 200,
+          "canEditSize": false,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "name": "RFID Module",
+          "x": 0,
+          "y": 0,
+          "canEditSize": true,
+          "width": 180,
+          "height": 290
+        }
+      ],
+      "stencilTypeIDs": [
+        "e0b99432-98a6-4e32-86d7-ca5f58897cc2",
+        "c7598413-4382-43e9-9904-fd9d877eb7a9",
+        "edd93ea1-6122-492c-bbef-332ecf0113b3"
+      ],
+      "CanEditInWhichDiagram": false,
+      "ListInUCDiagram": true
+    },
+    {
+      "ID": "0981c2a9-a7a2-4497-b60e-076a7bfa8860",
+      "Name": "GPS Module",
+      "Description": "",
+      "ListInHWDiagram": true,
+      "ListInElementTypeIDs": [],
+      "Layout": [
+        {
+          "name": "GPS Handler",
+          "x": 20,
+          "y": 40,
+          "canEditSize": false,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "name": "GPS Data Storage",
+          "x": 20,
+          "y": 200,
+          "canEditSize": false,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "name": "GPS Module",
+          "x": 0,
+          "y": 0,
+          "canEditSize": true,
+          "width": 180,
+          "height": 290
+        }
+      ],
+      "stencilTypeIDs": [
+        "e0b99432-98a6-4e32-86d7-ca5f58897cc2",
+        "c7598413-4382-43e9-9904-fd9d877eb7a9",
+        "edd93ea1-6122-492c-bbef-332ecf0113b3"
+      ],
+      "CanEditInWhichDiagram": false,
+      "ListInUCDiagram": true
+    },
+    {
+      "ID": "fad91fd1-0a2b-4ab0-a069-5362948e5f47",
+      "Name": "Ethernet Module",
+      "Description": "",
+      "ListInHWDiagram": true,
+      "ListInElementTypeIDs": [],
+      "Layout": [
+        {
+          "name": "Ethernet Handler",
+          "x": 20,
+          "y": 40,
+          "canEditSize": false,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "name": "Ethernet Data Storage",
+          "x": 20,
+          "y": 200,
+          "canEditSize": false,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "name": "Ethernet Module",
+          "x": 0,
+          "y": 0,
+          "canEditSize": true,
+          "width": 180,
+          "height": 290
+        }
+      ],
+      "stencilTypeIDs": [
+        "e0b99432-98a6-4e32-86d7-ca5f58897cc2",
+        "c7598413-4382-43e9-9904-fd9d877eb7a9",
+        "edd93ea1-6122-492c-bbef-332ecf0113b3"
+      ],
+      "CanEditInWhichDiagram": false,
+      "ListInUCDiagram": true
     }
   ],
   "stencilThreatMnemonics": [
@@ -1642,7 +2058,8 @@
             32,
             51
           ],
-          "threatCategoryID": "3bbe354c-317a-4f76-bdbb-75543b5d5aa4"
+          "threatCategoryID": "3bbe354c-317a-4f76-bdbb-75543b5d5aa4",
+          "ID": "89012bfb-6c3e-465b-aa8c-31e41614968f"
         },
         {
           "Name": "Tampering",
@@ -1658,7 +2075,8 @@
             51,
             61
           ],
-          "threatCategoryID": "f0e814f3-b3d2-4357-b155-8fffd70ec42e"
+          "threatCategoryID": "f0e814f3-b3d2-4357-b155-8fffd70ec42e",
+          "ID": "b09d9704-9868-446d-a6a6-f91761d223ef"
         },
         {
           "Name": "Repudiation",
@@ -1670,7 +2088,8 @@
             31,
             32
           ],
-          "threatCategoryID": "a77f314c-f74e-4340-a993-5a1a24f26db4"
+          "threatCategoryID": "a77f314c-f74e-4340-a993-5a1a24f26db4",
+          "ID": "111e4a03-1420-4cc4-8a8c-b649258851f0"
         },
         {
           "Name": "Information Disclosure",
@@ -1685,7 +2104,8 @@
             51,
             61
           ],
-          "threatCategoryID": "369640cc-1b53-4a2e-9e3b-a74c187e68e7"
+          "threatCategoryID": "369640cc-1b53-4a2e-9e3b-a74c187e68e7",
+          "ID": "1da5e6cb-43b9-4fbb-acaa-5437d658bf31"
         },
         {
           "Name": "Denial of Service",
@@ -1700,7 +2120,8 @@
             51,
             61
           ],
-          "threatCategoryID": "422b9042-212d-4467-a000-2528a2e09f8b"
+          "threatCategoryID": "422b9042-212d-4467-a000-2528a2e09f8b",
+          "ID": "4cb90c1b-9c46-4666-99ff-151e3f7fb122"
         },
         {
           "Name": "Elevation of Privilege",
@@ -1710,7 +2131,8 @@
             11,
             12
           ],
-          "threatCategoryID": "8687e614-c127-418b-8fda-536bb2f0708f"
+          "threatCategoryID": "8687e614-c127-418b-8fda-536bb2f0708f",
+          "ID": "7ab5111c-e480-41e6-9c6d-0c48433fac72"
         }
       ]
     },
@@ -1734,7 +2156,8 @@
             22,
             12
           ],
-          "threatCategoryID": "55379fba-d815-4e29-bd4b-9aa674ed6821"
+          "threatCategoryID": "55379fba-d815-4e29-bd4b-9aa674ed6821",
+          "ID": "dc68752a-08bc-4359-858d-b84ad3ede975"
         },
         {
           "Name": "Identifiability",
@@ -1751,7 +2174,8 @@
             22,
             12
           ],
-          "threatCategoryID": "5278c995-f9d9-410e-b012-2995ba30c353"
+          "threatCategoryID": "5278c995-f9d9-410e-b012-2995ba30c353",
+          "ID": "2062fc21-5b59-44a5-9ba2-88bdf22710a7"
         },
         {
           "Name": "Non-Repudiation",
@@ -1766,7 +2190,8 @@
             22,
             12
           ],
-          "threatCategoryID": "700f5437-7d03-4bff-a0e6-50cfb82dc0e5"
+          "threatCategoryID": "700f5437-7d03-4bff-a0e6-50cfb82dc0e5",
+          "ID": "c1d68de4-a522-4cf8-8f95-501b2f422498"
         },
         {
           "Name": "Detectability",
@@ -1781,7 +2206,8 @@
             22,
             12
           ],
-          "threatCategoryID": "b98738a0-f79e-4b1e-86df-0e716eb61bc0"
+          "threatCategoryID": "b98738a0-f79e-4b1e-86df-0e716eb61bc0",
+          "ID": "b96ae216-002a-48fd-97b2-5807ea74f696"
         },
         {
           "Name": "Disclosure of Information",
@@ -1796,7 +2222,8 @@
             22,
             12
           ],
-          "threatCategoryID": "da86b5fc-d15d-41f7-a98f-01fe5e143651"
+          "threatCategoryID": "da86b5fc-d15d-41f7-a98f-01fe5e143651",
+          "ID": "22de5b16-e0db-43b6-9a80-2618e3848f88"
         },
         {
           "Name": "Unawareness",
@@ -1806,7 +2233,8 @@
             31,
             32
           ],
-          "threatCategoryID": "aead4d1d-0f64-42b4-a512-cbbc979af3ca"
+          "threatCategoryID": "aead4d1d-0f64-42b4-a512-cbbc979af3ca",
+          "ID": "10cdb2c2-e4ec-4d88-86a8-934339f84ed8"
         },
         {
           "Name": "Non-Compliance",
@@ -1821,7 +2249,8 @@
             22,
             12
           ],
-          "threatCategoryID": "2521b219-3d43-4fd8-bf96-d658eea44d01"
+          "threatCategoryID": "2521b219-3d43-4fd8-bf96-d658eea44d01",
+          "ID": "24a57fc5-2005-4867-8c56-b1a96ea38be9"
         }
       ]
     },
@@ -1839,7 +2268,8 @@
             41,
             32
           ],
-          "threatCategoryID": "17a04fbd-365f-4345-97f8-88d3c7382ec1"
+          "threatCategoryID": "17a04fbd-365f-4345-97f8-88d3c7382ec1",
+          "ID": "df1e858e-538b-4f26-b6e1-ea7813e63d3d"
         },
         {
           "Name": "Privacy",
@@ -1853,7 +2283,8 @@
             12,
             41
           ],
-          "threatCategoryID": "7bbfe5d3-8a91-4210-99ab-79f670715e61"
+          "threatCategoryID": "7bbfe5d3-8a91-4210-99ab-79f670715e61",
+          "ID": "5ae41943-50b7-46c3-acbb-97c70e085c39"
         }
       ]
     }
@@ -4736,7 +5167,7 @@
       ],
       "threatCategorieIDs": [
         "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
-        "ddf75d3c-ac5a-4ca2-8268-a4f7b40add7d"
+        "70d07015-4eda-4d1a-8d07-1791f881f8f0"
       ],
       "Severity": 3
     },
@@ -9446,9 +9877,6 @@
         "fa055483-b3a2-461f-b09c-46e99de0455e",
         "9ec88af2-3da9-41df-93bf-8cbcb74a7bb6",
         "b41b621c-4b91-43f9-90ab-b7e955269620",
-        "87987695-a4ae-4a76-9eae-977592998b8c",
-        "d2839332-47c8-4f40-9fd9-66aa02a3615d",
-        "01a4663a-1bac-4d51-ac66-3f957b90d1ab",
         "08043f24-cc72-435b-ace1-bd593442215d",
         "e8848ea8-e120-4722-bc10-90daf7b4a075",
         "0e783801-b482-4721-af49-1be96b16fc59",
@@ -9473,7 +9901,6 @@
         "d9290f90-aa79-432f-92e0-267226771aea",
         "961c5b9f-ea27-48ec-b526-514636536540",
         "b76247eb-309c-4fad-9a8c-28fea0a98555",
-        "797fda2f-6e6e-4100-acc9-2192b485a0e5",
         "b9b2fbaa-be5c-48ca-bddc-6d4cb5989f96",
         "ba71d0ae-0a71-40d5-a3e3-f15c3a3baa2b",
         "b05b7085-3952-4f0d-bb85-7c380eb32f92",
@@ -9482,7 +9909,11 @@
         "2c32278f-ea97-4aa1-8e85-982f76dee1b9",
         "a777fa41-a13f-4225-af47-e4458a0c8f9e",
         "ab670c99-4f5c-41c7-974c-a6704df1661b",
-        "d406176c-9381-4f8c-aecc-b6d7ba56c7da"
+        "d406176c-9381-4f8c-aecc-b6d7ba56c7da",
+        "82c0d2ca-5756-40bd-a2e9-3c7ab8c5c2ba",
+        "bd2cf4bb-a728-46bd-8d38-269b4cfef7be",
+        "d07d24f4-10b5-452d-a489-10c9752dda4d",
+        "6394d7a4-c2db-4fe6-826c-93b1cd0d5373"
       ]
     },
     {
@@ -9628,8 +10059,9 @@
         "78cbfae0-bbd0-47a5-91ff-223518ffd7b1",
         "4198e708-4e70-41f4-9466-dfc4cc171bfc",
         "27b2bc15-e19c-452e-b096-4f910810e42f",
+        "e95a6d53-4e91-412b-ba0e-7a6e2dd5a52b",
         "5d6a6968-e654-4080-91f2-a0755ae8f9e0",
-        "e95a6d53-4e91-412b-ba0e-7a6e2dd5a52b"
+        "85f70a97-fb3a-498b-8402-bcc7f6737f73"
       ],
       "threatRuleIDs": []
     },
@@ -9645,12 +10077,13 @@
         "7b825bd7-222e-476f-bf22-85fe2e50eb6c",
         "32d4322f-482d-4a59-8f62-964ef8014a0b",
         "4440ba48-7d42-44cd-b5de-f6664ccc6259",
+        "1221dc8c-f495-4833-a027-c3c5d2dc1a7d",
         "ef5ee1a2-c3b4-492d-b7be-d2285f10107c"
       ]
     },
     {
       "ID": "5d6a6968-e654-4080-91f2-a0755ae8f9e0",
-      "Name": "STRIDE per Interaction",
+      "Name": "STRIDE per Interaction (old)",
       "Description": "According to Adam Shostack: Threat Modeling - Designing for Security",
       "threatRuleGroupIDs": [],
       "threatRuleIDs": [
@@ -9697,11 +10130,7 @@
       "Description": "",
       "threatRuleGroupIDs": [],
       "threatRuleIDs": [
-        "8c29ed3b-b151-41de-81ae-627227aaa104",
-        "2cb626ff-1bee-4cb1-a509-aa1ca3e79ea0",
-        "a625c7a8-adde-4721-85fe-336a25d1da61",
-        "d4a9ad7c-c4fe-49ae-ba3f-0bb48a60642d",
-        "c78c1ed5-3f0a-4e70-810c-9527f1aadad2"
+        "8c29ed3b-b151-41de-81ae-627227aaa104"
       ]
     },
     {
@@ -9710,6 +10139,7 @@
       "Description": "",
       "threatRuleGroupIDs": [
         "12b0ec09-b6a6-48b9-8600-fc1816f3fe5f",
+        "8d69374e-a6be-40bc-a8b6-1365b3009c25",
         "662f8645-0847-4a94-bd50-14b4615526cc",
         "dd000a59-4eba-47ad-8fa5-4d2909ac5c44"
       ],
@@ -9748,6 +10178,56 @@
       "threatRuleGroupIDs": [],
       "threatRuleIDs": [
         "b0d91b9a-111b-464b-8011-3e02defafe1d"
+      ]
+    },
+    {
+      "ID": "8d69374e-a6be-40bc-a8b6-1365b3009c25",
+      "Name": "Tampering",
+      "Description": "",
+      "threatRuleGroupIDs": [],
+      "threatRuleIDs": [
+        "fec7c871-d868-4edf-9bca-80c9061e830b"
+      ]
+    },
+    {
+      "ID": "85f70a97-fb3a-498b-8402-bcc7f6737f73",
+      "Name": "STRIDE-per-Interaction",
+      "Description": "According to Adam Shostack: Threat Modeling - Designing for Security",
+      "threatRuleGroupIDs": [],
+      "threatRuleIDs": [
+        "66f7a456-2edb-4d91-9bd1-aec421a92011",
+        "ddc5a2f1-7466-488d-a4f4-9f6a1520a00e",
+        "4d724289-8fe3-47c5-b44b-7fd9cac6c701",
+        "97682dbc-2fb9-456d-94c3-a6a09998b5a4",
+        "9e788439-62ed-44ea-9b19-093f92cf2223",
+        "30b01ab6-2eea-49ff-ac4e-f5838f8a8337",
+        "4f56c6cd-3daa-4b7a-91a5-740403957ff5",
+        "7b140721-9f7a-46a7-8290-931efec07769",
+        "557991c1-4eeb-40e1-96c3-c8a214278e29",
+        "8fabcdad-c70f-4416-8cb6-5c65a21142b0",
+        "f5894534-60a9-4363-84e5-4c0479ca71b9",
+        "71f98504-8182-4fb2-81ed-aea1e1953215",
+        "6d1d58a3-f4ff-4938-93d8-d91bb9ae3f58",
+        "6ca91e1b-746c-47bb-8cd3-2fa0c478042e",
+        "a1b5637c-fac3-4b49-bf3f-5f39ce8757da",
+        "c0158e50-7c0f-4457-a8ea-223ff165fdaf",
+        "984d970a-8ef5-445c-a15b-7613b313306c",
+        "a7f340d4-3aa2-45d2-9226-db55414c7f69",
+        "2a2ea224-58c9-4187-b721-940fc97b1c04",
+        "c1e53b74-7e9d-4566-b690-978bfc8b9af3",
+        "35915020-1d0c-4853-849d-d32159bf6401",
+        "1308104d-16da-432f-a70f-8de14a8bfbf9",
+        "3008afca-320c-489b-9ff6-f61b7cdf497c",
+        "46a79465-8cb7-4c8e-8025-e1a08e9620d8",
+        "134a6570-e75e-4c8a-bd2f-f02b5a052878",
+        "4c4d3f55-3ffd-4416-9bc3-4bf2921110e1",
+        "0115bdb1-d2ab-4bbc-bfd1-b23c831b5a70",
+        "b06930a0-bff1-49e4-889c-6211290de683",
+        "2a171a21-0d62-4159-b7ab-5e2ad1796fff",
+        "7e4e6144-6504-4796-a3ca-00962c0a9cbb",
+        "d59a4a10-780a-465b-86fa-292a07e7a89a",
+        "d675c061-7af1-4e49-a503-0b512a85f9da",
+        "427f13f4-ce93-4344-b6fc-1178ea54199e"
       ]
     }
   ],
@@ -12508,79 +12988,6 @@
       "Severity": 2
     },
     {
-      "ID": "87987695-a4ae-4a76-9eae-977592998b8c",
-      "Name": "Tag cloning",
-      "Description": "A cloned tag may enable access to sensitive data or restricted areas",
-      "IsActive": true,
-      "RuleGenerationType": 1,
-      "Mapping": {
-        "ThreatCategoryIDs": [
-          "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
-          "4f5e6bf4-c9c4-4ea6-9b0e-5c861570e6ec",
-          "c46b7c74-5979-409d-8ceb-631b8833c596"
-        ],
-        "AttackVectorID": "06c24920-2ce3-49ca-8134-9fa81fb2cdef"
-      },
-      "overridenRuleIDs": [],
-      "RuleType": 1,
-      "StencilRestriction": {
-        "stencilTypeID": "6970555e-8c1f-466b-add7-35babed4a7fa",
-        "DetailRestrictions": []
-      },
-      "Severity": 2
-    },
-    {
-      "ID": "d2839332-47c8-4f40-9fd9-66aa02a3615d",
-      "Name": "Tag tracking",
-      "Description": "Tracking a tag by its unique identifier allows, for example, to create a movement profile",
-      "IsActive": true,
-      "RuleGenerationType": 1,
-      "Mapping": {
-        "ThreatCategoryIDs": [
-          "61d04f2d-83b1-4152-9aba-4ad188eef06d",
-          "2765e61e-29a9-498e-adf8-4d653f488e3d"
-        ]
-      },
-      "overridenRuleIDs": [],
-      "RuleType": 1,
-      "StencilRestriction": {
-        "stencilTypeID": "6970555e-8c1f-466b-add7-35babed4a7fa",
-        "DetailRestrictions": []
-      },
-      "Severity": 2
-    },
-    {
-      "ID": "01a4663a-1bac-4d51-ac66-3f957b90d1ab",
-      "Name": "Tag inventorying",
-      "Description": "Tags with an EPC are vulnerable to inventory attacks. For example, medical devices such as pacemakers can be used to draw conclusions about the health of individuals.",
-      "IsActive": true,
-      "RuleGenerationType": 1,
-      "Mapping": {
-        "ThreatCategoryIDs": [
-          "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
-          "e6ba8518-0074-492c-95e5-ebe89fa601fe"
-        ]
-      },
-      "overridenRuleIDs": [],
-      "RuleType": 1,
-      "StencilRestriction": {
-        "stencilTypeID": "6970555e-8c1f-466b-add7-35babed4a7fa",
-        "DetailRestrictions": [
-          {
-            "IsOR": true,
-            "Layer": 0,
-            "RestType": 1,
-            "PropertyRest": {
-              "ID": "edc587ce-e8d8-4340-9e42-d90627777c62",
-              "ComparisonType": "==",
-              "Value": true
-            }
-          }
-        ]
-      },
-      "Severity": 2
-    },
-    {
       "ID": "08043f24-cc72-435b-ace1-bd593442215d",
       "Name": "Unauthorized unplugging",
       "Description": "",
@@ -12745,194 +13152,6 @@
           }
         ],
         "NodeRestrictions": []
-      },
-      "Severity": 2
-    },
-    {
-      "ID": "2cb626ff-1bee-4cb1-a509-aa1ca3e79ea0",
-      "Name": "P-E-D",
-      "Description": "",
-      "IsActive": false,
-      "RuleGenerationType": 1,
-      "Mapping": {
-        "AttackVectorID": "c7787e71-5c70-462c-9558-ce20e7cfdfe8",
-        "ThreatCategoryIDs": [
-          "f7639a0c-e85b-4947-bbec-2ac4a0911827",
-          "f3fe9ca9-4c34-40fc-a270-3e6252d01e6f",
-          "f2b91aaf-7d9f-4baf-8713-13d7625174d9"
-        ]
-      },
-      "overridenRuleIDs": [],
-      "RuleType": 2,
-      "DFDRestriction": {
-        "AppliesReverse": false,
-        "Target": 2,
-        "NodeTypes": [
-          {
-            "TypeIDs": [
-              "e0b99432-98a6-4e32-86d7-ca5f58897cc2"
-            ]
-          },
-          {
-            "TypeIDs": [
-              "02b39924-b8f2-44da-a2bc-be1bd2450f68"
-            ]
-          },
-          {
-            "TypeIDs": [
-              "c7598413-4382-43e9-9904-fd9d877eb7a9"
-            ]
-          }
-        ],
-        "NodeRestrictions": []
-      },
-      "Severity": 2
-    },
-    {
-      "ID": "a625c7a8-adde-4721-85fe-336a25d1da61",
-      "Name": "P-E-D-Rev",
-      "Description": "",
-      "IsActive": false,
-      "RuleGenerationType": 1,
-      "Mapping": {
-        "AttackVectorID": "c7787e71-5c70-462c-9558-ce20e7cfdfe8",
-        "ThreatCategoryIDs": [
-          "f7639a0c-e85b-4947-bbec-2ac4a0911827",
-          "f3fe9ca9-4c34-40fc-a270-3e6252d01e6f",
-          "f2b91aaf-7d9f-4baf-8713-13d7625174d9"
-        ]
-      },
-      "overridenRuleIDs": [],
-      "RuleType": 2,
-      "DFDRestriction": {
-        "AppliesReverse": true,
-        "Target": 2,
-        "NodeTypes": [
-          {
-            "TypeIDs": [
-              "e0b99432-98a6-4e32-86d7-ca5f58897cc2"
-            ]
-          },
-          {
-            "TypeIDs": [
-              "02b39924-b8f2-44da-a2bc-be1bd2450f68"
-            ]
-          },
-          {
-            "TypeIDs": [
-              "c7598413-4382-43e9-9904-fd9d877eb7a9"
-            ]
-          }
-        ],
-        "NodeRestrictions": []
-      },
-      "Severity": 2
-    },
-    {
-      "ID": "d4a9ad7c-c4fe-49ae-ba3f-0bb48a60642d",
-      "Name": "P-E-P-E",
-      "Description": "",
-      "IsActive": false,
-      "RuleGenerationType": 1,
-      "Mapping": {
-        "AttackVectorID": "c7787e71-5c70-462c-9558-ce20e7cfdfe8",
-        "ThreatCategoryIDs": [
-          "f7639a0c-e85b-4947-bbec-2ac4a0911827",
-          "f3fe9ca9-4c34-40fc-a270-3e6252d01e6f",
-          "f2b91aaf-7d9f-4baf-8713-13d7625174d9"
-        ]
-      },
-      "overridenRuleIDs": [],
-      "RuleType": 2,
-      "DFDRestriction": {
-        "AppliesReverse": false,
-        "Target": 2,
-        "NodeTypes": [
-          {
-            "TypeIDs": [
-              "e0b99432-98a6-4e32-86d7-ca5f58897cc2"
-            ]
-          },
-          {
-            "TypeIDs": [
-              "02b39924-b8f2-44da-a2bc-be1bd2450f68"
-            ]
-          },
-          {
-            "TypeIDs": [
-              "e0b99432-98a6-4e32-86d7-ca5f58897cc2"
-            ]
-          },
-          {
-            "TypeIDs": [
-              "02b39924-b8f2-44da-a2bc-be1bd2450f68"
-            ]
-          }
-        ],
-        "NodeRestrictions": []
-      },
-      "Severity": 2
-    },
-    {
-      "ID": "c78c1ed5-3f0a-4e70-810c-9527f1aadad2",
-      "Name": "P-E-D-Rest",
-      "Description": "",
-      "IsActive": false,
-      "RuleGenerationType": 1,
-      "Mapping": {
-        "AttackVectorID": "c7787e71-5c70-462c-9558-ce20e7cfdfe8",
-        "ThreatCategoryIDs": [
-          "f7639a0c-e85b-4947-bbec-2ac4a0911827",
-          "f3fe9ca9-4c34-40fc-a270-3e6252d01e6f",
-          "f2b91aaf-7d9f-4baf-8713-13d7625174d9"
-        ]
-      },
-      "overridenRuleIDs": [],
-      "RuleType": 2,
-      "DFDRestriction": {
-        "AppliesReverse": false,
-        "Target": 2,
-        "NodeTypes": [
-          {
-            "TypeIDs": [
-              "e0b99432-98a6-4e32-86d7-ca5f58897cc2"
-            ]
-          },
-          {
-            "TypeIDs": [
-              "02b39924-b8f2-44da-a2bc-be1bd2450f68"
-            ]
-          },
-          {
-            "TypeIDs": [
-              "c7598413-4382-43e9-9904-fd9d877eb7a9"
-            ]
-          }
-        ],
-        "NodeRestrictions": [
-          {
-            "Layer": 0,
-            "NodeNumber": 2,
-            "IsOR": false,
-            "RestType": 1,
-            "PropertyRest": {
-              "ID": "ContainsUserData",
-              "ComparisonType": "==",
-              "Value": true
-            }
-          },
-          {
-            "Layer": 0,
-            "NodeNumber": -1,
-            "IsOR": false,
-            "RestType": 1,
-            "PropertyRest": {
-              "ID": "ProvidesConfidentiality",
-              "ComparisonType": "==",
-              "Value": true
-            }
-          }
-        ]
       },
       "Severity": 2
     },
@@ -13712,7 +13931,7 @@
         "AttackVectorID": "5605adab-044a-4b1f-9344-90a602d8d448",
         "ThreatCategoryIDs": [
           "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
-          "ddf75d3c-ac5a-4ca2-8268-a4f7b40add7d"
+          "70d07015-4eda-4d1a-8d07-1791f881f8f0"
         ]
       },
       "overridenRuleIDs": [],
@@ -16172,28 +16391,6 @@
       "Severity": 3
     },
     {
-      "ID": "797fda2f-6e6e-4100-acc9-2192b485a0e5",
-      "Name": "Location tracking",
-      "Description": "",
-      "IsActive": true,
-      "RuleGenerationType": 1,
-      "Mapping": {
-        "AttackVectorID": "6bf04ffa-1f83-4637-a866-d02ff10d752b",
-        "ThreatCategoryIDs": [
-          "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
-          "2765e61e-29a9-498e-adf8-4d653f488e3d",
-          "7bbfe5d3-8a91-4210-99ab-79f670715e61"
-        ]
-      },
-      "overridenRuleIDs": [],
-      "RuleType": 1,
-      "StencilRestriction": {
-        "stencilTypeID": "c628fae9-68f2-4abc-886c-3fc103048e9f",
-        "DetailRestrictions": []
-      },
-      "Severity": 3
-    },
-    {
       "ID": "b9b2fbaa-be5c-48ca-bddc-6d4cb5989f96",
       "Name": "Human injury",
       "Description": "",
@@ -17567,6 +17764,1794 @@
         ]
       },
       "Severity": 2
+    },
+    {
+      "ID": "1221dc8c-f495-4833-a027-c3c5d2dc1a7d",
+      "Name": "Collision attack",
+      "Description": "Attackers who can send a series of packets or messages may be able to overlap data. For example, packet 1 may be 100 bytes starting at offset 0. Packet 2 may be 100 bytes starting at offset 25. Packet 2 will overwrite 75 bytes of packet 1. Ensure you reassemble data before filtering it, and ensure you explicitly handle these sorts of cases.",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "f7639a0c-e85b-4947-bbec-2ac4a0911827",
+          "f3fe9ca9-4c34-40fc-a270-3e6252d01e6f"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 2,
+      "DFDRestriction": {
+        "AppliesReverse": false,
+        "Target": -1,
+        "NodeTypes": [
+          {
+            "TypeIDs": []
+          },
+          {
+            "TypeIDs": []
+          }
+        ],
+        "NodeRestrictions": [
+          {
+            "Layer": 0,
+            "NodeNumber": -1,
+            "IsOR": false,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "1fec597f-dfd0-4fcc-b348-828307b946ee",
+              "ComparisonType": "==",
+              "Value": true
+            }
+          }
+        ]
+      },
+      "Severity": 2
+    },
+    {
+      "ID": "fec7c871-d868-4edf-9bca-80c9061e830b",
+      "Name": "JSON processing",
+      "Description": "If a dataflow contains JSON, JSON processing and hijacking threats may be exploited.",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "f7639a0c-e85b-4947-bbec-2ac4a0911827"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 2,
+      "DFDRestriction": {
+        "AppliesReverse": false,
+        "Target": -1,
+        "NodeTypes": [
+          {
+            "TypeIDs": []
+          },
+          {
+            "TypeIDs": []
+          }
+        ],
+        "NodeRestrictions": [
+          {
+            "Layer": 0,
+            "NodeNumber": -1,
+            "IsOR": false,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "758fa1ec-35f3-44a2-9f3d-0e5c21fc92c4",
+              "ComparisonType": "==",
+              "Value": true
+            }
+          }
+        ]
+      },
+      "Severity": 2
+    },
+    {
+      "ID": "82c0d2ca-5756-40bd-a2e9-3c7ab8c5c2ba",
+      "Name": "Tag cloning",
+      "Description": "A cloned tag may enable access to sensitive data or restricted areas",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "AttackVectorID": "06c24920-2ce3-49ca-8134-9fa81fb2cdef",
+        "ThreatCategoryIDs": [
+          "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
+          "4f5e6bf4-c9c4-4ea6-9b0e-5c861570e6ec",
+          "c46b7c74-5979-409d-8ceb-631b8833c596",
+          "3bbe354c-317a-4f76-bdbb-75543b5d5aa4"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 1,
+      "StencilRestriction": {
+        "stencilTypeID": "de170dec-af60-4cc7-8daf-946b3fa53132",
+        "DetailRestrictions": []
+      },
+      "Severity": 2
+    },
+    {
+      "ID": "bd2cf4bb-a728-46bd-8d38-269b4cfef7be",
+      "Name": "Tag tracking",
+      "Description": "Tracking a tag by its unique identifier allows, for example, to create a movement profile",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "61d04f2d-83b1-4152-9aba-4ad188eef06d",
+          "2765e61e-29a9-498e-adf8-4d653f488e3d"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 1,
+      "StencilRestriction": {
+        "stencilTypeID": "de170dec-af60-4cc7-8daf-946b3fa53132",
+        "DetailRestrictions": []
+      },
+      "Severity": 2
+    },
+    {
+      "ID": "d07d24f4-10b5-452d-a489-10c9752dda4d",
+      "Name": "Tag inventorying",
+      "Description": "Tags with an EPC are vulnerable to inventory attacks. For example, medical devices such as pacemakers can be used to draw conclusions about the health of individuals.",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
+          "e6ba8518-0074-492c-95e5-ebe89fa601fe"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 1,
+      "StencilRestriction": {
+        "stencilTypeID": "de170dec-af60-4cc7-8daf-946b3fa53132",
+        "DetailRestrictions": [
+          {
+            "IsOR": true,
+            "Layer": 0,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "355ded09-e3ae-41f7-8bbb-3fa0870e35a6",
+              "ComparisonType": "==",
+              "Value": true
+            }
+          }
+        ]
+      },
+      "Severity": 2
+    },
+    {
+      "ID": "6394d7a4-c2db-4fe6-826c-93b1cd0d5373",
+      "Name": "Location tracking",
+      "Description": "",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "AttackVectorID": "6bf04ffa-1f83-4637-a866-d02ff10d752b",
+        "ThreatCategoryIDs": [
+          "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
+          "2765e61e-29a9-498e-adf8-4d653f488e3d",
+          "7bbfe5d3-8a91-4210-99ab-79f670715e61"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 1,
+      "StencilRestriction": {
+        "stencilTypeID": "840b5bd1-b250-427c-bf56-5ddf826382ff",
+        "DetailRestrictions": []
+      },
+      "Severity": 3
+    },
+    {
+      "ID": "66f7a456-2edb-4d91-9bd1-aec421a92011",
+      "Name": "Sending data to spoofed data store",
+      "Description": "Process has outbound data flow to data store. E.g., database is spoofed, process writes to wrong place. (see Threat modeling - designing for security: Table 3-10-1)",
+      "IsActive": false,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "3bbe354c-317a-4f76-bdbb-75543b5d5aa4"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 2,
+      "DFDRestriction": {
+        "AppliesReverse": false,
+        "Target": 0,
+        "NodeTypes": [
+          {
+            "TypeIDs": [
+              "e0b99432-98a6-4e32-86d7-ca5f58897cc2"
+            ]
+          },
+          {
+            "TypeIDs": [
+              "c7598413-4382-43e9-9904-fd9d877eb7a9"
+            ]
+          }
+        ],
+        "NodeRestrictions": [
+          {
+            "Layer": 0,
+            "NodeNumber": -1,
+            "IsOR": false,
+            "RestType": 2,
+            "PropertyRest": {
+              "ID": "",
+              "ComparisonType": "==",
+              "Value": null
+            },
+            "DataflowRest": {
+              "TrustAreaIDs": []
+            }
+          },
+          {
+            "Layer": 0,
+            "NodeNumber": -1,
+            "IsOR": false,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "ProvidesReceiverAuthenticity",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          }
+        ]
+      }
+    },
+    {
+      "ID": "ddc5a2f1-7466-488d-a4f4-9f6a1520a00e",
+      "Name": "Sending confidential data to data store",
+      "Description": "Process has outbound data flow to data store. E.g. process writes information to data store which should not be there. (see Threat modeling - designing for security: Table 3-10-1)",
+      "IsActive": false,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "369640cc-1b53-4a2e-9e3b-a74c187e68e7"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 2,
+      "DFDRestriction": {
+        "AppliesReverse": false,
+        "Target": 0,
+        "NodeTypes": [
+          {
+            "TypeIDs": [
+              "e0b99432-98a6-4e32-86d7-ca5f58897cc2"
+            ]
+          },
+          {
+            "TypeIDs": [
+              "c7598413-4382-43e9-9904-fd9d877eb7a9"
+            ]
+          }
+        ],
+        "NodeRestrictions": [
+          {
+            "Layer": 0,
+            "NodeNumber": -1,
+            "IsOR": false,
+            "RestType": 2,
+            "PropertyRest": {
+              "ID": "",
+              "ComparisonType": "==",
+              "Value": null
+            },
+            "DataflowRest": {
+              "TrustAreaIDs": []
+            }
+          }
+        ]
+      }
+    },
+    {
+      "ID": "4d724289-8fe3-47c5-b44b-7fd9cac6c701",
+      "Name": "Sending data to spoofed process",
+      "Description": "Process sends output to another process. E.g., Process2 is spoofed, Process1 writes to wrong place. (see Threat modeling - designing for security: Table 3-10-2)",
+      "IsActive": false,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "3bbe354c-317a-4f76-bdbb-75543b5d5aa4"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 2,
+      "DFDRestriction": {
+        "AppliesReverse": false,
+        "Target": 0,
+        "NodeTypes": [
+          {
+            "TypeIDs": [
+              "e0b99432-98a6-4e32-86d7-ca5f58897cc2"
+            ]
+          },
+          {
+            "TypeIDs": [
+              "e0b99432-98a6-4e32-86d7-ca5f58897cc2"
+            ]
+          }
+        ],
+        "NodeRestrictions": [
+          {
+            "Layer": 0,
+            "NodeNumber": -1,
+            "IsOR": false,
+            "RestType": 2,
+            "PropertyRest": {
+              "ID": "",
+              "ComparisonType": "==",
+              "Value": null
+            },
+            "DataflowRest": {
+              "TrustAreaIDs": []
+            }
+          },
+          {
+            "Layer": 0,
+            "NodeNumber": -1,
+            "IsOR": false,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "ProvidesReceiverAuthenticity",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          }
+        ]
+      }
+    },
+    {
+      "ID": "97682dbc-2fb9-456d-94c3-a6a09998b5a4",
+      "Name": "Process denies receiving data",
+      "Description": "Process sends output to another process. E.g., Process2 claims not to have received data from Process1.  (see Threat modeling - designing for security: Table 3-10-2)",
+      "IsActive": false,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "a77f314c-f74e-4340-a993-5a1a24f26db4"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 2,
+      "DFDRestriction": {
+        "AppliesReverse": false,
+        "Target": 0,
+        "NodeTypes": [
+          {
+            "TypeIDs": [
+              "e0b99432-98a6-4e32-86d7-ca5f58897cc2"
+            ]
+          },
+          {
+            "TypeIDs": [
+              "e0b99432-98a6-4e32-86d7-ca5f58897cc2"
+            ]
+          }
+        ],
+        "NodeRestrictions": [
+          {
+            "Layer": 0,
+            "NodeNumber": -1,
+            "IsOR": false,
+            "RestType": 2,
+            "PropertyRest": {
+              "ID": "",
+              "ComparisonType": "==",
+              "Value": null
+            },
+            "DataflowRest": {
+              "TrustAreaIDs": []
+            }
+          }
+        ]
+      }
+    },
+    {
+      "ID": "9e788439-62ed-44ea-9b19-093f92cf2223",
+      "Name": "Sending confidential data to process",
+      "Description": "Process sends output to another process. E.g., Process2 is not authorized to receive data. (see Threat modeling - designing for security: Table 3-10-2)",
+      "IsActive": false,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "369640cc-1b53-4a2e-9e3b-a74c187e68e7"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 2,
+      "DFDRestriction": {
+        "AppliesReverse": false,
+        "Target": 0,
+        "NodeTypes": [
+          {
+            "TypeIDs": [
+              "e0b99432-98a6-4e32-86d7-ca5f58897cc2"
+            ]
+          },
+          {
+            "TypeIDs": [
+              "e0b99432-98a6-4e32-86d7-ca5f58897cc2"
+            ]
+          }
+        ],
+        "NodeRestrictions": [
+          {
+            "Layer": 0,
+            "NodeNumber": -1,
+            "IsOR": false,
+            "RestType": 2,
+            "PropertyRest": {
+              "ID": "",
+              "ComparisonType": "==",
+              "Value": null
+            },
+            "DataflowRest": {
+              "TrustAreaIDs": []
+            }
+          }
+        ]
+      }
+    },
+    {
+      "ID": "30b01ab6-2eea-49ff-ac4e-f5838f8a8337",
+      "Name": "Sending data to spoofed log. external entity",
+      "Description": "Process sends output to log. external entity. E.g., external entity is spoofed. (see Threat modeling - designing for security: Table 3-10-3)",
+      "IsActive": false,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "3bbe354c-317a-4f76-bdbb-75543b5d5aa4"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 2,
+      "DFDRestriction": {
+        "AppliesReverse": false,
+        "Target": 0,
+        "NodeTypes": [
+          {
+            "TypeIDs": [
+              "e0b99432-98a6-4e32-86d7-ca5f58897cc2"
+            ]
+          },
+          {
+            "TypeIDs": [
+              "02b39924-b8f2-44da-a2bc-be1bd2450f68"
+            ]
+          }
+        ],
+        "NodeRestrictions": [
+          {
+            "Layer": 0,
+            "NodeNumber": -1,
+            "IsOR": false,
+            "RestType": 2,
+            "PropertyRest": {
+              "ID": "",
+              "ComparisonType": "==",
+              "Value": null
+            },
+            "DataflowRest": {
+              "TrustAreaIDs": []
+            }
+          },
+          {
+            "Layer": 0,
+            "NodeNumber": -1,
+            "IsOR": false,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "ProvidesReceiverAuthenticity",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          }
+        ]
+      }
+    },
+    {
+      "ID": "4f56c6cd-3daa-4b7a-91a5-740403957ff5",
+      "Name": "External entity denies receiving data",
+      "Description": "Process sends output to log. external entity. E.g., browser disclaims and doesn't acknowledge the output. (see Threat modeling - designing for security: Table 3-10-3)",
+      "IsActive": false,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "a77f314c-f74e-4340-a993-5a1a24f26db4"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 2,
+      "DFDRestriction": {
+        "AppliesReverse": false,
+        "Target": 0,
+        "NodeTypes": [
+          {
+            "TypeIDs": [
+              "e0b99432-98a6-4e32-86d7-ca5f58897cc2"
+            ]
+          },
+          {
+            "TypeIDs": [
+              "02b39924-b8f2-44da-a2bc-be1bd2450f68"
+            ]
+          }
+        ],
+        "NodeRestrictions": [
+          {
+            "Layer": 0,
+            "NodeNumber": -1,
+            "IsOR": false,
+            "RestType": 2,
+            "PropertyRest": {
+              "ID": "",
+              "ComparisonType": "==",
+              "Value": null
+            },
+            "DataflowRest": {
+              "TrustAreaIDs": []
+            }
+          }
+        ]
+      }
+    },
+    {
+      "ID": "7b140721-9f7a-46a7-8290-931efec07769",
+      "Name": "Sending confidential data to log. external entity",
+      "Description": "Process sends output to log. external entity. E.g., ext. entity gets data it's not authorized to get. (see Threat modeling - designing for security: Table 3-10-3)",
+      "IsActive": false,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "369640cc-1b53-4a2e-9e3b-a74c187e68e7"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 2,
+      "DFDRestriction": {
+        "AppliesReverse": false,
+        "Target": 0,
+        "NodeTypes": [
+          {
+            "TypeIDs": [
+              "e0b99432-98a6-4e32-86d7-ca5f58897cc2"
+            ]
+          },
+          {
+            "TypeIDs": [
+              "02b39924-b8f2-44da-a2bc-be1bd2450f68"
+            ]
+          }
+        ],
+        "NodeRestrictions": [
+          {
+            "Layer": 0,
+            "NodeNumber": -1,
+            "IsOR": false,
+            "RestType": 2,
+            "PropertyRest": {
+              "ID": "",
+              "ComparisonType": "==",
+              "Value": null
+            },
+            "DataflowRest": {
+              "TrustAreaIDs": []
+            }
+          }
+        ]
+      }
+    },
+    {
+      "ID": "557991c1-4eeb-40e1-96c3-c8a214278e29",
+      "Name": "Phy. external entity denies receiving data",
+      "Description": "Process sends output to phy. external entity. E.g., human disclaims seeing the output. (see Threat modeling - designing for security: Table 3-10-4)",
+      "IsActive": false,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "a77f314c-f74e-4340-a993-5a1a24f26db4"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 2,
+      "DFDRestriction": {
+        "AppliesReverse": false,
+        "Target": 0,
+        "NodeTypes": [
+          {
+            "TypeIDs": [
+              "e0b99432-98a6-4e32-86d7-ca5f58897cc2"
+            ]
+          },
+          {
+            "TypeIDs": [
+              "03e3750c-8549-4589-8269-e0121b3f26a4"
+            ]
+          }
+        ],
+        "NodeRestrictions": [
+          {
+            "Layer": 0,
+            "NodeNumber": -1,
+            "IsOR": false,
+            "RestType": 2,
+            "PropertyRest": {
+              "ID": "",
+              "ComparisonType": "==",
+              "Value": null
+            },
+            "DataflowRest": {
+              "TrustAreaIDs": []
+            }
+          }
+        ]
+      }
+    },
+    {
+      "ID": "8fabcdad-c70f-4416-8cb6-5c65a21142b0",
+      "Name": "Receiving data from spoofed data store",
+      "Description": "Process has inbound data flow from data store. E.g., database is spoofed and process reads the wrong data. (see Threat modeling - designing for security: Table 3-10-5)",
+      "IsActive": false,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "3bbe354c-317a-4f76-bdbb-75543b5d5aa4"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 2,
+      "DFDRestriction": {
+        "AppliesReverse": false,
+        "Target": 1,
+        "NodeTypes": [
+          {
+            "TypeIDs": [
+              "c7598413-4382-43e9-9904-fd9d877eb7a9"
+            ]
+          },
+          {
+            "TypeIDs": [
+              "e0b99432-98a6-4e32-86d7-ca5f58897cc2"
+            ]
+          }
+        ],
+        "NodeRestrictions": [
+          {
+            "Layer": 0,
+            "NodeNumber": -1,
+            "IsOR": false,
+            "RestType": 2,
+            "PropertyRest": {
+              "ID": "",
+              "ComparisonType": "==",
+              "Value": null
+            },
+            "DataflowRest": {
+              "TrustAreaIDs": []
+            }
+          },
+          {
+            "Layer": 0,
+            "NodeNumber": -1,
+            "IsOR": false,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "ProvidesSenderAuthenticity",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          }
+        ]
+      }
+    },
+    {
+      "ID": "f5894534-60a9-4363-84e5-4c0479ca71b9",
+      "Name": "Processing corrupted data",
+      "Description": "Process has inbound data flow from data store. E.g., process is corrupted by data read from the data store. (see Threat modeling - designing for security: Table 3-10-5)",
+      "IsActive": false,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "f0e814f3-b3d2-4357-b155-8fffd70ec42e"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 2,
+      "DFDRestriction": {
+        "AppliesReverse": false,
+        "Target": 1,
+        "NodeTypes": [
+          {
+            "TypeIDs": [
+              "c7598413-4382-43e9-9904-fd9d877eb7a9"
+            ]
+          },
+          {
+            "TypeIDs": [
+              "e0b99432-98a6-4e32-86d7-ca5f58897cc2"
+            ]
+          }
+        ],
+        "NodeRestrictions": [
+          {
+            "Layer": 0,
+            "NodeNumber": -1,
+            "IsOR": false,
+            "RestType": 2,
+            "PropertyRest": {
+              "ID": "",
+              "ComparisonType": "==",
+              "Value": null
+            },
+            "DataflowRest": {
+              "TrustAreaIDs": []
+            }
+          }
+        ]
+      }
+    },
+    {
+      "ID": "71f98504-8182-4fb2-81ed-aea1e1953215",
+      "Name": "Process denies services due to received data",
+      "Description": "Process has inbound data flow from data store. E.g., process state is corrupted by the data retrieved from the data store. (see Threat modeling - designing for security: Table 3-10-5)",
+      "IsActive": false,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "422b9042-212d-4467-a000-2528a2e09f8b"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 2,
+      "DFDRestriction": {
+        "AppliesReverse": false,
+        "Target": 1,
+        "NodeTypes": [
+          {
+            "TypeIDs": [
+              "c7598413-4382-43e9-9904-fd9d877eb7a9"
+            ]
+          },
+          {
+            "TypeIDs": [
+              "e0b99432-98a6-4e32-86d7-ca5f58897cc2"
+            ]
+          }
+        ],
+        "NodeRestrictions": [
+          {
+            "Layer": 0,
+            "NodeNumber": -1,
+            "IsOR": false,
+            "RestType": 2,
+            "PropertyRest": {
+              "ID": "",
+              "ComparisonType": "==",
+              "Value": null
+            },
+            "DataflowRest": {
+              "TrustAreaIDs": []
+            }
+          }
+        ]
+      }
+    },
+    {
+      "ID": "6d1d58a3-f4ff-4938-93d8-d91bb9ae3f58",
+      "Name": "Receiving data leads to code execution",
+      "Description": "Process has inbound data flow from data store. E.g., process internal state is corrupted based on data read from the data store, leading to code execution.  (see Threat modeling - designing for security: Table 3-10-5)",
+      "IsActive": false,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "8687e614-c127-418b-8fda-536bb2f0708f"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 2,
+      "DFDRestriction": {
+        "AppliesReverse": false,
+        "Target": 1,
+        "NodeTypes": [
+          {
+            "TypeIDs": [
+              "c7598413-4382-43e9-9904-fd9d877eb7a9"
+            ]
+          },
+          {
+            "TypeIDs": [
+              "e0b99432-98a6-4e32-86d7-ca5f58897cc2"
+            ]
+          }
+        ],
+        "NodeRestrictions": [
+          {
+            "Layer": 0,
+            "NodeNumber": -1,
+            "IsOR": false,
+            "RestType": 2,
+            "PropertyRest": {
+              "ID": "",
+              "ComparisonType": "==",
+              "Value": null
+            },
+            "DataflowRest": {
+              "TrustAreaIDs": []
+            }
+          }
+        ]
+      }
+    },
+    {
+      "ID": "6ca91e1b-746c-47bb-8cd3-2fa0c478042e",
+      "Name": "Receiving data from spoofed process",
+      "Description": "Process has inbound data flow from another process. E.g., Process1 believes it's getting data from Process2. (see Threat modeling - designing for security: Table 3-10-6)",
+      "IsActive": false,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "3bbe354c-317a-4f76-bdbb-75543b5d5aa4"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 2,
+      "DFDRestriction": {
+        "AppliesReverse": false,
+        "Target": 1,
+        "NodeTypes": [
+          {
+            "TypeIDs": [
+              "e0b99432-98a6-4e32-86d7-ca5f58897cc2"
+            ]
+          },
+          {
+            "TypeIDs": [
+              "e0b99432-98a6-4e32-86d7-ca5f58897cc2"
+            ]
+          }
+        ],
+        "NodeRestrictions": [
+          {
+            "Layer": 0,
+            "NodeNumber": -1,
+            "IsOR": false,
+            "RestType": 2,
+            "PropertyRest": {
+              "ID": "",
+              "ComparisonType": "==",
+              "Value": null
+            },
+            "DataflowRest": {
+              "TrustAreaIDs": []
+            }
+          },
+          {
+            "Layer": 0,
+            "NodeNumber": -1,
+            "IsOR": false,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "ProvidesSenderAuthenticity",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          }
+        ]
+      }
+    },
+    {
+      "ID": "a1b5637c-fac3-4b49-bf3f-5f39ce8757da",
+      "Name": "Process denies receiving data",
+      "Description": "Process has inbound data flow from another process. E.g., Process1 denies getting data from Process2. (see Threat modeling - designing for security: Table 3-10-6)",
+      "IsActive": false,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "a77f314c-f74e-4340-a993-5a1a24f26db4"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 2,
+      "DFDRestriction": {
+        "AppliesReverse": false,
+        "Target": 1,
+        "NodeTypes": [
+          {
+            "TypeIDs": [
+              "e0b99432-98a6-4e32-86d7-ca5f58897cc2"
+            ]
+          },
+          {
+            "TypeIDs": [
+              "e0b99432-98a6-4e32-86d7-ca5f58897cc2"
+            ]
+          }
+        ],
+        "NodeRestrictions": [
+          {
+            "Layer": 0,
+            "NodeNumber": -1,
+            "IsOR": false,
+            "RestType": 2,
+            "PropertyRest": {
+              "ID": "",
+              "ComparisonType": "==",
+              "Value": null
+            },
+            "DataflowRest": {
+              "TrustAreaIDs": []
+            }
+          }
+        ]
+      }
+    },
+    {
+      "ID": "c0158e50-7c0f-4457-a8ea-223ff165fdaf",
+      "Name": "Process denies services",
+      "Description": "Process has inbound data flow from another process. E.g., Process1 crashes due to interaction with Process2. (see Threat modeling - designing for security: Table 3-10-6)",
+      "IsActive": false,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "422b9042-212d-4467-a000-2528a2e09f8b"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 2,
+      "DFDRestriction": {
+        "AppliesReverse": false,
+        "Target": 1,
+        "NodeTypes": [
+          {
+            "TypeIDs": [
+              "e0b99432-98a6-4e32-86d7-ca5f58897cc2"
+            ]
+          },
+          {
+            "TypeIDs": [
+              "e0b99432-98a6-4e32-86d7-ca5f58897cc2"
+            ]
+          }
+        ],
+        "NodeRestrictions": [
+          {
+            "Layer": 0,
+            "NodeNumber": -1,
+            "IsOR": false,
+            "RestType": 2,
+            "PropertyRest": {
+              "ID": "",
+              "ComparisonType": "==",
+              "Value": null
+            },
+            "DataflowRest": {
+              "TrustAreaIDs": []
+            }
+          }
+        ]
+      }
+    },
+    {
+      "ID": "984d970a-8ef5-445c-a15b-7613b313306c",
+      "Name": "Receiving data leads to code execution",
+      "Description": "Process has inbound data flow from another process. E.g., Process2 passes data or args that allow it to change flow of execution of Process1. (see Threat modeling - designing for security: Table 3-10-6)",
+      "IsActive": false,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "422b9042-212d-4467-a000-2528a2e09f8b"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 2,
+      "DFDRestriction": {
+        "AppliesReverse": false,
+        "Target": 1,
+        "NodeTypes": [
+          {
+            "TypeIDs": [
+              "e0b99432-98a6-4e32-86d7-ca5f58897cc2"
+            ]
+          },
+          {
+            "TypeIDs": [
+              "e0b99432-98a6-4e32-86d7-ca5f58897cc2"
+            ]
+          }
+        ],
+        "NodeRestrictions": [
+          {
+            "Layer": 0,
+            "NodeNumber": -1,
+            "IsOR": false,
+            "RestType": 2,
+            "PropertyRest": {
+              "ID": "",
+              "ComparisonType": "==",
+              "Value": null
+            },
+            "DataflowRest": {
+              "TrustAreaIDs": []
+            }
+          }
+        ]
+      }
+    },
+    {
+      "ID": "a7f340d4-3aa2-45d2-9226-db55414c7f69",
+      "Name": "Receiving data from spoofed external entity",
+      "Description": "Process has inbound data flow from external entity. E.g., Process believes it's getting data from the ext. entity, when it fact it's a random attacker. (see Threat modeling - designing for security: Table 3-10-7)",
+      "IsActive": false,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "3bbe354c-317a-4f76-bdbb-75543b5d5aa4"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 2,
+      "DFDRestriction": {
+        "AppliesReverse": false,
+        "Target": 1,
+        "NodeTypes": [
+          {
+            "TypeIDs": [
+              "02b39924-b8f2-44da-a2bc-be1bd2450f68",
+              "03e3750c-8549-4589-8269-e0121b3f26a4"
+            ]
+          },
+          {
+            "TypeIDs": [
+              "e0b99432-98a6-4e32-86d7-ca5f58897cc2"
+            ]
+          }
+        ],
+        "NodeRestrictions": [
+          {
+            "Layer": 0,
+            "NodeNumber": -1,
+            "IsOR": false,
+            "RestType": 2,
+            "PropertyRest": {
+              "ID": "",
+              "ComparisonType": "==",
+              "Value": null
+            },
+            "DataflowRest": {
+              "TrustAreaIDs": []
+            }
+          },
+          {
+            "Layer": 0,
+            "NodeNumber": -1,
+            "IsOR": false,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "ProvidesSenderAuthenticity",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          }
+        ]
+      }
+    },
+    {
+      "ID": "2a2ea224-58c9-4187-b721-940fc97b1c04",
+      "Name": "Process denies services",
+      "Description": "Process has inbound data flow from external entity. E.g., process crashes due to ext. entity interaction. (see Threat modeling - designing for security: Table 3-10-7)",
+      "IsActive": false,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "422b9042-212d-4467-a000-2528a2e09f8b"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 2,
+      "DFDRestriction": {
+        "AppliesReverse": false,
+        "Target": 1,
+        "NodeTypes": [
+          {
+            "TypeIDs": [
+              "02b39924-b8f2-44da-a2bc-be1bd2450f68",
+              "03e3750c-8549-4589-8269-e0121b3f26a4"
+            ]
+          },
+          {
+            "TypeIDs": [
+              "e0b99432-98a6-4e32-86d7-ca5f58897cc2"
+            ]
+          }
+        ],
+        "NodeRestrictions": [
+          {
+            "Layer": 0,
+            "NodeNumber": -1,
+            "IsOR": false,
+            "RestType": 2,
+            "PropertyRest": {
+              "ID": "",
+              "ComparisonType": "==",
+              "Value": null
+            },
+            "DataflowRest": {
+              "TrustAreaIDs": []
+            }
+          }
+        ]
+      }
+    },
+    {
+      "ID": "c1e53b74-7e9d-4566-b690-978bfc8b9af3",
+      "Name": "Receiving data leads to code execution",
+      "Description": "Process has inbound data flow from external entity. E.g., ext. entity passes data or args that allow it to change flow of execution of process. (see Threat modeling - designing for security: Table 3-10-7)",
+      "IsActive": false,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "8687e614-c127-418b-8fda-536bb2f0708f"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 2,
+      "DFDRestriction": {
+        "AppliesReverse": false,
+        "Target": 1,
+        "NodeTypes": [
+          {
+            "TypeIDs": [
+              "02b39924-b8f2-44da-a2bc-be1bd2450f68",
+              "03e3750c-8549-4589-8269-e0121b3f26a4"
+            ]
+          },
+          {
+            "TypeIDs": [
+              "e0b99432-98a6-4e32-86d7-ca5f58897cc2"
+            ]
+          }
+        ],
+        "NodeRestrictions": [
+          {
+            "Layer": 0,
+            "NodeNumber": -1,
+            "IsOR": false,
+            "RestType": 2,
+            "PropertyRest": {
+              "ID": "",
+              "ComparisonType": "==",
+              "Value": null
+            },
+            "DataflowRest": {
+              "TrustAreaIDs": []
+            }
+          }
+        ]
+      }
+    },
+    {
+      "ID": "35915020-1d0c-4853-849d-d32159bf6401",
+      "Name": "Tampering with data flow",
+      "Description": "Data flow crosses trust boundary. E.g., data flow is modified by MITM attack. (see Threat modeling - designing for security: Table 3-10-8)",
+      "IsActive": false,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "f0e814f3-b3d2-4357-b155-8fffd70ec42e"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 2,
+      "DFDRestriction": {
+        "AppliesReverse": false,
+        "Target": -1,
+        "NodeTypes": [
+          {
+            "TypeIDs": []
+          },
+          {
+            "TypeIDs": []
+          }
+        ],
+        "NodeRestrictions": [
+          {
+            "Layer": 0,
+            "NodeNumber": -1,
+            "IsOR": false,
+            "RestType": 2,
+            "PropertyRest": {
+              "ID": "",
+              "ComparisonType": "==",
+              "Value": null
+            },
+            "DataflowRest": {
+              "TrustAreaIDs": []
+            }
+          },
+          {
+            "Layer": 0,
+            "NodeNumber": -1,
+            "IsOR": false,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "ProvidesIntegrity",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          }
+        ]
+      }
+    },
+    {
+      "ID": "1308104d-16da-432f-a70f-8de14a8bfbf9",
+      "Name": "Data flow sniffing",
+      "Description": "Data flow crosses trust boundary. E.g., the contents of the data flow are sniffed on the wire. (see Threat modeling - designing for security: Table 3-10-8)",
+      "IsActive": false,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "369640cc-1b53-4a2e-9e3b-a74c187e68e7"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 2,
+      "DFDRestriction": {
+        "AppliesReverse": false,
+        "Target": -1,
+        "NodeTypes": [
+          {
+            "TypeIDs": []
+          },
+          {
+            "TypeIDs": []
+          }
+        ],
+        "NodeRestrictions": [
+          {
+            "Layer": 0,
+            "NodeNumber": -1,
+            "IsOR": false,
+            "RestType": 2,
+            "PropertyRest": {
+              "ID": "",
+              "ComparisonType": "==",
+              "Value": null
+            },
+            "DataflowRest": {
+              "TrustAreaIDs": []
+            }
+          },
+          {
+            "Layer": 0,
+            "NodeNumber": -1,
+            "IsOR": false,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "ProvidesConfidentiality",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          }
+        ]
+      }
+    },
+    {
+      "ID": "3008afca-320c-489b-9ff6-f61b7cdf497c",
+      "Name": "Denial of service",
+      "Description": "Data flow crosses trust boundary. E.g., the data flow is interrupted by an ext. entity, e.g. messing with TCP sequence numbers. (see Threat modeling - designing for security: Table 3-10-8)",
+      "IsActive": false,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "422b9042-212d-4467-a000-2528a2e09f8b"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 2,
+      "DFDRestriction": {
+        "AppliesReverse": false,
+        "Target": -1,
+        "NodeTypes": [
+          {
+            "TypeIDs": []
+          },
+          {
+            "TypeIDs": []
+          }
+        ],
+        "NodeRestrictions": [
+          {
+            "Layer": 0,
+            "NodeNumber": -1,
+            "IsOR": false,
+            "RestType": 2,
+            "PropertyRest": {
+              "ID": "",
+              "ComparisonType": "==",
+              "Value": null
+            },
+            "DataflowRest": {
+              "TrustAreaIDs": []
+            }
+          }
+        ]
+      }
+    },
+    {
+      "ID": "46a79465-8cb7-4c8e-8025-e1a08e9620d8",
+      "Name": "Corrupting the data store",
+      "Description": "Process has outbound data flow to data store. E.g., data store is corrupted. (see Threat modeling - designing for security: Table 3-10-9)",
+      "IsActive": false,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "f0e814f3-b3d2-4357-b155-8fffd70ec42e"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 2,
+      "DFDRestriction": {
+        "AppliesReverse": false,
+        "Target": 1,
+        "NodeTypes": [
+          {
+            "TypeIDs": [
+              "e0b99432-98a6-4e32-86d7-ca5f58897cc2"
+            ]
+          },
+          {
+            "TypeIDs": [
+              "c7598413-4382-43e9-9904-fd9d877eb7a9"
+            ]
+          }
+        ],
+        "NodeRestrictions": [
+          {
+            "Layer": 0,
+            "NodeNumber": -1,
+            "IsOR": false,
+            "RestType": 2,
+            "PropertyRest": {
+              "ID": "",
+              "ComparisonType": "==",
+              "Value": null
+            },
+            "DataflowRest": {
+              "TrustAreaIDs": []
+            }
+          }
+        ]
+      }
+    },
+    {
+      "ID": "134a6570-e75e-4c8a-bd2f-f02b5a052878",
+      "Name": "Data store reveals information",
+      "Description": "Process has outbound data flow to data store. E.g., data store reveals information. (see Threat modeling - designing for security: Table 3-10-9)",
+      "IsActive": false,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "369640cc-1b53-4a2e-9e3b-a74c187e68e7"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 2,
+      "DFDRestriction": {
+        "AppliesReverse": false,
+        "Target": 1,
+        "NodeTypes": [
+          {
+            "TypeIDs": [
+              "e0b99432-98a6-4e32-86d7-ca5f58897cc2"
+            ]
+          },
+          {
+            "TypeIDs": [
+              "c7598413-4382-43e9-9904-fd9d877eb7a9"
+            ]
+          }
+        ],
+        "NodeRestrictions": [
+          {
+            "Layer": 0,
+            "NodeNumber": -1,
+            "IsOR": false,
+            "RestType": 2,
+            "PropertyRest": {
+              "ID": "",
+              "ComparisonType": "==",
+              "Value": null
+            },
+            "DataflowRest": {
+              "TrustAreaIDs": []
+            }
+          }
+        ]
+      }
+    },
+    {
+      "ID": "4c4d3f55-3ffd-4416-9bc3-4bf2921110e1",
+      "Name": "Process denies writing data",
+      "Description": "Process has outbound data flow to data store. E.g., process claims not to have written to data store. (see Threat modeling - designing for security: Table 3-10-9)",
+      "IsActive": false,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "a77f314c-f74e-4340-a993-5a1a24f26db4"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 2,
+      "DFDRestriction": {
+        "AppliesReverse": false,
+        "Target": 1,
+        "NodeTypes": [
+          {
+            "TypeIDs": [
+              "e0b99432-98a6-4e32-86d7-ca5f58897cc2"
+            ]
+          },
+          {
+            "TypeIDs": [
+              "c7598413-4382-43e9-9904-fd9d877eb7a9"
+            ]
+          }
+        ],
+        "NodeRestrictions": [
+          {
+            "Layer": 0,
+            "NodeNumber": -1,
+            "IsOR": false,
+            "RestType": 2,
+            "PropertyRest": {
+              "ID": "",
+              "ComparisonType": "==",
+              "Value": null
+            },
+            "DataflowRest": {
+              "TrustAreaIDs": []
+            }
+          }
+        ]
+      }
+    },
+    {
+      "ID": "0115bdb1-d2ab-4bbc-bfd1-b23c831b5a70",
+      "Name": "Data store cannot be written to",
+      "Description": "Process has outbound data flow to data store. E.g., data store cannot be written to. (see Threat modeling - designing for security: Table 3-10-9)",
+      "IsActive": false,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "a77f314c-f74e-4340-a993-5a1a24f26db4"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 2,
+      "DFDRestriction": {
+        "AppliesReverse": false,
+        "Target": 1,
+        "NodeTypes": [
+          {
+            "TypeIDs": [
+              "e0b99432-98a6-4e32-86d7-ca5f58897cc2"
+            ]
+          },
+          {
+            "TypeIDs": [
+              "c7598413-4382-43e9-9904-fd9d877eb7a9"
+            ]
+          }
+        ],
+        "NodeRestrictions": [
+          {
+            "Layer": 0,
+            "NodeNumber": -1,
+            "IsOR": false,
+            "RestType": 2,
+            "PropertyRest": {
+              "ID": "",
+              "ComparisonType": "==",
+              "Value": null
+            },
+            "DataflowRest": {
+              "TrustAreaIDs": []
+            }
+          }
+        ]
+      }
+    },
+    {
+      "ID": "b06930a0-bff1-49e4-889c-6211290de683",
+      "Name": "Process denies reading data",
+      "Description": "Process has inbound data flow from data store. E.g., process claims not to have read from data store. (see Threat modeling - designing for security: Table 3-10-10)",
+      "IsActive": false,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "a77f314c-f74e-4340-a993-5a1a24f26db4"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 2,
+      "DFDRestriction": {
+        "AppliesReverse": false,
+        "Target": 0,
+        "NodeTypes": [
+          {
+            "TypeIDs": [
+              "c7598413-4382-43e9-9904-fd9d877eb7a9"
+            ]
+          },
+          {
+            "TypeIDs": [
+              "e0b99432-98a6-4e32-86d7-ca5f58897cc2"
+            ]
+          }
+        ],
+        "NodeRestrictions": [
+          {
+            "Layer": 0,
+            "NodeNumber": -1,
+            "IsOR": false,
+            "RestType": 2,
+            "PropertyRest": {
+              "ID": "",
+              "ComparisonType": "==",
+              "Value": null
+            },
+            "DataflowRest": {
+              "TrustAreaIDs": []
+            }
+          }
+        ]
+      }
+    },
+    {
+      "ID": "2a171a21-0d62-4159-b7ab-5e2ad1796fff",
+      "Name": "Data store reveals information",
+      "Description": "Process has inbound data flow from data store. E.g., data store discloses information. (see Threat modeling - designing for security: Table 3-10-10)",
+      "IsActive": false,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "369640cc-1b53-4a2e-9e3b-a74c187e68e7"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 2,
+      "DFDRestriction": {
+        "AppliesReverse": false,
+        "Target": 0,
+        "NodeTypes": [
+          {
+            "TypeIDs": [
+              "c7598413-4382-43e9-9904-fd9d877eb7a9"
+            ]
+          },
+          {
+            "TypeIDs": [
+              "e0b99432-98a6-4e32-86d7-ca5f58897cc2"
+            ]
+          }
+        ],
+        "NodeRestrictions": [
+          {
+            "Layer": 0,
+            "NodeNumber": -1,
+            "IsOR": false,
+            "RestType": 2,
+            "PropertyRest": {
+              "ID": "",
+              "ComparisonType": "==",
+              "Value": null
+            },
+            "DataflowRest": {
+              "TrustAreaIDs": []
+            }
+          }
+        ]
+      }
+    },
+    {
+      "ID": "7e4e6144-6504-4796-a3ca-00962c0a9cbb",
+      "Name": "Data store cannot be read from",
+      "Description": "Process has inbound data flow from data store. E.g., data store cannot be read from. (see Threat modeling - designing for security: Table 3-10-10)",
+      "IsActive": false,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "422b9042-212d-4467-a000-2528a2e09f8b"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 2,
+      "DFDRestriction": {
+        "AppliesReverse": false,
+        "Target": 0,
+        "NodeTypes": [
+          {
+            "TypeIDs": [
+              "c7598413-4382-43e9-9904-fd9d877eb7a9"
+            ]
+          },
+          {
+            "TypeIDs": [
+              "e0b99432-98a6-4e32-86d7-ca5f58897cc2"
+            ]
+          }
+        ],
+        "NodeRestrictions": [
+          {
+            "Layer": 0,
+            "NodeNumber": -1,
+            "IsOR": false,
+            "RestType": 2,
+            "PropertyRest": {
+              "ID": "",
+              "ComparisonType": "==",
+              "Value": null
+            },
+            "DataflowRest": {
+              "TrustAreaIDs": []
+            }
+          }
+        ]
+      }
+    },
+    {
+      "ID": "d59a4a10-780a-465b-86fa-292a07e7a89a",
+      "Name": "External entity is spoofed",
+      "Description": "Ext. entity passes input to process. E.g., process is confused by the identify of the ext. entity. (see Threat modeling - designing for security: Table 3-10-11)",
+      "IsActive": false,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "3bbe354c-317a-4f76-bdbb-75543b5d5aa4"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 2,
+      "DFDRestriction": {
+        "AppliesReverse": false,
+        "Target": 0,
+        "NodeTypes": [
+          {
+            "TypeIDs": [
+              "02b39924-b8f2-44da-a2bc-be1bd2450f68",
+              "03e3750c-8549-4589-8269-e0121b3f26a4"
+            ]
+          },
+          {
+            "TypeIDs": [
+              "e0b99432-98a6-4e32-86d7-ca5f58897cc2"
+            ]
+          }
+        ],
+        "NodeRestrictions": [
+          {
+            "Layer": 0,
+            "NodeNumber": -1,
+            "IsOR": false,
+            "RestType": 2,
+            "PropertyRest": {
+              "ID": "",
+              "ComparisonType": "==",
+              "Value": null
+            },
+            "DataflowRest": {
+              "TrustAreaIDs": []
+            }
+          },
+          {
+            "Layer": 0,
+            "NodeNumber": -1,
+            "IsOR": false,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "ProvidesSenderAuthenticity",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          }
+        ]
+      }
+    },
+    {
+      "ID": "d675c061-7af1-4e49-a503-0b512a85f9da",
+      "Name": "Process denies receiving data",
+      "Description": "Ext. entity passes input to process. E.g., process claims not to have received data. (see Threat modeling - designing for security: Table 3-10-11)",
+      "IsActive": false,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "a77f314c-f74e-4340-a993-5a1a24f26db4"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 2,
+      "DFDRestriction": {
+        "AppliesReverse": false,
+        "Target": 0,
+        "NodeTypes": [
+          {
+            "TypeIDs": [
+              "02b39924-b8f2-44da-a2bc-be1bd2450f68",
+              "03e3750c-8549-4589-8269-e0121b3f26a4"
+            ]
+          },
+          {
+            "TypeIDs": [
+              "e0b99432-98a6-4e32-86d7-ca5f58897cc2"
+            ]
+          }
+        ],
+        "NodeRestrictions": [
+          {
+            "Layer": 0,
+            "NodeNumber": -1,
+            "IsOR": false,
+            "RestType": 2,
+            "PropertyRest": {
+              "ID": "",
+              "ComparisonType": "==",
+              "Value": null
+            },
+            "DataflowRest": {
+              "TrustAreaIDs": []
+            }
+          }
+        ]
+      }
+    },
+    {
+      "ID": "427f13f4-ce93-4344-b6fc-1178ea54199e",
+      "Name": "Process is spoofed",
+      "Description": "Ext. entity gets input from process. E.g., ext. entity is confused about the identify of the process. (see Threat modeling - designing for security: Table 3-10-11)",
+      "IsActive": false,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "3bbe354c-317a-4f76-bdbb-75543b5d5aa4"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 2,
+      "DFDRestriction": {
+        "AppliesReverse": false,
+        "Target": 0,
+        "NodeTypes": [
+          {
+            "TypeIDs": [
+              "e0b99432-98a6-4e32-86d7-ca5f58897cc2"
+            ]
+          },
+          {
+            "TypeIDs": [
+              "02b39924-b8f2-44da-a2bc-be1bd2450f68",
+              "03e3750c-8549-4589-8269-e0121b3f26a4"
+            ]
+          }
+        ],
+        "NodeRestrictions": [
+          {
+            "Layer": 0,
+            "NodeNumber": -1,
+            "IsOR": false,
+            "RestType": 2,
+            "PropertyRest": {
+              "ID": "",
+              "ComparisonType": "==",
+              "Value": null
+            },
+            "DataflowRest": {
+              "TrustAreaIDs": []
+            }
+          }
+        ]
+      }
     }
   ],
   "controls": [

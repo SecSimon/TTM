@@ -1,0 +1,42 @@
+<ng-container *ngIf="selectedTypeTemplate">
+  <mat-checkbox color="primary" [disabled]="!selectedTypeTemplate.CanEditInWhichDiagram" [(ngModel)]="selectedTypeTemplate.ListInHWDiagram">{{'properties.ListInHWDiagram' | translate}}</mat-checkbox>
+  <br/>
+  <mat-checkbox color="primary" [disabled]="!selectedTypeTemplate.CanEditInWhichDiagram" [(ngModel)]="selectedTypeTemplate.ListInUCDiagram">{{'properties.ListInUCDiagram' | translate}}</mat-checkbox>
+  <br/>
+  <mat-form-field appearance="fill" style="margin-top: 15px; width: 100%;">
+    <mat-label>{{'properties.ListInElementTypeIDs' | translate}}</mat-label>
+    <mat-select [(value)]="selectedTypeTemplate.ListInElementTypeIDs" multiple>
+      <mat-option *ngFor="let type of GetElementTypes()" [value]="type">{{GetElementTypeName(type)}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="fill" style="width: 100%;">
+    <mat-label>{{'properties.StencilTypes' | translate}}</mat-label>
+    <mat-select [(value)]="selectedTypeTemplate.StencilTypes" multiple>
+      <mat-option *ngFor="let type of GetStencilTypes()" [value]="type">{{type.GetProperty('Name')}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  {{'properties.Layout' | translate}} <button mat-icon-button (click)="AutoCalcLayout()" matTooltip="{{'pages.config.stencils.calcLayout' | translate}}" matTooltipShowDelay="1000" style="margin-left: 15px;"><mat-icon>auto_fix_high</mat-icon></button>
+  <br/>
+  <div *ngFor="let stencil of selectedTypeTemplate.StencilTypes; index as i">
+    <mat-form-field class="property-form-field" appearance="fill">
+      <mat-label>{{stencil.GetProperty('Name')}}</mat-label>
+      <input matInput type="text" [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="selectedTypeTemplate.Layout[i]['name']" matTooltip="selectedTypeTemplate.Layout[i]['name']" matTooltipShowDelay="1000">
+    </mat-form-field>
+    <mat-form-field class="number-form-field" appearance="fill" style="margin-left: 10px;">
+      <mat-label>X</mat-label>
+      <input matInput type="number" [ngModel]="selectedTypeTemplate.Layout[i]['x']">
+    </mat-form-field>
+    <mat-form-field class="number-form-field" appearance="fill" style="margin-left: 10px;">
+      <mat-label>Y</mat-label>
+      <input matInput type="number" [ngModel]="selectedTypeTemplate.Layout[i]['y']">
+    </mat-form-field>
+    <mat-form-field class="number-form-field" appearance="fill" style="margin-left: 10px;" *ngIf="selectedTypeTemplate.Layout[i]['canEditSize']">
+      <mat-label>Width</mat-label>
+      <input matInput type="number" [ngModel]="selectedTypeTemplate.Layout[i]['width']">
+    </mat-form-field>
+    <mat-form-field class="number-form-field" appearance="fill" style="margin-left: 10px;" *ngIf="selectedTypeTemplate.Layout[i]['canEditSize']">
+      <mat-label>Height</mat-label>
+      <input matInput type="number" [ngModel]="selectedTypeTemplate.Layout[i]['height']">
+    </mat-form-field>
+  </div>
+</ng-container>

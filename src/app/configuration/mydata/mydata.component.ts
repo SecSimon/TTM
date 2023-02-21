@@ -1,6 +1,7 @@
 import { Component, Input, OnInit, Optional } from '@angular/core';
 import { AssetGroup, LowMediumHighNumber, LowMediumHighNumberUtil, MyData } from '../../model/assets';
 import { IKeyValue } from '../../model/database';
+import { ImpactCategories, ImpactCategoryUtil } from '../../model/threat-model';
 import { DataService } from '../../util/data.service';
 
 @Component({
@@ -24,10 +25,23 @@ export class MyDataComponent implements OnInit {
   ngOnInit(): void {
     this.assetGroups = [];
     if (this.myData.IsProjectData) {
-      this.dataService.Project.GetDevices().forEach(dev => {
+      const glob = this.dataService.Project.GetProjectAssetGroup();
+      let g: IKeyValue = {
+        Key: glob.Name,
+        Value: [glob, ...glob.GetGroupsFlat()]
+      }
+      this.assetGroups.push(g);
+      this.dataService.Project.GetDevices().filter(x => x.AssetGroup).forEach(dev => {
         let g: IKeyValue = {
           Key: dev.Name,
           Value: [dev.AssetGroup, ...dev.AssetGroup.GetGroupsFlat()]
+        }
+        this.assetGroups.push(g);
+      });
+      this.dataService.Project.GetMobileApps().filter(x => x.AssetGroup).forEach(app => {
+        let g: IKeyValue = {
+          Key: app.Name,
+          Value: [app.AssetGroup, ...app.AssetGroup.GetGroupsFlat()]
         }
         this.assetGroups.push(g);
       });
@@ -60,5 +74,23 @@ export class MyDataComponent implements OnInit {
 
   public GetSensitivities() {
     return LowMediumHighNumberUtil.GetKeys();
+  }
+
+  public NumberAlreadyExists() {
+    return this.dataService.Project.GetNewAssets().some(x => x.Number == this.myData.Number && x.ID != this.myData.ID);
+  }
+
+  public ImpactCatChanged(data: MyData, impact: ImpactCategories) {
+    const index = data.ImpactCats.indexOf(impact);
+    if (index >= 0) data.ImpactCats.splice(index, 1);
+    else data.ImpactCats.push(impact);
+  }
+
+  public GetImpactCategories() {
+    return ImpactCategoryUtil.GetKeys();
+  }
+
+  public GetImpactCategoryName(cat: ImpactCategories) {
+    return ImpactCategoryUtil.ToString(cat);
   }
 }

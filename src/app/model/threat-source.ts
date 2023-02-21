@@ -1,9 +1,12 @@
 import { LowMediumHighNumber } from "./assets";
 import { ConfigFile } from "./config-file";
-import { DatabaseBase, IDataReferences } from "./database";
+import { DatabaseBase, ICustomNumber, IDataReferences } from "./database";
 import { ProjectFile } from "./project-file";
 
-export class ThreatActor extends DatabaseBase {
+export class ThreatActor extends DatabaseBase implements ICustomNumber {
+
+  public get Number(): string { return this.Data['Number']; }
+  public set Number(val: string) { this.Data['Number'] = val ? String(val) : val; }
 
   public get Motive(): string[] { return this.Data['Motive']; }
   public set Motive(val: string[]) { this.Data['Motive'] = val; }
@@ -12,6 +15,10 @@ export class ThreatActor extends DatabaseBase {
 
   constructor(data, cf: ConfigFile) {
     super(data);
+  }
+
+  public GetLongName(): string {
+    return 'TS' + this.Number + ') ' + this.Name;
   }
 
   public FindReferences(pf: ProjectFile, cf: ConfigFile): IDataReferences[] {

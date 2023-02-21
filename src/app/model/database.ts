@@ -102,6 +102,7 @@ export enum DataReferenceTypes {
   DeleteThreatCategory,
   DeleteAttackVector,
   DeleteAttackVectorGroup,
+  RemoveStencilTypeTemplateFromStencilType,
 
   // Protocol References
   RemoveFromStencilProtocolStack,
@@ -164,6 +165,17 @@ export class DataReferencesUtil {
       if (DataReferenceTypes[ref.Type].startsWith('Delete')) {
         res.push(...this.FindAllReferencesDeep(ref.Param, pf, cf));
       }
+    });
+
+    let toDel = [];
+    for (let i = 1; i < res.length; i++) {
+      const index = res.findIndex(x => x.Type == res[i].Type && x.Param == res[i].Param);
+      if (index >= 0 && index < i) {
+        toDel.push(i);
+      }
+    }
+    toDel.forEach(x => {
+      res.splice(x, 1);
     });
 
     return res;
@@ -263,6 +275,9 @@ export abstract class ViewElementBase extends DatabaseBase {
   public get UserCheckedElement(): boolean { return this.Data['UserCheckedElement']; }
   public set UserCheckedElement(val: boolean) { this.Data['UserCheckedElement'] = val; }
 
+  public get OutOfScope(): boolean { return this.Data['OutOfScope']; }
+  public set OutOfScope(val: boolean) { this.Data['OutOfScope'] = val; }
+
   constructor(data: {}) {
     super(data);
 
@@ -274,6 +289,7 @@ export abstract class ViewElementBase extends DatabaseBase {
   protected initProperties(): void {
     super.initProperties();
     this.GetProperties().find(x => x.ID == 'Name').Type = PropertyEditTypes.TextArea;
+    this.AddProperty('properties.OutOfScope', 'OutOfScope', '', true, PropertyEditTypes.CheckBox, true, false);
   }
 
   public InitSubsriptions() {
@@ -325,4 +341,9 @@ export interface IElementType {
   Parent: IContainer;
   Type: any;
   TypeChanged: EventEmitter<any>;
+}
+
+export interface ICustomNumber extends IDatabaseBase {
+  Number: string;
+  GetLongName(): string;
 }

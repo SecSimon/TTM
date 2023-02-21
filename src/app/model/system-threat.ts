@@ -1,12 +1,15 @@
 import { AssetGroup, LowMediumHighNumber, MyData } from "./assets";
 import { ConfigFile } from "./config-file";
-import { DatabaseBase, DataReferenceTypes, IDataReferences } from "./database";
+import { DatabaseBase, DataReferenceTypes, ICustomNumber, IDataReferences } from "./database";
 import { ProjectFile } from "./project-file";
 import { AttackScenario, ImpactCategories, ThreatCategory } from "./threat-model";
 
-export class SystemThreat extends DatabaseBase {
+export class SystemThreat extends DatabaseBase implements ICustomNumber {
   private project: ProjectFile;
   private config: ConfigFile;
+
+  public get Number(): string { return this.Data['Number']; }
+  public set Number(val: string) { this.Data['Number'] = val ? String(val) : val; }
 
   public get AffectedAssetObjects(): (AssetGroup|MyData)[] {
     let res = [];
@@ -42,6 +45,10 @@ export class SystemThreat extends DatabaseBase {
     if (!this.Impact) this.Impact = LowMediumHighNumber.Medium;
 
     if (!this.ImpactCats) this.Data['ImpactCats'] = [];
+  }
+
+  public GetLongName(): string {
+    return 'ST' + this.Number + ') ' + this.Name;
   }
 
   public FindReferences(pf: ProjectFile, cf: ConfigFile): IDataReferences[] {

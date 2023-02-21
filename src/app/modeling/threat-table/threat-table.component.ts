@@ -59,10 +59,10 @@ export class ThreatTableComponent implements OnInit {
     let myFilter = (data: AttackScenario, filter: string) => {
       let search = filter.trim().toLowerCase();
       let res = data.Name.toLowerCase().indexOf(search);
-      if (res == -1) res = data.AttackVector.Name.toLowerCase().indexOf(search);
-      if (res == -1) res = this.GetThreatCategories(data).toLowerCase().indexOf(search);
-      if (res == -1) res = this.GetTargets(data).toLowerCase().indexOf(search); 
-      if (res == -1) res = data.ThreatRule.Name.toLowerCase().indexOf(search);
+      if (res == -1 && data.AttackVector) res = data.AttackVector.Name.toLowerCase().indexOf(search);
+      if (res == -1 && this.GetThreatCategories(data)) res = this.GetThreatCategories(data).toLowerCase().indexOf(search);
+      if (res == -1 && this.GetTargets(data)) res = this.GetTargets(data).toLowerCase().indexOf(search); 
+      if (res == -1 && data.ThreatRule) res = data.ThreatRule.Name.toLowerCase().indexOf(search);
       return res != -1;
     };
 

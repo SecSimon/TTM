@@ -135,6 +135,9 @@ export class StencilType extends DatabaseBase {
   public get PropertyOverwrites(): IKeyValue[] { return this.Data['PropertyOverwrites']; }
   public set PropertyOverwrites(val: IKeyValue[]) { this.Data['PropertyOverwrites'] = val; }
 
+  public get TemplateDFD(): StencilTypeTemplate { return this.config.GetStencilTypeTemplate(this.Data['templateDFDID']); }
+  public set TemplateDFD(val: StencilTypeTemplate) { this.Data['templateDFDID'] = val?.ID; }
+
   constructor(data, cf: ConfigFile) {
     super(data);
     this.config = cf;
@@ -172,6 +175,7 @@ export class StencilType extends DatabaseBase {
 }
 
 export interface IStencilTemplateLayout {
+  name: string;
   x: number;
   y: number;
   canEditSize: boolean;
@@ -182,6 +186,8 @@ export interface IStencilTemplateLayout {
 export class StencilTypeTemplate extends DatabaseBase {
   private config: ConfigFile;
 
+  public get CanEditInWhichDiagram(): boolean { return this.Data['CanEditInWhichDiagram']; }
+  public set CanEditInWhichDiagram(val: boolean) { this.Data['CanEditInWhichDiagram'] = val; }
   public get ListInHWDiagram(): boolean { return this.Data['ListInHWDiagram']; }
   public set ListInHWDiagram(val: boolean) { this.Data['ListInHWDiagram'] = val; }
   public get ListInUCDiagram(): boolean { return this.Data['ListInUCDiagram']; }
@@ -193,11 +199,12 @@ export class StencilTypeTemplate extends DatabaseBase {
   public get StencilTypes(): StencilType[] { return this.config.GetStencilTypes().filter(x => this.Data['stencilTypeIDs'].includes(x.ID)); }
   public set StencilTypes(val: StencilType[]) { 
     this.Data['stencilTypeIDs'] = val.map(x => x.ID); 
-    while (this.Layout.length < val.length) this.Layout.push({ x: 0, y: 0, canEditSize: false, width: 0, height: 0 });
+    while (this.Layout.length < val.length) this.Layout.push({ name: null, x: 0, y: 0, canEditSize: false, width: 0, height: 0 });
     while (this.Layout.length > val.length) this.Layout.pop();
 
     for (let i = 0; i < val.length; i++) {
       this.Layout[i].canEditSize = val[i].ElementTypeID == ElementTypeIDs.LogTrustArea || val[i].ElementTypeID == ElementTypeIDs.PhyTrustArea;
+      this.Layout[i].name = val[i].Name; 
     }
   }
 
@@ -212,14 +219,24 @@ export class StencilTypeTemplate extends DatabaseBase {
     if (!this.ListInElementTypeIDs) this.ListInElementTypeIDs = [];
     if (!this.Layout) this.Layout = [];
     if (!this.Data['stencilTypeIDs']) this.Data['stencilTypeIDs'] = [];
+    if (this.CanEditInWhichDiagram == null) this.CanEditInWhichDiagram = true;
   }
 
   public FindReferences(pf: ProjectFile, cf: ConfigFile): IDataReferences[] {
     let res: IDataReferences[] = [];
+    cf.GetStencilTypes().filter(x => x.TemplateDFD == this).forEach(x => {
+      res.push({ Type: DataReferenceTypes.RemoveStencilTypeTemplateFromStencilType, Param: this });
+    });
     return res;
   }
 
   public OnDelete(pf: ProjectFile, cf: ConfigFile) {
+    let refs = this.FindReferences(pf, cf);
+    refs.forEach(ref => {
+      if (ref.Type == DataReferenceTypes.RemoveStencilTypeTemplateFromStencilType) {
+        (ref.Param as StencilType).TemplateDFD = null;
+      }
+    });
   }
 
   public static FromJSON(data, cf: ConfigFile): StencilTypeTemplate {
@@ -228,6 +245,7 @@ export class StencilTypeTemplate extends DatabaseBase {
 }
 
 export interface IElementTypeThreat {
+  ID: string;
   Name: string;
   Letter: string;
   Description: string;
@@ -249,12 +267,29 @@ export class StencilThreatMnemonic extends DatabaseBase {
     if (this.Data['Letters'] == null) this.Letters = [];
   }
 
+  public GetThreatCategory(letter: IElementTypeThreat) {
+    return this.config.GetThreatCategory(letter.threatCategoryID);
+  }
+
   public FindReferences(pf: ProjectFile, cf: ConfigFile): IDataReferences[] {
     let res: IDataReferences[] = [];
+    
+    // attack scenarios
+    pf?.GetAttackScenarios().filter(x => x.ThreatRule?.ID == this.ID).forEach(x => {
+      res.push({ Type: DataReferenceTypes.DeleteAttackScenario, Param: x });
+    });
+
     return res;
   }
 
   public OnDelete(pf: ProjectFile, cf: ConfigFile) {
+    let refs = this.FindReferences(pf, cf);
+
+    refs.forEach(ref => {
+      if (ref.Type == DataReferenceTypes.DeleteAttackScenario) {
+        pf.DeleteAttackScenario(ref.Param as AttackScenario);
+      }
+    });
   }
 
   public static FromJSON(data, cf: ConfigFile): StencilThreatMnemonic {
@@ -405,9 +440,11 @@ export abstract class DFDElement extends ViewElementBase implements IElementType
             if (x.HasGetter) this[x.ID] = overwrite.Value;
             else this.Data[x.ID] = overwrite.Value;
           }
-          else if (this.Data[x.ID] == null) {
-            if (x.HasGetter) this[x.ID] = x.DefaultValue;
-            else this.Data[x.ID] = x.DefaultValue;
+          else if (x.HasGetter && this[x.ID] == null) { 
+            this[x.ID] = x.DefaultValue; 
+          }
+          else if (!x.HasGetter && this.Data[x.ID] == null) { 
+            this.Data[x.ID] = x.DefaultValue; 
           }
         });
       }
@@ -497,7 +534,7 @@ export abstract class DataFlowEntity extends DFDElement {
 
   public get ProcessedData(): MyData[] {
     let res = [];
-    this.Data['ProcessedDataIDs'].forEach(x => res.push(this.project.GetMyData(x)));
+    this.Data['ProcessedDataIDs']?.forEach(x => res.push(this.project.GetMyData(x)));
     return res;
   }
   public set ProcessedData(val: MyData[]) { 
@@ -812,9 +849,9 @@ export class DataFlow extends DFDElement implements ICanvasFlow {
   public set Sender(val: DataFlowEntity) { this.Data['senderID'] = val.ID; }
   public get Receiver(): DataFlowEntity { return this.project.GetDFDElement(this.Data['receiverID']) as DataFlowEntity; }
   public set Receiver(val: DataFlowEntity) { this.Data['receiverID'] = val?.ID; }
-  public get SenderInterface(): Interface { return this.project.GetDFDElement(this.Data['senderInterfaceID']) as DataFlowEntity; }
+  public get SenderInterface(): Interface { return this.project.GetDFDElement(this.Data['senderInterfaceID']) as Interface; }
   public set SenderInterface(val: Interface) { this.Data['senderInterfaceID'] = val?.ID; }
-  public get ReceiverInterface(): Interface { return this.project.GetDFDElement(this.Data['receiverInterfaceID']) as DataFlowEntity; }
+  public get ReceiverInterface(): Interface { return this.project.GetDFDElement(this.Data['receiverInterfaceID']) as Interface; }
   public set ReceiverInterface(val: Interface) { this.Data['receiverInterfaceID'] = val?.ID; }
 
   public get OverwriteProtocolProperties(): boolean { return this.Data['OverwriteProtocolProperties']; }
@@ -838,7 +875,7 @@ export class DataFlow extends DFDElement implements ICanvasFlow {
       return res;
     }
     else {
-      return this.Sender?.ProcessedData;
+      return this.Sender?.GetProperty('ProcessedData');
     }
     
   }

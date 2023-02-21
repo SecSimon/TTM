@@ -127,49 +127,39 @@
           </div>
         </ng-template>
     </mat-tab>
+    <mat-tab *ngIf="selectedType.ElementTypeID == 61" label="{{'pages.config.stencils.DFDTemplate' | translate}} {{selectedType.TemplateDFD ? '(1)' : ''}}">
+        <ng-template matTabContent>
+          <div class="row">
+            <div class="column1">
+              <mat-list class="prop-list reorder-list" [class.prop-list-light]="!theme.IsDarkMode" [class.prop-list-dark]="theme.IsDarkMode">
+                <div mat-subheader>{{selectedType.Name}} {{ 'pages.config.stencils.DFDTemplate' | translate }} <button mat-icon-button [disabled]="!!selectedType.TemplateDFD" (click)="AddTemplateDFD()" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000" style="margin-left: 15px;"><mat-icon>add</mat-icon></button></div>
+                <mat-list-item *ngIf="selectedType.TemplateDFD"
+                [class.highlight-light]="!theme.IsDarkMode" [class.highlight-dark]="theme.IsDarkMode"
+                matTooltip="{{selectedType.TemplateDFD.Name}}" matTooltipShowDelay="1000">
+                  <mat-icon mat-list-icon>chevron_right</mat-icon>
+                  <div mat-line>{{selectedType.TemplateDFD.Name}}</div>
+                  <button mat-icon-button style="margin-left: auto;" (click)="DeleteTemplate(selectedType.TemplateDFD)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000"><mat-icon>delete</mat-icon></button>
+                </mat-list-item>
+              </mat-list>
+            </div>
+            <div class="column2">
+              <div style="margin: 10px;">
+                <mat-form-field appearance="fill" class="property-form-field">
+                  <mat-label>{{ 'properties.Name' | translate }}</mat-label>
+                  <input matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="selectedType.TemplateDFD.Name"/>
+                  <button *ngIf="selectedType.TemplateDFD.Name" matSuffix mat-icon-button (click)="selectedType.TemplateDFD.Name=''" matTooltip="{{'general.Clear' | translate}}" matTooltipShowDelay="1000">
+                    <mat-icon>close</mat-icon>
+                  </button>
+                </mat-form-field>
+                <br/>
+                <app-stencil-type-template *ngIf="selectedType.TemplateDFD" [selectedTypeTemplate]="selectedType.TemplateDFD"></app-stencil-type-template>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+    </mat-tab>
   </mat-tab-group>
-  <div *ngIf="isStencilTypeTemplate">
-    <mat-checkbox color="primary" [(ngModel)]="selectedTypeTemplate.ListInHWDiagram">{{'properties.ListInHWDiagram' | translate}}</mat-checkbox>
-    <br/>
-    <mat-checkbox color="primary" [(ngModel)]="selectedTypeTemplate.ListInUCDiagram">{{'properties.ListInUCDiagram' | translate}}</mat-checkbox>
-    <br/>
-    <mat-form-field appearance="fill" style="margin-top: 15px; width: 100%;">
-      <mat-label>{{'properties.ListInElementTypeIDs' | translate}}</mat-label>
-      <mat-select [(value)]="selectedTypeTemplate.ListInElementTypeIDs" multiple>
-        <mat-option *ngFor="let type of GetElementTypes()" [value]="type">{{GetElementTypeName(type)}}</mat-option>
-      </mat-select>
-    </mat-form-field>
-    <mat-form-field appearance="fill" style="width: 100%;">
-      <mat-label>{{'properties.StencilTypes' | translate}}</mat-label>
-      <mat-select [(value)]="selectedTypeTemplate.StencilTypes" multiple>
-        <mat-option *ngFor="let type of GetStencilTypes()" [value]="type">{{type.GetProperty('Name')}}</mat-option>
-      </mat-select>
-    </mat-form-field>
-    {{'properties.Layout' | translate}} <button mat-icon-button (click)="AutoCalcLayout()" matTooltip="{{'pages.config.stencils.calcLayout' | translate}}" matTooltipShowDelay="1000" style="margin-left: 15px;"><mat-icon>auto_fix_high</mat-icon></button>
-    <br/>
-    <div *ngFor="let stencil of selectedTypeTemplate.StencilTypes; index as i">
-      <mat-form-field class="property-form-field disable" appearance="fill">
-        <mat-label>{{'general.Element' | translate}}</mat-label>
-        <input matInput type="text" [spellcheck]="dataService.HasSpellCheck" [ngModel]="stencil.GetProperty('Name')" matTooltip="stencil.GetProperty('Name')" matTooltipShowDelay="1000">
-      </mat-form-field>
-      <mat-form-field class="number-form-field" appearance="fill" style="margin-left: 10px;">
-        <mat-label>X</mat-label>
-        <input matInput type="number" [ngModel]="selectedTypeTemplate.Layout[i]['x']">
-      </mat-form-field>
-      <mat-form-field class="number-form-field" appearance="fill" style="margin-left: 10px;">
-        <mat-label>Y</mat-label>
-        <input matInput type="number" [ngModel]="selectedTypeTemplate.Layout[i]['y']">
-      </mat-form-field>
-      <mat-form-field class="number-form-field" appearance="fill" style="margin-left: 10px;" *ngIf="selectedTypeTemplate.Layout[i]['canEditSize']">
-        <mat-label>Width</mat-label>
-        <input matInput type="number" [ngModel]="selectedTypeTemplate.Layout[i]['width']">
-      </mat-form-field>
-      <mat-form-field class="number-form-field" appearance="fill" style="margin-left: 10px;" *ngIf="selectedTypeTemplate.Layout[i]['canEditSize']">
-        <mat-label>Height</mat-label>
-        <input matInput type="number" [ngModel]="selectedTypeTemplate.Layout[i]['height']">
-      </mat-form-field>
-    </div>
-  </div>
+  <app-stencil-type-template *ngIf="isStencilTypeTemplate" [selectedTypeTemplate]="selectedTypeTemplate"></app-stencil-type-template>
   <mat-tab-group *ngIf="isProtocol" [selectedIndex]="GetSelectedTabIndex()" (selectedIndexChange)="SetSelectedTabIndex($event)">
     <mat-tab label="{{'general.Properties' | translate}} ({{selectedProtocol?.Properties?.length}})">
         <ng-template matTabContent>

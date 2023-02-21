@@ -123,6 +123,53 @@
         </div>
       </ng-template>
     </mat-tab>
+
+    <mat-tab>
+      <ng-template mat-tab-label>
+        {{'pages.modeling.deviceassets.referencematrix' | translate}}
+      </ng-template>
+      <ng-template matTabContent>
+        <div class="referenceTable">
+          <table>
+            <thead>
+              <tr>
+                <th [style.borderColor]="theme.IsDarkMode ? bgColorDark : bgColorLight"></th>
+                <th [attr.colspan]="dataService.Project.GetHWDiagrams().length" [style.borderColor]="theme.IsDarkMode ? bgColorDark : bgColorLight">{{'pages.modeling.deviceassets.HWDiagram' | translate}}</th>
+                <th style="min-width: 10px;" [style.borderColor]="theme.IsDarkMode ? bgColorDark : bgColorLight"></th>
+                <th [attr.colspan]="dataService.Project.GetDFDiagrams().length" [style.borderColor]="theme.IsDarkMode ? bgColorDark : bgColorLight">{{'pages.modeling.deviceassets.DFDiagram' | translate}}</th>
+              </tr>
+              <tr>
+                <th class="refDiagramColumn" [style.borderColor]="theme.IsDarkMode ? bgColorDark : bgColorLight">{{'pages.modeling.deviceassets.dataDiagrams' | translate}}</th>
+                <th *ngFor="let dia of dataService.Project.GetHWDiagrams()" class="refDiagramColumn" [style.borderColor]="theme.IsDarkMode ? bgColorDark : bgColorLight">
+                  <button class="buttonAsText primary-color" (click)="OpenDiagram(dia)" matTooltip="{{'pages.modeling.deviceassets.OpenDiagram' | translate}}: {{dia.Name}}" matTooltipShowDelay="1000">{{dia.Name}}</button>
+                </th>
+                <th [style.borderColor]="theme.IsDarkMode ? bgColorDark : bgColorLight"></th>
+                <th *ngFor="let dia of dataService.Project.GetDFDiagrams()" class="refDiagramColumn" [style.borderColor]="theme.IsDarkMode ? bgColorDark : bgColorLight">
+                  <button class="buttonAsText primary-color" (click)="OpenDiagram(dia)" matTooltip="{{'pages.modeling.deviceassets.OpenDiagram' | translate}}: {{dia.Name}}" matTooltipShowDelay="1000">{{dia.Name}}</button>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let data of assetGroup.GetMyDataFlat()">
+                <td [style.borderColor]="theme.IsDarkMode ? bgColorDark : bgColorLight"><span [matBadgeHidden]="!GetAssetToolTip(data)" matTooltip="{{GetAssetToolTip(data)}}"  matTooltipShowDelay="1000" matBadge="!" matBadgeColor="warn" matBadgeSize="small" matBadgePosition="below" matBadgeOverlap="false">{{data.Name}}</span></td>
+                <td *ngFor="let dia of dataService.Project.GetHWDiagrams()" class="refDiagramColumn" [style.borderColor]="theme.IsDarkMode ? bgColorDark : bgColorLight">
+                  <ng-container *ngFor="let ref of GetReferences(data, dia)">
+                    <button class="buttonAsText primary-color" style="font-size: small;" (click)="OpenElement(dia, ref)" matTooltip="{{'pages.modeling.deviceassets.OpenElement' | translate}}: {{ref.Name}}" matTooltipShowDelay="1000">{{ref.Name}}</button>
+                    <br/>
+                  </ng-container>
+                </td>
+                <td [style.borderColor]="theme.IsDarkMode ? bgColorDark : bgColorLight"></td>
+                <td *ngFor="let dia of dataService.Project.GetDFDiagrams()" class="refDiagramColumn" [style.borderColor]="theme.IsDarkMode ? bgColorDark : bgColorLight">
+                  <ng-container *ngFor="let ref of GetReferences(data, dia)">
+                    <button class="buttonAsText primary-color" style="font-size: small;" (click)="OpenElement(dia, ref)" matTooltip="{{'pages.modeling.deviceassets.OpenElement' | translate}}: {{ref.Name}}" matTooltipShowDelay="1000">{{ref.Name}}</button>
+                    <br/>
+                  </ng-container>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </ng-template>
+    </mat-tab>
   </mat-tab-group>
-  
 </div>

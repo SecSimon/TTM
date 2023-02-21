@@ -45,6 +45,13 @@
               <mat-icon>close</mat-icon>
             </button>
           </mat-form-field>
+          <mat-form-field appearance="fill" style="width: 70px; float: right; margin-left: 10px;">
+            <mat-label>{{ 'general.Number' | translate }}</mat-label>
+            <input matInput type="number" min="0" [(ngModel)]="selectedSource.Number" required matTooltip="{{selectedSource.Number}}" matTooltipShowDelay="1000"/>
+            <mat-hint *ngIf="NumberAlreadyExists()" style="color: red;" class="alert alert-danger">
+              {{'messages.error.numberAlreadyExists' | translate}}
+            </mat-hint>
+          </mat-form-field>
           <br/>
           <app-threat-actor [threatActor]="selectedSource"></app-threat-actor>
         </div>

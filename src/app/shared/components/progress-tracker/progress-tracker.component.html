@@ -1,3 +1,6 @@
+<p *ngIf="!dataService.Project" style="color: #faff00;">
+  {{'dialog.progress.noProject' | translate}}
+</p>
 <mat-accordion class="expansion-panel-headers-align">
   <mat-expansion-panel *ngFor="let stage of Stages; index as stageIndex; first as isFirst; last as isLast;" [expanded]="processStep === stageIndex" (opened)="SetProcessStep(stageIndex)" hideToggle style="width: 600px;">
     <mat-expansion-panel-header>

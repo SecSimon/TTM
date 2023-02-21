@@ -1,6 +1,20 @@
-<div *ngIf="selectedNode" style="margin-left: 10px; margin-right: 10px;">
-  <h2>{{selectedNode.name()}}</h2>
+<div *ngIf="selectedNode" style="margin: 10px;">
   <ng-container *ngIf="selectedAssetGroup">
+    <mat-form-field appearance="fill" class="property-form-field">
+      <mat-label>{{'general.Name' | translate}}</mat-label>
+      <input matInput type="text" [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="selectedAssetGroup.Name" matTooltip="{{selectedAssetGroup.Name}}" matTooltipShowDelay="1000">
+      <button *ngIf="selectedAssetGroup.Name" matSuffix mat-icon-button (click)="selectedAssetGroup.Name=''" matTooltip="{{'general.Clear' | translate}}" matTooltipShowDelay="1000">
+        <mat-icon>close</mat-icon>
+      </button>
+    </mat-form-field>
+    <mat-form-field *ngIf="selectedAssetGroup.IsNewAsset" appearance="fill" style="width: 70px; float: right; margin-left: 10px;">
+      <mat-label>{{ 'general.Number' | translate }}</mat-label>
+      <input matInput type="number" min="0" [(ngModel)]="selectedAssetGroup.Number" required matTooltip="{{selectedAssetGroup.Number}}" matTooltipShowDelay="1000"/>
+      <mat-hint *ngIf="NumberAlreadyExists()" style="color: red;" class="alert alert-danger">
+        {{'messages.error.numberAlreadyExists' | translate}}
+      </mat-hint>
+    </mat-form-field>
+    <br/>
     <mat-form-field appearance="fill" style="width: 100%;">
       <mat-label>{{ 'properties.Description' | translate }}</mat-label>
       <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="2" cdkAutosizeMaxRows="5" [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="selectedAssetGroup.Description"></textarea>

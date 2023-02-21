@@ -4,7 +4,7 @@ import { AssetGroup, LowMediumHighNumber, MyData } from "./assets";
 import { CharScope } from "./char-scope";
 import { MyComponentType, MyComponent, MyComponentStack, MyComponentTypeIDs } from "./component";
 import { ConfigFile } from "./config-file";
-import { DatabaseBase, DataChangedTypes, IDatabaseBase, IDataChanged, IDataReferences, INote } from "./database";
+import { DatabaseBase, DataChangedTypes, ICustomNumber, IDatabaseBase, IDataChanged, IDataReferences, IKeyValue, INote } from "./database";
 import { DFDContainer, DFDContainerRef, DFDElement, DFDElementRef } from "./dfd-model";
 import { CtxDiagram, Diagram, DiagramTypes, HWDFDiagram } from "./diagram";
 import { ObjImpact } from "./obj-impact";
@@ -17,6 +17,7 @@ import { Countermeasure, MitigationProcess, MitigationStates } from "./mitigatio
 import { FileUpdateService } from "../util/file-update.service";
 import { ExportTemplate } from "./export-template";
 import { MyTag, MyTagChart as MyTagChart } from "./my-tags";
+import { TranslateService } from "@ngx-translate/core";
 
 export interface IProjectFile extends IDatabaseBase {
   charSope: {};
@@ -126,6 +127,8 @@ export class ProjectFile extends DatabaseBase {
   public GetContextElements(): ContextElement[] { return Array.from(this.contextElementMap, ([k, v]) => v); }
   public GetDFDElements(): DFDElement[] { return Array.from(this.dfdElementMap, ([k, v]) => v); }
   public GetDiagrams(): Diagram[] { return this.diagrams; }
+  public GetHWDFDiagrams() { return this.GetDiagrams().filter(x => [DiagramTypes.Hardware, DiagramTypes.DataFlow].includes(x.DiagramType)); }
+  public GetHWDiagrams(): Diagram[] { return this.diagrams.filter(x => x.DiagramType == DiagramTypes.Hardware); }
   public GetDFDiagrams(): Diagram[] { return this.diagrams.filter(x => x.DiagramType == DiagramTypes.DataFlow); }
   public GetStacks(): MyComponentStack[] { return this.stacks; }
   public GetDevices(): Device[] { return this.GetContextElements().filter(x => x.Type == ContextElementTypes.Device && x instanceof Device) as Device[]; }
@@ -233,6 +236,9 @@ export class ProjectFile extends DatabaseBase {
     this.assetGroups.push(res);
     res.Name = StringExtension.FindUniqueName('Asset Group', this.assetGroups.map(x => x.Name));
     if (parentGroup != null) parentGroup.AddAssetGroup(res);
+    if (this.GetNewAssets().length == 0) res.Number = '1';
+    else res.Number = (Math.max(...this.GetNewAssets().map(x => Number(x.Number)))+1).toString();
+    res.IsNewAsset = true;
     return res;
   }
 
@@ -249,12 +255,16 @@ export class ProjectFile extends DatabaseBase {
     let copyMyData = (copySource: MyData, parent: AssetGroup): MyData => {
       let d = this.CreateMyData(parent);
       d.CopyFrom(copySource.Data);
+      d.IsNewAsset = false;
+      d.Number = null;
       return d;
     };
 
     let copyGroup = (copySource: AssetGroup, parent: AssetGroup): AssetGroup => {
       let g = this.CreateAssetGroup(parent);
       g.CopyFrom(copySource.Data);
+      g.IsNewAsset = false;
+      g.Number = null;
       g.Data['assetGroupIDs'] = [];
       copySource.SubGroups.forEach(copySubGroup => {
         let sg = copyGroup(copySubGroup, g);
@@ -280,6 +290,9 @@ export class ProjectFile extends DatabaseBase {
     if (asset) asset.AddMyData(res);
     this.myData.push(res);
     res.Name = StringExtension.FindUniqueName('Data', this.GetMyDatas().map(x => x.Name));
+    if (this.GetNewAssets().length == 0) res.Number = '1';
+    else res.Number = (Math.max(...this.GetNewAssets().map(x => Number(x.Number)))+1).toString();
+    res.IsNewAsset = true;
     return res;
   }
 
@@ -292,6 +305,10 @@ export class ProjectFile extends DatabaseBase {
     return index >= 0;
   }
 
+  public GetNewAssets(): (AssetGroup|MyData)[] {
+    return [...this.GetAssetGroups(), ...this.GetMyDatas()].filter(x => x.IsNewAsset);
+  }
+
   public GetThreatActor(ID: string) {
     return this.threatActors.find(x => x.ID == ID);
   }
@@ -300,6 +317,8 @@ export class ProjectFile extends DatabaseBase {
     let res = new ThreatActor({}, this.Config);
     res.Name = StringExtension.FindUniqueName('Threat Actor', this.threatActors.map(x => x.Name));
     res.Likelihood = LowMediumHighNumber.Medium;
+    if (this.GetThreatActors().length == 0) res.Number = '1';
+    else res.Number = (Math.max(...this.GetThreatActors().map(x => Number(x.Number)))+1).toString();
     res.Motive = [];
     this.threatActors.push(res);
     return res;
@@ -322,6 +341,8 @@ export class ProjectFile extends DatabaseBase {
     let res = new SystemThreat({}, this, this.Config);
     res.Name = StringExtension.FindUniqueName(cat ? cat.Name : 'Threat', this.GetSystemThreats().map(x => x.Name));
     res.ThreatCategory = cat;
+    if (this.GetSystemThreats().length == 0) res.Number = '1';
+    else res.Number = (Math.max(...this.GetSystemThreats().map(x => Number(x.Number)))+1).toString();
     this.systemThreats.push(res);
     return res;
   }
@@ -380,10 +401,6 @@ export class ProjectFile extends DatabaseBase {
 
   public GetDiagram(ID: string) {
     return this.diagrams.find(x => x.ID == ID);
-  }
-
-  public GetHWDFDiagrams() {
-    return this.GetDiagrams().filter(x => [DiagramTypes.Hardware, DiagramTypes.DataFlow].includes(x.DiagramType));
   }
 
   public DeleteDiagram(diagram: Diagram): boolean {
@@ -621,6 +638,52 @@ export class ProjectFile extends DatabaseBase {
     let view: Diagram|MyComponentStack = this.GetDiagram(viewID);
     if (!view) view = this.GetStack(viewID);
     return view;
+  }
+
+  public ConsistencyCheck(translate: TranslateService): string[] {
+    let res: string[] = [];
+
+    const checkDiagram = (arr: AttackScenario[]|Countermeasure[], prefix: string) => {
+      let numbers = [];
+      arr.forEach(item => {
+        if (!item.Number) {
+          res.push(StringExtension.Format(translate.instant('messages.error.inconsistency.project.' + prefix + 'woNumber'), item.GetDiagram()?.Name, item.Name));
+        }
+        else {
+          if (numbers.includes(item.Number)) {
+            res.push(StringExtension.Format(translate.instant('messages.error.inconsistency.project.' + prefix + 'multiNumber'), item.GetDiagram()?.Name, item.Number));
+          }
+          else {
+            numbers.push(item.Number);
+          }
+        }
+      });
+    };
+
+    const checkList = (arr: ICustomNumber[], prefix: string) => {
+      let numbers = [];
+      arr.forEach(item => {
+        if (!item.Number) {
+          res.push(StringExtension.Format(translate.instant('messages.error.inconsistency.project.' + prefix + 'woNumber'), item['Name']));
+        }
+        else {
+          if (numbers.includes(item.Number)) {
+            res.push(StringExtension.Format(translate.instant('messages.error.inconsistency.project.' + prefix + 'multiNumber'), item.Number));
+          }
+          else {
+            numbers.push(item.Number);
+          }
+        }
+      });
+    };
+
+    checkDiagram(this.GetAttackScenarios(), 'AS');
+    checkDiagram(this.GetCountermeasures(), 'CM');
+    checkList(this.GetMitigationProcesses(), 'MP');
+    checkList(this.GetThreatActors(), 'TS');
+    checkList(this.GetSystemThreats(), 'ST');
+
+    return res;
   }
 
   private moveItemInMap<Type>(mapName: string, prevIndex: number, currIndex: number) {

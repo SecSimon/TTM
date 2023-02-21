@@ -1,6 +1,9 @@
-import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import { AssetGroup, LowMediumHighNumber, LowMediumHighNumberUtil, MyData } from '../../model/assets';
+import { ViewElementBase } from '../../model/database';
+import { DataFlow } from '../../model/dfd-model';
+import { Diagram } from '../../model/diagram';
 import { INavigationNode, NavTreeComponent } from '../../shared/components/nav-tree/nav-tree.component';
 import { DataService } from '../../util/data.service';
 import { DialogService } from '../../util/dialog.service';
@@ -45,6 +48,9 @@ export class DeviceAssetsComponent implements OnInit {
   @Output()
   public selectionChanged = new EventEmitter<AssetGroup|MyData>();
 
+  @Output()
+  public openDiagram = new EventEmitter<{diagram: Diagram, element: ViewElementBase}>();
+
   public get assetGroupBase(): AssetGroup { 
     if (this.assetGroup.SubGroups.length == 0) return null;
     return this.assetGroup.SubGroups[0]; 
@@ -57,7 +63,7 @@ export class DeviceAssetsComponent implements OnInit {
   public readonly bgColorDark = '#424242';
   public readonly bgColorLight = '#e7e5e5';
 
-  constructor(public theme: ThemeService, public dataService: DataService, private locStorage: LocalStorageService, private dialog: DialogService, public elRef: ElementRef) { }
+  constructor(public theme: ThemeService, public dataService: DataService, private locStorage: LocalStorageService, private dialog: DialogService, public elRef: ElementRef, private translate: TranslateService) { }
 
   ngOnInit(): void {
   }
@@ -138,6 +144,40 @@ export class DeviceAssetsComponent implements OnInit {
 
   public GetSensitivities() {
     return LowMediumHighNumberUtil.GetKeys();
+  }
+
+  private references = {};
+  public GetReferences(data: MyData, dia: Diagram): ViewElementBase[] {
+    if (!this.references[data.ID] || !this.references[data.ID][dia.ID]) {
+      if (!this.references[data.ID]) this.references[data.ID] = {};
+      this.references[data.ID][dia.ID] = dia.Elements.GetChildrenFlat().filter(x => {
+        let res = x.GetProperty('ProcessedData')?.includes(data); 
+        if (res && x instanceof DataFlow) {
+          res = x.OverwriteDataProperties;
+        }
+        return res;
+      });
+    }
+
+    return this.references[data.ID][dia.ID];
+  }
+
+  public GetAssetToolTip(data: MyData): string|null {
+    const refInHW = this.dataService.Project.GetHWDiagrams().some(x => this.GetReferences(data, x)?.length > 0);
+    const refInDF = this.dataService.Project.GetDFDiagrams().some(x => this.GetReferences(data, x)?.length > 0);
+    let res = '';
+    if (!refInHW && !refInDF) res = this.translate.instant('pages.modeling.deviceassets.noReferenceInDFHW');
+    else if (!refInHW) res += this.translate.instant('pages.modeling.deviceassets.noReferenceInHW');
+    else if (!refInDF) res += this.translate.instant('pages.modeling.deviceassets.noReferenceInDF');
+    return res == '' ? null : res;
+  }
+
+  public OpenDiagram(dia) {
+    this.openDiagram.emit({diagram: dia, element: null});
+  }
+
+  public OpenElement(dia, ref) {
+    this.openDiagram.emit({diagram: dia, element: ref});
   }
 
   public GetSelectedTabIndex() {

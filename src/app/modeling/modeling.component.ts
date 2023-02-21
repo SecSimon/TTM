@@ -180,13 +180,18 @@ export class ModelingComponent extends SideNavBase implements OnInit {
     this.locStorage.Set(LocStorageKeys.PAGE_MODELING_SPLIT_SIZE_X + splitter.toString(), JSON.stringify(event['sizes']));
   }
 
-  public OnOpenDiagram(diagram: Diagram) {
-    let node = NavTreeBase.FindNodeOfObject(diagram, this.nodes);
+  public OnOpenDiagram(data: {diagram: Diagram, element: ViewElementBase}) {
+    let node = NavTreeBase.FindNodeOfObject(data.diagram, this.nodes);
     if (!node) {
       this.createNodes();
-      node = NavTreeBase.FindNodeOfObject(diagram, this.nodes);
+      node = NavTreeBase.FindNodeOfObject(data.diagram, this.nodes);
     }
     if (node) this.newTab(node);
+    if (data.element) {
+      setTimeout(() => {
+        this.selectedObject = data.element;
+      }, 1000);
+    }
   }
 
   public IsCharScope(node: INavigationNode) {

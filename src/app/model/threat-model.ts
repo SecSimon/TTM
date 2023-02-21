@@ -1,11 +1,11 @@
 import { TranslateService } from "@ngx-translate/core";
 import { DataService } from "../util/data.service";
-import { LowMediumHighNumber, LowMediumHighNumberUtil } from "./assets";
+import { AssetGroup, LowMediumHighNumber, LowMediumHighNumberUtil, MyData } from "./assets";
 import { MyComponent, MyComponentType } from "./component";
 import { ConfigFile } from "./config-file";
-import { DatabaseBase, DataReferenceTypes, IDataReferences, IKeyValue, IProperty, PropertyEditTypes, ViewElementBase } from "./database";
+import { DatabaseBase, DataReferenceTypes, ICustomNumber, IDataReferences, IKeyValue, IProperty, PropertyEditTypes, ViewElementBase } from "./database";
 import { SystemThreat } from "./system-threat";
-import { ElementTypeIDs, ElementTypeUtil, StencilThreatMnemonic, StencilType } from "./dfd-model";
+import { ElementTypeIDs, ElementTypeUtil, IElementTypeThreat, StencilThreatMnemonic, StencilType } from "./dfd-model";
 import { Control, Countermeasure, MitigationStates } from "./mitigations";
 import { ProjectFile } from "./project-file";
 import { ITagable, MyTag } from "./my-tags";
@@ -1131,6 +1131,7 @@ export interface IAttackScenario {
   Threat: IThreatVectorCategoryMapping;
   RuleID: string; //ThreatRule
   QuestionID: string; //ThreatQuestion
+  MnemonicID: string; //StencilTypeMnemonic
 }
 
 export enum MappingStates {
@@ -1196,7 +1197,7 @@ export class RiskStrategyUtil {
 /**
  * Class for threats in project
  */
-export class AttackScenario extends DatabaseBase implements ITagable {
+export class AttackScenario extends DatabaseBase implements ITagable, ICustomNumber {
   private project: ProjectFile;
   private config: ConfigFile;
 
@@ -1216,7 +1217,7 @@ export class AttackScenario extends DatabaseBase implements ITagable {
   }
 
   public get Number(): string { return this.Data['Number']; }
-  public set Number(val: string) { this.Data['Number'] = val; }
+  public set Number(val: string) { this.Data['Number'] = val ? String(val) : val; }
   public get ViewID(): string { return this.Data['ViewID']; } // ID of Diagram, ComponentStack
   public set ViewID(val: string) { this.Data['ViewID'] = val; }
   public get MappingState(): MappingStates { return this.Data['MappingState']; }
@@ -1293,6 +1294,10 @@ export class AttackScenario extends DatabaseBase implements ITagable {
   public set ThreatQuestion(val: ThreatQuestion) { this.Mapping.QuestionID = val.ID; }
   public get ThreatRule(): ThreatRule { return this.config.GetThreatRule(this.Mapping.RuleID); }
   public set ThreatRule(val: ThreatRule) { this.Mapping.RuleID = val.ID; }
+  //public get ThreatMnemonic(): StencilThreatMnemonic { return this.config.GetStencilThreatMnemonic(this.Mapping.MnemonicID); }
+  //public set ThreatMnemonic(val: StencilThreatMnemonic) { this.Mapping.MnemonicID = val.ID; }
+  public get ThreatMnemonicLetterID(): string { return this.Mapping.MnemonicID; }
+  public set ThreatMnemonicLetterID(val: string) { this.Mapping.MnemonicID = val; }
   public get RuleStillApplies(): boolean { return this.Data['RuleStillApplies']; }
   public set RuleStillApplies(val: boolean) { this.Data['RuleStillApplies'] = val; }
   public get SystemThreats(): SystemThreat[] { 
@@ -1329,7 +1334,7 @@ export class AttackScenario extends DatabaseBase implements ITagable {
     if (!this.Data['myTagIDs']) this.Data['myTagIDs'] = [];
   }
 
-  public SetMapping(attackVectorID: string, categorieIDs: string[], target: ViewElementBase, elements: ViewElementBase[], rule: ThreatRule, question: ThreatQuestion) {
+  public SetMapping(attackVectorID: string, categorieIDs: string[], target: ViewElementBase, elements: ViewElementBase[], rule: ThreatRule, question: ThreatQuestion, mnemonic: StencilThreatMnemonic, letter: IElementTypeThreat) {
     this.MappingState = MappingStates.New;
     this.Mapping.Threat = { AttackVectorID: attackVectorID, ThreatCategoryIDs: categorieIDs };
     if (rule) {
@@ -1339,7 +1344,17 @@ export class AttackScenario extends DatabaseBase implements ITagable {
       if (rule.AttackVector?.AttackTechnique?.CVSS) this.ScoreCVSS = JSON.parse(JSON.stringify(rule.AttackVector.AttackTechnique.CVSS));
     }
     if (question) this.ThreatQuestion = question;
-    this.Name = null;
+    if (mnemonic && letter) {
+      this.ThreatMnemonicLetterID = letter.ID;
+      this.Name = letter.Name + ' on ' + target?.GetProperty('Name');
+      this.Description = letter.Description;
+      if (letter.threatCategoryID) {
+        this.ThreatCategories = [mnemonic.GetThreatCategory(letter)];
+      }
+    }
+    else {
+      this.Name = null;
+    }
     this.Target = target;
     this.Targets = elements;
     this.RuleStillApplies = true;
@@ -1373,6 +1388,23 @@ export class AttackScenario extends DatabaseBase implements ITagable {
 
   public GetCountermeasures() {
     return this.project.GetCountermeasuresApplicable().filter(x => x.AttackScenarios.includes(this));
+  }
+
+  public GetAffectedAssetObjects(): (AssetGroup|MyData)[] {
+    let res = [];
+    if (this.Target && this.Target.GetProperty('ProcessedData')) {
+      res.push(...this.Target.GetProperty('ProcessedData'));
+    }
+    if (this.Targets) {
+      this.Targets.forEach(t => {
+        if (t.GetProperty('ProcessedData')) {
+          t.GetProperty('ProcessedData').forEach(data => {
+            if (!res.includes(data)) res.push(data);
+          });
+        }
+      });
+    }
+    return res;
   }
 
   public GetDiagram() {

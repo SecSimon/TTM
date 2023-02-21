@@ -48,7 +48,7 @@ export class TTMService {
       steps: [
         {
           number: 1,
-          name: 'Device Characterization & Scope Defintion',
+          name: 'Device Characterization & Scope Defintion [Optional]',
           link: 'modeling?tab=' + NodeTypes.CharScope,
           activities: [
             {
@@ -67,7 +67,7 @@ export class TTMService {
         },
         {
           number: 2,
-          name: 'Business Objectives and Impact Definition',
+          name: 'Business Objectives and Impact Definition [Optional]',
           link: 'modeling?tab=' + NodeTypes.ObjImpact,
           activities: [
             {
@@ -82,7 +82,7 @@ export class TTMService {
         },
         {
           number: 3,
-          name: 'Device Interaction Analysis',
+          name: 'Device Interaction Analysis [Optional]',
           activities: [
             {
               name: this.translate.instant('ttm.3.1.n'),
@@ -133,7 +133,7 @@ export class TTMService {
           name: 'Threat and Threat Source Identification',
           activities: [
             {
-              name: this.translate.instant('ttm.5.1.n'),
+              name: this.translate.instant('ttm.5.1.n') + ' [Optional]',
               desc: this.translate.instant('ttm.5.1.d'),
               link: 'modeling?tab=' + NodeTypes.ThreatSources
             },
@@ -144,7 +144,7 @@ export class TTMService {
             },
             {
               name: this.translate.instant('ttm.5.3.n'),
-              desc: this.translate.instant('ttm.5.3.d'),
+              desc: this.translate.instant('ttm.5.3.d') + ' [Optional]',
               link: 'configuration'
             }
           ],
