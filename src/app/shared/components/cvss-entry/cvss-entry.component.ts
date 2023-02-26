@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, Optional } from '@angular/core';
-import { ICVSSEntry } from '../../../model/threat-model';
+import { ICVSSEntry, ThreatSeverities } from '../../../model/threat-model';
 
 import Cvss from 'cvss-calculator';
 import { DataService } from '../../../util/data.service';
@@ -39,15 +39,25 @@ export class CvssEntryComponent implements OnInit {
     }
   }
 
+  public static ToThreatSeverity(score: number) {
+    if (score >= 9) return ThreatSeverities.Critical;
+    else if (score >= 7) return ThreatSeverities.High;
+    else if (score >= 4) return ThreatSeverities.Medium;
+    else if (score > 0) return ThreatSeverities.Low;
+    else return ThreatSeverities.None;
+  }
+
   public static GetURL(entry: ICVSSEntry) {
     let vec = CvssEntryComponent.GetVector(entry);
-    if (vec) return 'https://www.first.org/cvss/calculator/3.1#' + vec;
+    const version = entry.Version ? entry.Version : '3.1';
+    if (vec) return 'https://nvd.nist.gov/vuln-metrics/cvss/v' + version[0] + '-calculator?vector=' + vec.substring(vec.indexOf('/')+1) + '&version=' + version;
     return null;
   }
 
   public static GetVector(entry: ICVSSEntry) {
     if (entry) {
-      let vec = 'CVSS:3.1';
+      let vec = 'CVSS:' + (entry.Version ? entry.Version : '3.1');
+      if (entry.Vector) return entry.Vector.includes('CVSS') ? entry.Vector : (vec + '/' + entry.Vector);
       Object.keys(entry).forEach(k => {
         if (entry[k] && typeof entry[k] === 'string') vec += '/' + k + ':' + entry[k];
       });

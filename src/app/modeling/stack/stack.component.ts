@@ -102,6 +102,10 @@ export class StackComponent implements OnInit {
     }
   }
 
+  public ShowCVESearch() {
+    this.dialogService.OpenCveSearchDialog(this.selectedComponent, this.stack.ID);
+  }
+
   public AddCountermeasure(item: MyComponent) {
     if (!item) item = this.selectedComponent;
     if (item) {

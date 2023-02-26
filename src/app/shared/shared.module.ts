@@ -44,6 +44,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatPaginatorIntl, MatPaginatorModule } from '@angular/material/paginator';
 
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { AngularSplitModule } from 'angular-split';
@@ -66,10 +67,12 @@ import { CvssEntryComponent } from './components/cvss-entry/cvss-entry.component
 import { ProgressTrackerComponent } from './components/progress-tracker/progress-tracker.component';
 import { ModelInfoComponent } from './components/model-info/model-info.component';
 import { NotesComponent } from './components/notes/notes.component';
-import { LocalDatePipe, LocalDateTimePipe, LocalizationService } from '../util/localization.service';
+import { LocalDatePipe, LocalDateTimePipe, LocalizationService, MatPaginationIntlService } from '../util/localization.service';
 import { OwaspRREntryComponent } from './components/owasp-rr-entry/owasp-rr-entry.component';
 import { RenameDialogComponent } from './components/rename-dialog/rename-dialog.component';
 import { TagsComponent } from './components/tags/tags.component';
+import { CveSearchComponent } from './components/cve-search/cve-search.component';
+import { CveEntryComponent } from './components/cve-entry/cve-entry.component';
 
 @NgModule({
   declarations: [
@@ -77,7 +80,7 @@ import { TagsComponent } from './components/tags/tags.component';
     StatusBarComponent, SideNavComponent, SaveDialogComponent, PasswordDialogComponent, MessagesDialogComponent, 
     TwoOptionsDialogComponent, CweEntryComponent, CapecEntryComponent, NavTreeComponent, CvssEntryComponent, OwaspRREntryComponent,
     ProgressTrackerComponent, ModelInfoComponent, NotesComponent, 
-    LocalDatePipe, LocalDateTimePipe, RenameDialogComponent, TagsComponent
+    LocalDatePipe, LocalDateTimePipe, RenameDialogComponent, TagsComponent, CveSearchComponent, CveEntryComponent
   ],
   imports: [
     CommonModule, 
@@ -129,7 +132,8 @@ import { TagsComponent } from './components/tags/tags.component';
     MatTableModule,
     MatSortModule,
     MatStepperModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    MatPaginatorModule
   ],
   exports: [
     TranslateModule, 
@@ -180,6 +184,7 @@ import { TagsComponent } from './components/tags/tags.component';
     MatSortModule,
     MatStepperModule,
     MatProgressBarModule,
+    MatPaginatorModule,
 
     StatusBarComponent,
     SideNavComponent,
@@ -190,6 +195,7 @@ import { TagsComponent } from './components/tags/tags.component';
     NotesComponent,
     ModelInfoComponent,
     TagsComponent,
+    CveEntryComponent,
 
     LocalDatePipe,
     LocalDateTimePipe
@@ -200,6 +206,7 @@ import { TagsComponent } from './components/tags/tags.component';
       deps: [LocalizationService],
       useFactory: (translate) => translate.Locale
     },
+    { provide: MatPaginatorIntl, useClass: MatPaginationIntlService },
     { provide: MAT_COLOR_FORMATS, useValue: NGX_MAT_COLOR_FORMATS }
   ]
 })

@@ -26,9 +26,14 @@ import { CvssEntryComponent } from '../shared/components/cvss-entry/cvss-entry.c
 import { OwaspRREntryComponent } from '../shared/components/owasp-rr-entry/owasp-rr-entry.component';
 import { RenameDialogComponent, IRenameDialogData } from '../shared/components/rename-dialog/rename-dialog.component';
 import { TagChartsComponent } from '../dashboard/tag-charts/tag-charts.component';
+import { CveSearchComponent } from '../shared/components/cve-search/cve-search.component';
 
 export class MyBoolean {
   public Value: boolean;
+}
+
+export class MyString {
+  public Value: string;
 }
 
 export class NoteConfig {
@@ -335,6 +340,25 @@ export class DialogService {
       component: SuggestedThreatsDialogComponent,
       componentInputData: [
         { Key: DFDElement, Value: element }
+      ]
+    };
+    return this.OpenTwoOptionsDialog(data, true, '800px');
+  }
+
+  public OpenCveSearchDialog(element: ViewElementBase, viewID: string) {
+    let str = new MyString();
+    str.Value = viewID;
+    let data: ITwoOptionDialogData = {
+      title: this.translate.instant('shared.cvesearch.title'),
+      resultTrueText: this.translate.instant('general.Close'),
+      hasResultFalse: false,
+      resultFalseText: '',
+      resultTrueEnabled: () => true,
+      initalTrue: false,
+      component: CveSearchComponent,
+      componentInputData: [
+        { Key: ViewElementBase, Value: element },
+        { Key: MyString, Value: str }
       ]
     };
     return this.OpenTwoOptionsDialog(data, true, '800px');

@@ -9,6 +9,7 @@ import { ElementTypeIDs, ElementTypeUtil, IElementTypeThreat, StencilThreatMnemo
 import { Control, Countermeasure, MitigationStates } from "./mitigations";
 import { ProjectFile } from "./project-file";
 import { ITagable, MyTag } from "./my-tags";
+import { ICVEEntry } from "../shared/components/cve-entry/cve-entry.component";
 
 
 export enum ImpactCategories {
@@ -274,6 +275,8 @@ export interface ICVSSEntry {
   I: LowHighNone;
   A: LowHighNone;
   Score: number;
+  Version: string;
+  Vector: string;
 }
 
 export interface IOwaspRREntry {
@@ -1132,6 +1135,7 @@ export interface IAttackScenario {
   RuleID: string; //ThreatRule
   QuestionID: string; //ThreatQuestion
   MnemonicID: string; //StencilTypeMnemonic
+  CVE: ICVEEntry;
 }
 
 export enum MappingStates {
@@ -1298,6 +1302,8 @@ export class AttackScenario extends DatabaseBase implements ITagable, ICustomNum
   //public set ThreatMnemonic(val: StencilThreatMnemonic) { this.Mapping.MnemonicID = val.ID; }
   public get ThreatMnemonicLetterID(): string { return this.Mapping.MnemonicID; }
   public set ThreatMnemonicLetterID(val: string) { this.Mapping.MnemonicID = val; }
+  public get CveEntry(): ICVEEntry { return this.Mapping.CVE; }
+  public set CveEntry(val: ICVEEntry) { this.Mapping.CVE = val; }
   public get RuleStillApplies(): boolean { return this.Data['RuleStillApplies']; }
   public set RuleStillApplies(val: boolean) { this.Data['RuleStillApplies'] = val; }
   public get SystemThreats(): SystemThreat[] { 
@@ -1334,9 +1340,9 @@ export class AttackScenario extends DatabaseBase implements ITagable, ICustomNum
     if (!this.Data['myTagIDs']) this.Data['myTagIDs'] = [];
   }
 
-  public SetMapping(attackVectorID: string, categorieIDs: string[], target: ViewElementBase, elements: ViewElementBase[], rule: ThreatRule, question: ThreatQuestion, mnemonic: StencilThreatMnemonic, letter: IElementTypeThreat) {
+  public SetMapping(attackVectorID: string, categoryIDs: string[], target: ViewElementBase, elements: ViewElementBase[], rule: ThreatRule, question: ThreatQuestion, mnemonic: StencilThreatMnemonic, letter: IElementTypeThreat) {
     this.MappingState = MappingStates.New;
-    this.Mapping.Threat = { AttackVectorID: attackVectorID, ThreatCategoryIDs: categorieIDs };
+    this.Mapping.Threat = { AttackVectorID: attackVectorID, ThreatCategoryIDs: categoryIDs };
     if (rule) {
       this.ThreatRule = rule;
       if (rule.Severity) this.Severity = rule.Severity;

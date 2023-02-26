@@ -1,6 +1,8 @@
 <div style="margin-left: 10px; margin-top: 10px;" *ngIf="threatActor">
   {{'properties.Motive' | translate}}:
   <app-notes [showTimestamp]="false" [hasCheckbox]="false" [strings]="threatActor.Motive"></app-notes>
+  {{'properties.Capabilities' | translate}}:
+  <app-notes [showTimestamp]="false" [hasCheckbox]="false" [strings]="threatActor.Capabilities"></app-notes>
   <mat-form-field appearance="fill" class="property-form-field">
     <mat-label>{{ 'general.Likelihood' | translate }}</mat-label>
     <mat-select [(value)]="threatActor.Likelihood">

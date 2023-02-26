@@ -375,12 +375,13 @@ export class ExportSystemThreatPropertyUtil {
 
 export enum ExportThreatSourceProperties {
   Motive = 'Motive',
+  Capabilities = 'Capabilities',
   Likelihood = 'Likelihood',
 }
 
 export class ExportThreatSourcePropertyUtil {
   public static GetKeys() {
-    return [ExportThreatSourceProperties.Motive, ExportThreatSourceProperties.Likelihood];
+    return [ExportThreatSourceProperties.Motive, ExportThreatSourceProperties.Capabilities, ExportThreatSourceProperties.Likelihood];
   }
 
   public static GetValues(key: string, entry, translate: TranslateService): string[] {
@@ -390,7 +391,7 @@ export class ExportThreatSourcePropertyUtil {
       return [''];
     };
     if (this.GetKeys().includes(key as ExportThreatSourceProperties)) {
-      if ([ExportThreatSourceProperties.Motive].includes(key as ExportThreatSourceProperties)) {
+      if ([ExportThreatSourceProperties.Motive, ExportThreatSourceProperties.Capabilities].includes(key as ExportThreatSourceProperties)) {
         return ExportUtil.wrap(translate, entry[key]?.join('; '));
       }
       else if ([ExportThreatSourceProperties.Likelihood].includes(key as ExportThreatSourceProperties)) return myToString(LowMediumHighNumberUtil.ToString);
@@ -401,6 +402,7 @@ export class ExportThreatSourcePropertyUtil {
   public static ToString(easp: ExportThreatSourceProperties): string {
     switch (easp) {
       case ExportThreatSourceProperties.Motive: return "properties.Motive";
+      case ExportThreatSourceProperties.Capabilities: return "properties.Capabilities";
       case ExportThreatSourceProperties.Likelihood: return "properties.Likelihood";
       default:
         console.error('Missing Prop in ExportThreatSourcePropertyUtil.ToString()')

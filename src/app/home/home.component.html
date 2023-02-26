@@ -19,11 +19,11 @@
                   <mat-icon>more_vert</mat-icon>
                 </button>
                 <mat-menu #projMenu="matMenu">
-                  <button mat-menu-item [disabled]="!dataService.SelectedGHProject || !dataService.GetRepoOfFile(dataService.SelectedGHProject)?.isWritable" (click)="dataService.OpenSaveProjectDialog('')">
+                  <button mat-menu-item [disabled]="!dataService.SelectedGHProject || !dataService.GetRepoOfFile(dataService.SelectedGHProject)?.isWritable" (click)="dataService.OpenSaveProjectDialog()">
                     <mat-icon>save</mat-icon>
                     <span>{{'pages.home.menu.saveProject' | translate}}</span>
                   </button>
-                  <button mat-menu-item [disabled]="!dataService.SelectedGHProject" (click)="dataService.OpenSaveConfigDialog('')">
+                  <button mat-menu-item [disabled]="!dataService.SelectedGHProject" (click)="dataService.OpenSaveConfigDialog()">
                     <mat-icon>exit_to_app</mat-icon>
                     <span>{{'pages.home.menu.exportConfig' | translate}}</span>
                   </button>
@@ -61,7 +61,7 @@
               </h2>
 
               <div *ngIf="dataService.SelectedGHProject" style="margin-bottom: 10px;">
-                Current Project: {{dataService.SelectedGHProject.name}}
+                {{'pages.home.CurrentProject' | translate}}: {{dataService.SelectedGHProject.name}}
                 <br/>
               </div>
 
@@ -70,10 +70,12 @@
                 {{'pages.home.createProject' | translate}}
               </button>
               <br/>
-              <ng-container *ngFor="let proj of dataService.AvailableGHProjects">
+              <ng-container *ngFor="let proj of GetAvailableGHProjects()">
                 <div id="project">
+                  <mat-icon style="vertical-align: top; width: 20px; height: 20px; line-height: 20px; font-size: 20px; margin-right: 5px;" matTooltip="{{'pages.home.storedOnline' | translate}}" matTooltipShowDelay="1000">cloud_queue</mat-icon>
                   <button class="color-primary astext" (click)="dataService.LoadProject(proj)">{{proj.name}}</button>
-                  in {{GetRepoName(proj)}}
+                  in {{GetRepoName(proj)}} 
+                  <mat-icon *ngIf="IsProtected(proj)" style="vertical-align: top; width: 20px; height: 20px; line-height: 20px; margin-right: 5px;" matTooltip="{{'pages.home.notWritable' | translate}}" matTooltipShowDelay="1000">edit_off</mat-icon>
                   <button mat-icon-button class="show-on-hover" style="width: 20px; height: 20px; line-height: 20px; margin-right: 5px;" (click)="dataService.OpenRepo(proj)" matTooltip="{{'general.openInNew' | translate}}" matTooltipShowDelay="1000">
                     <mat-icon>open_in_new</mat-icon>
                   </button>
@@ -82,8 +84,18 @@
                   </button>
                 </div>
               </ng-container>
+              <mat-paginator class="paginator" *ngIf="dataService.AvailableGHProjects.length > 0" [length]="dataService.AvailableGHProjects.length" [pageSize]="pageProjectSize" [hidePageSize]="true" (page)="pageGHProjectIndex = $event.pageIndex"> </mat-paginator>
+              
+              <ng-container *ngFor="let proj of GetAvailableFSProjects()">
+                <div id="project">
+                  <mat-icon style="vertical-align: top; width: 20px; height: 20px; line-height: 20px; font-size: 20px; margin-right: 5px;" matTooltip="{{'pages.home.storedOffline' | translate}}" matTooltipShowDelay="1000">file_present</mat-icon>
+                  <button class="color-primary astext" (click)="dataService.LoadProjectFS(proj)">{{GetFileName(proj)}}</button>
+                  in {{GetFilePath(proj)}}
+                </div>
+              </ng-container>
+              <mat-paginator class="paginator" *ngIf="dataService.AvailableFSProjects.length > 0" [length]="dataService.AvailableFSProjects.length" [pageSize]="pageProjectSize" [hidePageSize]="true" (page)="pageFSProjectIndex = $event.pageIndex"> </mat-paginator>
 
-              <h2 style="margin-top: 50px;">
+              <h2>
                 {{'pages.home.configs' | translate}}
                 <button mat-icon-button style="vertical-align: middle;" [matMenuTriggerFor]="confMenu" aria-label="Menu">
                   <mat-icon>more_vert</mat-icon>
@@ -97,10 +109,12 @@
                 </mat-menu>
               </h2>
 
-              <ng-container *ngFor="let conf of dataService.AvailableGHConfigs">
+              <ng-container *ngFor="let conf of GetAvailableGHConfigs()">
                 <div id="config">
+                  <mat-icon style="vertical-align: top; width: 20px; height: 20px; line-height: 20px; font-size: 20px; margin-right: 5px;" matTooltip="{{'pages.home.storedOnline' | translate}}" matTooltipShowDelay="1000">cloud_queue</mat-icon>
                   <button class="color-primary astext" (click)="dataService.LoadConfig(conf)">{{conf.name}}</button>
                   in {{GetRepoName(conf)}}
+                  <mat-icon *ngIf="IsProtected(conf)" style="vertical-align: top; width: 20px; height: 20px; line-height: 20px; margin-right: 5px;" matTooltip="{{'pages.home.notWritable' | translate}}" matTooltipShowDelay="1000">edit_off</mat-icon>
                   <button mat-icon-button class="show-on-hover" style="width: 20px; height: 20px; line-height: 20px; margin-right: 5px;" (click)="dataService.OpenRepo(conf)" matTooltip="{{'general.openInNew' | translate}}" matTooltipShowDelay="1000">
                     <mat-icon>open_in_new</mat-icon>
                   </button>
@@ -109,6 +123,8 @@
                   </button>
                 </div>
               </ng-container>
+              <mat-paginator class="paginator" *ngIf="dataService.AvailableGHConfigs.length > 0" [length]="dataService.AvailableGHConfigs.length" [pageSize]="pageConfigSize" [hidePageSize]="true" (page)="pageGHConfigIndex = $event.pageIndex"> </mat-paginator>
+
               <button style="margin-top: 70px;" class="color-primary astext" (click)="tourService.start()">{{'pages.home.welcomeTour' | translate}}</button>
             </ng-container>
 
@@ -137,6 +153,22 @@
               <mat-expansion-panel [expanded]="processStep === 0" (opened)="SetProcessStep(0)" hideToggle>
                 <mat-expansion-panel-header>
                   <mat-panel-title>
+                    TTModeler
+                  </mat-panel-title>
+                  <mat-panel-description>
+                    {{'pages.home.tool' | translate}}
+                    <mat-icon>terminal</mat-icon>
+                  </mat-panel-description>
+                </mat-expansion-panel-header>
+
+                <p *ngFor="let pro of toolBenefits" style="margin: 0;"><mat-icon style="vertical-align: bottom;">done</mat-icon> {{'pages.home.tool.' + pro | translate}}</p>
+                <mat-action-row>
+                  <button mat-button color="primary" (click)="NextProcessStep()">{{'tour.next' | translate}}</button>
+                </mat-action-row>
+              </mat-expansion-panel>
+              <mat-expansion-panel [expanded]="processStep === 1" (opened)="SetProcessStep(1)" hideToggle>
+                <mat-expansion-panel-header>
+                  <mat-panel-title>
                     {{'pages.home.process' | translate}}
                   </mat-panel-title>
                   <mat-panel-description>
@@ -147,10 +179,11 @@
 
                 <p>{{'pages.home.methodologyInfo' | translate}}</p>
                 <mat-action-row>
+                  <button mat-button color="primary" (click)="PrevProcessStep()">{{'tour.prev' | translate}}</button>
                   <button mat-button color="primary" (click)="NextProcessStep()">{{'tour.next' | translate}}</button>
                 </mat-action-row>
               </mat-expansion-panel>
-              <mat-expansion-panel *ngFor="let stage of Stages; index as indexStage; last as isLast;" [style.marginBottom]="isLast ? '20px' : '0px'" [expanded]="processStep === indexStage+1" (opened)="SetProcessStep(indexStage+1)" hideToggle>
+              <mat-expansion-panel *ngFor="let stage of Stages; index as indexStage; last as isLast;" [style.marginBottom]="isLast ? '20px' : '0px'" [expanded]="processStep === indexStage+2" (opened)="SetProcessStep(indexStage+2)" hideToggle>
                 <mat-expansion-panel-header>
                   <mat-panel-title>
                     {{stage.name}}

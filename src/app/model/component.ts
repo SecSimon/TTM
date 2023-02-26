@@ -130,6 +130,8 @@ export class MyComponent extends ViewElementBase {
 
   public get ThreatQuestions() { return this.Data['threatQuestions']; } // key: questionID, value: optionVal
 
+  public get Version(): string { return this.Data['Version']; }
+  public set Version(val: string) { this.Data['Version'] = val; }
   public get Notes(): INote[] { return this.Data['Notes']; }
   public set Notes(val: INote[]) { this.Data['Notes'] = val; }
   public get NotesPerQuestion(): {} { return this.Data['notesPerQuestion']; }
@@ -150,6 +152,7 @@ export class MyComponent extends ViewElementBase {
     if (!this.Data['threatQuestions']) this.Data['threatQuestions'] = {};
     if (!this.Data['Notes']) this.Data['Notes'] = [];
     if (!this.Data['notesPerQuestion']) this.Data['notesPerQuestion'] = {};
+    if (!this.Version) this.Version = '';
 
     cf.GetThreatQuestions().filter(x => x.ComponentType.ID == type.ID).forEach(x => this.AddThreatQuestion(x));
   }
@@ -191,6 +194,7 @@ export class MyComponent extends ViewElementBase {
 
     this.AddProperty('properties.IsActive', 'IsActive', '', true, PropertyEditTypes.CheckBox, true);
     this.AddProperty('properties.IsThirdParty', 'IsThirdParty', '', true, PropertyEditTypes.CheckBox, true);
+    if (this.TypeID == MyComponentTypeIDs.Software) this.AddProperty('properties.Version', 'Version', '', true, PropertyEditTypes.TextBox, true);
     this.AddProperty('properties.Questionnaire', '', '', false, PropertyEditTypes.OpenQuestionnaire, true);
     this.AddProperty('general.Notes', '', '', false, PropertyEditTypes.OpenNotes, true);
   }

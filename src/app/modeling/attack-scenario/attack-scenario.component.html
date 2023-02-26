@@ -202,10 +202,24 @@
     </div>
   </div>
   <mat-accordion class="expansion-panel-headers-align" style="pointer-events: initial;">
+    <mat-expansion-panel *ngIf="attackScenario.CveEntry">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          {{'general.CveInfo' | translate}}
+        </mat-panel-title>
+        <mat-panel-description>
+          {{attackScenario.CveEntry.ID}}
+          <mat-icon>info</mat-icon>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <ng-template matExpansionPanelContent>
+        <app-cve-entry [entry]="attackScenario.CveEntry"></app-cve-entry>
+      </ng-template>
+    </mat-expansion-panel>
     <mat-expansion-panel *ngIf="attackScenario.AttackVector">
       <mat-expansion-panel-header>
         <mat-panel-title>
-          {{'general.ThreatInfo' | translate}}
+          {{'general.AttackVectorInfo' | translate}}
         </mat-panel-title>
         <mat-panel-description>
           {{attackScenario.AttackVector.Name}}

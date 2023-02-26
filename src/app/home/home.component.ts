@@ -5,7 +5,6 @@ import { ThemeService } from '../util/theme.service';
 import { DataService, UserModes } from '../util/data.service';
 import { LocalStorageService, LocStorageKeys } from '../util/local-storage.service';
 
-import { WelcomeDialogComponent } from './Dialogs/welcome-dialog/welcome-dialog.component';
 import { TourService } from 'ngx-ui-tour-md-menu';
 import { TranslateService } from '@ngx-translate/core';
 import { ITTMStage, TTMService } from '../util/ttm.service';
@@ -30,6 +29,15 @@ export class HomeComponent implements OnInit {
     if (consent != null) return JSON.parse(consent);
     return false;
   }
+
+  public pageProjectSize = 5;
+  public pageConfigSize = 5;
+  public pageGHProjectIndex = 0;
+  public pageGHConfigIndex = 0;
+  public pageFSProjectIndex = 0;
+  public pageFSConfigIndex = 0;
+
+  public toolBenefits = ['platform', 'onlineStorage', 'offlineStorage', 'libraries', 'libraryIntegration', 'guidelines', 'diagramming', 'riskAssessment', 'dashboard', 'reports', 'csv', 'languages', 'collaboration'];
 
   constructor(private router: Router, private route: ActivatedRoute, private theme: ThemeService, public dataService: DataService, private dialogService: DialogService, private dialog: MatDialog,
     private locStorage: LocalStorageService, public tourService: TourService, private translate: TranslateService, private electronService: ElectronService, 
@@ -107,6 +115,22 @@ export class HomeComponent implements OnInit {
     return this.dataService.GetRepoOfFile(file)?.name;
   }
 
+  public IsProtected(file) {
+    return !this.dataService.GetRepoOfFile(file).isWritable;
+  }
+
+  public GetAvailableGHProjects() {
+    return this.dataService.AvailableGHProjects.slice(this.pageGHProjectIndex*this.pageProjectSize, (this.pageGHProjectIndex+1)*this.pageProjectSize);
+  }
+
+  public GetAvailableGHConfigs() {
+    return this.dataService.AvailableGHConfigs.slice(this.pageGHConfigIndex*this.pageConfigSize, (this.pageGHConfigIndex+1)*this.pageConfigSize);
+  }
+
+  public GetAvailableFSProjects() {
+    return this.dataService.AvailableFSProjects.slice(this.pageFSProjectIndex*this.pageProjectSize, (this.pageFSProjectIndex+1)*this.pageProjectSize);
+  }
+
   public SetProcessStep(index: number) {
     this.processStep = index;
   }
@@ -122,5 +146,13 @@ export class HomeComponent implements OnInit {
   public ProgressTracker() {
     this.NextProcessStep();
     this.dialogService.OpenProgresstrackerDialog();
+  }
+
+  public GetFileName(path: string) {
+    return path.substring(path.lastIndexOf('/')+1);
+  }
+
+  public GetFilePath(path: string) {
+    return path.substring(0, path.lastIndexOf('/'));
   }
 }

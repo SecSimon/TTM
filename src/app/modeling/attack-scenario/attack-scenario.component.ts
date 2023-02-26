@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Optional } from '@angular/core'
 import { LowMediumHighNumber, LowMediumHighNumberUtil } from '../../model/assets';
 import { Countermeasure } from '../../model/mitigations';
 import { RiskStrategies, RiskStrategyUtil, ThreatCategoryGroup, AttackScenario, AttackVectorGroup, ThreatSeverities, ThreatSeverityUtil, ThreatStates, ThreatStateUtil, ICVSSEntry, IOwaspRREntry } from '../../model/threat-model';
+import { CvssEntryComponent } from '../../shared/components/cvss-entry/cvss-entry.component';
 import { DataService } from '../../util/data.service';
 import { DialogService } from '../../util/dialog.service';
 import { ThemeService } from '../../util/theme.service';
@@ -105,11 +106,7 @@ export class AttackScenarioComponent implements OnInit {
   }
 
   public OnScoreCVSSChanged() {
-    if (this.attackScenario.ScoreCVSS.Score >= 9) this.attackScenario.Severity = ThreatSeverities.Critical;
-    else if (this.attackScenario.ScoreCVSS.Score >= 7) this.attackScenario.Severity = ThreatSeverities.High;
-    else if (this.attackScenario.ScoreCVSS.Score >= 4) this.attackScenario.Severity = ThreatSeverities.Medium;
-    else if (this.attackScenario.ScoreCVSS.Score > 0) this.attackScenario.Severity = ThreatSeverities.Low;
-    else this.attackScenario.Severity = ThreatSeverities.None;
+    this.attackScenario.Severity = CvssEntryComponent.ToThreatSeverity(this.attackScenario.ScoreCVSS.Score);
     this.CalculateRisk();
   }
 

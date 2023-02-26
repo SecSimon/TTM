@@ -319,7 +319,6 @@ export class ProjectFile extends DatabaseBase {
     res.Likelihood = LowMediumHighNumber.Medium;
     if (this.GetThreatActors().length == 0) res.Number = '1';
     else res.Number = (Math.max(...this.GetThreatActors().map(x => Number(x.Number)))+1).toString();
-    res.Motive = [];
     this.threatActors.push(res);
     return res;
   }

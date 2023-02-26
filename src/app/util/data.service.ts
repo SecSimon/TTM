@@ -82,6 +82,9 @@ export class DataService {
   private availableGHConfigs: IGHFile[] = [];
   private selectedGHProject: IGHFile;
   private selectedGHConfig: IGHFile;
+  private availableFSProjects: string[] = [];
+  private selectedFSProject: string;
+  private selectedFSConfig: string;
 
   private projectContentCrypto: MyCrypto;
 
@@ -95,7 +98,10 @@ export class DataService {
     private dialog: MatDialog, private messagesService: MessagesService, private translate: TranslateService, private fileUpdate: FileUpdateService, private zone: NgZone, 
     private electron: ElectronService) { 
     this.restoreUserAccount();
-    if (this.UserMode == UserModes.LoggedIn) {
+    if (this.UserMode == UserModes.None) {
+      if (this.locStorage.Get(LocStorageKeys.AUTH_GUEST) == 'true') this.userMode = UserModes.Guest;
+    }
+    if (this.UserMode == UserModes.LoggedIn || this.UserMode == UserModes.Guest) {
       this.retrieveRepositories();
     }
 
@@ -141,14 +147,29 @@ export class DataService {
         this.zone.run(() => {
           this.OnCloseProject().then(() => {
             const content = JSON.parse(data);
-            const path = filePath.split('/');
-            this.locStorage.Remove(LocStorageKeys.GH_LAST_PROJECT);
-            this.importFile(content, path[path.length-1], null);
+            this.locStorage.Remove(LocStorageKeys.LAST_PROJECT);
+            this.importFile(content, filePath, null);
           });
         });
       });
 
       this.electron.ipcRenderer.send('OnMyReady');
+
+      const lastFiles = this.getLastProjectHistory().filter(x => x.startsWith('FS:')).map(x => x.substring(3));
+      if (lastFiles.length > 0) this.electron.ipcRenderer.send('ExistFiles', lastFiles);
+
+      this.electron.ipcRenderer.on('OnExistingFiles', (event, files) => {
+        this.availableFSProjects = files;
+
+        const lastProject = this.locStorage.Get(LocStorageKeys.LAST_PROJECT);
+        if (lastProject) {
+          const parsed = JSON.parse(lastProject);
+          if (this.availableFSProjects.includes(parsed['path'])) {
+            if (!this.IsLoggedIn) this.GuestLogin();
+            this.LoadProjectFS(parsed['path']);
+          }
+        }
+      });
     }
   }
 
@@ -175,6 +196,7 @@ export class DataService {
   public get Repos(): IGHRepository[] { return this.repos; }
   public get AvailableGHProjects(): IGHFile[] { return this.availableGHProjects; }
   public get AvailableGHConfigs(): IGHFile[] { return this.availableGHConfigs; }
+  public get AvailableFSProjects(): string[] { return this.availableFSProjects; }
   public get SelectedGHProject(): IGHFile { return this.selectedGHProject; }
   public get SelectedGHConfig(): IGHFile { return this.selectedGHConfig; }
 
@@ -223,8 +245,12 @@ export class DataService {
     this.ConfigChanged.emit(val);
   }
 
-  public get CanSaveProject(): boolean {
+  public get CanSaveGHProject(): boolean {
     return this.SelectedGHProject != null && this.GetRepoOfFile(this.SelectedGHProject).isWritable;
+  }
+
+  public get CanSaveAsProject(): boolean {
+    return this.CanSaveGHProject || (this.electron.isElectron && this.selectedFSProject != null);
   }
 
   public get CanSaveConfig(): boolean {
@@ -298,6 +324,7 @@ export class DataService {
 
   public GuestLogin() {
     this.userMode = UserModes.Guest;
+    this.locStorage.Set(LocStorageKeys.AUTH_GUEST, String(true));
     this.retrieveRepositories();
     this.router.navigate(['/']);
   }
@@ -389,20 +416,20 @@ export class DataService {
       proj.CreateDiagram(DiagramTypes.DataFlow);
 
       this.Project = proj;
-      this.locStorage.Remove(LocStorageKeys.GH_LAST_PROJECT);
+      this.locStorage.Remove(LocStorageKeys.LAST_PROJECT);
     }
   }
 
   public Save() {
-    if (this.Project) return this.OpenSaveProjectDialog('');
-    else if (this.UserMode == UserModes.LoggedIn) return this.OpenSaveConfigDialog('');
+    if (this.Project) return this.OpenSaveProjectDialog();
+    else if (this.UserMode == UserModes.LoggedIn) return this.OpenSaveConfigDialog();
   }
 
-  public OpenSaveProjectDialog(msg: string, saveAs: boolean = false) {
+  public OpenSaveProjectDialog(saveAs: boolean = false) {
     return new Promise<void>((resolve, reject) => {
       this.ConsistencyCheck().then(x => {
-        if (this.CanSaveProject) {
-          let data = { 'msg': msg };
+        if (this.CanSaveGHProject) {
+          let data = { 'msg': '' };
           if (!this.SelectedGHProject || saveAs) {
             data['newProject'] = { name: '', configFile: null, path: '', repoId: null, isEncrypted: this.SelectedGHProject?.isEncrypted ? true : false, sha: null } as IGHFile;
           }
@@ -416,6 +443,49 @@ export class DataService {
             else resolve();
           });
         }
+        else if (this.electron.isElectron && this.selectedFSProject) {
+          const onSuccess = () => {
+            this.messagesService.Success('messages.success.saveProject', this.Project.Name);
+            this.locStorage.Set(LocStorageKeys.LAST_PROJECT, JSON.stringify({ path: this.selectedFSProject }));
+            this.ProjectSaved.emit(this.Project);
+            setTimeout(() => {
+              if (this.Project) this.Project.FileChanged = false;
+              if (this.Config) this.Config.FileChanged = false;
+            }, 100);
+            this.stopUnsavedChangesTimer();
+            resolve();
+          };
+
+          const content = this.getFileContent(this.Project.ToJSON(), true, false);
+          if (saveAs) {
+            if (this.electron.ipcRenderer.listenerCount('OnSaveFileAs') == 0) {
+              this.electron.ipcRenderer.on('OnSaveFileAs', (event, newPath) => {
+                if (newPath) {
+                  this.selectedFSProject = newPath;
+                  this.addFSProjectToHistory(newPath);
+                  this.availableFSProjects.push(newPath);
+                  this.Project.Name = newPath.split('/')[newPath.split('/').length-1];
+                  onSuccess();
+                }
+                else {
+                  reject();
+                }
+              });
+            }
+            this.electron.ipcRenderer.send('SaveFileAs', this.selectedFSProject, content);
+          }
+          else {
+            if (this.electron.ipcRenderer.listenerCount('OnSaveFile') == 0) {
+              this.electron.ipcRenderer.on('OnSaveFile', (event, res) => {
+                if (res) {
+                  onSuccess();
+                }
+                else reject();
+              });
+            }
+            this.electron.ipcRenderer.send('SaveFile', this.selectedFSProject, content);
+          }
+        }
         else {
           this.ExportFile(true);
           resolve();
@@ -424,9 +494,9 @@ export class DataService {
     });
   }
 
-  public OpenSaveConfigDialog(msg: string, saveAs: boolean = false) {
+  public OpenSaveConfigDialog(saveAs: boolean = false) {
     return new Promise<void>((resolve, reject) => {
-      let data = { 'msg': msg };
+      let data = { 'msg': '' };
       if (!this.SelectedGHConfig || saveAs) {
         data['newConfig'] = { name: '', path: '', repoId: null, isEncrypted: false, sha: null } as IGHFile;
       }
@@ -444,7 +514,7 @@ export class DataService {
     this.OnCloseProject().then(() => {
 
       // check for outdated file
-      const lastProject = this.locStorage.Get(LocStorageKeys.GH_LAST_PROJECT);
+      const lastProject = this.locStorage.Get(LocStorageKeys.LAST_PROJECT);
       if (lastProject) {
         const parsedLastProject = JSON.parse(lastProject);
         const repo = this.GetRepoOfFile(proj);
@@ -475,6 +545,32 @@ export class DataService {
       }).finally(() => {
         this.isLoading.remove();
       });
+    });
+  }
+
+  public LoadProjectFS(path: string) {
+    this.OnCloseProject().then(() => {
+      this.isLoading.add();
+
+      this.electron.ipcRenderer.send('ReadFile', path);
+      if (this.electron.ipcRenderer.listenerCount('OnReadFile') == 0) {
+        this.electron.ipcRenderer.on('OnReadFile', (event, file) => {
+          this.zone.run(() => {
+            try {
+              const content = JSON.parse(file);
+              this.locStorage.Remove(LocStorageKeys.LAST_PROJECT);
+              this.selectedFSProject = path;
+              this.importFile(content, path, null);
+              if (this.availableFSProjects.indexOf(path) < 0) {
+                this.availableFSProjects.push(path);
+              }
+            } catch (error) {
+              console.log(error);
+            }
+            this.isLoading.remove();
+          });
+        });
+      }
     });
   }
 
@@ -537,18 +633,21 @@ export class DataService {
     });
   }
 
-  private loadProjectFile(name: string, json: any) {
+  private loadProjectFile(filePath: string, json: any) {
     try {
       let updated = this.fileUpdate.UpdateProjectFile(json);
-      json['Data']['Name'] = name;
+      const fileName = filePath.split('/')[filePath.split('/').length-1];
+      json['Data']['Name'] = fileName;
       this.Project = ProjectFile.FromJSON(json);
       if (this.Project) {
         this.Project.FileChanged = updated;
         this.Config = this.Project.Config;
         this.selectedGHConfig = null;
-        if (this.KeepUserSignedIn && this.selectedGHProject) this.locStorage.Set(LocStorageKeys.GH_LAST_PROJECT, JSON.stringify({ owner: this.GetRepoOfFile(this.SelectedGHProject).owner, repoId: this.SelectedGHProject.repoId, path: this.SelectedGHProject.path, sha: this.SelectedGHProject.sha }));
-        this.addProjectToHistory(this.SelectedGHProject);
-        this.messagesService.Success('messages.success.loadProject', name);
+        if (this.KeepUserSignedIn && this.selectedGHProject) this.locStorage.Set(LocStorageKeys.LAST_PROJECT, JSON.stringify({ owner: this.GetRepoOfFile(this.SelectedGHProject).owner, repoId: this.SelectedGHProject.repoId, path: this.SelectedGHProject.path, sha: this.SelectedGHProject.sha }));
+        else if (this.selectedFSProject) this.locStorage.Set(LocStorageKeys.LAST_PROJECT, JSON.stringify({ path: this.selectedFSProject }));
+        this.addGHProjectToHistory(this.SelectedGHProject);
+        this.addFSProjectToHistory(this.selectedFSProject);
+        this.messagesService.Success('messages.success.loadProject', fileName);
       }
     } 
     catch (error) {
@@ -599,7 +698,8 @@ export class DataService {
       this.selectedGHProject.sha = res.content.sha;
       this.messagesService.Success('messages.success.saveProject', this.SelectedGHProject.name);
       if (ghProject) this.availableGHProjects.push(ghProject);
-      if (this.KeepUserSignedIn && this.selectedGHProject) this.locStorage.Set(LocStorageKeys.GH_LAST_PROJECT, JSON.stringify({ owner: this.GetRepoOfFile(this.SelectedGHProject).owner, repoId: this.SelectedGHProject.repoId, path: this.SelectedGHProject.path, sha: this.SelectedGHProject.sha }));
+      if (this.KeepUserSignedIn && this.selectedGHProject) this.locStorage.Set(LocStorageKeys.LAST_PROJECT, JSON.stringify({ owner: this.GetRepoOfFile(this.SelectedGHProject).owner, repoId: this.SelectedGHProject.repoId, path: this.SelectedGHProject.path, sha: this.SelectedGHProject.sha }));
+      else if (this.selectedFSProject) this.locStorage.Set(LocStorageKeys.LAST_PROJECT, JSON.stringify({ path: this.selectedFSProject }));
       this.ProjectSaved.emit(this.Project);
       setTimeout(() => {
         if (this.Project) this.Project.FileChanged = false;
@@ -712,9 +812,9 @@ export class DataService {
     .then(({ data: res }) => {
       this.messagesService.Success('messages.success.githubdelete', file.name);
       if (file == this.SelectedGHProject) {
-        let lp = JSON.parse(this.locStorage.Get(LocStorageKeys.GH_LAST_PROJECT));
-        if (lp['owner'] == this.GetRepoOfFile(this.SelectedGHProject).owner && lp['repoId'] == this.SelectedGHProject.repoId && lp['path'] == this.SelectedGHProject.path) {
-          this.locStorage.Remove(LocStorageKeys.GH_LAST_PROJECT);
+        let lp = JSON.parse(this.locStorage.Get(LocStorageKeys.LAST_PROJECT));
+        if ('owner' in lp && lp['owner'] == this.GetRepoOfFile(this.SelectedGHProject).owner && lp['repoId'] == this.SelectedGHProject.repoId && lp['path'] == this.SelectedGHProject.path) {
+          this.locStorage.Remove(LocStorageKeys.LAST_PROJECT);
         }
         this.selectedGHProject = null;
         this.Project = null;
@@ -765,7 +865,7 @@ export class DataService {
   public ImportFile(isProject: boolean, fileInput: any) {
     if (fileInput.target.files && fileInput.target.files[0]) {
       const reader = new FileReader();
-      const fileName = fileInput.target.files[0].name;
+      const filePath = this.electron.isElectron ? fileInput.target.files[0].path : fileInput.target.files[0].name;
       reader.onload = (e) => {
         const fileRes = reader.result;
         let file = JSON.parse(fileRes.toString());
@@ -773,7 +873,13 @@ export class DataService {
           file = {'content': JSON.stringify(file) };
         } 
         if ('content' in file) {
-          this.importFile(file, fileName, isProject);
+          if (this.electron.isElectron) {
+            this.selectedFSProject = filePath;
+            if (this.availableFSProjects.indexOf(filePath) < 0) {
+              this.availableFSProjects.push(filePath);
+            }
+          }
+          this.importFile(file, filePath, isProject);
         }
         else {
           this.messagesService.Error('Unsupported file');
@@ -784,17 +890,17 @@ export class DataService {
     }
   }
 
-  private importFile(file, fileName: string, isProject: boolean) {
-    if ('content' in file) {
-      const content = file['content'];
+  private importFile(fileBlob, filePath: string, isProject: boolean) {
+    if ('content' in fileBlob) {
+      const content = fileBlob['content'];
       const json = JSON.parse(content);
       this.selectedGHConfig = this.selectedGHProject = null;
       if (isProject == null) isProject = json['config'] != null;
       if (isProject) {
-        this.loadProjectFile(fileName, json);
+        this.loadProjectFile(filePath, json);
       }
       else {
-        this.loadConfigFile(fileName, json);
+        this.loadConfigFile(filePath, json);
         this.Config.FileChanged = true;
       }
     }
@@ -858,7 +964,7 @@ export class DataService {
     return this.dialog.open(TwoOptionsDialogComponent, { hasBackdrop: false, data: data }).afterClosed();
   }
 
-  public GetProjectHistory() {
+  public GetGHProjectHistory() {
     return new Promise<IGHCommitInfo[]>((resolve, reject) => {
       let res: IGHCommitInfo[] = [];
       if (this.SelectedGHProject) {
@@ -891,7 +997,7 @@ export class DataService {
         dialogRef.afterClosed().subscribe(res => {
           if (res) {
             if (this.UserMode == UserModes.LoggedIn) {
-              this.OpenSaveProjectDialog('').then(() => {
+              this.OpenSaveProjectDialog().then(() => {
                 this.closeProject();
                 resolve();
               })
@@ -932,7 +1038,7 @@ export class DataService {
         dialogRef.afterClosed().subscribe(res => {
           if (res) {
             if (this.UserMode == UserModes.LoggedIn) {
-              this.OpenSaveConfigDialog('').then(() => {
+              this.OpenSaveConfigDialog().then(() => {
                 this.closeConfig();
                 resolve();
               })
@@ -996,7 +1102,10 @@ export class DataService {
   private closeProject() {
     this.Project = null;
     this.selectedGHProject = null;
-    this.locStorage.Remove(LocStorageKeys.GH_LAST_PROJECT);
+    this.selectedGHConfig = null;
+    this.selectedFSProject = null;
+    this.selectedFSConfig = null;
+    this.locStorage.Remove(LocStorageKeys.LAST_PROJECT);
     this.Config = ConfigFile.DefaultFile();
     this.Config.FileChanged = false;
     this.router.navigate(['/']);
@@ -1075,9 +1184,9 @@ export class DataService {
     return res;
   }
 
-  private addProjectToHistory(proj: IGHFile) {
+  private addGHProjectToHistory(proj: IGHFile) {
     if (this.KeepUserSignedIn && proj) {
-      const history = this.getProjectHistory();
+      const history = this.getLastProjectHistory();
       const name = proj.repoId + ':' + proj.path;
       if (history.indexOf(name) >= 0) history.splice(history.indexOf(name), 1);
       history.splice(0, 0, name);
@@ -1085,7 +1194,17 @@ export class DataService {
     }
   }
 
-  private getProjectHistory(): string[] {
+  private addFSProjectToHistory(path: string) {
+    if (path) {
+      const history = this.getLastProjectHistory();
+      const name = 'FS:' + path;
+      if (history.indexOf(name) >= 0) history.splice(history.indexOf(name), 1);
+      history.splice(0, 0, name);
+      this.locStorage.Set(LocStorageKeys.PROJECT_HISTORY, JSON.stringify(history));
+    }
+  }
+
+  private getLastProjectHistory(): string[] {
     const historyStr = this.locStorage.Get(LocStorageKeys.PROJECT_HISTORY);
     if (historyStr) return JSON.parse(historyStr); 
     else return [];
@@ -1152,9 +1271,10 @@ export class DataService {
               })
               .then(({ data: fileArray }) => {
                 (fileArray as []).filter(x => (x['name'] as string).endsWith('.ttmp')).forEach(x => {
-                  this.availableGHProjects.push({ repoId: rep.id, name: x['name'], path: x['path'], sha: x['sha'], isEncrypted: false });
+                  const newProj = { repoId: rep.id, name: x['name'], path: x['path'], sha: x['sha'], isEncrypted: false };
+                  if (!this.availableGHProjects.some(y => y.repoId == newProj.repoId && y.name == newProj.name && y.path && newProj.path)) this.availableGHProjects.push(newProj);
                   const getName = (file: IGHFile): string => { return file.repoId + ':' + file.path; };
-                  const history = this.getProjectHistory();
+                  const history = this.getLastProjectHistory();
                   this.availableGHProjects = this.availableGHProjects.sort((a, b) => {
                     if (this.GetRepoOfFile(a).isWritable == this.GetRepoOfFile(b).isWritable) {
                       let aIdx = history.indexOf(getName(a));
@@ -1167,10 +1287,10 @@ export class DataService {
                     }
                     return this.GetRepoOfFile(a).isWritable ? -1 : (this.GetRepoOfFile(b).isWritable ? 1 : 0);
                   });
-                  let lastProject = this.locStorage.Get(LocStorageKeys.GH_LAST_PROJECT);
+                  let lastProject = this.locStorage.Get(LocStorageKeys.LAST_PROJECT);
                   if (!this.blockLoading && this.KeepUserSignedIn && lastProject) {
                     let parsed = JSON.parse(lastProject);
-                    let proj = this.AvailableGHProjects.find(x => rep.owner == parsed['owner'] && x.repoId == parsed['repoId'] && x.path == parsed['path']);
+                    let proj = this.AvailableGHProjects.find(x => 'owner' in parsed && rep.owner == parsed['owner'] && x.repoId == parsed['repoId'] && x.path == parsed['path']);
                     if (proj) {
                       this.blockLoading = true;
                       this.LoadProject(proj);

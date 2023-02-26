@@ -1,9 +1,5 @@
 @import 'stylesTheme.scss';
 
-.mat-row:hover .mat-cell {
-  border-color: currentColor;
-}
-
 .selected-countermeasure {
   td {
     @extend .primary-color;

@@ -10,11 +10,16 @@ export class ThreatActor extends DatabaseBase implements ICustomNumber {
 
   public get Motive(): string[] { return this.Data['Motive']; }
   public set Motive(val: string[]) { this.Data['Motive'] = val; }
+  public get Capabilities(): string[] { return this.Data['Capabilities']; }
+  public set Capabilities(val: string[]) { this.Data['Capabilities'] = val; }
   public get Likelihood(): LowMediumHighNumber { return this.Data['Likelihood']; }
   public set Likelihood(val: LowMediumHighNumber) { this.Data['Likelihood'] = val; }
 
   constructor(data, cf: ConfigFile) {
     super(data);
+
+    if (!this.Motive) this.Motive = [];
+    if (!this.Capabilities) this.Capabilities = [];
   }
 
   public GetLongName(): string {

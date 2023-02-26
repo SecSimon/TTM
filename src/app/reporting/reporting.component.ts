@@ -384,6 +384,10 @@ export class ReportingComponent implements OnInit {
           this.createParagraph(this.translate.instant('properties.Motive') + ':');
           this.createUL(src.Motive);
         }
+        if (src.Capabilities.length > 0) {
+          this.createParagraph(this.translate.instant('properties.Capabilities') + ':');
+          this.createUL(src.Capabilities);
+        }
         this.createParagraph(this.translate.instant('general.Likelihood') + ': ' + this.translate.instant(LowMediumHighNumberUtil.ToString(src.Likelihood)));
         this.createParagraph('');
       });

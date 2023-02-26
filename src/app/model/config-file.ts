@@ -375,7 +375,6 @@ export class ConfigFile extends DatabaseBase {
     let res = new ThreatActor({}, this);
     res.Name = StringExtension.FindUniqueName('Threat Actor', this.threatActors.map(x => x.Name));
     res.Likelihood = LowMediumHighNumber.Medium;
-    res.Motive = [];
     this.threatActors.push(res);
     return res;
   }

@@ -3595,6 +3595,10 @@ export class DiagramComponent implements OnInit {
     this.dialog.OpenSuggestThreatsDialog(this.selectedElement as DFDElement);
   }
 
+  public ShowCVESearch() {
+    this.dialog.OpenCveSearchDialog(this.selectedElement, this.diagram.ID);
+  }
+
   public GetThreatRuleGroups(): ThreatRuleGroup[] {
     let rules = this.dataService.Config.GetThreatRuleGroups().filter(x => x.ThreatRules?.length > 0);
     if (this.diagram.Settings.GenerationThreatLibrary) {

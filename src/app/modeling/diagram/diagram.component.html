@@ -76,6 +76,17 @@
     <button mat-button class="toolBtn" [disabled]="!selectedElement" (click)="Dia.AddThreat()" matTooltip="{{'pages.modeling.diagram.addThreat' | translate}}" matTooltipShowDelay="1000">
       <mat-icon>flash_on</mat-icon>
     </button>
+    <button mat-button class="toolBtn" [disabled]="!selectedElement" (click)="ShowCVESearch()" matTooltip="{{'pages.modeling.diagram.CveSearch' | translate}}" matTooltipShowDelay="1000">
+      <style>
+        .heavy {
+          font: bold 10px sans-serif;
+        }
+      </style>
+      <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" version="1.1">
+        <rect [attr.fill]="Dia.IsObjectSelected ? (theme.IsDarkMode ? '#FFF' : '#000') : (theme.IsDarkMode ? '#676767' : '#B6B6B6')" x="1" y="1" width="23" height="23" rx="3" ry="3"/>
+        <text [attr.fill]="theme.IsDarkMode ? '#000' : '#FFF'" x="2" y="16" class="heavy">CVE</text>
+      </svg>
+    </button>
     <button mat-button class="toolBtn" [disabled]="!selectedElement" (click)="Dia.AddCountermeasure()" matTooltip="{{'pages.modeling.diagram.addCountermeasure' | translate}}" matTooltipShowDelay="1000">
       <mat-icon>security</mat-icon>
     </button>

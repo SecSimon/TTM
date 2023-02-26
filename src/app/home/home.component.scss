@@ -60,6 +60,18 @@
   visibility: visible;
 }
 
+.paginator {
+  background: transparent;
+  ::ng-deep .mat-paginator-container {
+    justify-content: left;
+    min-height: auto;
+    padding: 0;
+  }
+  ::ng-deep .mat-paginator-range-label {
+    margin: 0 24px 0 0;
+  }
+}
+
 #config .show-on-hover {
   visibility: hidden;
 }

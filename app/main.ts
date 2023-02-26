@@ -106,11 +106,37 @@ function createWindow(): BrowserWindow {
 
   if (process.argv.length >= 2) {
     let openFilePath = process.argv[1];
-    let data = fs.readFileSync(openFilePath, 'utf-8');
+    const data = fs.readFileSync(openFilePath, 'utf-8');
     ipcMain.on('OnMyReady', () => {
       win.webContents.send('OnImportFile', data, openFilePath);
     });
   }
+
+  ipcMain.on('ExistFiles', (event, files: string[]) => {
+    const existingFiles = [];
+    files.forEach(file => {
+      try {
+        fs.accessSync(file, fs.constants.W_OK | fs.constants.R_OK);
+        existingFiles.push(file);
+      }
+      catch {
+      }
+    });
+    win.webContents.send('OnExistingFiles', existingFiles);
+  });
+  ipcMain.on('ReadFile', (event, path) => {
+    const data = fs.readFileSync(path, 'utf-8');
+    win.webContents.send('OnReadFile', data);
+  });
+  ipcMain.on('SaveFile', (event, path, content) => {
+    fs.writeFileSync(path, content);
+    win.webContents.send('OnSaveFile', true);
+  });
+  ipcMain.on('SaveFileAs', (event, path, content) => {
+    const newPath = dialog.showSaveDialogSync(win, { defaultPath: path });
+    if (newPath) fs.writeFileSync(newPath, content);
+    win.webContents.send('OnSaveFileAs', newPath);
+  });
 
   ipcMain.on('OnCloseApp', () => {
     console.log('exit');

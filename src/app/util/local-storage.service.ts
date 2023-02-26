@@ -3,17 +3,19 @@ import { Injectable } from '@angular/core';
 export enum LocStorageKeys {
   AUTH_KEEP_SIGNED_IN         = "keep_signed_in",
   AUTH_ACCESS_TOKEN           = "auth_access_token",
+  AUTH_GUEST                  = "auth_guest",
   AUTH_LAST_CODE              = "auth_last_code",
   COOKIE_CONSENT              = "cookie_consent",
   CURRENT_VERSION             = "current_verison",
+  CVE_SEARCH_HISTORY          = "cve_search_history",
   DARK_MODE                   = "dark_mode",
   DIALOG_WARNING_CONSENT      = "dialog_warning_consent",
   GH_ACCOUNT_NAME             = "github_account_name",
   GH_USER_NAME                = "github_user_name",
   GH_USER_URL                 = "github_user_url",
   GH_USER_EMAIL               = "github_user_email",
-  GH_LAST_PROJECT             = "github_last_project",
   LANGUAGE                    = "language",
+  LAST_PROJECT                = "last_project",
   MSG_SHOW_ERROR              = "msg_show_error",
   MSG_SHOW_WARNING            = "msg_show_warning",
   MSG_SHOW_SUCCESS            = "msg_show_success",
@@ -40,7 +42,7 @@ export enum LocStorageKeys {
   PAGE_REPORTING_SHOW_FIRST_STEPS  = "page_reporting_show_first_steps",
   PROJECT_HISTORY             = "project_history",
   SPELL_CHECK                 = "spell_check",
-  WELCOME_TOUR_STARTED      = "welcome_tour_started"
+  WELCOME_TOUR_STARTED        = "welcome_tour_started"
 }
 
 @Injectable({

@@ -28,7 +28,7 @@ export class ModelInfoComponent implements OnInit {
     this.GHProject = this.dataService.SelectedGHProject;
     this.Project = this.dataService.Project;
 
-    this.dataService.GetProjectHistory().then(x => this.commits = x);
+    this.dataService.GetGHProjectHistory().then(x => this.commits = x);
   }
 
   public async OnFileSelected(event) {

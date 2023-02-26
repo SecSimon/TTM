@@ -36,7 +36,8 @@ export class FileUpdateService {
 
   public UpdateProjectFile(file: IProjectFile): boolean {
     let res = this.UpdateConfigFile(file.config as IConfigFile);
-    res = res || this.updateFile(file, false);
+    let res2 = this.updateFile(file, false);
+    res = res || res2;
     return res;
   }
 
