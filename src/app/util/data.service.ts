@@ -110,24 +110,11 @@ export class DataService {
     setTimeout(() => {
       const octokit = new Octokit();
       octokit.repos.listReleases({ owner: 'SecSimon', repo: 'TTM' }).then(({data}) => {
-      const isNewVersion = (tag: string): boolean => {
-        const currArr = versionFile.version.replace('v', '').split('.');
-        const tagArr = tag.replace('v', '').split('.');
-
-        if (currArr.length == tagArr.length) {
-          for (let i = 0; i < currArr.length; i++) {
-            if (Number(tagArr[i]) > Number(currArr[i])) return true;
-          }
+        const newerVersion = data.find(x => this.isNewVersion(x.tag_name));
+        if (newerVersion) {
+          this.messagesService.Info('messages.info.newVersion');
         }
-
-        return false;
-      };
-      
-      const newerVersion = data.find(x => isNewVersion(x.tag_name));
-      if (newerVersion) {
-        this.messagesService.Info('messages.info.newVersion');
-      }
-    });
+      });
     }, 12000);
     
     if (this.electron.isElectron && this.electron.ipcRenderer) {
@@ -206,20 +193,7 @@ export class DataService {
   }
   public set Project(val: ProjectFile) {
     if (this.project != val) {
-      const isNewVersion = (tag: string): boolean => {
-        const currArr = versionFile.version.replace('v', '').split('.');
-        const tagArr = tag.replace('v', '').split('.');
-
-        if (currArr.length == tagArr.length) {
-          for (let i = 0; i < currArr.length; i++) {
-            if (Number(tagArr[i]) > Number(currArr[i])) return true;
-          }
-        }
-
-        return false;
-      };
-
-      if (val && val.TTModelerVersion && isNewVersion(val.TTModelerVersion)) {
+      if (val && val.TTModelerVersion && this.isNewVersion(val.TTModelerVersion)) {
         this.messagesService.Error(StringExtension.Format(this.translate.instant('messages.error.newerFileVersion'), val.TTModelerVersion));
         val = null;
       }
@@ -1396,6 +1370,20 @@ export class DataService {
       }, 500);
     }
   }
+
+  private isNewVersion(tag: string): boolean {
+    const currArr = versionFile.version.replace('v', '').split('.');
+    const tagArr = tag.replace('v', '').split('.');
+
+    if (currArr.length == tagArr.length) {
+      for (let i = 0; i < currArr.length; i++) {
+        if (Number(tagArr[i]) > Number(currArr[i])) return true;
+        else if (Number(tagArr[i]) < Number(currArr[i])) break;
+      }
+    }
+
+    return false;
+  };
   
   private startUnsavedChangesTimer() {
     if (this.unsavedChangesTimer == null) {
