@@ -19,11 +19,11 @@
                   <mat-icon>more_vert</mat-icon>
                 </button>
                 <mat-menu #projMenu="matMenu">
-                  <button mat-menu-item [disabled]="!dataService.SelectedGHProject || !dataService.GetRepoOfFile(dataService.SelectedGHProject)?.isWritable" (click)="dataService.OpenSaveProjectDialog()">
+                  <button mat-menu-item [disabled]="!dataService.CanSaveProjectBtn" (click)="dataService.OnSave()">
                     <mat-icon>save</mat-icon>
                     <span>{{'pages.home.menu.saveProject' | translate}}</span>
                   </button>
-                  <button mat-menu-item [disabled]="!dataService.SelectedGHProject" (click)="dataService.OpenSaveConfigDialog()">
+                  <button mat-menu-item [disabled]="!dataService.SelectedGHProject" (click)="dataService.OnExportConfig()">
                     <mat-icon>exit_to_app</mat-icon>
                     <span>{{'pages.home.menu.exportConfig' | translate}}</span>
                   </button>
@@ -125,7 +125,15 @@
               </ng-container>
               <mat-paginator class="paginator" *ngIf="dataService.AvailableGHConfigs.length > 0" [length]="dataService.AvailableGHConfigs.length" [pageSize]="pageConfigSize" [hidePageSize]="true" (page)="pageGHConfigIndex = $event.pageIndex"> </mat-paginator>
 
-              <button style="margin-top: 70px;" class="color-primary astext" (click)="tourService.start()">{{'pages.home.welcomeTour' | translate}}</button>
+              <div style="margin-top: 50px;">
+                <mat-icon style="vertical-align: top; width: 20px; height: 20px; line-height: 20px; font-size: 20px; margin-right: 5px;" matTooltip="{{'pages.home.storedOnline' | translate}}" matTooltipShowDelay="1000">waving_hand</mat-icon>
+                <button class="color-primary astext" (click)="tourService.start()">{{'pages.home.welcomeTour' | translate}}</button>
+                <ng-container *ngIf="!electron?.isElectron">
+                  <br/>
+                  <mat-icon style="vertical-align: top; width: 20px; height: 20px; line-height: 20px; font-size: 20px; margin-right: 5px;" matTooltip="{{'pages.home.storedOnline' | translate}}" matTooltipShowDelay="1000">install_desktop</mat-icon>
+                  <a href="https://github.com/SecSimon/TTM/releases" target="_blank">{{'pages.home.downloadDesktop' | translate}}</a>
+                </ng-container>
+              </div>
             </ng-container>
 
             <ng-container *ngIf="!dataService.IsLoggedIn && !dataService.IsGuest">

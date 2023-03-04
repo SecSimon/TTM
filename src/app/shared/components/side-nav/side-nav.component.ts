@@ -54,7 +54,7 @@ export class SideNavComponent implements AfterViewInit {
     if (this.dataService.HasUnsavedChanges) {
       this.dialog.OpenUnsavedChangesDialog().subscribe(res => {
         if (res) {
-          this.dataService.Save().then(() => clear());
+          this.dataService.OnSave().then(() => clear());
         }
         else {
           clear();
@@ -75,7 +75,7 @@ export class SideNavComponent implements AfterViewInit {
     if (this.dataService.HasUnsavedChanges) {
       this.dialog.OpenUnsavedChangesDialog().subscribe(res => {
         if (res) {
-          this.dataService.Save().then(() => reset());
+          this.dataService.OnSave().then(() => reset());
         }
         else {
           reset();

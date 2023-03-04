@@ -1,7 +1,6 @@
-import { Component, ElementRef, EventEmitter, HostBinding, HostListener, KeyValueDiffer, KeyValueDiffers, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, HostBinding, KeyValueDiffers, OnInit, ViewChild } from '@angular/core';
 import { ElectronService } from './core/services';
 import { TranslateService } from '@ngx-translate/core';
-import { APP_CONFIG } from '../environments/environment';
 import { ThemeService } from './util/theme.service';
 import { OverlayContainer } from '@angular/cdk/overlay';
 import { IsLoadingService } from '@service-work/is-loading';
@@ -24,36 +23,34 @@ interface IDiff {
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
-  isLoading: Observable<boolean>;
+export class AppComponent implements OnInit, AfterViewInit {
+  static blockChanges = false;
 
-  static BlockChanges = false;
+  @HostBinding('class') public className = '';
+  @ViewChild('primary') public primary: ElementRef;
+  @ViewChild('accent') public accent: ElementRef;
 
-  @HostBinding('class') className = '';
-  @ViewChild('primary') primary: ElementRef;
-  @ViewChild('accent') accent: ElementRef;
+  public isLoading: Observable<boolean>;
 
   constructor(
-    private electronService: ElectronService, private translate: TranslateService,
+    public dataService: DataService, private electronService: ElectronService, private translate: TranslateService,
     private theme: ThemeService, private locStorage: LocalStorageService,
     private overlay: OverlayContainer, private isLoadingService: IsLoadingService,
-    public dataService: DataService, private kvDiffers: KeyValueDiffers
+    private kvDiffers: KeyValueDiffers
   ) {
     this.translate.setDefaultLang('en');
 
-    window.onbeforeunload = (event) => {
-      return this.dataService.OnClose(event);
-    };
+    window.onbeforeunload = (event) => { return this.dataService.OnClose(event); };
   }
 
-  ngOnInit() {    
+  ngOnInit() {
     this.isLoading = this.isLoadingService.isLoading$();
 
     if (!this.electronService.isElectron) {
       document.onkeydown = (e) => {
-        if (e.ctrlKey && e.key == 's') {
+        if (e.ctrlKey && e.key === 's') {
           e.preventDefault();
-          this.dataService.Save();
+          this.dataService.OnSave();
         }
       };
     }
@@ -132,11 +129,11 @@ export class AppComponent {
 
     if (this.configStr || this.projectStr) {
       setTimeout(() => {
-        AppComponent.BlockChanges = true;
+        AppComponent.blockChanges = true;
         this.isInitialized = true;
         
         setTimeout(() => {
-          AppComponent.BlockChanges = false;
+          AppComponent.blockChanges = false;
         }, 1000);
       }, 500);
     }
@@ -207,7 +204,7 @@ export class AppComponent {
             let newItem = record.currentValue;
             diff.differMap.set(newItem.ID, this.kvDiffers.find(diff.key ? newItem.Data[diff.key] : newItem.Data).create());
             diff.objMap.set(newItem.ID, diff.key ? newItem.Data[diff.key] : newItem.Data);
-            if (!AppComponent.BlockChanges) {
+            if (!AppComponent.blockChanges) {
               if (diff.event) {
                 diff.event.emit({ ID: newItem.ID, Type: DataChangedTypes.Added });
                 newItem.DataChanged?.subscribe((val) => diff.event.emit({ ID: newItem.ID, Type: val.Type }));
@@ -227,7 +224,7 @@ export class AppComponent {
           let objChanges = val.diff(diff.objMap.get(key));
           if (objChanges) {
             objChanges.forEachChangedItem(record => {
-              if (!AppComponent.BlockChanges) {
+              if (!AppComponent.blockChanges) {
                 // console.log('--- Object with ID ' + key + ' updated ---');
                 // console.log('Previous value: ' + record.previousValue);
                 // console.log('Current value: ' + record.currentValue);

@@ -13,11 +13,14 @@
     <button mat-icon-button class="msgBtn" style="margin-left: 5px;" matTooltip="{{'status-bar.ConsistencyCheck' | translate}}" matTooltipShowDelay="1000" (click)="dataService.ManualConsistencyCheck()">
       <mat-icon class="iconBtn">flaky</mat-icon> 
     </button>
-    <button mat-icon-button tourAnchor="save-file" class="msgBtn" matTooltip="{{'general.Save' | translate}}" matTooltipShowDelay="1000" (click)="dataService.OpenSaveProjectDialog()">
+    <button mat-icon-button tourAnchor="save-file" [disabled]="!dataService.CanSaveProjectBtn" class="msgBtn" matTooltip="{{'general.Save' | translate}}" matTooltipShowDelay="1000" (click)="dataService.OnSave()">
       <mat-icon class="iconBtn">save</mat-icon> 
     </button>
-    <button mat-icon-button class="msgBtn" [disabled]="!dataService.CanSaveAsProject" matTooltip="{{'general.SaveAs' | translate}}" matTooltipShowDelay="1000" (click)="dataService.OpenSaveProjectDialog(true)">
+    <button mat-icon-button class="msgBtn" [disabled]="!dataService.CanSaveAsProjectBtn" matTooltip="{{'general.SaveAs' | translate}}" matTooltipShowDelay="1000" (click)="dataService.OnSaveAs()">
       <mat-icon class="iconBtn">save_as</mat-icon> 
+    </button>
+    <button mat-icon-button class="msgBtn" matTooltip="{{'pages.home.menu.downloadProject' | translate}}" matTooltipShowDelay="1000" (click)="dataService.ExportFile(true)">
+      <mat-icon class="iconBtn">file_download</mat-icon> 
     </button>
     <button mat-icon-button class="msgBtn" [disabled]="!dataService.SelectedGHProject" matTooltip="{{'general.ReloadProject' | translate}}" matTooltipShowDelay="1000" (click)="dataService.ReloadProject()">
       <mat-icon class="iconBtn">refresh</mat-icon> 
@@ -30,11 +33,14 @@
     <button mat-icon-button class="msgBtn" style="margin-left: 5px;" matTooltip="{{'status-bar.ConsistencyCheck' | translate}}" matTooltipShowDelay="1000" (click)="dataService.ManualConsistencyCheck()">
       <mat-icon class="iconBtn">flaky</mat-icon> 
     </button>
-    <button mat-icon-button tourAnchor="save-file" class="msgBtn" [disabled]="!dataService.CanSaveConfig" matTooltip="{{'general.Save' | translate}}" matTooltipShowDelay="1000" (click)="dataService.OpenSaveConfigDialog()">
+    <button mat-icon-button tourAnchor="save-file" class="msgBtn" [disabled]="!dataService.CanSaveConfigBtn" matTooltip="{{'general.Save' | translate}}" matTooltipShowDelay="1000" (click)="dataService.OnSave()">
       <mat-icon class="iconBtn">save</mat-icon> 
     </button>
-    <button mat-icon-button class="msgBtn" [disabled]="!dataService.CanSaveConfig" matTooltip="{{'general.SaveAs' | translate}}" matTooltipShowDelay="1000" (click)="dataService.OpenSaveConfigDialog(true)">
+    <button mat-icon-button class="msgBtn" [disabled]="!dataService.CanSaveAsConfigBtn" matTooltip="{{'general.SaveAs' | translate}}" matTooltipShowDelay="1000" (click)="dataService.OnSaveAs()">
       <mat-icon class="iconBtn">save_as</mat-icon> 
+    </button>
+    <button mat-icon-button class="msgBtn" matTooltip="{{'pages.home.menu.downloadConfig' | translate}}" matTooltipShowDelay="1000" (click)="dataService.ExportFile(false)">
+      <mat-icon class="iconBtn">file_download</mat-icon> 
     </button>
     <button mat-icon-button class="msgBtn" matTooltip="{{'general.ReloadConfig' | translate}}" matTooltipShowDelay="1000" (click)="dataService.ReloadConfig()">
       <mat-icon class="iconBtn">refresh</mat-icon> 

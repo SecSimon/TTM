@@ -96,7 +96,7 @@ export class DataService {
 
   constructor(private locStorage: LocalStorageService, private isLoading: IsLoadingService, private http: HttpClient, private router: Router, private clipboard: Clipboard,
     private dialog: MatDialog, private messagesService: MessagesService, private translate: TranslateService, private fileUpdate: FileUpdateService, private zone: NgZone, 
-    private electron: ElectronService) { 
+    public electron: ElectronService) { 
     this.restoreUserAccount();
     if (this.UserMode == UserModes.None) {
       if (this.locStorage.Get(LocStorageKeys.AUTH_GUEST) == 'true') this.userMode = UserModes.Guest;
@@ -119,19 +119,21 @@ export class DataService {
     
     if (this.electron.isElectron && this.electron.ipcRenderer) {
       this.electron.ipcRenderer.on('OnSave', () => {
-        this.Save();
+        this.zone.run(() => this.OnSave());
       });
       this.electron.ipcRenderer.on('OnDownloadProject', () => {
-        if (this.Project) this.ExportFile(true);
-        else if (this.Config) this.ExportFile(false);
+        this.zone.run(() => {
+          if (this.Project) this.ExportFile(true);
+          else if (this.Config) this.ExportFile(false);
+        });
       });
       this.electron.ipcRenderer.on('OnCloseProject', () => {
-        this.OnCloseProject();
+        this.zone.run(() => this.OnCloseProject());
       });
 
       this.electron.ipcRenderer.on('OnImportFile', (event, data, filePath) => {
-        if (!this.IsLoggedIn) this.GuestLogin();
         this.zone.run(() => {
+          if (!this.IsLoggedIn) this.GuestLogin();
           this.OnCloseProject().then(() => {
             const content = JSON.parse(data);
             this.locStorage.Remove(LocStorageKeys.LAST_PROJECT);
@@ -146,16 +148,18 @@ export class DataService {
       if (lastFiles.length > 0) this.electron.ipcRenderer.send('ExistFiles', lastFiles);
 
       this.electron.ipcRenderer.on('OnExistingFiles', (event, files) => {
-        this.availableFSProjects = files;
+        this.zone.run(() => {
+          this.availableFSProjects = files;
 
-        const lastProject = this.locStorage.Get(LocStorageKeys.LAST_PROJECT);
-        if (lastProject) {
-          const parsed = JSON.parse(lastProject);
-          if (this.availableFSProjects.includes(parsed['path'])) {
-            if (!this.IsLoggedIn) this.GuestLogin();
-            this.LoadProjectFS(parsed['path']);
+          const lastProject = this.locStorage.Get(LocStorageKeys.LAST_PROJECT);
+          if (lastProject) {
+            const parsed = JSON.parse(lastProject);
+            if (this.availableFSProjects.includes(parsed['path'])) {
+              if (!this.IsLoggedIn) this.GuestLogin();
+              this.LoadProjectFS(parsed['path']);
+            }
           }
-        }
+        });
       });
     }
   }
@@ -186,6 +190,8 @@ export class DataService {
   public get AvailableFSProjects(): string[] { return this.availableFSProjects; }
   public get SelectedGHProject(): IGHFile { return this.selectedGHProject; }
   public get SelectedGHConfig(): IGHFile { return this.selectedGHConfig; }
+  public get SelectedFSProject(): string { return this.selectedFSProject; }
+  public get SelectedFSConfig(): string { return this.selectedFSConfig; }
 
   public get HasProject(): boolean { return this.Project != null; }
   public get Project(): ProjectFile {
@@ -220,15 +226,39 @@ export class DataService {
   }
 
   public get CanSaveGHProject(): boolean {
-    return this.SelectedGHProject != null && this.GetRepoOfFile(this.SelectedGHProject).isWritable;
+    return this.SelectedGHProject != null && this.GetRepoOfFile(this.SelectedGHProject)?.isWritable;
   }
 
-  public get CanSaveAsProject(): boolean {
-    return this.CanSaveGHProject || (this.electron.isElectron && this.selectedFSProject != null);
+  public get CanSaveFSProject(): boolean {
+    return this.SelectedFSProject != null;
   }
 
   public get CanSaveConfig(): boolean {
     return (this.SelectedGHConfig == null && this.Config != null) || (this.SelectedGHConfig != null && this.GetRepoOfFile(this.SelectedGHConfig).isWritable);
+  }
+
+  public get CanSaveProjectBtn(): boolean {
+    return this.CanSaveGHProject || this.CanSaveFSProject;
+  }
+
+  public get CanSaveAsProjectBtn(): boolean {
+    return this.UserMode == UserModes.LoggedIn || this.SelectedFSProject != null;
+  }
+
+  public get CanSaveGHConfig(): boolean {
+    return this.SelectedGHConfig != null && this.GetRepoOfFile(this.SelectedGHConfig)?.isWritable;
+  }
+
+  public get CanSaveFSConfig(): boolean {
+    return this.SelectedFSConfig != null;
+  }
+
+  public get CanSaveConfigBtn(): boolean {
+    return this.CanSaveGHConfig || this.CanSaveFSConfig;
+  }
+
+  public get CanSaveAsConfigBtn(): boolean {
+    return this.UserMode == UserModes.LoggedIn || this.SelectedFSConfig != null;
   }
 
   public get HasUnsavedChanges(): boolean {
@@ -394,15 +424,24 @@ export class DataService {
     }
   }
 
-  public Save() {
-    if (this.Project) return this.OpenSaveProjectDialog();
-    else if (this.UserMode == UserModes.LoggedIn) return this.OpenSaveConfigDialog();
+  public OnSave(): Promise<void> {
+    if (this.Project) return this.openSaveProjectDialog();
+    else return this.openSaveConfigDialog();
   }
 
-  public OpenSaveProjectDialog(saveAs: boolean = false) {
+  public OnSaveAs() {
+    if (this.Project) return this.openSaveProjectDialog(true);
+    else return this.openSaveConfigDialog(true);
+  }
+
+  public OnExportConfig() {
+    return this.openSaveConfigDialog(false);
+  }
+
+  private openSaveProjectDialog(saveAs: boolean = false) {
     return new Promise<void>((resolve, reject) => {
       this.ConsistencyCheck().then(x => {
-        if (this.CanSaveGHProject) {
+        if (this.CanSaveGHProject || (this.UserMode == UserModes.LoggedIn && saveAs)) {
           let data = { 'msg': '' };
           if (!this.SelectedGHProject || saveAs) {
             data['newProject'] = { name: '', configFile: null, path: '', repoId: null, isEncrypted: this.SelectedGHProject?.isEncrypted ? true : false, sha: null } as IGHFile;
@@ -417,10 +456,10 @@ export class DataService {
             else resolve();
           });
         }
-        else if (this.electron.isElectron && this.selectedFSProject) {
+        else if (this.electron.isElectron && this.SelectedFSProject) {
           const onSuccess = () => {
             this.messagesService.Success('messages.success.saveProject', this.Project.Name);
-            this.locStorage.Set(LocStorageKeys.LAST_PROJECT, JSON.stringify({ path: this.selectedFSProject }));
+            this.locStorage.Set(LocStorageKeys.LAST_PROJECT, JSON.stringify({ path: this.SelectedFSProject }));
             this.ProjectSaved.emit(this.Project);
             setTimeout(() => {
               if (this.Project) this.Project.FileChanged = false;
@@ -434,53 +473,97 @@ export class DataService {
           if (saveAs) {
             if (this.electron.ipcRenderer.listenerCount('OnSaveFileAs') == 0) {
               this.electron.ipcRenderer.on('OnSaveFileAs', (event, newPath) => {
+                this.zone.run(() => {
+                  if (newPath) {
+                    this.selectedFSProject = newPath;
+                    this.addFSProjectToHistory(newPath);
+                    this.availableFSProjects.push(newPath);
+                    this.Project.Name = newPath.split('/')[newPath.split('/').length-1];
+                    onSuccess();
+                  }
+                  else {
+                    reject();
+                  }
+                });
+              });
+            }
+            this.electron.ipcRenderer.send('SaveFileAs', this.SelectedFSProject, content);
+          }
+          else {
+            if (this.electron.ipcRenderer.listenerCount('OnSaveFile') == 0) {
+              this.electron.ipcRenderer.on('OnSaveFile', (event, res) => {
+                this.zone.run(() => {
+                  if (res) {
+                    onSuccess();
+                  }
+                  else reject();
+                });
+              });
+            }
+            this.electron.ipcRenderer.send('SaveFile', this.SelectedFSProject, content);
+          }
+        }
+      });
+    });
+  }
+
+  private openSaveConfigDialog(saveAs: boolean = false) {
+    return new Promise<void>((resolve, reject) => {
+      if (this.CanSaveGHConfig) {
+        let data = { 'msg': '' };
+        if (!this.SelectedGHConfig || saveAs) {
+          data['newConfig'] = { name: '', path: '', repoId: null, isEncrypted: false, sha: null } as IGHFile;
+        }
+        const dialogRef = this.dialog.open(SaveDialogComponent, { hasBackdrop: false, data: data });
+        dialogRef.afterClosed().subscribe(res => {
+          if (res) {
+            this.SaveConfig(data.msg, data['newConfig'] ? data['newConfig'] : null).then(() => resolve()).catch(() => reject());
+          }
+          else resolve();
+        });
+      }
+      else if (this.electron.isElectron && this.SelectedFSConfig) {
+        const onSuccess = () => {
+          this.messagesService.Success('messages.success.saveConfig', this.Config.Name);
+          setTimeout(() => {
+            if (this.Config) this.Config.FileChanged = false;
+          }, 100);
+          this.stopUnsavedChangesTimer();
+          resolve();
+        };
+
+        const content = this.getFileContent(this.Config.ToJSON(), true, false);
+        if (saveAs) {
+          if (this.electron.ipcRenderer.listenerCount('OnSaveFileAs') == 0) {
+            this.electron.ipcRenderer.on('OnSaveFileAs', (event, newPath) => {
+              this.zone.run(() => {
                 if (newPath) {
-                  this.selectedFSProject = newPath;
-                  this.addFSProjectToHistory(newPath);
-                  this.availableFSProjects.push(newPath);
-                  this.Project.Name = newPath.split('/')[newPath.split('/').length-1];
+                  this.selectedFSConfig = newPath;
+                  this.Config.Name = newPath.split('/')[newPath.split('/').length-1];
                   onSuccess();
                 }
                 else {
                   reject();
                 }
               });
-            }
-            this.electron.ipcRenderer.send('SaveFileAs', this.selectedFSProject, content);
+            });
           }
-          else {
-            if (this.electron.ipcRenderer.listenerCount('OnSaveFile') == 0) {
-              this.electron.ipcRenderer.on('OnSaveFile', (event, res) => {
+          this.electron.ipcRenderer.send('SaveFileAs', this.SelectedFSConfig, content);
+        }
+        else {
+          if (this.electron.ipcRenderer.listenerCount('OnSaveFile') == 0) {
+            this.electron.ipcRenderer.on('OnSaveFile', (event, res) => {
+              this.zone.run(() => {
                 if (res) {
                   onSuccess();
                 }
                 else reject();
               });
-            }
-            this.electron.ipcRenderer.send('SaveFile', this.selectedFSProject, content);
+            });
           }
+          this.electron.ipcRenderer.send('SaveFile', this.SelectedFSConfig, content);
         }
-        else {
-          this.ExportFile(true);
-          resolve();
-        }
-      });
-    });
-  }
-
-  public OpenSaveConfigDialog(saveAs: boolean = false) {
-    return new Promise<void>((resolve, reject) => {
-      let data = { 'msg': '' };
-      if (!this.SelectedGHConfig || saveAs) {
-        data['newConfig'] = { name: '', path: '', repoId: null, isEncrypted: false, sha: null } as IGHFile;
       }
-      const dialogRef = this.dialog.open(SaveDialogComponent, { hasBackdrop: false, data: data });
-      dialogRef.afterClosed().subscribe(res => {
-        if (res) {
-          this.SaveConfig(data.msg, data['newConfig'] ? data['newConfig'] : null).then(() => resolve()).catch(() => reject());
-        }
-        else resolve();
-      });
     });
   }
 
@@ -618,9 +701,9 @@ export class DataService {
         this.Config = this.Project.Config;
         this.selectedGHConfig = null;
         if (this.KeepUserSignedIn && this.selectedGHProject) this.locStorage.Set(LocStorageKeys.LAST_PROJECT, JSON.stringify({ owner: this.GetRepoOfFile(this.SelectedGHProject).owner, repoId: this.SelectedGHProject.repoId, path: this.SelectedGHProject.path, sha: this.SelectedGHProject.sha }));
-        else if (this.selectedFSProject) this.locStorage.Set(LocStorageKeys.LAST_PROJECT, JSON.stringify({ path: this.selectedFSProject }));
+        else if (this.SelectedFSProject) this.locStorage.Set(LocStorageKeys.LAST_PROJECT, JSON.stringify({ path: this.SelectedFSProject }));
         this.addGHProjectToHistory(this.SelectedGHProject);
-        this.addFSProjectToHistory(this.selectedFSProject);
+        this.addFSProjectToHistory(this.SelectedFSProject);
         this.messagesService.Success('messages.success.loadProject', fileName);
       }
     } 
@@ -673,7 +756,7 @@ export class DataService {
       this.messagesService.Success('messages.success.saveProject', this.SelectedGHProject.name);
       if (ghProject) this.availableGHProjects.push(ghProject);
       if (this.KeepUserSignedIn && this.selectedGHProject) this.locStorage.Set(LocStorageKeys.LAST_PROJECT, JSON.stringify({ owner: this.GetRepoOfFile(this.SelectedGHProject).owner, repoId: this.SelectedGHProject.repoId, path: this.SelectedGHProject.path, sha: this.SelectedGHProject.sha }));
-      else if (this.selectedFSProject) this.locStorage.Set(LocStorageKeys.LAST_PROJECT, JSON.stringify({ path: this.selectedFSProject }));
+      else if (this.SelectedFSProject) this.locStorage.Set(LocStorageKeys.LAST_PROJECT, JSON.stringify({ path: this.SelectedFSProject }));
       this.ProjectSaved.emit(this.Project);
       setTimeout(() => {
         if (this.Project) this.Project.FileChanged = false;
@@ -971,7 +1054,7 @@ export class DataService {
         dialogRef.afterClosed().subscribe(res => {
           if (res) {
             if (this.UserMode == UserModes.LoggedIn) {
-              this.OpenSaveProjectDialog().then(() => {
+              this.openSaveProjectDialog().then(() => {
                 this.closeProject();
                 resolve();
               })
@@ -1012,7 +1095,7 @@ export class DataService {
         dialogRef.afterClosed().subscribe(res => {
           if (res) {
             if (this.UserMode == UserModes.LoggedIn) {
-              this.OpenSaveConfigDialog().then(() => {
+              this.openSaveConfigDialog().then(() => {
                 this.closeConfig();
                 resolve();
               })

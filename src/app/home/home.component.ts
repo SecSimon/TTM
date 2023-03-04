@@ -40,7 +40,7 @@ export class HomeComponent implements OnInit {
   public toolBenefits = ['platform', 'onlineStorage', 'offlineStorage', 'libraries', 'libraryIntegration', 'guidelines', 'diagramming', 'riskAssessment', 'dashboard', 'reports', 'csv', 'languages', 'collaboration'];
 
   constructor(private router: Router, private route: ActivatedRoute, private theme: ThemeService, public dataService: DataService, private dialogService: DialogService, private dialog: MatDialog,
-    private locStorage: LocalStorageService, public tourService: TourService, private translate: TranslateService, private electronService: ElectronService, 
+    private locStorage: LocalStorageService, public tourService: TourService, private translate: TranslateService, public electron: ElectronService, 
     private ttmService: TTMService, private sanitizer: DomSanitizer) {
       this.VideoURL = this.sanitizer.bypassSecurityTrustResourceUrl('https://www.youtube-nocookie.com/embed/videoseries?list=PLSMRtuVN409fB35RLljjg3jNkVJbLIP1u');
     }
@@ -102,8 +102,8 @@ export class HomeComponent implements OnInit {
       }
     });
 
-    if (this.electronService.isElectron) {
-      this.electronService.ipcRenderer.on('oncode', (e, args) => {
+    if (this.electron.isElectron) {
+      this.electron.ipcRenderer.on('oncode', (e, args) => {
         this.dataService.LogIn(args);
       });
     }
@@ -116,7 +116,7 @@ export class HomeComponent implements OnInit {
   }
 
   public IsProtected(file) {
-    return !this.dataService.GetRepoOfFile(file).isWritable;
+    return !this.dataService.GetRepoOfFile(file)?.isWritable;
   }
 
   public GetAvailableGHProjects() {
