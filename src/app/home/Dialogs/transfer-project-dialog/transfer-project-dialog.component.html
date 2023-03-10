@@ -1,0 +1,44 @@
+<h2 mat-dialog-title>{{'dialog.transferproject.title' | translate}}</h2>
+<mat-dialog-content>
+  <mat-form-field appearance="fill" style="width: 500px;">
+    <mat-label>{{'dialog.transferproject.SelectSourceProject' | translate}}</mat-label>
+    <mat-select [(value)]="SelectedProject"  (selectionChange)="SourceProject = null">
+      <mat-select-trigger>
+        <mat-icon *ngIf="SelectedProject" style="vertical-align: bottom;">{{ GetIcon(SelectedProject) }}</mat-icon>&nbsp;{{ SelectedProject?.name }}
+      </mat-select-trigger>
+      <mat-option>{{'properties.selectNone' | translate}}</mat-option>
+      <mat-option *ngFor="let proj of AvailableProjects" [value]="proj" matTooltip="{{proj.tooltip}}" matTooltipShowDelay="1000">
+        <mat-icon>{{ GetIcon(proj) }}</mat-icon>
+        {{proj.name}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <br/>
+  <button mat-raised-button [disabled]="!SelectedProject" (click)="LoadProject()">{{'dialog.transferproject.LoadProject' | translate}}</button>
+  <button mat-raised-button [disabled]="!SourceProject || (!SomeDetails() && !AllDetails)" (click)="TransferProject()" color="primary" style="margin-left: 50px;" matTooltip="{{'dialog.transferproject.TransferDetails.tt' | translate}}" matTooltipShowDelay="1000">{{'dialog.transferproject.TransferDetails' | translate}}</button>
+  <br/>
+  <div style="margin-top: 20px;">
+    <span class="detail-list-section">
+      <mat-checkbox class="detail-margin" [disabled]="!SourceProject" [checked]="AllDetails" color="primary" [indeterminate]="SomeDetails()" (change)="SetAll($event.checked)">
+        {{'dialog.transferproject.Details' | translate}}
+      </mat-checkbox>
+    </span>
+    <span class="detail-list-section">
+      <ul>
+        <li *ngFor="let detail of Details">
+          <mat-checkbox [disabled]="!SourceProject" [(ngModel)]="detail.Key" color="primary" (ngModelChange)="UpdateAllDetails()">
+            {{detail.Value | translate}}
+          </mat-checkbox>
+        </li>
+      </ul>
+    </span>
+  </div>
+  <br/>
+  <mat-form-field style="width: 500px;" appearance="fill">
+    <mat-label>Log</mat-label>
+    <textarea matInput readonly cdkTextareaAutosize cdkAutosizeMinRows="2" cdkAutosizeMaxRows="5" [disabled]="!TransferLog" [(ngModel)]="TransferLog"></textarea>
+  </mat-form-field>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>{{'general.Close' | translate}}</button>
+</mat-dialog-actions>

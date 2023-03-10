@@ -34,7 +34,7 @@
       <td [style.borderColor]="theme.IsDarkMode ? '#424242' : '#F5F5F5'">{{ 'pages.reporting.exporttemplate.Rows' | translate}}</td>
       <td *ngFor="let col of template.Template; index as i" [style.borderColor]="theme.IsDarkMode ? '#424242' : '#F5F5F5'">
         <select style="width: 150px;" [(ngModel)]="col.value" (change)="OnCellChanged($event, i)">
-          <option value=""> -- None -- </option>
+          <option value="">{{'properties.selectNone' | translate}}</option>
           <optgroup *ngFor="let cl of GetAvailableClasses()" label="{{GetExportClassName(cl) | translate}}">
             <option *ngFor="let prop of GetExportProperties(cl)" [value]="cl + '.' + prop">{{GetExportPropertyName(prop) | translate}}</option>
           </optgroup>

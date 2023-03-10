@@ -23,19 +23,19 @@
                     <mat-icon>save</mat-icon>
                     <span>{{'pages.home.menu.saveProject' | translate}}</span>
                   </button>
-                  <button mat-menu-item [disabled]="!dataService.SelectedGHProject" (click)="dataService.OnExportConfig()">
-                    <mat-icon>exit_to_app</mat-icon>
-                    <span>{{'pages.home.menu.exportConfig' | translate}}</span>
-                  </button>
-                  <button mat-menu-item [disabled]="!dataService.Project" (click)="dataService.ExportFile(true)">
+                  <button mat-menu-item [disabled]="!dataService.Project" (click)="dataService.ExportFile(true)" matTooltip="{{'pages.home.menu.downloadProject.tt' | translate}}" matTooltipShowDelay="1000">
                     <mat-icon matBadge="P" matBadgeOverlap="true" matBadgeColor="primary" matBadgeSize="small" matBadgePosition="below">file_download</mat-icon>
                     <span>{{'pages.home.menu.downloadProject' | translate}}</span>
                   </button>
-                  <button mat-menu-item [disabled]="!dataService.Project" class="exportBtn" (click)="dataService.ExportFile(false)">
+                  <button mat-menu-item [disabled]="!dataService.Project" class="exportBtn" (click)="dataService.ExportFile(false)" matTooltip="{{'pages.home.menu.downloadConfig.tt' | translate}}" matTooltipShowDelay="1000">
                     <mat-icon matBadge="C" matBadgeOverlap="true" matBadgeColor="primary" matBadgeSize="small" matBadgePosition="below">file_download</mat-icon>
                     <span>{{'pages.home.menu.downloadConfig' | translate}}</span>
                   </button>
-                  <button mat-menu-item [disabled]="!dataService.Project" class="exportBtn" [matMenuTriggerFor]="exchangeMenu">
+                  <button mat-menu-item [disabled]="!dataService.SelectedGHProject" (click)="dataService.OnExportConfig()" matTooltip="{{'pages.home.menu.exportConfig.tt' | translate}}" matTooltipShowDelay="1000">
+                    <mat-icon>output</mat-icon>
+                    <span>{{'pages.home.menu.exportConfig' | translate}}</span>
+                  </button>
+                  <button mat-menu-item [disabled]="!dataService.Project" class="exportBtn" [matMenuTriggerFor]="exchangeMenu" matTooltip="{{'pages.home.menu.exchangeConfig.tt' | translate}}" matTooltipShowDelay="1000">
                     <mat-icon matBadge="C" matBadgeOverlap="true" matBadgeColor="primary" matBadgeSize="small" matBadgePosition="below">wifi_protected_setup</mat-icon>
                     <span>{{'pages.home.menu.exchangeConfig' | translate}}</span>
                   </button>
@@ -47,13 +47,17 @@
                     <button mat-menu-item (click)="dataService.ExchangeConfigWithDefault()">Default Configuration</button>
                     <button mat-menu-item *ngFor="let conf of dataService.AvailableGHConfigs" (click)="dataService.ExchangeConfig(conf)">{{conf.name}}</button>
                   </mat-menu>
+                  <button mat-menu-item [disabled]="!dataService.SelectedGHProject" (click)="dataService.OnTransferProjectDetails()" matTooltip="{{'pages.home.menu.transferProjectDetails.tt' | translate}}" matTooltipShowDelay="1000">
+                    <mat-icon>exit_to_app</mat-icon>
+                    <span>{{'pages.home.menu.transferProjectDetails' | translate}}</span>
+                  </button>
                   <button mat-menu-item [disabled]="!dataService.Project" (click)="dataService.OnCloseProject()">
                     <mat-icon>close</mat-icon>
                     <span>{{'pages.home.menu.closeProject' | translate}}</span>
                   </button>
                   <mat-divider></mat-divider>
                   <input hidden type="file" accept=".ttmp" #projectUploader (change)="dataService.ImportFile(true, $event)"/>
-                  <button mat-menu-item (click)="projectUploader.click()">
+                  <button mat-menu-item (click)="projectUploader.click()" matTooltip="{{'pages.home.menu.importProject.tt' | translate}}" matTooltipShowDelay="1000">
                     <mat-icon matBadge="P" matBadgeOverlap="true" matBadgeColor="primary" matBadgeSize="small" matBadgePosition="below">file_upload</mat-icon>
                     <span>{{'pages.home.menu.importProject' | translate}}</span>
                   </button>

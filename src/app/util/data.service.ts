@@ -28,6 +28,7 @@ import { MatDialog } from '@angular/material/dialog';
 
 import versionFile from '../../assets/version.json';
 import { ElectronService } from '../core/services';
+import { TransferProjectDialogComponent } from '../home/Dialogs/transfer-project-dialog/transfer-project-dialog.component';
 
 export interface IGHRepository {
   id: number;
@@ -435,7 +436,7 @@ export class DataService {
   }
 
   public OnExportConfig() {
-    return this.openSaveConfigDialog(false);
+    return this.openSaveConfigDialog(true);
   }
 
   private openSaveProjectDialog(saveAs: boolean = false) {
@@ -509,7 +510,7 @@ export class DataService {
 
   private openSaveConfigDialog(saveAs: boolean = false) {
     return new Promise<void>((resolve, reject) => {
-      if (this.CanSaveGHConfig) {
+      if (this.CanSaveGHConfig || (this.UserMode == UserModes.LoggedIn && saveAs)) {
         let data = { 'msg': '' };
         if (!this.SelectedGHConfig || saveAs) {
           data['newConfig'] = { name: '', path: '', repoId: null, isEncrypted: false, sha: null } as IGHFile;
@@ -609,7 +610,6 @@ export class DataService {
     this.OnCloseProject().then(() => {
       this.isLoading.add();
 
-      this.electron.ipcRenderer.send('ReadFile', path);
       if (this.electron.ipcRenderer.listenerCount('OnReadFile') == 0) {
         this.electron.ipcRenderer.on('OnReadFile', (event, file) => {
           this.zone.run(() => {
@@ -627,7 +627,8 @@ export class DataService {
             this.isLoading.remove();
           });
         });
-      }
+      }      
+      this.electron.ipcRenderer.send('ReadFile', path);
     });
   }
 
@@ -1005,6 +1006,93 @@ export class DataService {
         this.Project = ProjectFile.FromJSON(proj);
         this.messagesService.Info('messages.info.exchangeConfig');
       }
+    });
+  }
+
+  public OnTransferProjectDetails() {
+    this.dialog.open(TransferProjectDialogComponent);
+  }
+
+  public ReadGHFile(proj: IGHFile) {
+    return new Promise<ProjectFile>((resolve, reject) => {
+      const octokit = this.UserMode == UserModes.LoggedIn ? new Octokit({ auth: this.accessToken }) : new Octokit();
+      octokit.git.getBlob({ owner: this.GetRepoOfFile(proj).owner, repo: this.GetRepoOfFile(proj).name, file_sha: proj.sha }).then(({ data }) => {
+        const projContent = JSON.parse(Buffer.from(data['content'], 'base64').toString()) as IGHFileContent;
+
+        const loadFile = (content) => {
+          try {
+            const json = JSON.parse(content);
+            this.fileUpdate.UpdateProjectFile(json);
+            const res = ProjectFile.FromJSON(json);
+            resolve(res);
+          } 
+          catch (error) {
+            this.messagesService.Error(error);
+            reject();
+          }
+        };
+        
+        if ('encrypted' in projContent) {
+          proj.isEncrypted = true;
+
+          const getPassword = () => {
+            let pw = { 'pw': '' };
+            const dialogRef = this.dialog.open(PasswordDialogComponent, { hasBackdrop: false, data: pw });
+            dialogRef.afterClosed().subscribe((res) => {
+              if (res) {
+                try {
+                  this.projectContentCrypto = new MyCrypto(pw.pw);
+                  const keycheck = this.projectContentCrypto.Decrypt(projContent.encrypted);
+                  projContent.content = JSON.parse(this.projectContentCrypto.Decrypt(projContent.content));
+                  delete projContent['encrypted'];
+    
+                  loadFile(projContent.content);
+                } 
+                catch (error) {
+                  this.messagesService.Warning('messages.warning.wrongPassword');
+                  getPassword();
+                }
+              }
+              else reject();
+            });
+          };
+          getPassword();
+        }
+        else {
+          loadFile(projContent.content);
+        }
+      }).catch((err) => {
+        this.messagesService.Error('messages.error.githubfetch', err);
+        reject();
+      });
+    });
+  }
+
+  public ReadFSFile(path: string) {
+    return new Promise<ProjectFile>((resolve, reject) => {
+      if (this.electron.ipcRenderer.listenerCount('OnReadFile') == 0) {
+        this.electron.ipcRenderer.on('OnReadFile', (event, file) => {
+          this.zone.run(() => {
+            try {
+              const fileBlob = JSON.parse(file);
+              if ('content' in fileBlob) {
+                const content = fileBlob['content'];
+                const json = JSON.parse(content);
+                const res = ProjectFile.FromJSON(json);
+                resolve(res);
+              }
+              else {
+                this.messagesService.Error('Unsupported file');
+                reject();
+              }
+            } catch (error) {
+              console.log(error);
+              reject();
+            }
+          });
+        });
+      }
+      this.electron.ipcRenderer.send('ReadFile', path);
     });
   }
 

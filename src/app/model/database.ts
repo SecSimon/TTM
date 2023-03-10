@@ -251,7 +251,7 @@ export abstract class DatabaseBase implements IDatabaseBase {
   }
 
   public CopyFrom(data: {}) {
-    let id = this.ID;
+    const id = this.ID;
     this.Data = JSON.parse(JSON.stringify(data));
     this.Data['ID'] = id;
   } 

@@ -114,6 +114,10 @@ export class ReportingComponent implements OnInit {
     this.IsReportGenerating = true;
     await this.initializeReportHTML();
     this.initializeReportDOCX().then(async () => {
+      if (this.Project.Participants.length > 0) {
+        this.createParagraph(this.translate.instant('report.by'));
+        this.createUL(this.Project.Participants.map(x => x.Name + (x.Email?.length > 0 ? ' (' + x.Email + ')' : '')));
+      }
       // Executive Summary
       this.createHeading(this.translate.instant('report.ExecutiveSummary'));
       this.createParagraph(StringExtension.Format(this.translate.instant('report.SUC'), this.Project.GetDevices().map(x => x.Name).join(', '), this.Project.GetMobileApps().map(x => x.Name).join(', ')));
