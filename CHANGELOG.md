@@ -1,9 +1,14 @@
-## 0.4.2
+## 0.4.3
 
 * Fix: Context menu in diagram 
 * Fix: Adding SW/P stack multipe times
 * Transfer project improvements
 * Localization update
+
+## 0.4.2
+
+* Added dialog to transfer project details
+* Minor UI improvements
 
 ## 0.4.1
 
