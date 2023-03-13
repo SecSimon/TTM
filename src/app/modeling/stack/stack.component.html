@@ -39,6 +39,10 @@
     <ng-template matMenuContent let-item="item">
       <ng-container *ngIf="item">
         <span *ngIf="item" style="margin-left: 20px; margin-right: 20px;">{{item.GetProperty('Name')}}</span> 
+        <button mat-menu-item (click)="OnComponentDblClick(item)">
+          <mat-icon>question_answer</mat-icon>
+          <span>{{'properties.openQuestionnaire' | translate}}</span>
+        </button>
         <button mat-menu-item (click)="OnDeleteElement(item)">
           <mat-icon>delete</mat-icon>
           <span>{{'pages.modeling.stack.deleteComponent' | translate}}</span>

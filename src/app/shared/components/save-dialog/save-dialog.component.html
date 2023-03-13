@@ -8,7 +8,7 @@
       </mat-select>
     </mat-form-field>
     <mat-form-field>
-      <mat-label>Name</mat-label>
+      <mat-label>{{'general.Name' | translate}}</mat-label>
       <input matInput [formControl]="nameFormControl" [errorStateMatcher]="matcher">
       <span matSuffix>.ttmp</span>
       <mat-error *ngIf="nameFormControl.hasError('required')">
@@ -34,7 +34,7 @@
       </mat-select>
     </mat-form-field>
     <mat-form-field>
-      <mat-label>Name</mat-label>
+      <mat-label>{{'general.Name' | translate}}</mat-label>
       <input matInput [spellcheck]="dataService.HasSpellCheck" [formControl]="nameFormControl" [errorStateMatcher]="matcher">
       <span matSuffix>.ttmc</span>
       <mat-error *ngIf="nameFormControl.hasError('required')">

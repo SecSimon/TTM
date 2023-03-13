@@ -3512,7 +3512,7 @@ export class DiagramComponent implements OnInit {
   public faLongArrowAltRight = faLongArrowAltRight;
 
   public menuTopLeftPosition = { x: '0', y: '0' };
-  @ViewChild(MatMenuTrigger) public matMenuTrigger: MatMenuTrigger;
+  @ViewChild('ctxMenu') public matMenuTrigger: MatMenuTrigger;
 
   public Dia: CanvasBase;
 

@@ -8,7 +8,7 @@
         {{stage.name}}
       </mat-panel-title>
       <mat-panel-description>
-        Steps: {{GetCheckedCount(stage)}}/{{GetActivityCount(stage)}}
+        {{'dialog.progress.Steps' | translate}}: {{GetCheckedCount(stage)}}/{{GetActivityCount(stage)}}
         <mat-icon>{{stage.icon}}</mat-icon>
       </mat-panel-description>
     </mat-expansion-panel-header>

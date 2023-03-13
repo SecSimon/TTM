@@ -26,7 +26,7 @@
     <span class="detail-list-section">
       <ul>
         <li *ngFor="let detail of Details">
-          <mat-checkbox [disabled]="!SourceProject" [(ngModel)]="detail.Key" color="primary" (ngModelChange)="UpdateAllDetails()">
+          <mat-checkbox [disabled]="!SourceProject || detail.Key == null" [(ngModel)]="detail.Key" color="primary" (ngModelChange)="UpdateAllDetails()">
             {{detail.Value | translate}}
           </mat-checkbox>
         </li>

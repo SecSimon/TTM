@@ -37,6 +37,7 @@ export class TTMService {
   }
 
   constructor(private translate: TranslateService) {
+    this.translate.onLangChange.subscribe(x => this.initialize());
   }
 
   private initialize() {

@@ -152,7 +152,7 @@
     <!--<input type="button" value="x" id="inline-btn" style="position: absolute; left: 50px; top: 50px; z-index: 1;">-->
   </div>
 
-  <div style="visibility: hidden; position: fixed;" [style.left]="menuTopLeftPosition.x" [style.top]="menuTopLeftPosition.y" [matMenuTriggerFor]="rightMenu"></div> 
+  <div #ctxMenu="matMenuTrigger" style="visibility: hidden; position: fixed;" [style.left]="menuTopLeftPosition.x" [style.top]="menuTopLeftPosition.y" [matMenuTriggerFor]="rightMenu"></div> 
   <mat-menu #rightMenu="matMenu"> 
     <ng-template matMenuContent let-item="item">
       <ng-container *ngIf="selectedElement">

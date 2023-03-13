@@ -278,7 +278,7 @@ export class Device extends ContextElement {
   }
 
   public CreateSoftwareStack() {
-    if (!this.Data['softwareStackID']) {
+    if (!this.SoftwareStack) {
       this.SoftwareStack = this.project.CreateStack(MyComponentTypeIDs.Software);
       this.project.Config.GetMyComponentSWTypeGroups().forEach(x => x.Types.forEach(y => this.SoftwareStack.AddChild(this.project.CreateComponent(y))));
       this.SoftwareStack.Name = this.Name + "'s Software";
@@ -292,7 +292,7 @@ export class Device extends ContextElement {
   }
 
   public CreateProcessStack() {
-    if (!this.Data['processStackID']) {
+    if (!this.ProcessStack) {
       this.ProcessStack = this.project.CreateStack(MyComponentTypeIDs.Process);
       this.project.Config.GetMyComponentPTypeGroups().forEach(x => x.Types.forEach(y => this.ProcessStack.AddChild(this.project.CreateComponent(y))));
       this.ProcessStack.Name = this.Name + "'s Processes";
@@ -739,7 +739,7 @@ export class MobileApp extends ContextElement {
   }
 
   public CreateSoftwareStack() {
-    if (!this.Data['softwareStackID']) {
+    if (!this.SoftwareStack) {
       this.SoftwareStack = this.project.CreateStack(MyComponentTypeIDs.Software);
     }
 
@@ -751,7 +751,7 @@ export class MobileApp extends ContextElement {
   }
 
   public CreateProcessStack() {
-    if (!this.Data['processStackID']) {
+    if (!this.ProcessStack) {
       this.ProcessStack = this.project.CreateStack(MyComponentTypeIDs.Process);
       this.project.Config.GetMyComponentPTypeGroups().forEach(x => x.Types.forEach(y => this.ProcessStack.AddChild(this.project.CreateComponent(y))));
     }

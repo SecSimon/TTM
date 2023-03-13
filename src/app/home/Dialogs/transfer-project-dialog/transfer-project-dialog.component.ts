@@ -43,6 +43,7 @@ export class TransferProjectDialogComponent implements OnInit {
       this.AvailableProjects.push({ key: x, name: x.substring(x.lastIndexOf('/')+1), tooltip: x });
     });
 
+    this.Details.push({ Key: false, Value: 'dialog.transferproject.d.Participants' });
     this.Details.push({ Key: false, Value: 'dialog.transferproject.d.CharScope' });
     this.Details.push({ Key: false, Value: 'dialog.transferproject.d.ObjImpact' });
     this.Details.push({ Key: false, Value: 'dialog.transferproject.d.Assets' });
@@ -51,11 +52,25 @@ export class TransferProjectDialogComponent implements OnInit {
   }
 
   public LoadProject() {
+    const setDetails = (file: ProjectFile) => {
+      if (file.Participants?.length == 0) this.Details.find(x => x.Value == 'dialog.transferproject.d.Participants').Key = null;
+      if (file.GetProjectAssetGroup() == null || this.SourceProject.GetProjectAssetGroup() == null) this.Details.find(x => x.Value == 'dialog.transferproject.d.Assets').Key = null;
+      if (file.GetThreatSources().Sources.length == 0) this.Details.find(x => x.Value == 'dialog.transferproject.d.ThreatSources').Key = null;
+      if (file.GetSystemThreats().length == 0) this.Details.find(x => x.Value == 'dialog.transferproject.d.ThreatIdentification').Key = null;
+    };
+
+    this.Details.forEach(x => x.Key = false);
     if (typeof this.SelectedProject.key === 'string') {
-      this.dataService.ReadFSFile(this.SelectedProject.key).then((file) => this.SourceProject = file).catch(err => { });
+      this.dataService.ReadFSFile(this.SelectedProject.key).then((file) => {
+        this.SourceProject = file;
+        setDetails(file);
+      }).catch(err => { });
     }
     else {
-      this.dataService.ReadGHFile(this.SelectedProject.key).then((file) => this.SourceProject = file).catch(err => { });
+      this.dataService.ReadGHFile(this.SelectedProject.key).then((file) => {
+        this.SourceProject = file;
+        setDetails(file);
+      }).catch(err => { });
     }
   }
 
@@ -64,7 +79,15 @@ export class TransferProjectDialogComponent implements OnInit {
     const currProj = this.dataService.Project;
     const srcProj = this.SourceProject;
     this.Details.filter(x => x.Key == true).forEach(key => {
-      if (key.Value === 'dialog.transferproject.d.CharScope') {
+      if (key.Value === 'dialog.transferproject.d.Participants') {
+        srcProj.Participants.forEach(p => {
+          if (!currProj.Participants.some(x => x.Name == p.Name && x.Email == p.Email)) {
+            currProj.Participants.push({ Name: p.Name, Email: p.Email });
+            this.TransferLog += this.translate.instant('dialog.transferproject.l.createParticipant') + ': ' + p.Name + '\n';
+          }
+        });
+      }
+      else if (key.Value === 'dialog.transferproject.d.CharScope') {
         const srcCS = srcProj.GetCharScope(); 
         const destCS = currProj.GetCharScope();
         srcCS.StepProperties.forEach(prop => {
@@ -165,7 +188,7 @@ export class TransferProjectDialogComponent implements OnInit {
   }
 
   public UpdateAllDetails() {
-    this.AllDetails = this.Details.every(x => x.Key);
+    this.AllDetails = this.Details.filter(x => x.Key != null).every(x => x.Key);
   }
 
   public SomeDetails(): boolean {
@@ -174,7 +197,7 @@ export class TransferProjectDialogComponent implements OnInit {
 
   public SetAll(completed: boolean) {
     this.AllDetails = completed;
-    this.Details.forEach(x => (x.Key = completed));
+    this.Details.filter(x => x.Key != null).forEach(x => (x.Key = completed));
   }
 
   public GetIcon(proj: IFileDetails): string {

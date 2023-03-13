@@ -55,6 +55,7 @@ export class StackComponent implements OnInit {
 
   public OnComponentDblClick(comp: MyComponent) {
     comp.IsActive = true;
+    this.selectedComponent = comp;
 
     let data = {
       'components': this.components.filter(x => x.IsActive),
