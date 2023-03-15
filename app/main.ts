@@ -76,9 +76,8 @@ function createWindow(): BrowserWindow {
   temp.push({
     label: 'File',
     submenu: [
-      { label: 'Save', accelerator: 'Ctrl+S', click: () => { win.webContents.send('OnSave'); } },
-      { label: 'Download Project', click: () => { win.webContents.send('OnDownloadProject'); } },
-      { label: 'Import Project', click: () => { 
+      { label: 'New', accelerator: 'Ctrl+N', click: () => { win.webContents.send('OnNew'); } },
+      { label: 'Open / Import Project', accelerator: 'Ctrl+O', click: () => { 
           dialog.showOpenDialog(win, { filters: [ { extensions: ['ttmp'], name: 'TTModeler Project' }], properties: [ 'openFile' ] }).then(result => {
             if (result.filePaths.length >= 1) {
               let data = fs.readFileSync(result.filePaths[0], 'utf-8');
@@ -87,6 +86,9 @@ function createWindow(): BrowserWindow {
           });
         } 
       },
+      { label: 'Save', accelerator: 'Ctrl+S', click: () => { win.webContents.send('OnSave'); } },
+      { label: 'Save As', accelerator: 'Ctrl+Shift+S', click: () => { win.webContents.send('OnSaveAs'); } },
+      { label: 'Download Project', click: () => { win.webContents.send('OnDownloadProject'); } },
       { label: 'Close Project', click: () => { win.webContents.send('OnCloseProject'); } },
       { role: 'quit', label: '&Quit', accelerator: 'Ctrl+Q', click: () => { app.quit(); } }
     ]
@@ -136,6 +138,9 @@ function createWindow(): BrowserWindow {
     const newPath = dialog.showSaveDialogSync(win, { defaultPath: path });
     if (newPath) fs.writeFileSync(newPath, content);
     win.webContents.send('OnSaveFileAs', newPath);
+  });
+  ipcMain.on('DeleteFile', (event, path) => {
+    fs.rmSync(path);
   });
 
   ipcMain.on('OnCloseApp', () => {

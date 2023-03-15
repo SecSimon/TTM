@@ -1,3 +1,8 @@
+## 0.4.4
+
+* ReFix: Adding SW/P stack multiple times
+* Fixes and improvements in local file storage
+
 ## 0.4.3
 
 * Fix: Context menu in diagram 

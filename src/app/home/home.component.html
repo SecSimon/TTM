@@ -76,25 +76,45 @@
               <br/>
               <ng-container *ngFor="let proj of GetAvailableGHProjects()">
                 <div id="project">
-                  <mat-icon style="vertical-align: top; width: 20px; height: 20px; line-height: 20px; font-size: 20px; margin-right: 5px;" matTooltip="{{'pages.home.storedOnline' | translate}}" matTooltipShowDelay="1000">cloud_queue</mat-icon>
+                  <mat-icon class="iconBtn" style="vertical-align: top; font-size: 20px; margin-right: 5px;" matTooltip="{{'pages.home.storedOnline' | translate}}" matTooltipShowDelay="1000">cloud_queue</mat-icon>
                   <button class="color-primary astext" (click)="dataService.LoadProject(proj)">{{proj.name}}</button>
                   in {{GetRepoName(proj)}} 
-                  <mat-icon *ngIf="IsProtected(proj)" style="vertical-align: top; width: 20px; height: 20px; line-height: 20px; margin-right: 5px;" matTooltip="{{'pages.home.notWritable' | translate}}" matTooltipShowDelay="1000">edit_off</mat-icon>
-                  <button mat-icon-button class="show-on-hover" style="width: 20px; height: 20px; line-height: 20px; margin-right: 5px;" (click)="dataService.OpenRepo(proj)" matTooltip="{{'general.openInNew' | translate}}" matTooltipShowDelay="1000">
-                    <mat-icon>open_in_new</mat-icon>
+                  <mat-icon *ngIf="IsProtected(proj)" class="iconBtn" style="vertical-align: top; margin-right: 5px;" matTooltip="{{'pages.home.notWritable' | translate}}" matTooltipShowDelay="1000">edit_off</mat-icon>
+                  <button mat-icon-button class="show-on-hover iconBtn" style="margin-right: 5px;" [matMenuTriggerFor]="moreGHProject" matTooltip="{{'general.More' | translate}}" matTooltipShowDelay="1000">
+                    <mat-icon>more_vert</mat-icon>
                   </button>
-                  <button *ngIf="dataService.GetRepoOfFile(proj)?.isWritable" mat-icon-button class="show-on-hover" style="width: 20px; height: 20px; line-height: 20px;" (click)="dataService.DeleteGHFile(proj)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000">
-                    <mat-icon>delete</mat-icon>
-                  </button>
+                  <mat-menu #moreGHProject="matMenu">
+                    <button mat-menu-item (click)="dataService.OpenRepo(proj)">
+                      <mat-icon>open_in_new</mat-icon>
+                      <span>{{'general.openInNew' | translate}}</span>
+                    </button>
+                    <button mat-menu-item (click)="dataService.DeleteGHFile(proj)">
+                      <mat-icon>delete</mat-icon>
+                      <span>{{'general.Delete' | translate}}</span>
+                    </button>
+                  </mat-menu>
                 </div>
               </ng-container>
               <mat-paginator class="paginator" *ngIf="dataService.AvailableGHProjects.length > 0" [length]="dataService.AvailableGHProjects.length" [pageSize]="pageProjectSize" [hidePageSize]="true" (page)="pageGHProjectIndex = $event.pageIndex"> </mat-paginator>
               
               <ng-container *ngFor="let proj of GetAvailableFSProjects()">
                 <div id="project">
-                  <mat-icon style="vertical-align: top; width: 20px; height: 20px; line-height: 20px; font-size: 20px; margin-right: 5px;" matTooltip="{{'pages.home.storedOffline' | translate}}" matTooltipShowDelay="1000">file_present</mat-icon>
+                  <mat-icon class="iconBtn" style="vertical-align: top; font-size: 20px; margin-right: 5px;" matTooltip="{{'pages.home.storedOffline' | translate}}" matTooltipShowDelay="1000">file_present</mat-icon>
                   <button class="color-primary astext" (click)="dataService.LoadProjectFS(proj)">{{GetFileName(proj)}}</button>
                   in {{GetFilePath(proj)}}
+                  <button mat-icon-button class="show-on-hover iconBtn" style="margin-right: 5px;" [matMenuTriggerFor]="moreFSProject" matTooltip="{{'general.More' | translate}}" matTooltipShowDelay="1000">
+                    <mat-icon>more_vert</mat-icon>
+                  </button>
+                  <mat-menu #moreFSProject="matMenu">
+                    <button mat-menu-item (click)="dataService.RemoveFSFile(proj)">
+                      <mat-icon>remove</mat-icon>
+                      <span>{{'general.Remove' | translate}}</span>
+                    </button>
+                    <button mat-menu-item (click)="dataService.DeleteFSFile(proj)">
+                      <mat-icon>delete</mat-icon>
+                      <span>{{'general.Delete' | translate}}</span>
+                    </button>
+                  </mat-menu>
                 </div>
               </ng-container>
               <mat-paginator class="paginator" *ngIf="dataService.AvailableFSProjects.length > 0" [length]="dataService.AvailableFSProjects.length" [pageSize]="pageProjectSize" [hidePageSize]="true" (page)="pageFSProjectIndex = $event.pageIndex"> </mat-paginator>
@@ -115,26 +135,33 @@
 
               <ng-container *ngFor="let conf of GetAvailableGHConfigs()">
                 <div id="config">
-                  <mat-icon style="vertical-align: top; width: 20px; height: 20px; line-height: 20px; font-size: 20px; margin-right: 5px;" matTooltip="{{'pages.home.storedOnline' | translate}}" matTooltipShowDelay="1000">cloud_queue</mat-icon>
+                  <mat-icon class="iconBtn" style="vertical-align: top; font-size: 20px; margin-right: 5px;" matTooltip="{{'pages.home.storedOnline' | translate}}" matTooltipShowDelay="1000">cloud_queue</mat-icon>
                   <button class="color-primary astext" (click)="dataService.LoadConfig(conf)">{{conf.name}}</button>
                   in {{GetRepoName(conf)}}
-                  <mat-icon *ngIf="IsProtected(conf)" style="vertical-align: top; width: 20px; height: 20px; line-height: 20px; margin-right: 5px;" matTooltip="{{'pages.home.notWritable' | translate}}" matTooltipShowDelay="1000">edit_off</mat-icon>
-                  <button mat-icon-button class="show-on-hover" style="width: 20px; height: 20px; line-height: 20px; margin-right: 5px;" (click)="dataService.OpenRepo(conf)" matTooltip="{{'general.openInNew' | translate}}" matTooltipShowDelay="1000">
-                    <mat-icon>open_in_new</mat-icon>
+                  <mat-icon *ngIf="IsProtected(conf)" class="iconBtn" style="vertical-align: top; margin-right: 5px;" matTooltip="{{'pages.home.notWritable' | translate}}" matTooltipShowDelay="1000">edit_off</mat-icon>
+                  <button mat-icon-button class="show-on-hover iconBtn" style="margin-right: 5px;" [matMenuTriggerFor]="moreGHConfig" matTooltip="{{'general.More' | translate}}" matTooltipShowDelay="1000">
+                    <mat-icon>more_vert</mat-icon>
                   </button>
-                  <button *ngIf="dataService.GetRepoOfFile(conf)?.isWritable" mat-icon-button class="show-on-hover" style="width: 20px; height: 20px; line-height: 20px;" (click)="dataService.DeleteGHFile(conf)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000">
-                    <mat-icon>delete</mat-icon>
-                  </button>
+                  <mat-menu #moreGHConfig="matMenu">
+                    <button mat-menu-item (click)="dataService.OpenRepo(conf)">
+                      <mat-icon>open_in_new</mat-icon>
+                      <span>{{'general.openInNew' | translate}}</span>
+                    </button>
+                    <button mat-menu-item (click)="dataService.DeleteGHFile(conf)">
+                      <mat-icon>delete</mat-icon>
+                      <span>{{'general.Delete' | translate}}</span>
+                    </button>
+                  </mat-menu>
                 </div>
               </ng-container>
               <mat-paginator class="paginator" *ngIf="dataService.AvailableGHConfigs.length > 0" [length]="dataService.AvailableGHConfigs.length" [pageSize]="pageConfigSize" [hidePageSize]="true" (page)="pageGHConfigIndex = $event.pageIndex"> </mat-paginator>
 
               <div style="margin-top: 50px;">
-                <mat-icon style="vertical-align: top; width: 20px; height: 20px; line-height: 20px; font-size: 20px; margin-right: 5px;" matTooltip="{{'pages.home.storedOnline' | translate}}" matTooltipShowDelay="1000">waving_hand</mat-icon>
+                <mat-icon class="iconBtn" style="vertical-align: top; font-size: 20px; margin-right: 5px;" matTooltip="{{'pages.home.storedOnline' | translate}}" matTooltipShowDelay="1000">waving_hand</mat-icon>
                 <button class="color-primary astext" (click)="tourService.start()">{{'pages.home.welcomeTour' | translate}}</button>
                 <ng-container *ngIf="!electron?.isElectron">
                   <br/>
-                  <mat-icon style="vertical-align: top; width: 20px; height: 20px; line-height: 20px; font-size: 20px; margin-right: 5px;" matTooltip="{{'pages.home.storedOnline' | translate}}" matTooltipShowDelay="1000">install_desktop</mat-icon>
+                  <mat-icon class="iconBtn" style="vertical-align: top; font-size: 20px; margin-right: 5px;" matTooltip="{{'pages.home.storedOnline' | translate}}" matTooltipShowDelay="1000">install_desktop</mat-icon>
                   <a href="https://github.com/SecSimon/TTM/releases" target="_blank">{{'pages.home.downloadDesktop' | translate}}</a>
                 </ng-container>
               </div>

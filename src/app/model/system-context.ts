@@ -262,8 +262,8 @@ export class Device extends ContextElement {
       this.HardwareDiagram = pf.CreateDiagram(DiagramTypes.Hardware) as HWDFDiagram;
     }
 
-    this.CreateSoftwareStack();
-    if (pf.GetDevices().length == 0) this.CreateProcessStack();
+    if (!this.Data['softwareStackID']) this.CreateSoftwareStack();
+    if (pf.GetDevices().length == 0 && !this.Data['processStackID']) this.CreateProcessStack();
 
     if (!this.Data['checklistIDs']) this.Data['checklistIDs'] = [];
 

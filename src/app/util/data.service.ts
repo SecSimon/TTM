@@ -119,8 +119,14 @@ export class DataService {
     }, 12000);
     
     if (this.electron.isElectron && this.electron.ipcRenderer) {
+      this.electron.ipcRenderer.on('OnNew', () => {
+        this.zone.run(() => this.NewProject());
+      });
       this.electron.ipcRenderer.on('OnSave', () => {
         this.zone.run(() => this.OnSave());
+      });
+      this.electron.ipcRenderer.on('OnSaveAs', () => {
+        this.zone.run(() => this.OnSaveAs());
       });
       this.electron.ipcRenderer.on('OnDownloadProject', () => {
         this.zone.run(() => {
@@ -353,76 +359,78 @@ export class DataService {
   }
 
   public NewProject() {
-    this.selectedGHProject = null;
+    this.OnCloseProject().then(() => {
+      this.selectedGHProject = null;
 
-    if (this.UserMode == UserModes.LoggedIn) {
-      let data = { 'msg': 'Created new project' };
-      if (!this.SelectedGHProject) {
-        data['newProject'] = { name: '', configFile: null, path: '', repoId: null, isEncrypted: false, sha: null } as IGHFile;
-      }
-      else if (this.SelectedGHProject?.isEncrypted) data['removePW'] = false;
-      const dialogRef = this.dialog.open(SaveDialogComponent, { hasBackdrop: false, data: data });
-      dialogRef.afterClosed().subscribe(res => {
-        if (res) {
-          let createProject = (cfg: ConfigFile) => {
-            cfg.Data['ID'] == uuidv4();
-            let proj = new ProjectFile({}, cfg);
-            proj.InitializeNewProject();
-            //let dev = proj.CreateDevice();
-            proj.CreateDiagram(DiagramTypes.DataFlow);
-  
-            this.Project = proj;
-  
-            if (!APP_CONFIG.production) {
-              setTimeout(() => {
-                let pStr = JSON.stringify(this.Project.ToJSON());
-                let cObj = ProjectFile.FromJSON(JSON.parse(pStr));
-                let cStr = JSON.stringify(cObj.ToJSON());
-                if (pStr !== cStr) {
-                  console.error('Database serialization failed');
-                  console.log(this.Project.ToJSON());
-                  console.log(cObj.ToJSON());
-                }
-              }, 100);
-            }
-            this.SaveProject(data.msg, data['removePW'] != null ? data['removePW'] : false, data['pw'] != null ? data['pw'] : null, data['newProject'] ? data['newProject'] : null);
-          };
-  
-          let cfg: ConfigFile = this.config;
-          if (data['newProject']['configFile'] == null) createProject(ConfigFile.DefaultFile());
-          else {
-            let conf = data['newProject']['configFile'] as IGHFile;
-            this.isLoading.add();
-            const octokit = new Octokit({ auth: this.accessToken });
-            octokit.repos.getContent(
-            {
-              owner: this.GetRepoOfFile(conf).owner,
-              repo: this.GetRepoOfFile(conf).name,
-              path: conf.path
-            }).then(({ data }) => {
-              let confContent = JSON.parse(Buffer.from(data['content'], 'base64').toString()) as IGHFileContent;
-              cfg = ConfigFile.FromJSON(JSON.parse(confContent.content));
-              createProject(cfg);
-            }).catch((err) => {
-              this.messagesService.Error('messages.error.githubfetch', err);
-            }).finally(() => {
-              this.isLoading.remove();
-            });
-          }
+      if (this.UserMode == UserModes.LoggedIn) {
+        let data = { 'msg': 'Created new project' };
+        if (!this.SelectedGHProject) {
+          data['newProject'] = { name: '', configFile: null, path: '', repoId: null, isEncrypted: false, sha: null } as IGHFile;
         }
-      });
-    }
-    else {
-      const cfg = ConfigFile.DefaultFile();
-      cfg.Data['ID'] = uuidv4();
-      let proj = new ProjectFile({}, cfg);
-      proj.InitializeNewProject();
-      //let dev = proj.CreateDevice();
-      proj.CreateDiagram(DiagramTypes.DataFlow);
-
-      this.Project = proj;
-      this.locStorage.Remove(LocStorageKeys.LAST_PROJECT);
-    }
+        else if (this.SelectedGHProject?.isEncrypted) data['removePW'] = false;
+        const dialogRef = this.dialog.open(SaveDialogComponent, { hasBackdrop: false, data: data });
+        dialogRef.afterClosed().subscribe(res => {
+          if (res) {
+            let createProject = (cfg: ConfigFile) => {
+              cfg.Data['ID'] == uuidv4();
+              let proj = new ProjectFile({}, cfg);
+              proj.InitializeNewProject();
+              //let dev = proj.CreateDevice();
+              proj.CreateDiagram(DiagramTypes.DataFlow);
+    
+              this.Project = proj;
+    
+              if (!APP_CONFIG.production) {
+                setTimeout(() => {
+                  let pStr = JSON.stringify(this.Project.ToJSON());
+                  let cObj = ProjectFile.FromJSON(JSON.parse(pStr));
+                  let cStr = JSON.stringify(cObj.ToJSON());
+                  if (pStr !== cStr) {
+                    console.error('Database serialization failed');
+                    console.log(this.Project.ToJSON());
+                    console.log(cObj.ToJSON());
+                  }
+                }, 100);
+              }
+              this.SaveProject(data.msg, data['removePW'] != null ? data['removePW'] : false, data['pw'] != null ? data['pw'] : null, data['newProject'] ? data['newProject'] : null);
+            };
+    
+            let cfg: ConfigFile = this.config;
+            if (data['newProject']['configFile'] == null) createProject(ConfigFile.DefaultFile());
+            else {
+              let conf = data['newProject']['configFile'] as IGHFile;
+              this.isLoading.add();
+              const octokit = new Octokit({ auth: this.accessToken });
+              octokit.repos.getContent(
+              {
+                owner: this.GetRepoOfFile(conf).owner,
+                repo: this.GetRepoOfFile(conf).name,
+                path: conf.path
+              }).then(({ data }) => {
+                let confContent = JSON.parse(Buffer.from(data['content'], 'base64').toString()) as IGHFileContent;
+                cfg = ConfigFile.FromJSON(JSON.parse(confContent.content));
+                createProject(cfg);
+              }).catch((err) => {
+                this.messagesService.Error('messages.error.githubfetch', err);
+              }).finally(() => {
+                this.isLoading.remove();
+              });
+            }
+          }
+        });
+      }
+      else {
+        const cfg = ConfigFile.DefaultFile();
+        cfg.Data['ID'] = uuidv4();
+        let proj = new ProjectFile({}, cfg);
+        proj.InitializeNewProject();
+        //let dev = proj.CreateDevice();
+        proj.CreateDiagram(DiagramTypes.DataFlow);
+  
+        this.Project = proj;
+        this.locStorage.Remove(LocStorageKeys.LAST_PROJECT);
+      }
+    });
   }
 
   public OnSave(): Promise<void> {
@@ -430,7 +438,7 @@ export class DataService {
     else return this.openSaveConfigDialog();
   }
 
-  public OnSaveAs() {
+  public OnSaveAs(): Promise<void> {
     if (this.Project) return this.openSaveProjectDialog(true);
     else return this.openSaveConfigDialog(true);
   }
@@ -457,7 +465,8 @@ export class DataService {
             else resolve();
           });
         }
-        else if (this.electron.isElectron && this.SelectedFSProject) {
+        else if (this.electron.isElectron) {
+          if (!saveAs) saveAs = this.SelectedFSProject == null;
           const onSuccess = () => {
             this.messagesService.Success('messages.success.saveProject', this.Project.Name);
             this.locStorage.Set(LocStorageKeys.LAST_PROJECT, JSON.stringify({ path: this.SelectedFSProject }));
@@ -488,7 +497,7 @@ export class DataService {
                 });
               });
             }
-            this.electron.ipcRenderer.send('SaveFileAs', this.SelectedFSProject, content);
+            this.electron.ipcRenderer.send('SaveFileAs', this.SelectedFSProject ? this.SelectedFSProject : 'Project.ttmp', content);
           }
           else {
             if (this.electron.ipcRenderer.listenerCount('OnSaveFile') == 0) {
@@ -889,6 +898,33 @@ export class DataService {
     }).finally(() => this.isLoading.remove());
   }
 
+  public RemoveFSFile(path: string) {
+    const index = this.AvailableFSProjects.indexOf(path);
+    if (index >= 0) {
+      this.AvailableFSProjects.splice(index, 1);
+      this.removeFSProjectToHistory(path);
+    }
+  }
+
+  public DeleteFSFile(path: string) {
+    const data: ITwoOptionDialogData = {
+      title: this.translate.instant('dialog.delete.deleteItem') + ' ' + name,
+      textContent: this.translate.instant('dialog.delete.sure'),
+      resultTrueText: this.translate.instant('general.Yes'),
+      hasResultFalse: true,
+      resultFalseText: this.translate.instant('general.No'),
+      resultTrueEnabled: () => { return true; },
+      initalTrue: false
+    };
+    const dialogRef = this.dialog.open(TwoOptionsDialogComponent, { hasBackdrop: true, data: data });
+    dialogRef.afterClosed().subscribe(res => {
+      if (res) {
+        this.RemoveFSFile(path);
+        if (this.electron.isElectron) this.electron.ipcRenderer.send('DeleteFile', path);
+      }
+    });
+  }
+
   public ExportFile(isProject: boolean) {
     let content = '';
     let name = '';
@@ -931,12 +967,6 @@ export class DataService {
           file = {'content': JSON.stringify(file) };
         } 
         if ('content' in file) {
-          if (this.electron.isElectron) {
-            this.selectedFSProject = filePath;
-            if (this.availableFSProjects.indexOf(filePath) < 0) {
-              this.availableFSProjects.push(filePath);
-            }
-          }
           this.importFile(file, filePath, isProject);
         }
         else {
@@ -955,6 +985,12 @@ export class DataService {
       this.selectedGHConfig = this.selectedGHProject = null;
       if (isProject == null) isProject = json['config'] != null;
       if (isProject) {
+        if (this.electron.isElectron) {
+          this.selectedFSProject = filePath;
+          if (this.availableFSProjects.indexOf(filePath) < 0) {
+            this.availableFSProjects.splice(0, 0, filePath);
+          }
+        }
         this.loadProjectFile(filePath, json);
       }
       else {
@@ -1141,14 +1177,14 @@ export class DataService {
         const dialogRef = this.dialog.open(TwoOptionsDialogComponent, { hasBackdrop: false, data: data });
         dialogRef.afterClosed().subscribe(res => {
           if (res) {
-            if (this.UserMode == UserModes.LoggedIn) {
+            if (this.CanSaveGHProject || this.CanSaveFSProject) {
               this.openSaveProjectDialog().then(() => {
                 this.closeProject();
                 resolve();
               })
               .catch(() => reject());
             }
-            else if (this.UserMode == UserModes.Guest) {
+            else {
               this.ExportFile(true);
               this.closeProject();
               resolve();
@@ -1345,6 +1381,15 @@ export class DataService {
       const name = 'FS:' + path;
       if (history.indexOf(name) >= 0) history.splice(history.indexOf(name), 1);
       history.splice(0, 0, name);
+      this.locStorage.Set(LocStorageKeys.PROJECT_HISTORY, JSON.stringify(history));
+    }
+  }
+
+  private removeFSProjectToHistory(path: string) {
+    if (path) {
+      const history = this.getLastProjectHistory();
+      const name = 'FS:' + path;
+      if (history.indexOf(name) >= 0) history.splice(history.indexOf(name), 1);
       this.locStorage.Set(LocStorageKeys.PROJECT_HISTORY, JSON.stringify(history));
     }
   }

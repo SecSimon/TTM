@@ -65,7 +65,7 @@ export class DialogService {
   }
 
   public OpenUnsavedChangesDialog() {
-    let data: ITwoOptionDialogData = {
+    const data: ITwoOptionDialogData = {
       title: this.translate.instant('dialog.unsaved.title'),
       textContent: this.translate.instant('dialog.unsaved.saveProject'),
       resultTrueText: this.translate.instant('general.Yes'),
@@ -78,7 +78,7 @@ export class DialogService {
   }
 
   public OpenDeleteDialog(name: string): Observable<any> {
-    let data: ITwoOptionDialogData = {
+    const data: ITwoOptionDialogData = {
       title: this.translate.instant('dialog.delete.deleteItem') + ' ' + name,
       textContent: this.translate.instant('dialog.delete.sure'),
       resultTrueText: this.translate.instant('general.Yes'),
@@ -102,7 +102,7 @@ export class DialogService {
       });
     }
 
-    let data: ITwoOptionDialogData = {
+    const data: ITwoOptionDialogData = {
       title: this.translate.instant('dialog.delete.deleteItem') + ' ' + obj.Name,
       textContent: content,
       resultTrueText: this.translate.instant('general.Yes'),
@@ -115,7 +115,7 @@ export class DialogService {
   }
 
   public OpenAttackScenarioDialog(scenario: AttackScenario, isNew: boolean, scenarios: AttackScenario[] = null) {
-    let data: ITwoOptionDialogData = {
+    const data: ITwoOptionDialogData = {
       title: this.translate.instant('pages.modeling.attackscenario.dialogTitle'),
       resultTrueText: isNew ? this.translate.instant('general.Add') : this.translate.instant('general.Close'),
       hasResultFalse: isNew,
@@ -149,7 +149,7 @@ export class DialogService {
   }
 
   public OpenAddAttackVectorDialog(vector: AttackVector) {
-    let data: ITwoOptionDialogData = {
+    const data: ITwoOptionDialogData = {
       title: this.translate.instant('pages.config.attackVectorEditDialogTitle'),
       resultTrueText: this.translate.instant('general.Add'),
       hasResultFalse: true,
@@ -169,7 +169,7 @@ export class DialogService {
   public OpenViewAttackVectorDialog(vector: AttackVector, canEdit) {
     let edit = new MyBoolean();
     edit.Value = canEdit;
-    let data: ITwoOptionDialogData = {
+    const data: ITwoOptionDialogData = {
       title: this.translate.instant('pages.config.attackVectorViewDialogTitle'),
       resultTrueText: this.translate.instant('general.Close'),
       hasResultFalse: false,
@@ -186,7 +186,7 @@ export class DialogService {
   }
 
   public OpenViewThreatRuleDialog(rule: ThreatRule) {
-    let data: ITwoOptionDialogData = {
+    const data: ITwoOptionDialogData = {
       title: this.translate.instant('pages.config.threatRuleViewDialogTitle'),
       resultTrueText: this.translate.instant('general.Close'),
       hasResultFalse: false,
@@ -204,7 +204,7 @@ export class DialogService {
   public OpenCVSSEntryDiaglog(entry: ICVSSEntry) {
     const val = new MyCVSSEntry();
     val.Value = entry;
-    let data: ITwoOptionDialogData = {
+    const data: ITwoOptionDialogData = {
       title: this.translate.instant('shared.cvss.name.l'),
       resultTrueText: this.translate.instant('general.Close'),
       hasResultFalse: false,
@@ -222,7 +222,7 @@ export class DialogService {
   public OpenOwaspRREntryDiaglog(entry: IOwaspRREntry) {
     const val = new MyOwaspRREntry();
     val.Value = entry;
-    let data: ITwoOptionDialogData = {
+    const data: ITwoOptionDialogData = {
       title: this.translate.instant('shared.owasprr.name.l'),
       resultTrueText: this.translate.instant('general.Close'),
       hasResultFalse: false,
@@ -238,7 +238,7 @@ export class DialogService {
   }
 
   public OpenAddMyDataDialog(myData: MyData) {
-    let data: ITwoOptionDialogData = {
+    const data: ITwoOptionDialogData = {
       title: this.translate.instant('dialog.mydata.addDialogTitle'),
       resultTrueText: this.translate.instant('general.Add'),
       hasResultFalse: true,
@@ -258,7 +258,7 @@ export class DialogService {
   public OpenCountermeasureDialog(measure: Countermeasure, isNew: boolean, elements: ViewElementBase[], measures: Countermeasure[] = null) {
     let isNewWrapper = new MyBoolean();
     isNewWrapper.Value = isNew;
-    let data: ITwoOptionDialogData = {
+    const data: ITwoOptionDialogData = {
       title: this.translate.instant('pages.modeling.countermeasure.dialogTitle'),
       resultTrueText: isNew ? this.translate.instant('general.Add') : this.translate.instant('general.Close'),
       hasResultFalse: isNew,
@@ -294,7 +294,7 @@ export class DialogService {
   }
 
   public OpenAddControlDialog(mit: Control) {
-    let data: ITwoOptionDialogData = {
+    const data: ITwoOptionDialogData = {
       title: this.translate.instant('pages.config.control.dialogTitle'),
       resultTrueText: this.translate.instant('general.Add'),
       hasResultFalse: true,
@@ -312,7 +312,7 @@ export class DialogService {
   }
 
   public OpenMitigationProcessDialog(proc: MitigationProcess, isNew: boolean) {
-    let data: ITwoOptionDialogData = {
+    const data: ITwoOptionDialogData = {
       title: this.translate.instant('pages.modeling.mitigationprocess.dialogTitle'),
       resultTrueText: isNew ? this.translate.instant('general.Add') : this.translate.instant('general.Close'),
       hasResultFalse: isNew,
@@ -330,7 +330,7 @@ export class DialogService {
   }
 
   public OpenSuggestThreatsDialog(element: DFDElement) {
-    let data: ITwoOptionDialogData = {
+    const data: ITwoOptionDialogData = {
       title: this.translate.instant('pages.modeling.diagram.suggestedthreats.dialogTitle'),
       resultTrueText: this.translate.instant('general.Close'),
       hasResultFalse: false,
@@ -348,7 +348,7 @@ export class DialogService {
   public OpenCveSearchDialog(element: ViewElementBase, viewID: string) {
     let str = new MyString();
     str.Value = viewID;
-    let data: ITwoOptionDialogData = {
+    const data: ITwoOptionDialogData = {
       title: this.translate.instant('shared.cvesearch.title'),
       resultTrueText: this.translate.instant('general.Close'),
       hasResultFalse: false,
@@ -365,7 +365,7 @@ export class DialogService {
   }
 
   public OpenProgresstrackerDialog() {
-    let data: ITwoOptionDialogData = {
+    const data: ITwoOptionDialogData = {
       title: this.translate.instant('dialog.progress.title'),
       resultTrueText: this.translate.instant('general.Close'),
       hasResultFalse: false,
@@ -384,7 +384,7 @@ export class DialogService {
     config.ShowTimestamp = showTimestamp;
     config.CanToggleTimestamp = canToggleTimestamp;
     config.CanToggleCheckbox = canToggleCheckbox;
-    let data: ITwoOptionDialogData = {
+    const data: ITwoOptionDialogData = {
       title: this.translate.instant('general.Notes'),
       resultTrueText: this.translate.instant('general.Close'),
       hasResultFalse: false,
@@ -400,7 +400,7 @@ export class DialogService {
   }
 
   public OpenModelInfoDialog() {
-    let data: ITwoOptionDialogData = {
+    const data: ITwoOptionDialogData = {
       title: this.translate.instant('dialog.modelinfo.title'),
       resultTrueText: this.translate.instant('general.Close'),
       hasResultFalse: false,
@@ -436,7 +436,7 @@ export class DialogService {
   }
 
   public OpenTagChartsDialog() {
-    let data: ITwoOptionDialogData = {
+    const data: ITwoOptionDialogData = {
       title: this.translate.instant('dialog.tagcharts.title'),
       resultTrueText: this.translate.instant('general.Close'),
       hasResultFalse: false,
