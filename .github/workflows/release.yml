@@ -44,11 +44,16 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npm run electron:release -- --linux AppImage deb
       
+      - name: Prepare Pages release
+        run: ./.github/scripts/prep-web-release.sh
+        shell: bash
+        
       - name: Publish to Pages
         env: 
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: ./.github/scripts/publish.sh
-        shell: bash
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: dist
 
   desktop_windows:
     name: windows installers
