@@ -43,6 +43,10 @@ jobs:
         env: 
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npm run electron:release -- --linux AppImage deb
+      
+      - name: Publish to Pages
+        run: ./.github/scripts/publish.sh
+        shell: bash
 
   desktop_windows:
     name: windows installers
