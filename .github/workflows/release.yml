@@ -44,6 +44,9 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npm run electron:release -- --linux AppImage deb
       
+      - name: Install angular-cli
+        run: npm install -g @angular/cli
+      
       - name: Prepare Pages release
         run: ./.github/scripts/prep-web-release.sh
         shell: bash
