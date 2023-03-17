@@ -45,6 +45,8 @@ jobs:
         run: npm run electron:release -- --linux AppImage deb
       
       - name: Publish to Pages
+        env: 
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: ./.github/scripts/publish.sh
         shell: bash
 
