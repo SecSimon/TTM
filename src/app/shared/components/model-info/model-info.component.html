@@ -14,7 +14,7 @@
       </div>
       <div class="col2">
         <div class="imgContainer">
-          <img #projImg [src]="Project.Image">
+          <img #projImg [src]="Project.Image" (click)="ViewImage(Project.Image)">
           <input #fileUpload type="file" class="fileInput" accept="image/*" (change)="OnFileSelected($event)">
           <div class="removeBtn" *ngIf="Project.Image" [style.left]="GetRemoveBtnLeft(projImg)">
             <button mat-icon-button color="primary" (click)="Project.Image=''">
@@ -68,6 +68,12 @@
   <div>
     <h4>{{'general.Notes' | translate}}</h4>
     <app-notes [showTimestamp]="true" [hasCheckbox]="false" [canToggleCheckbox]="true" [notes]="Project.Notes"></app-notes>
+  </div>
+  <div>
+    <h4>{{'general.Settings' | translate}}</h4>
+    <div style="margin-left: 20px; margin-bottom: 15px;">
+      <mat-slide-toggle color="primary" [checked]="Project.HasTesting" (change)="OnTestingChanged($event)">{{'general.TestCases' | translate}}</mat-slide-toggle>
+    </div>
   </div>
   <div>
     <mat-accordion class="expansion-panel-headers-align">

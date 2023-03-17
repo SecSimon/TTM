@@ -49,5 +49,11 @@
       "AppImage",
       "deb"
     ]
+  },
+  "publish": {
+    "provider": "github",
+    "repo": "TTM",
+    "owner": "SecSimon",
+    "releaseType": "release"
   }
 }

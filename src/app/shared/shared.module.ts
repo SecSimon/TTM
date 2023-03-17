@@ -73,6 +73,7 @@ import { RenameDialogComponent } from './components/rename-dialog/rename-dialog.
 import { TagsComponent } from './components/tags/tags.component';
 import { CveSearchComponent } from './components/cve-search/cve-search.component';
 import { CveEntryComponent } from './components/cve-entry/cve-entry.component';
+import { ImageViewComponent } from './components/image-view/image-view.component';
 
 @NgModule({
   declarations: [
@@ -80,7 +81,7 @@ import { CveEntryComponent } from './components/cve-entry/cve-entry.component';
     StatusBarComponent, SideNavComponent, SaveDialogComponent, PasswordDialogComponent, MessagesDialogComponent, 
     TwoOptionsDialogComponent, CweEntryComponent, CapecEntryComponent, NavTreeComponent, CvssEntryComponent, OwaspRREntryComponent,
     ProgressTrackerComponent, ModelInfoComponent, NotesComponent, 
-    LocalDatePipe, LocalDateTimePipe, RenameDialogComponent, TagsComponent, CveSearchComponent, CveEntryComponent
+    LocalDatePipe, LocalDateTimePipe, RenameDialogComponent, TagsComponent, CveSearchComponent, CveEntryComponent, ImageViewComponent
   ],
   imports: [
     CommonModule, 

@@ -27,8 +27,9 @@ import { ResultsAnalysisComponent } from '../dashboard/results-analysis/results-
 
 import { 
   AlignmentType,
+  convertInchesToTwip,
   Document, ExternalHyperlink, HeadingLevel,
-  ImageRun, Packer,
+  ImageRun, LevelFormat, Packer,
   Paragraph,
   ShadingType,
   Table,
@@ -47,6 +48,7 @@ import { OwaspRREntryComponent } from '../shared/components/owasp-rr-entry/owasp
 import { CapecEntryComponent } from '../shared/components/capec-entry/capec-entry.component';
 import { CweEntryComponent } from '../shared/components/cwe-entry/cwe-entry.component';
 import { StringExtension } from '../util/string-extension';
+import { TestCaseStateUtil } from '../model/test-case';
 
 @Component({
   selector: 'app-reporting',
@@ -88,6 +90,14 @@ export class ReportingComponent implements OnInit {
     this.locStorage.Set(LocStorageKeys.PAGE_REPORTING_SHOW_FIRST_STEPS, String(val));
   }
 
+  public get ShowTestCases(): boolean {
+    let res = this.locStorage.Get(LocStorageKeys.PAGE_REPORTING_SHOW_TEST_CASES);
+    return res == 'true';
+  };
+  public set ShowTestCases(val: boolean) {
+    this.locStorage.Set(LocStorageKeys.PAGE_REPORTING_SHOW_TEST_CASES, String(val));
+  }
+
   public Project: ProjectFile;
   public Dia: CtxCanvas|HWDFCanvas;
 
@@ -104,6 +114,7 @@ export class ReportingComponent implements OnInit {
       } 
 
       if (this.locStorage.Get(LocStorageKeys.PAGE_REPORTING_SHOW_FIRST_STEPS) == null) this.ShowFirstTwoSteps = true;
+      if (this.locStorage.Get(LocStorageKeys.PAGE_REPORTING_SHOW_TEST_CASES) == null) this.ShowTestCases = true;
     }
 
   ngOnInit(): void {
@@ -278,6 +289,10 @@ export class ReportingComponent implements OnInit {
             if (scenario.RiskStrategyReason?.length > 0) this.createParagraph(this.translate.instant('properties.RiskStrategyReason') + ': ' + scenario.RiskStrategyReason);
             if (scenario.GetCountermeasures()?.length > 0) this.createParagraph(this.translate.instant('general.Countermeasures') + ': ' + scenario.GetCountermeasures().map(x => x.GetLongName()).join(', '));
             if (scenario.LinkedScenarios?.length > 0) this.createParagraph(this.translate.instant('report.SeeAlso') + ': ' + scenario.LinkedScenarios.map(x => 'AS' + x.Number).join(', '));
+            const links = this.Project.GetTestCases().filter(x => x.LinkedScenarios.includes(scenario));
+            if (links.length > 0) {
+              this.createParagraph(this.translate.instant('report.SeeAlso') + ': ' + links.map(x => 'TC' + x.Number).join(', '));
+            }
             if (scenario.MyTags.length > 0) this.createParagraph(this.translate.instant('general.Tags') + ': ' + scenario.MyTags.map(x => x.Name).join(', '));
             this.createParagraph('');
           });
@@ -293,6 +308,10 @@ export class ReportingComponent implements OnInit {
             if (cm.Description?.length > 0) this.createParagraph(this.translate.instant('properties.Description') + ': ' + cm.Description);
             if (cm.MitigationProcess) this.createParagraph(this.translate.instant('general.MitigationProcess') + ': ' + cm.MitigationProcess.GetLongName());
             this.createParagraph(this.translate.instant('pages.modeling.countermeasure.mitigatedThreats') + ': ' + cm.AttackScenarios.map(x => x.GetLongName()).join(', '));
+            const links = this.Project.GetTestCases().filter(x => x.LinkedMeasures.includes(cm));
+            if (links.length > 0) {
+              this.createParagraph(this.translate.instant('report.SeeAlso') + ': ' + links.map(x => 'TC' + x.Number).join(', '));
+            }
             if (cm.MyTags.length > 0) this.createParagraph(this.translate.instant('general.Tags') + ': ' + cm.MyTags.map(x => x.Name).join(', '));
             this.createParagraph('');
           });
@@ -409,8 +428,8 @@ export class ReportingComponent implements OnInit {
 
       // models
       // hardware
-      this.createSubHeading(this.ttmService.Stages[1].steps[1].name);
       const devCount = this.Project.GetDevices().length;
+      if (devCount > 0) this.createSubHeading(this.ttmService.Stages[1].steps[1].name);
       this.Project.GetDevices().forEach(x => {
         if (devCount > 1) this.createSubSubHeading(x.Name);
         this.createDiagram(x.HardwareDiagram);
@@ -418,9 +437,9 @@ export class ReportingComponent implements OnInit {
       });
 
       // software
-      this.createSubHeading(this.ttmService.Stages[1].steps[2].name);
-      let stacks = [...this.Project.GetDevices(), ...this.Project.GetMobileApps()];
+      const stacks = [...this.Project.GetDevices(), ...this.Project.GetMobileApps()];
       let stackCount = stacks.map(x => x.SoftwareStack).filter(x => x != null && x.GetChildrenFlat().length > 0).length;
+      if (stackCount > 0) this.createSubHeading(this.ttmService.Stages[1].steps[2].name);
       for (let i = 0; i < stacks.length; i++) {
         if (stacks[i].SoftwareStack?.GetChildrenFlat().length > 0) {
           if (stackCount > 1) this.createSubSubHeading(stacks[i].Name);
@@ -456,8 +475,8 @@ export class ReportingComponent implements OnInit {
       });
 
       // processes
-      this.createSubHeading(this.ttmService.Stages[1].steps[4].name);
       stackCount = stacks.map(x => x.ProcessStack).filter(x => x != null && x.GetChildrenFlat().length > 0).length;
+      if (stackCount > 0) this.createSubHeading(this.ttmService.Stages[1].steps[4].name);
       for (let i = 0; i < stacks.length; i++) {
         if (stacks[i].ProcessStack?.GetChildrenFlat().length > 0) {
           if (stackCount > 1) this.createSubSubHeading(stacks[i].Name);
@@ -484,26 +503,88 @@ export class ReportingComponent implements OnInit {
         }
       }
 
-      this.createSubHeading(this.translate.instant('general.MitigationProcesses'));
-      this.createParagraph(this.translate.instant('report.mitigationProcessExplanation'));
-      this.createParagraph('');
-      this.Project.GetMitigationProcesses().forEach(process => {
-        this.createBoldParagraph(process.GetLongName());
-        if (process.MitigationProcessState) this.createParagraph(this.translate.instant('properties.Status') + ': ' + this.translate.instant(MitigationProcessStateUtil.ToString(process.MitigationProcessState)) + ' (' + this.translate.instant('general.Progress') + ': ' + process.Progress.toFixed(0) +  '%)');
-        if (process.Description?.length > 0) this.createParagraph(this.translate.instant('properties.Description') + ': ' + process.Description);
-        if (process.Tasks?.length > 0) {
-          this.createParagraph(this.translate.instant('general.Tasks'));
-          this.createUL(process.Tasks.map(x => (x.IsChecked ? this.translate.instant('general.Done') : this.translate.instant('general.DoneNot')) + ': ' + x.Note));
-        }
-        if (process.Notes?.length > 0) {
-          this.createParagraph(this.translate.instant('general.Notes'));
-          this.createUL(process.Notes.map(x => new Date(Number(x.Date)).toLocaleDateString() + ' - ' + x.Author + ': ' + x.Note));
-        }
-        if (process.Countermeasures.length > 0) {
-          this.createParagraph(this.translate.instant('general.Countermeasures') + ': ' + process.Countermeasures.map(x => x.GetLongName()).join(', '));
-        }
+      if (this.Project.GetMitigationProcesses().length > 0) {
+        this.createSubHeading(this.translate.instant('general.MitigationProcesses'));
+        this.createParagraph(this.translate.instant('report.mitigationProcessExplanation'));
         this.createParagraph('');
-      });
+        this.Project.GetMitigationProcesses().forEach(process => {
+          this.createBoldParagraph(process.GetLongName());
+          if (process.MitigationProcessState) this.createParagraph(this.translate.instant('properties.Status') + ': ' + this.translate.instant(MitigationProcessStateUtil.ToString(process.MitigationProcessState)) + ' (' + this.translate.instant('general.Progress') + ': ' + process.Progress.toFixed(0) +  '%)');
+          if (process.Description?.length > 0) this.createParagraph(this.translate.instant('properties.Description') + ': ' + process.Description);
+          if (process.Tasks?.length > 0) {
+            this.createParagraph(this.translate.instant('general.Tasks'));
+            this.createUL(process.Tasks.map(x => (x.IsChecked ? this.translate.instant('general.Done') : this.translate.instant('general.DoneNot')) + ': ' + x.Note));
+          }
+          if (process.Notes?.length > 0) {
+            this.createParagraph(this.translate.instant('general.Notes'));
+            this.createUL(process.Notes.map(x => new Date(Number(x.Date)).toLocaleDateString() + ' - ' + x.Author + ': ' + x.Note));
+          }
+          if (process.Countermeasures.length > 0) {
+            this.createParagraph(this.translate.instant('general.Countermeasures') + ': ' + process.Countermeasures.map(x => x.GetLongName()).join(', '));
+          }
+          this.createParagraph('');
+        });
+      }
+
+      if (this.Project.HasTesting && this.ShowTestCases) {
+        this.createSubHeading(this.translate.instant('general.TestCases'));
+        this.createParagraph(this.translate.instant('report.testCaseExplanation'));
+        this.createParagraph('');
+        const tcs = this.Project.GetTestCases();
+        for (let i = 0; i < tcs.length; i++) {
+          const tc = tcs[i];
+          this.createBoldParagraph(tc.GetLongName());
+          this.createParagraph(this.translate.instant('properties.Status') + ': ' + this.translate.instant(TestCaseStateUtil.ToString(tc.Status)));
+          if (tc.Description?.length > 0) this.createParagraph(this.translate.instant('properties.Description') + ': ' + tc.Description);
+          if (tc.Version) this.createParagraph(this.translate.instant('pages.modeling.testcase.verison') + ': ' + tc.Version);
+          if (tc.PreConditions.length > 0) {
+            this.createParagraph(this.translate.instant('properties.PreConditions'));
+            this.createUL(tc.PreConditions);
+          }
+          if (tc.Steps.length > 0) {
+            this.createParagraph(this.translate.instant('properties.Steps'));
+            this.createOL(tc.Steps);
+          }
+          if (tc.TestData.length > 0) {
+            this.createParagraph(this.translate.instant('properties.TestData'));
+            this.createUL(tc.TestData);
+          }
+          if (tc.Summary.length > 0) {
+            this.createParagraph(this.translate.instant('properties.Summary'));
+            this.createUL(tc.Summary.map(x => x.Note));
+          }
+          if (tc.Images.length > 0) this.createParagraph(this.translate.instant('general.Images'));
+          for (let j = 0; j < tc.Images.length; j++) {
+            const image = tc.Images[j];
+            const getMeta = async (url) => {
+              const img = new Image();
+              img.src = url;
+              await img.decode();  
+              return img
+            };
+            
+            await getMeta(image).then(img => {
+              this.createImage(image, img.naturalWidth, img.naturalHeight);
+              this.createParagraph('');
+            });
+          }
+          if (tc.LinkedElements.length == 1) this.createParagraph(this.translate.instant('properties.LinkedElements') + ': ' + tc.LinkedElements[0].GetProperty('Name') + ' in ' + tc.GetViewOfLinkedElement(tc.LinkedElements[0]).Name);
+          if (tc.LinkedElements.length > 1) {
+            this.createParagraph(this.translate.instant('properties.LinkedElements'));
+            this.createUL(tc.LinkedElements.map(x => x.GetProperty('Name') + ' in ' + tc.GetViewOfLinkedElement(x).Name));
+          }
+          if (tc.LinkedScenarios.length == 1) this.createParagraph(this.translate.instant('properties.LinkedScenarios') + ': ' + tc.LinkedScenarios[0].GetProperty('Name') + ' in ' + this.Project.GetView(tc.LinkedScenarios[0].ViewID).Name);
+          if (tc.LinkedScenarios.length > 1) {
+            this.createParagraph(this.translate.instant('properties.LinkedScenarios'));
+            this.createUL(tc.LinkedScenarios.map(x => x.GetProperty('Name') + ' in ' + this.Project.GetView(x.ViewID).Name));
+          }
+          if (tc.LinkedMeasures.length == 1) this.createParagraph(this.translate.instant('properties.LinkedMeasures') + ': ' + tc.LinkedMeasures[0].GetProperty('Name') + ' in ' + this.Project.GetView(tc.LinkedMeasures[0].ViewID).Name);
+          if (tc.LinkedMeasures.length > 1) {
+            this.createParagraph(this.translate.instant('properties.LinkedMeasures'));
+            this.createUL(tc.LinkedMeasures.map(x => x.GetProperty('Name') + ' in ' + this.Project.GetView(x.ViewID).Name));
+          }
+        }
+      }
 
       // finish: remove old HTML report
       Array.from((this.content.nativeElement as HTMLDivElement).children).forEach(x => (this.content.nativeElement as HTMLDivElement).removeChild(x));
@@ -524,6 +605,26 @@ export class ReportingComponent implements OnInit {
 
   public SaveDOCX() {
     const doc = new Document({
+        numbering: {
+          config: [
+            {
+              levels: [
+                  {
+                    level: 0,
+                    format: LevelFormat.DECIMAL,
+                    text: "%1.",
+                    alignment: AlignmentType.START,
+                    style: {
+                      paragraph: {
+                        indent: { left: convertInchesToTwip(0.5), hanging: convertInchesToTwip(0.25) },
+                      },
+                    },
+                  },
+              ],
+              reference: "my-numbering",
+            },
+          ],
+      },
       creator: this.dataService.UserDisplayName,
       description: this.dataService.Project.Description,
       title: this.dataService.Project.GetProjectName(),
@@ -655,6 +756,32 @@ export class ReportingComponent implements OnInit {
       ul.appendChild(this.createHtmlElement('li', x));
     });
     this.htmlBuffer.push(ul);
+  }
+
+  private createOL(items: string[]) {
+    this.createDocxOL(items);
+    this.createHtmlOL(items);
+  }
+
+  private createDocxOL(items: string[]) {
+    items.forEach(x => {
+      const li = new Paragraph({
+        text: x,
+        numbering: {
+          reference: 'my-numbering',
+          level: 0
+        }
+      });
+      this.docxBuffer.push(li);
+    });
+  }
+
+  private createHtmlOL(items: string[]) {
+    const ol = document.createElement('ol');
+    items.forEach(x => {
+      ol.appendChild(this.createHtmlElement('li', x));
+    });
+    this.htmlBuffer.push(ol);
   }
 
   private createTitle(text: string) {

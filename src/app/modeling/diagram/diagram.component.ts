@@ -406,6 +406,18 @@ export abstract class CanvasBase {
     }
   }
 
+  public AddTestCase() {
+    if (this.SelectedElement) {
+      const tc = this.dataService.Project.CreateTestCase();
+      tc.AddLinkedElement(this.SelectedElement);
+      this.dialog.OpenTestCaseDialog(tc, true).subscribe(result => {
+        if (!result) {
+          this.dataService.Project.DeleteTestCase(tc);
+        }
+      });
+    }
+  }
+
   public AddCountermeasure() {
     if (this.SelectedElement) {
       let map = this.dataService.Project.CreateCountermeasure(this.Diagram.ID, false);

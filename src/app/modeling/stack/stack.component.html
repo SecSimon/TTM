@@ -1,6 +1,6 @@
 <div style="width: 100%; height: 100%;">
   <div class="tools mat-elevation-z8" [class.bg-color-light2]="!theme.IsDarkMode" [class.bg-color-dark2]="theme.IsDarkMode">
-    <button mat-button class="toolBtn" [disabled]="!selectedComponent" (click)="AddThreat(selectedComponent)" matTooltip="{{'pages.modeling.diagram.addThreat' | translate}}" matTooltipShowDelay="1000">
+    <button mat-button class="toolBtn" [disabled]="!selectedComponent" (click)="AddThreat(selectedComponent)" matTooltip="{{'pages.modeling.diagram.addAttackScenario' | translate}}" matTooltipShowDelay="1000">
       <mat-icon>flash_on</mat-icon>
     </button>
     <button mat-button class="toolBtn" [disabled]="!selectedComponent" (click)="ShowCVESearch()" matTooltip="{{'pages.modeling.diagram.CveSearch' | translate}}" matTooltipShowDelay="1000">
@@ -13,6 +13,9 @@
         <rect [attr.fill]="selectedComponent ? (theme.IsDarkMode ? '#FFF' : '#000') : (theme.IsDarkMode ? '#676767' : '#B6B6B6')" x="1" y="1" width="23" height="23" rx="3" ry="3"/>
         <text [attr.fill]="theme.IsDarkMode ? '#000' : '#FFF'" x="2" y="16" class="heavy">CVE</text>
       </svg>
+    </button>
+    <button mat-button class="toolBtn" *ngIf="dataService.Project.HasTesting" [disabled]="!selectedComponent" (click)="AddTestCase(selectedComponent)" matTooltip="{{'pages.modeling.diagram.addTestCase' | translate}}" matTooltipShowDelay="1000">
+      <mat-icon>checklist</mat-icon>
     </button>
     <button mat-button class="toolBtn" [disabled]="!selectedComponent" (click)="AddCountermeasure(selectedComponent)" matTooltip="{{'pages.modeling.diagram.addCountermeasure' | translate}}" matTooltipShowDelay="1000">
       <mat-icon>security</mat-icon>
@@ -49,7 +52,7 @@
         </button>
         <button mat-menu-item (click)="AddThreat(item)">
           <mat-icon>flash_on</mat-icon>
-          <span>{{'pages.modeling.diagram.addThreat' | translate}}</span>
+          <span>{{'pages.modeling.diagram.addAttackScenario' | translate}}</span>
         </button>
         <button mat-menu-item (click)="AddCountermeasure(item)">
           <mat-icon>security</mat-icon>

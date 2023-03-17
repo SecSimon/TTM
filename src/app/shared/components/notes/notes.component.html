@@ -4,6 +4,7 @@
       <mat-icon>chevron_right</mat-icon>
       <mat-checkbox color="primary" [(ngModel)]="item.IsChecked" *ngIf="item.HasCheckbox" style="padding-right: 5px;"></mat-checkbox>
       <span *ngIf="item.ShowTimestamp" style="padding-right: 5px;">{{item.Date | localDateTime}} - {{item.Author}}: </span> 
+      <span *ngIf="enumerateItems" style="padding-right: 5px;">{{index+1}}. </span>
       {{item.Note}}
       <button mat-icon-button *ngIf="canToggleCheckbox || canToggleTimestamp" style="width: 20px; height: 20px; line-height: 20px;" [matMenuTriggerFor]="moreMenu" [matMenuTriggerData]="{item: item}" matTooltip="{{'general.More' | translate}}" matTooltipShowDelay="1000">
         <mat-icon>more_vert</mat-icon>

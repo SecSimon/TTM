@@ -1,0 +1,31 @@
+<div style="margin: 10px;">
+  <div class="row">
+    <div class="column1">
+      <mat-list cdkDropList (cdkDropListDropped)="drop($event)" class="prop-list reorder-list" [class.prop-list-light]="!theme.IsDarkMode" [class.prop-list-dark]="theme.IsDarkMode">
+        <div mat-subheader>{{'general.TestCases' | translate}} <button mat-icon-button (click)="AddTestCase()" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000" style="margin-left: 15px;"><mat-icon>add</mat-icon></button>
+        </div>
+        <mat-list-item *ngFor="let tc of testing.TestCases" (click)="selectedTestCase = tc" cdkDrag
+        [class.highlight-light]="selectedTestCase === tc && !theme.IsDarkMode" [class.highlight-dark]="selectedTestCase === tc && theme.IsDarkMode">
+          <mat-icon mat-list-icon>chevron_right</mat-icon>
+          <div mat-line>{{tc.GetLongName()}}</div>
+          <div mat-line>{{'properties.Status' | translate}}: {{GetStatus(tc.Status) | translate}}</div>
+          <button mat-icon-button style="margin-left: auto;" (click)="DeleteTestCase(tc)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000"><mat-icon>delete</mat-icon></button>
+        </mat-list-item>
+      </mat-list>
+    </div>
+    <div class="column2">
+      <ng-container *ngIf="selectedTestCase">
+        <div style="margin-left: 10px;">
+          <app-test-case [testCase]="selectedTestCase"></app-test-case>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+  <mat-divider></mat-divider>
+  <div>
+    <mat-form-field appearance="fill" style="width: 100%; margin-top: 10px;">
+      <mat-label>{{ 'general.Notes' | translate }}</mat-label>
+      <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="2" cdkAutosizeMaxRows="5" [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="testing.Description"></textarea>
+    </mat-form-field>
+  </div>
+</div>

@@ -1,4 +1,5 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Router, ActivatedRoute, Params } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { AssetGroup, LowMediumHighNumber, LowMediumHighNumberUtil, MyData } from '../../model/assets';
 import { ViewElementBase } from '../../model/database';
@@ -48,9 +49,6 @@ export class DeviceAssetsComponent implements OnInit {
   @Output()
   public selectionChanged = new EventEmitter<AssetGroup|MyData>();
 
-  @Output()
-  public openDiagram = new EventEmitter<{diagram: Diagram, element: ViewElementBase}>();
-
   public get assetGroupBase(): AssetGroup { 
     if (this.assetGroup.SubGroups.length == 0) return null;
     return this.assetGroup.SubGroups[0]; 
@@ -63,7 +61,8 @@ export class DeviceAssetsComponent implements OnInit {
   public readonly bgColorDark = '#424242';
   public readonly bgColorLight = '#e7e5e5';
 
-  constructor(public theme: ThemeService, public dataService: DataService, private locStorage: LocalStorageService, private dialog: DialogService, public elRef: ElementRef, private translate: TranslateService) { }
+  constructor(public theme: ThemeService, public dataService: DataService, private locStorage: LocalStorageService, private dialog: DialogService, public elRef: ElementRef, 
+    private translate: TranslateService, private router: Router, private activatedRoute: ActivatedRoute) { }
 
   ngOnInit(): void {
   }
@@ -173,11 +172,13 @@ export class DeviceAssetsComponent implements OnInit {
   }
 
   public OpenDiagram(dia) {
-    this.openDiagram.emit({diagram: dia, element: null});
+    const queryParams: Params = { viewID: dia.ID };
+    this.router.navigate([], { relativeTo: this.activatedRoute, queryParams: queryParams, replaceUrl: true });
   }
 
   public OpenElement(dia, ref) {
-    this.openDiagram.emit({diagram: dia, element: ref});
+    const queryParams: Params = { viewID: dia.ID, elementID: ref.ID };
+    this.router.navigate([], { relativeTo: this.activatedRoute, queryParams: queryParams, replaceUrl: true });
   }
 
   public GetSelectedTabIndex() {

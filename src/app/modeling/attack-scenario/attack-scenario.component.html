@@ -263,7 +263,7 @@
   <div class="row" style="margin-bottom: 10px;">
     <div class="column1">
       <mat-list class="prop-list reorder-list" [class.prop-list-light]="!theme.IsDarkMode" [class.prop-list-dark]="theme.IsDarkMode">
-        <div mat-subheader>{{ 'pages.modeling.attackscenario.linkedScenarios' | translate }} 
+        <div mat-subheader>{{ 'properties.LinkedScenarios' | translate }} 
           <button mat-icon-button style="margin-left: 15px;" [matMenuTriggerFor]="addLinkedMenu" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000"><mat-icon>add</mat-icon></button>
           <mat-menu #addLinkedMenu="matMenu">
             <button mat-menu-item *ngFor="let group of GetAttackScenarioGroups()" [matMenuTriggerFor]="linkedScenarioList" [matMenuTriggerData]="{ item: group.scenarios }">{{group.name}}</button>

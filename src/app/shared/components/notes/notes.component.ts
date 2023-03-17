@@ -33,6 +33,7 @@ export class NotesComponent implements OnInit {
   @Input() public hasCheckbox: boolean = false;
   @Input() public canToggleCheckbox: boolean = false;
   @Input() public canToggleTimestamp: boolean = false;
+  @Input() public enumerateItems: boolean = false;
 
   public isEdtingArray: boolean[][] = [[], []];
 

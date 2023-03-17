@@ -2,6 +2,7 @@ import { ConfigFile } from "./config-file";
 import { DatabaseBase, DataReferenceTypes, ICustomNumber, IDataReferences, INote, ViewElementBase } from "./database";
 import { MyTag } from "./my-tags";
 import { ProjectFile } from "./project-file";
+import { TestCase } from "./test-case";
 import { LifeCycle, MappingStates, AttackScenario, AttackVector, ThreatRule } from "./threat-model";
 
 export interface IMitigationTip {
@@ -367,11 +368,21 @@ export class Countermeasure extends DatabaseBase implements ICustomNumber {
 
   public FindReferences(pf: ProjectFile, cf: ConfigFile): IDataReferences[] {
     let refs: IDataReferences[] = [];
+
+    pf?.GetTestCases().filter(x => x.LinkedMeasures.includes(this)).forEach(x => refs.push({ Type: DataReferenceTypes.RemoveCountermeasureFromTestCase, Param: x }));
     return refs;
   }
 
   public OnDelete(pf: ProjectFile, cf: ConfigFile) {
     this.MappingState = MappingStates.Removed;
+
+    const refs = this.FindReferences(pf, cf);
+
+    refs.forEach(ref => {
+      if (ref.Type == DataReferenceTypes.RemoveCountermeasureFromTestCase) {
+        (ref.Param as TestCase).RemoveLinkedCountermeasure(this.ID);
+      }
+    });
   }
 
   public static FromJSON(data, pf: ProjectFile, cf: ConfigFile): Countermeasure {

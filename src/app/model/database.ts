@@ -6,6 +6,7 @@ import { DataService } from '../util/data.service';
 import { ConfigFile } from './config-file';
 import { Countermeasure } from './mitigations';
 import { ProjectFile } from './project-file';
+import { TestCase } from './test-case';
 import { AttackScenario, RuleGenerationTypes } from './threat-model';
 
 export interface IKeyValue {
@@ -87,6 +88,7 @@ export enum DataReferenceTypes {
   RemoveInterfaceReference,
   DeleteAttackScenario,
   RemoveElementFromAttackScenario,
+  RemoveElementFromTestCase,
 
   // Context References
   DeleteContextFlow,
@@ -131,6 +133,8 @@ export enum DataReferenceTypes {
   RemoveElementFromCountermeasure,
   RemoveAttackScenarioFromCountermeasure,
   RemoveAttackScenarioFromAttackScenario,
+  RemoveAttackScenarioFromTestCase,
+  RemoveCountermeasureFromTestCase,
   RemoveMitigationProcessFromCountermeasure,
 
   // Checklist
@@ -138,6 +142,8 @@ export enum DataReferenceTypes {
   RemoveRequirementTypeFromChecklistType,
   RemoveRequirementTypeFromChecklist,
   DeleteChecklist,
+
+  DeleteTestCase,
 
   RemoveMyTagFromAttackScenario
 }
@@ -314,6 +320,7 @@ export abstract class ViewElementBase extends DatabaseBase {
       }
     });
     pf?.GetCountermeasures().filter(x => x.Targets.includes(this)).forEach(x => refs.push({ Type: DataReferenceTypes.RemoveElementFromCountermeasure, Param: x }));
+    pf?.GetTestCases().filter(x => x.LinkedElements.includes(this)).forEach(x => refs.push({ Type: DataReferenceTypes.RemoveElementFromTestCase, Param: x }));
     return refs;
   }
 
@@ -323,6 +330,7 @@ export abstract class ViewElementBase extends DatabaseBase {
       if (x.Type == DataReferenceTypes.DeleteAttackScenario) pf.DeleteAttackScenario(x.Param as AttackScenario);
       else if (x.Type == DataReferenceTypes.RemoveElementFromAttackScenario) (x.Param as AttackScenario).Targets = (x.Param as AttackScenario).Targets.filter(y => y != this);
       else if (x.Type == DataReferenceTypes.RemoveElementFromCountermeasure) (x.Param as Countermeasure).RemoveTarget(this.ID);
+      else if (x.Type == DataReferenceTypes.RemoveCountermeasureFromTestCase) (x.Param as TestCase).RemoveLinkedElement(this.ID);
     });
   }
 }

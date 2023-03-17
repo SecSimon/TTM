@@ -1,0 +1,31 @@
+@import 'stylesTheme.scss';
+
+.selected-test-case {
+  td {
+    @extend .primary-color;
+  }
+}
+
+th, td {
+  font-size: small;
+}
+
+.tools {
+  display: block;
+  float: left;
+  height: 27px;
+  width: calc(100% - 20px);
+  font-size: 12px;
+}
+
+.toolBtn {
+  width: 30px;
+  min-width: 30px;
+  padding: 0px;
+  line-height: 25px;
+  margin-left: 5px;
+}
+
+.toolBtn-Selected {
+  background-color: rgba($color: #fff, $alpha: 0.15);
+}

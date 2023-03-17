@@ -73,7 +73,7 @@
     <button mat-button class="toolBtn" [disabled]="IsContextDiagram || !selectedElement" (click)="ShowSuggestedThreats()" matTooltip="{{'pages.modeling.diagram.suggestedThreats' | translate}}" matTooltipShowDelay="1000">
       <mat-icon>flash_auto</mat-icon>
     </button>
-    <button mat-button class="toolBtn" [disabled]="!selectedElement" (click)="Dia.AddThreat()" matTooltip="{{'pages.modeling.diagram.addThreat' | translate}}" matTooltipShowDelay="1000">
+    <button mat-button class="toolBtn" [disabled]="!selectedElement" (click)="Dia.AddThreat()" matTooltip="{{'pages.modeling.diagram.addAttackScenario' | translate}}" matTooltipShowDelay="1000">
       <mat-icon>flash_on</mat-icon>
     </button>
     <button mat-button class="toolBtn" [disabled]="!selectedElement" (click)="ShowCVESearch()" matTooltip="{{'pages.modeling.diagram.CveSearch' | translate}}" matTooltipShowDelay="1000">
@@ -86,6 +86,9 @@
         <rect [attr.fill]="Dia.IsObjectSelected ? (theme.IsDarkMode ? '#FFF' : '#000') : (theme.IsDarkMode ? '#676767' : '#B6B6B6')" x="1" y="1" width="23" height="23" rx="3" ry="3"/>
         <text [attr.fill]="theme.IsDarkMode ? '#000' : '#FFF'" x="2" y="16" class="heavy">CVE</text>
       </svg>
+    </button>
+    <button mat-button class="toolBtn" *ngIf="dataService.Project.HasTesting" [disabled]="!selectedElement" (click)="Dia.AddTestCase()" matTooltip="{{'pages.modeling.diagram.addTestCase' | translate}}" matTooltipShowDelay="1000">
+      <mat-icon>checklist</mat-icon>
     </button>
     <button mat-button class="toolBtn" [disabled]="!selectedElement" (click)="Dia.AddCountermeasure()" matTooltip="{{'pages.modeling.diagram.addCountermeasure' | translate}}" matTooltipShowDelay="1000">
       <mat-icon>security</mat-icon>
@@ -171,7 +174,7 @@
         </button>
         <button mat-menu-item (click)="Dia.AddThreat()">
           <mat-icon>flash_on</mat-icon>
-          <span>{{'pages.modeling.diagram.addThreat' | translate}}</span>
+          <span>{{'pages.modeling.diagram.addAttackScenario' | translate}}</span>
         </button>
         <button mat-menu-item (click)="Dia.AddCountermeasure()">
           <mat-icon>security</mat-icon>

@@ -1,3 +1,8 @@
+## 0.4.5
+
+* Added test cases (optional, activation in project information)
+* Fix: Context menu in attack scenario table
+
 ## 0.4.4
 
 * ReFix: Adding SW/P stack multiple times

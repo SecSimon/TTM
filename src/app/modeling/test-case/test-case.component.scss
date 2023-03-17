@@ -1,0 +1,27 @@
+@import 'stylesTheme.scss';
+@import 'stylesPropList.scss';
+
+.imgContainer {
+  position: relative;
+  float: left;
+  margin-right: 10px;
+}
+
+.imgContainer img {
+  max-height: 100px;
+  height: auto;
+}
+
+.imgContainer .removeBtn {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  button {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.fileInput {
+  display: none;
+}

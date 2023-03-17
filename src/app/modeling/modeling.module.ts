@@ -24,14 +24,17 @@ import { ChecklistComponent } from './checklist/checklist.component';
 import { CountermeasureTableComponent } from './countermeasure-table/countermeasure-table.component';
 import { CountermeasureComponent } from './countermeasure/countermeasure.component';
 import { MitigationProcessComponent } from './mitigation-process/mitigation-process.component';
-import { SuggestedThreatsDialogComponent } from './diagram/suggested-threats-dialog/suggested-threats-dialog.component';;
+import { SuggestedThreatsDialogComponent } from './diagram/suggested-threats-dialog/suggested-threats-dialog.component';
+import { TestingComponent } from './testing/testing.component';
+import { TestCaseComponent } from './test-case/test-case.component';
+import { TestCaseTableComponent } from './test-case-table/test-case-table.component';;
 
 
 @NgModule({
   declarations: [ModelingComponent, DiagramComponent, StencilPaletteComponent, StackComponent, PropertiesComponent, QuestionDialogComponent, 
     ThreatTableComponent, AttackScenarioComponent, IssueTableComponent, DeviceAssetsComponent, CharScopeComponent, ObjImpactComponent, 
     ThreatSourcesComponent, ThreatIdentificationComponent, SystemThreatComponent, ContainerTreeComponent, ChecklistComponent, CountermeasureTableComponent, 
-    CountermeasureComponent, MitigationProcessComponent, SuggestedThreatsDialogComponent],
+    CountermeasureComponent, MitigationProcessComponent, SuggestedThreatsDialogComponent, TestingComponent, TestCaseComponent, TestCaseTableComponent],
   imports: [
     CommonModule,
     SharedModule,

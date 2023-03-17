@@ -217,7 +217,7 @@ export class ThreatTableComponent implements OnInit {
 
   public GetPossibleCountermeasures(entry: AttackScenario) {
     return this.dataService.Project.GetCountermeasuresApplicable().filter(x => !x.AttackScenarios.includes(entry)).sort((a,b) => {
-      return a.GetDiagram().Name.localeCompare(b.GetDiagram().Name);
+      return a.GetDiagram()?.Name.localeCompare(b.GetDiagram()?.Name);
     });
   }
 

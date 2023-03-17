@@ -21,6 +21,7 @@ import { Checklist } from '../model/checklist';
 import { NavTreeBase } from '../shared/components/nav-tree/nav-tree-base';
 import { TranslateService } from '@ngx-translate/core';
 import { ProjectFile } from '../model/project-file';
+import { Testing } from '../model/test-case';
 
 export enum NodeTypes {
   CharScope = 'char-scope',
@@ -92,6 +93,7 @@ export class ModelingComponent extends SideNavBase implements OnInit {
 
   public currentThreatCount: number = 0;
   public currentCountermeasureCount: number = 0;
+  public currentTestCaseCount: number = 0;
   public currentIssueCount: number = 0;
 
   @ViewChild('elementview') elementView: ContainerTreeComponent;
@@ -105,19 +107,38 @@ export class ModelingComponent extends SideNavBase implements OnInit {
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         this.route.queryParams.subscribe(params => {
-          let openTab = (tab: string) => {
-            let node = NavTreeBase.FlattenNodes(this.nodes).find(x => x.dataType == tab);
+          const openTabByDataType = (tab: string) => {
+            const node = NavTreeBase.FlattenNodes(this.nodes).find(x => x.dataType == tab);
+            if (node) this.newTab(node);
+            this.router.navigate([], { replaceUrl: true, relativeTo: this.route });
+          };
+          const openTabByViewID = (viewID: string) => {
+            const node = NavTreeBase.FlattenNodes(this.nodes).find(x => x.data?.ID == viewID);
             if (node) this.newTab(node);
             this.router.navigate([], { replaceUrl: true, relativeTo: this.route });
           };
 
           if (params['tab'] != null) {
-            if (this.nodes) openTab(params['tab']);
+            if (this.nodes) openTabByDataType(params['tab']);
             else {
               setTimeout(() => {
-                if (this.nodes) openTab(params['tab']);
+                if (this.nodes) openTabByDataType(params['tab']);
               }, 500);
             }
+          }
+          if (params['viewID'] != null) {
+            if (this.nodes) openTabByViewID(params['viewID']);
+            else {
+              setTimeout(() => {
+                if (this.nodes) openTabByViewID(params['viewID']);
+              }, 500);
+            }
+          }
+          if (params['elementID'] != null) {
+            let element: ViewElementBase = this.dataService.Project.GetDFDElement(params['elementID']);
+            if (!element) element = this.dataService.Project.GetComponent(params['elementID']);
+            if (!element) element = this.dataService.Project.GetContextElement(params['elementID']);
+            if (element) setTimeout(() => { this.selectedObject = element; }, 100);
           }
         });
       }
@@ -230,6 +251,10 @@ export class ModelingComponent extends SideNavBase implements OnInit {
     return node?.data instanceof ProjectFile;
   }
 
+  public IsTesting(node: INavigationNode) {
+    return node?.data instanceof Testing;
+  }
+
   public GetContainer(node: INavigationNode) {
     if (node) {
       if (this.isContainer(node.data)) return node.data;
@@ -274,11 +299,12 @@ export class ModelingComponent extends SideNavBase implements OnInit {
   }
 
   public createNodes() {
+    const selectedObject = this.selectedNode?.data;
     const prevNodes = this.nodes;
     this.nodes = [];
-    let pf = this.dataService.Project;
+    const pf = this.dataService.Project;
 
-    let createChecklist = (list: Checklist): INavigationNode => {
+    const createChecklist = (list: Checklist): INavigationNode => {
       let ch: INavigationNode = {
         name: () => list.Name,
         icon: 'fact_check',
@@ -305,7 +331,7 @@ export class ModelingComponent extends SideNavBase implements OnInit {
       return ch;
     };
 
-    let createDevice = (dev: Device, parentGroupNode: INavigationNode): INavigationNode => {
+    const createDevice = (dev: Device, parentGroupNode: INavigationNode): INavigationNode => {
       let node: INavigationNode = {
         name: () => { return dev.Name },
         canSelect: false,
@@ -488,7 +514,7 @@ export class ModelingComponent extends SideNavBase implements OnInit {
       return node;
     };
 
-    let createMobileApp = (app: MobileApp, parentGroupNode: INavigationNode): INavigationNode => {
+    const createMobileApp = (app: MobileApp, parentGroupNode: INavigationNode): INavigationNode => {
       let node: INavigationNode = {
         name: () => { return app.Name },
         canSelect: false,
@@ -658,7 +684,7 @@ export class ModelingComponent extends SideNavBase implements OnInit {
       return node;
     };
 
-    let createUseCase = (uc: Diagram, parentGroupNode: INavigationNode): INavigationNode => {
+    const createUseCase = (uc: Diagram, parentGroupNode: INavigationNode): INavigationNode => {
       let node: INavigationNode = {
         name: () => { return uc.Name },
         icon: 'account_tree',
@@ -707,7 +733,7 @@ export class ModelingComponent extends SideNavBase implements OnInit {
       return node;
     };
 
-    let modelInfo: INavigationNode = {
+    const modelInfo: INavigationNode = {
       name: () => { return this.translate.instant('dialog.modelinfo.title') },
       icon: 'source',
       iconAlignLeft: false,
@@ -715,7 +741,7 @@ export class ModelingComponent extends SideNavBase implements OnInit {
       data: this.dataService.Project,
     };
 
-    let analysis: INavigationNode = {
+    const analysis: INavigationNode = {
       name: () => this.translate.instant('pages.modeling.analysis'),
       icon: 'create',
       iconAlignLeft: false,
@@ -792,7 +818,7 @@ export class ModelingComponent extends SideNavBase implements OnInit {
         }
       ]
     };
-    let assetIndex = analysis.children.findIndex(x => x.dataType == NodeTypes.Assets);
+    const assetIndex = analysis.children.findIndex(x => x.dataType == NodeTypes.Assets);
     if (analysis.children[assetIndex].data == null) {
       analysis.children.splice(assetIndex, 1);
       analysis.canAdd = true;
@@ -805,7 +831,7 @@ export class ModelingComponent extends SideNavBase implements OnInit {
       }
     }
 
-    let devices: INavigationNode = {
+    const devices: INavigationNode = {
       name: () => this.translate.instant('pages.modeling.devices'),
       icon: Device.Icon,
       iconAlignLeft: false,
@@ -818,7 +844,7 @@ export class ModelingComponent extends SideNavBase implements OnInit {
       children: []
     };
 
-    let apps: INavigationNode = {
+    const apps: INavigationNode = {
       name: () => this.translate.instant('pages.modeling.apps'),
       icon: MobileApp.Icon,
       iconAlignLeft: false,
@@ -832,7 +858,7 @@ export class ModelingComponent extends SideNavBase implements OnInit {
       children: []
     };
 
-    let useCases: INavigationNode = {
+    const useCases: INavigationNode = {
       name: () => this.translate.instant('pages.modeling.useCases'),
       icon: 'account_tree',
       iconAlignLeft: false,
@@ -848,6 +874,14 @@ export class ModelingComponent extends SideNavBase implements OnInit {
       children: [],
     };
 
+    const testCases: INavigationNode = {
+      name: () => { return this.translate.instant('general.TestCases') },
+      icon: 'checklist',
+      iconAlignLeft: false,
+      canSelect: true,
+      data: this.dataService.Project.GetTesting(),
+    };
+
     pf.GetDevices().forEach(x => devices.children.push(createDevice(x, devices)));
     pf.GetMobileApps().forEach(x => apps.children.push(createMobileApp(x, apps)));
     pf.GetDFDiagrams().forEach(x => useCases.children.push(createUseCase(x, useCases)));
@@ -857,7 +891,8 @@ export class ModelingComponent extends SideNavBase implements OnInit {
     this.nodes.push(devices);
     this.nodes.push(apps);
     this.nodes.push(useCases);
+    if (testCases.data) this.nodes.push(testCases);
     NavTreeBase.TransferExpandedState(prevNodes, this.nodes);
-    if (this.navTree) this.navTree.SetNavTreeData(this.nodes);
+    if (this.navTree) { this.navTree.SetNavTreeData(this.nodes, selectedObject); }
   }
 }

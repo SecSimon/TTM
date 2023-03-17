@@ -1,0 +1,94 @@
+<div *ngIf="testCase">
+  <mat-form-field appearance="fill" class="property-form-field">
+    <mat-label>{{'general.Name' | translate}}</mat-label>
+    <input matInput type="text" [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="testCase.Name" matTooltip="{{testCase.Name}}" matTooltipShowDelay="1000">
+    <button *ngIf="testCase.Name" matSuffix mat-icon-button (click)="testCase.Name=''" matTooltip="{{'general.Clear' | translate}}" matTooltipShowDelay="1000">
+      <mat-icon>close</mat-icon>
+    </button>
+  </mat-form-field>
+  <mat-form-field appearance="fill" style="margin-left: 10px; width: 200px;">
+    <mat-label>{{'properties.Status' | translate}}</mat-label>
+    <mat-select [(value)]="testCase.Status" matTooltip="{{GetTestCaseStateName(testCase.Status) | translate}}" matTooltipShowDelay="1000">
+      <mat-option *ngFor="let state of GetTestCaseStates()" [value]="state">{{GetTestCaseStateName(state) | translate}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <button mat-icon-button [disabled]="!canAddAttackScenario" style="vertical-align: super;" matTooltip="{{'pages.modeling.diagram.addAttackScenario' | translate}}" (click)="AddAttackScenario()" matTooltipShowDelay="1000"><mat-icon>flash_on</mat-icon></button>
+  <mat-form-field appearance="fill" style="width: 70px; float: right; margin-left: 10px;">
+    <mat-label>{{ 'general.Number' | translate }}</mat-label>
+    <input matInput type="number" min="0" [(ngModel)]="testCase.Number" required matTooltip="{{testCase.Number}}" matTooltipShowDelay="1000"/>
+    <mat-hint *ngIf="NumberAlreadyExists()" style="color: red;" class="alert alert-danger">
+      {{'messages.error.numberAlreadyExists' | translate}}
+    </mat-hint>
+  </mat-form-field>
+  <mat-form-field appearance="fill" style="width: 100%;">
+    <mat-label>{{ 'properties.Description' | translate }}</mat-label>
+    <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="2" cdkAutosizeMaxRows="5" [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="testCase.Description"></textarea>
+  </mat-form-field>
+  <div>
+    <mat-form-field appearance="fill" class="property-form-field">
+      <mat-label>{{'pages.modeling.testcase.verison' | translate}}</mat-label>
+      <input matInput type="text" [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="testCase.Version" matTooltip="{{testCase.Version}}" matTooltipShowDelay="1000">
+    </mat-form-field>
+    <br/>
+    {{'properties.PreConditions' | translate}}:
+    <app-notes [showTimestamp]="false" [hasCheckbox]="false" [strings]="testCase.PreConditions"></app-notes>
+    {{'properties.Steps' | translate}}:
+    <app-notes [showTimestamp]="false" [hasCheckbox]="false" [enumerateItems]="true" [strings]="testCase.Steps"></app-notes>
+    {{'properties.TestData' | translate}}:
+    <app-notes [showTimestamp]="false" [hasCheckbox]="false" [strings]="testCase.TestData"></app-notes>
+    {{'properties.Summary' | translate}}:
+    <app-notes [showTimestamp]="true" [hasCheckbox]="false" [notes]="testCase.Summary"></app-notes>
+    {{'general.Images' | translate}}:
+    <button mat-icon-button matTooltip="{{'general.Add' | translate}}" (click)="fileUpload.click()" matTooltipShowDelay="1000"><mat-icon>add_photo_alternate</mat-icon></button>
+    <input #fileUpload type="file" class="fileInput" accept="image/*" (change)="OnFileSelected($event)">
+    <div style="overflow: auto;">
+      <div *ngFor="let img of testCase.Images" class="imgContainer">
+        <img #projImg [src]="img" (click)="ViewImage(img)">
+        <div class="removeBtn">
+          <button mat-icon-button color="primary" (click)="DeleteImage(img)">
+            <mat-icon>remove</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="column1">
+        <mat-list class="prop-list" [class.prop-list-light]="!theme.IsDarkMode" [class.prop-list-dark]="theme.IsDarkMode">
+          <mat-list-item *ngFor="let links of linkLists" (click)="selectedLinks = links"
+          [class.highlight-light]="selectedLinks === links && !theme.IsDarkMode" [class.highlight-dark]="selectedLinks === links && theme.IsDarkMode">
+            <mat-icon mat-list-icon>chevron_right</mat-icon>
+            <div mat-line>{{links.Key | translate}} <ng-container *ngIf="links.Value.length>0">({{links.Value.length}})</ng-container></div>
+            <button mat-icon-button style="margin-left: auto;" [matMenuTriggerFor]="addMenu" [matMenuTriggerData]="{groups: GetMenuGroups(links)}" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000"><mat-icon>add</mat-icon></button>
+          </mat-list-item>
+        </mat-list>
+        <mat-menu #addMenu="matMenu">
+          <ng-template matMenuContent let-groups="groups">
+            <button mat-menu-item *ngFor="let group of groups" [matMenuTriggerFor]="itemMenu" [matMenuTriggerData]="{items: group.Value}">
+              <span>{{group.Key.Name}}</span>
+            </button>
+          </ng-template> 
+        </mat-menu>
+        <mat-menu #itemMenu="matMenu">
+          <ng-template matMenuContent let-items="items">
+            <button mat-menu-item *ngFor="let item of items" (click)="AddLink(item)">
+              <span>{{item.Name}}</span>
+            </button>
+          </ng-template> 
+        </mat-menu>
+      </div>
+      <div class="column2">
+        <ng-container *ngIf="selectedLinks">
+          <div style="margin-left: 10px;">
+            <ul>
+              <li *ngFor="let item of selectedLinks.Value">
+                <button class="buttonAsText primary-color" style="font-size: small !important;" (click)="OnItemClick(item)" matTooltipShowDelay="1000">
+                  {{item.Name}} in {{GetItemView(item).Name}}
+                </button>
+              </li>
+            </ul>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</div>

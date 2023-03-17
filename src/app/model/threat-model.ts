@@ -10,6 +10,7 @@ import { Control, Countermeasure, MitigationStates } from "./mitigations";
 import { ProjectFile } from "./project-file";
 import { ITagable, MyTag } from "./my-tags";
 import { ICVEEntry } from "../shared/components/cve-entry/cve-entry.component";
+import { TestCase } from "./test-case";
 
 
 export enum ImpactCategories {
@@ -1426,13 +1427,14 @@ export class AttackScenario extends DatabaseBase implements ITagable, ICustomNum
 
     pf?.GetCountermeasures().filter(x => x.AttackScenarios.includes(this)).forEach(x => res.push({ Type: DataReferenceTypes.RemoveAttackScenarioFromCountermeasure, Param: x }));
     pf?.GetAttackScenarios().filter(x => x.LinkedScenarios.includes(this)).forEach(x => res.push({ Type: DataReferenceTypes.RemoveAttackScenarioFromAttackScenario, Param: x }));
+    pf?.GetTestCases().filter(x => x.LinkedScenarios.includes(this)).forEach(x => res.push({ Type: DataReferenceTypes.RemoveAttackScenarioFromTestCase, Param: x }));
     return res;
   }
 
   public OnDelete(pf: ProjectFile, cf: ConfigFile) {
     this.MappingState = MappingStates.Removed;
 
-    let refs = this.FindReferences(pf, cf);
+    const refs = this.FindReferences(pf, cf);
 
     refs.forEach(ref => {
       if (ref.Type == DataReferenceTypes.RemoveAttackScenarioFromCountermeasure) {
@@ -1440,6 +1442,9 @@ export class AttackScenario extends DatabaseBase implements ITagable, ICustomNum
       }
       else if (ref.Type == DataReferenceTypes.RemoveAttackScenarioFromAttackScenario) {
         (ref.Param as AttackScenario).RemoveLinkedAttackScenario(this.ID);
+      }
+      else if (ref.Type == DataReferenceTypes.RemoveAttackScenarioFromTestCase) {
+        (ref.Param as TestCase).RemoveLinkedAttackScenario(this.ID);
       }
     });
   }

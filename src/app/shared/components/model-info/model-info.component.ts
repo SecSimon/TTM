@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { IUserInfo, ProjectFile } from '../../../model/project-file';
 import { DataService, IGHCommitInfo, IGHFile } from '../../../util/data.service';
 import { StringExtension } from '../../../util/string-extension';
 import { ThemeService } from '../../../util/theme.service';
 
 import imageCompression from 'browser-image-compression';
+import { DialogService } from '../../../util/dialog.service';
 
 @Component({
   selector: 'app-model-info',
@@ -22,7 +23,9 @@ export class ModelInfoComponent implements OnInit {
 
   public commits: IGHCommitInfo[];
 
-  constructor(public dataService: DataService, public theme: ThemeService) { }
+  @Output() public refreshNodes = new EventEmitter();
+
+  constructor(public dataService: DataService, public theme: ThemeService, private dialog: DialogService) { }
 
   ngOnInit(): void {
     this.GHProject = this.dataService.SelectedGHProject;
@@ -54,6 +57,10 @@ export class ModelInfoComponent implements OnInit {
     }
   }
 
+  public ViewImage(img) {
+    this.dialog.OpenViewImageDialog(img);
+  }
+
   public AddUser() {
     this.Project.Participants.push({ Name: StringExtension.FindUniqueName('Participant', this.Project.Participants.map(x => x.Name)), Email: '' });
     this.selectedUser = this.Project.Participants[this.Project.Participants.length-1];
@@ -64,6 +71,24 @@ export class ModelInfoComponent implements OnInit {
     if (index >= 0) {
       this.Project.Participants.splice(index, 1);
       if (this.selectedUser == user) this.selectedUser = null;
+    }
+  }
+
+  public OnTestingChanged(event) {
+    if (event.checked) {
+      this.Project.CreateTesting();
+      this.refreshNodes.emit();
+    }
+    else {
+      this.dialog.OpenDeleteObjectDialog(this.Project.GetTesting()).subscribe(res => {
+        if (res) {
+          this.Project.DeleteTesting();
+          this.refreshNodes.emit();
+        }
+        else {
+          event.source.checked = true;
+        }
+      })
     }
   }
 

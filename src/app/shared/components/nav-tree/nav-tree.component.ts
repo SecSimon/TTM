@@ -134,8 +134,9 @@ export class NavTreeComponent implements OnInit {
     }
   }
 
-  public SetNavTreeData(nodes: INavigationNode[]) {
+  public SetNavTreeData(nodes: INavigationNode[], activeObj = null) {
     this.activeNode = null;
+    if (activeObj) this.activeNode = nodes.find(x => x.data == activeObj);
     this.dataSource.data = nodes;
     let flat = NavTreeBase.FlattenNodes(nodes);
     flat.forEach(x => {

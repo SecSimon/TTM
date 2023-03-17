@@ -1,9 +1,10 @@
 import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
+import { Router, ActivatedRoute, Params } from '@angular/router';
 import { LowMediumHighNumber, LowMediumHighNumberUtil } from '../../model/assets';
 import { MyComponent } from '../../model/component';
 import { DatabaseBase, IProperty, ViewElementBase } from '../../model/database';
 import { DataFlowEntity, DFDElement, ElementTypeIDs, IElementTypeThreat, StencilType } from '../../model/dfd-model';
-import { Diagram, DiagramTypes } from '../../model/diagram';
+import { DiagramTypes } from '../../model/diagram';
 import { Device, DeviceInterfaceNameUtil, FlowArrowPositions, FlowArrowPositionUtil, FlowLineTypes, FlowLineTypeUtil, FlowTypes, FlowTypeUtil, SystemUseCase } from '../../model/system-context';
 import { DataService } from '../../util/data.service';
 import { DialogService } from '../../util/dialog.service';
@@ -43,10 +44,8 @@ export class PropertiesComponent implements OnInit {
   @Output() 
   public openQuestionnaire = new EventEmitter<MyComponent>();
 
-  @Output()
-  public openDiagram = new EventEmitter<{diagram: Diagram, element: ViewElementBase}>();
-
-  constructor(public theme: ThemeService, public dataService: DataService, private dialog: DialogService, private threatEngine: ThreatEngineService) { }
+  constructor(public theme: ThemeService, public dataService: DataService, private dialog: DialogService, private threatEngine: ThreatEngineService,
+    private router: Router, private activatedRoute: ActivatedRoute) { }
 
   ngOnInit(): void {
   }
@@ -132,9 +131,9 @@ export class PropertiesComponent implements OnInit {
   public OnDiagramReference(prop: IProperty) {
     let id = this.selectedObject.GetProperty(prop.ID);
     if (id) {
-      let ele = null;
-      if (this.selectedObject['Ref']) ele = this.selectedObject['Ref'];
-      this.openDiagram.emit({diagram: this.dataService.Project.GetDiagram(id), element: ele});
+      const queryParams: Params = { viewID: id };
+      if (this.selectedObject['Ref']) queryParams['elementID'] = this.selectedObject['Ref']['ID'];
+      this.router.navigate([], { relativeTo: this.activatedRoute, queryParams: queryParams, replaceUrl: true });
     }
   }
 
@@ -260,7 +259,8 @@ export class PropertiesComponent implements OnInit {
     dia.Name = (this.selectedObject as SystemUseCase).Name;
     (this.selectedObject as SystemUseCase).DataFlowDiagramID = dia.ID;
     setTimeout(() => {
-      this.openDiagram.emit({diagram: this.dataService.Project.GetDiagram(dia.ID), element: null });
+      const queryParams: Params = { viewID: dia.ID };
+      this.router.navigate([], { relativeTo: this.activatedRoute, queryParams: queryParams, replaceUrl: true });
     }, 500);
   }
 

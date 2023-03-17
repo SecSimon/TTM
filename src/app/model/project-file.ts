@@ -18,6 +18,7 @@ import { FileUpdateService } from "../util/file-update.service";
 import { ExportTemplate } from "./export-template";
 import { MyTag, MyTagChart as MyTagChart } from "./my-tags";
 import { TranslateService } from "@ngx-translate/core";
+import { TestCase, Testing } from "./test-case";
 
 export interface IProjectFile extends IDatabaseBase {
   charSope: {};
@@ -41,6 +42,8 @@ export interface IProjectFile extends IDatabaseBase {
   mitigationProcesses: {}[];
 
   checklists: {}[];
+  testCases: {}[];
+  testing: {};
 
   tags: {}[];
   tagCharts: {}[];
@@ -81,6 +84,9 @@ export class ProjectFile extends DatabaseBase {
   private mitigationProcesses: MitigationProcess[] = [];
 
   private checklists: Checklist[] = [];
+
+  private testing: Testing;
+  private testCases: TestCase[] = [];
 
   private myTags: MyTag[] = [];
   private myTagCharts: MyTagChart[] = [];
@@ -145,6 +151,10 @@ export class ProjectFile extends DatabaseBase {
 
   public GetChecklists(): Checklist[] { return this.checklists; }
 
+  public GetTestCases(): TestCase[] { return this.testCases; }
+  public GetTesting(): Testing { return this.testing; }
+  public get HasTesting(): boolean { return this.testing != null; }
+
   public GetMyTags(): MyTag[] { return this.myTags; }
   public GetMyTagCharts(): MyTagChart[] { return this.myTagCharts; }
   public GetExportTemplates(): ExportTemplate[] { return this.exportTemplates; }
@@ -159,6 +169,7 @@ export class ProjectFile extends DatabaseBase {
   public AttackScenariosChanged = new EventEmitter<IDataChanged>();
   public CountermeasuresChanged = new EventEmitter<IDataChanged>();
   public MitigationProcessesChanged = new EventEmitter<IDataChanged>();
+  public TestCasesChanged = new EventEmitter<IDataChanged>();
 
   constructor(data: {}, cf: ConfigFile) {
     super(data);
@@ -573,6 +584,42 @@ export class ProjectFile extends DatabaseBase {
     return index >= 0;
   }
 
+  public GetTestCase(ID: string) {
+    return this.testCases.find(x => x.ID == ID);
+  }
+
+  public CreateTestCase() {
+    const res = new TestCase({}, this, this.Config);
+    res.Name = StringExtension.FindUniqueName('Test Case', this.testCases.map(x => x.Name));
+    if (this.GetTestCases().length == 0) res.Number = '1';
+    else res.Number = (Math.max(...this.GetTestCases().map(x => Number(x.Number)))+1).toString();
+    this.testCases.push(res);
+    this.testing.AddTestCase(res);
+    this.TestCasesChanged.emit({ Type: DataChangedTypes.Added, ID: res.ID });
+    return res;
+  }
+
+  public DeleteTestCase(tc: TestCase) {
+    const index = this.testCases.indexOf(tc);
+    if (index >= 0) {
+      tc.OnDelete(this, this.config);
+      this.testCases.splice(index, 1);
+      this.TestCasesChanged.emit({ Type: DataChangedTypes.Removed, ID: tc.ID });
+    }
+    return index >= 0;
+  }
+
+  public CreateTesting() {
+    if (!this.testing) this.testing = new Testing({}, this, this.config);
+  }
+  
+  public DeleteTesting() {
+    if (this.testing) {
+      this.testing.OnDelete(this, this.config);
+      this.testing = null;
+    }
+  }
+
   public GetExportTemplate(ID: string) {
     return this.exportTemplates.find(x => x.ID == ID);
   }
@@ -681,6 +728,7 @@ export class ProjectFile extends DatabaseBase {
     checkList(this.GetMitigationProcesses(), 'MP');
     checkList(this.GetThreatActors(), 'TS');
     checkList(this.GetSystemThreats(), 'ST');
+    checkList(this.GetTestCases(), 'TC');
 
     return res;
   }
@@ -719,6 +767,8 @@ export class ProjectFile extends DatabaseBase {
       countermeasures: [],
       mitigationProcesses: [],
       checklists: [],
+      testCases: [],
+      testing: this.testing?.ToJSON(),
       tags: [],
       tagCharts: [],
       exportTemplates: [],
@@ -740,6 +790,7 @@ export class ProjectFile extends DatabaseBase {
     this.mitigationProcesses.forEach(x => res.mitigationProcesses.push(x.ToJSON()));
 
     this.checklists.forEach(x => res.checklists.push(x.ToJSON()));
+    this.testCases.forEach(x => res.testCases.push(x.ToJSON()));
     this.myTags.forEach(x => res.tags.push(x.ToJSON()));
     this.myTagCharts.forEach(x => res.tagCharts.push(x.ToJSON()));
     this.exportTemplates.forEach(x => res.exportTemplates.push(x.ToJSON()));
@@ -772,6 +823,8 @@ export class ProjectFile extends DatabaseBase {
     val.mitigationProcesses?.forEach(x => res.mitigationProcesses.push(MitigationProcess.FromJSON(x, res, cf)));
 
     val.checklists?.forEach(x => res.checklists.push(Checklist.FromJSON(x, res, cf)));
+    val.testCases?.forEach(x => res.testCases.push(TestCase.FromJSON(x, res, cf)));
+    if (val.testing) res.testing = Testing.FromJSON(val.testing, res, cf);
 
     val.tags?.forEach(x => res.myTags.push(MyTag.FromJSON(x, res, cf)));
     val.tagCharts?.forEach(x => res.myTagCharts.push(MyTagChart.FromJSON(x, res, cf)));

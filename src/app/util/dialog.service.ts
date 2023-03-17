@@ -27,6 +27,9 @@ import { OwaspRREntryComponent } from '../shared/components/owasp-rr-entry/owasp
 import { RenameDialogComponent, IRenameDialogData } from '../shared/components/rename-dialog/rename-dialog.component';
 import { TagChartsComponent } from '../dashboard/tag-charts/tag-charts.component';
 import { CveSearchComponent } from '../shared/components/cve-search/cve-search.component';
+import { TestCase } from '../model/test-case';
+import { TestCaseComponent } from '../modeling/test-case/test-case.component';
+import { ImageViewComponent } from '../shared/components/image-view/image-view.component';
 
 export class MyBoolean {
   public Value: boolean;
@@ -293,6 +296,22 @@ export class DialogService {
     return this.OpenTwoOptionsDialog(data);
   }
 
+  public OpenTestCaseDialog(tc: TestCase, isNew: boolean) {
+    const data: ITwoOptionDialogData = {
+      title: this.translate.instant('general.TestCase'),
+      resultTrueText: isNew ? this.translate.instant('general.Add') : this.translate.instant('general.Close'),
+      hasResultFalse: isNew,
+      resultFalseText: this.translate.instant('general.Cancel'),
+      resultTrueEnabled: () => { return true },
+      initalTrue: false,
+      component: TestCaseComponent,
+      componentInputData: [
+        { Key: TestCase, Value: tc }
+      ]
+    };
+    return this.OpenTwoOptionsDialog(data);
+  }
+
   public OpenAddControlDialog(mit: Control) {
     const data: ITwoOptionDialogData = {
       title: this.translate.instant('pages.config.control.dialogTitle'),
@@ -444,6 +463,24 @@ export class DialogService {
       resultTrueEnabled: () => true,
       initalTrue: true,
       component: TagChartsComponent
+    };
+    return this.OpenTwoOptionsDialog(data, true, '700px');
+  }
+
+  public OpenViewImageDialog(img: string) {
+    const myStr = new MyString();
+    myStr.Value = img;
+    const data: ITwoOptionDialogData = {
+      title: this.translate.instant('general.Image'),
+      resultTrueText: this.translate.instant('general.Close'),
+      hasResultFalse: false,
+      resultFalseText: '',
+      resultTrueEnabled: () => true,
+      initalTrue: true,
+      component: ImageViewComponent,
+      componentInputData: [
+        { Key: MyString, Value: myStr }
+      ]
     };
     return this.OpenTwoOptionsDialog(data, true, '700px');
   }

@@ -107,6 +107,19 @@ export class StackComponent implements OnInit {
     this.dialogService.OpenCveSearchDialog(this.selectedComponent, this.stack.ID);
   }
 
+  public AddTestCase(item: MyComponent) {
+    if (!item) item = this.selectedComponent;
+    if (item) {
+      const tc = this.dataService.Project.CreateTestCase();
+      tc.AddLinkedElement(item);
+      this.dialogService.OpenTestCaseDialog(tc, true).subscribe(result => {
+        if (!result) {
+          this.dataService.Project.DeleteTestCase(tc);
+        }
+      });
+    }
+  }
+
   public AddCountermeasure(item: MyComponent) {
     if (!item) item = this.selectedComponent;
     if (item) {
