@@ -1,5 +1,6 @@
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, ElementRef, Input, OnInit, Optional, ViewChild } from '@angular/core';
+import { MatMenuTrigger } from '@angular/material/menu';
 import { INote } from '../../../model/database';
 import { DataService } from '../../../util/data.service';
 import { NoteConfig } from '../../../util/dialog.service';
@@ -38,6 +39,8 @@ export class NotesComponent implements OnInit {
   public isEdtingArray: boolean[][] = [[], []];
 
   @ViewChild('newNote') newNote!: ElementRef;
+  public menuTopLeftPosition = { x: '0', y: '0' };
+  @ViewChild('ctxMenu') public matMenuTrigger: MatMenuTrigger;
 
   constructor(@Optional() cfg: NoteConfig, public theme: ThemeService, public dataService: DataService) {
     if (cfg) {
@@ -79,6 +82,16 @@ export class NotesComponent implements OnInit {
       this.addNote(event.target['value']);
       event.target['value'] = '';
     }
+  }
+
+  public OpenContextMenu(event, item: INote, index: number) {
+    event.preventDefault();
+
+    this.menuTopLeftPosition.x = event.clientX + 'px';
+    this.menuTopLeftPosition.y = event.clientY + 'px';
+
+    this.matMenuTrigger.menuData = { item: item, index: index };
+    this.matMenuTrigger.openMenu();
   }
 
   public drop(event: CdkDragDrop<string[]>) {

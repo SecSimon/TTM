@@ -113,7 +113,10 @@ export class DataService {
       octokit.repos.listReleases({ owner: 'SecSimon', repo: 'TTM' }).then(({data}) => {
         const newerVersion = data.find(x => this.isNewVersion(x.tag_name));
         if (newerVersion) {
-          this.messagesService.Info('messages.info.newVersion');
+          this.messagesService.Info(StringExtension.Format(this.translate.instant('messages.info.newVersion'), newerVersion.tag_name));
+          setTimeout(() => {
+            this.NewVersionAvailable = newerVersion.tag_name;
+          }, 1500);
         }
       });
     }, 12000);
@@ -284,6 +287,8 @@ export class DataService {
     this.hasSpellCheck = val;
     this.locStorage.Set(LocStorageKeys.SPELL_CHECK, String(val));
   }
+
+  public NewVersionAvailable: string = null;
 
   public ProjectChanged = new EventEmitter<ProjectFile>();
   public ProjectSaved = new EventEmitter<ProjectFile>();

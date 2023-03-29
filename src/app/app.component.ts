@@ -8,6 +8,7 @@ import { LocalStorageService, LocStorageKeys } from './util/local-storage.servic
 import { Observable } from 'rxjs';
 import { DataService } from './util/data.service';
 import { DatabaseBase, DataChangedTypes, IDataChanged } from './model/database';
+import { StringExtension } from './util/string-extension';
 
 interface IDiff {
   key: string;
@@ -33,11 +34,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   public isLoading: Observable<boolean>;
 
   constructor(
-    public dataService: DataService, private electronService: ElectronService, private translate: TranslateService,
-    private theme: ThemeService, private locStorage: LocalStorageService,
-    private overlay: OverlayContainer, private isLoadingService: IsLoadingService,
-    private kvDiffers: KeyValueDiffers
-  ) {
+    public dataService: DataService, public theme: ThemeService, private electronService: ElectronService, private translate: TranslateService,
+    private locStorage: LocalStorageService, private overlay: OverlayContainer, private isLoadingService: IsLoadingService, private kvDiffers: KeyValueDiffers) {
     this.translate.setDefaultLang('en');
 
     window.onbeforeunload = (event) => { return this.dataService.OnClose(event); };
@@ -74,10 +72,25 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.translate.use(lang);
     }
 
-    this.theme.Primary = getComputedStyle(this.primary.nativeElement).color;
-    this.theme.Accent = getComputedStyle(this.accent.nativeElement).color;
-    this.dataService.ProjectChanged.subscribe(() => this.createDiffers());
-    this.dataService.ProjectSaved.subscribe(() => this.createDiffers());
+    setTimeout(() => {
+      this.theme.Primary = getComputedStyle(this.primary.nativeElement).color;
+      this.theme.Accent = getComputedStyle(this.accent.nativeElement).color;
+      this.dataService.ProjectChanged.subscribe(() => this.createDiffers());
+      this.dataService.ProjectSaved.subscribe(() => this.createDiffers());
+    }, 10);
+  }
+
+  public GetVersionString() {
+    return StringExtension.Format(this.translate.instant('messages.info.versionAvailable'), this.dataService.NewVersionAvailable);
+  }
+
+  public OpenReleases() {
+    window.open('https://github.com/SecSimon/TTM/releases', '_blank');
+    this.CloseVersionInfo();
+  }
+
+  public CloseVersionInfo() {
+    this.dataService.NewVersionAvailable = null;
   }
 
   private diffs: IDiff[];

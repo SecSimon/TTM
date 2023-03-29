@@ -97,8 +97,13 @@ export class StencilPaletteComponent implements OnInit {
 
   private initalizeStencils() {
     if ([NodeTypes.Software, NodeTypes.Process].includes(this.NodeType)) return;
-    let initElements = (abbr: string, nodeType: NodeTypes, typeIDs: ElementTypeIDs[], dfdRefs?: ElementTypeIDs[], ctxRefs?: ContextElementTypes[]) => {
+    const initElements = (abbr: string, nodeType: NodeTypes, typeIDs: ElementTypeIDs[], dfdRefs?: ElementTypeIDs[], ctxRefs?: ContextElementTypes[]) => {
       this.stencilBuffer[abbr][nodeType] = [];
+      typeIDs.sort();
+      typeIDs.forEach(typeID => {
+        this.dataService.Config.GetStencilTypes().filter(x => x.IsDefault && x.ElementTypeID == typeID).forEach(x => this.stencilBuffer[abbr][nodeType].push({ stencilID: x.ID, name: x.Name }));
+      });
+
       if (dfdRefs) {
         dfdRefs.forEach(x => this.stencilBuffer[abbr][nodeType].push(...this.addDFDElementReferences(x)));
       }
@@ -108,9 +113,8 @@ export class StencilPaletteComponent implements OnInit {
           return { name: y.name, stencilID: defStencil.ID };
         })));
       }
-      typeIDs.sort();
       typeIDs.forEach(typeID => {
-        this.dataService.Config.GetStencilTypes().filter(x => x.ElementTypeID == typeID).forEach(x => this.stencilBuffer[abbr][nodeType].push({ stencilID: x.ID, name: x.Name }));
+        this.dataService.Config.GetStencilTypes().filter(x => !x.IsDefault && x.ElementTypeID == typeID).forEach(x => this.stencilBuffer[abbr][nodeType].push({ stencilID: x.ID, name: x.Name }));
       });
       typeIDs.forEach(typeID => {
         let templates = this.dataService.Config.GetStencilTypeTemplates().filter(x => ((nodeType == NodeTypes.Hardware && x.ListInHWDiagram) || (nodeType == NodeTypes.Dataflow && x.ListInUCDiagram)) && x.StencilTypes.length > 0 && x.ListInElementTypeIDs.includes(typeID));

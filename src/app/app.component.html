@@ -6,5 +6,16 @@
 </mat-progress-bar>
 <router-outlet></router-outlet>
 <tour-step-template></tour-step-template>
+<div *ngIf="!!dataService.NewVersionAvailable" class="update-info" [style.backgroundColor]="theme.Accent">
+  <div>
+    {{GetVersionString()}}
+    <button mat-icon-button (click)="OpenReleases()" matTooltip="{{'general.openInNew' | translate}}" matTooltipShowDelay="1000">
+      <mat-icon style="margin-right: 5px;">open_in_new</mat-icon>
+    </button>
+    <button mat-icon-button (click)="CloseVersionInfo()" matTooltip="{{'general.Close' | translate}}" matTooltipShowDelay="1000">
+      <mat-icon style="margin-right: 0px;">close</mat-icon>
+    </button>
+  </div>
+</div>
 <div #primary class="mat-button mat-primary" color="primary" style="display:none"></div>
 <div #accent class="mat-button mat-accent" color="accent" style="display:none"></div>

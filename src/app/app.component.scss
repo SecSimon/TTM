@@ -1,3 +1,13 @@
 :host {
   
 }
+
+.update-info {
+  position: absolute; 
+  right: 3px; 
+  bottom: 27px; 
+  z-index: 100;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: small;
+}

@@ -1,3 +1,10 @@
+## 0.4.6
+
+* Fix: Diagram instantiate reference
+* CVSS: Show and set vector, notes for each metric
+* Desktop: Notification about new version
+* Minor UI improvements (notes, stencil palette)
+
 ## 0.4.5
 
 * Added test cases (optional, activation in project information)

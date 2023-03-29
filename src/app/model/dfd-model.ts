@@ -352,7 +352,7 @@ export abstract class DFDElement extends ViewElementBase implements IElementType
       this.Data['IsPhyiscal'] = ElementTypeUtil.IsPhysical(type.ElementTypeID);
     }
 
-    if (!this.IsPhysical && this.GetProperty('Type').ElementTypeID != ElementTypeIDs.DataFlow) this.AddProperty('properties.PhysicalElement', 'PhysicalElement', 'properties.PhysicalElement.tt', true, PropertyEditTypes.PhysicalElementSelect, true);
+    if (!this.IsPhysical && type.ElementTypeID != ElementTypeIDs.DataFlow) this.AddProperty('properties.PhysicalElement', 'PhysicalElement', 'properties.PhysicalElement.tt', true, PropertyEditTypes.PhysicalElementSelect, true);
   }
 
   public FindReferences(pf: ProjectFile, cf: ConfigFile): IDataReferences[] {

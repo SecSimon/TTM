@@ -1,7 +1,19 @@
 <table *ngIf="entry != null">
   <tr>
-    <td>Attack Vector (AV) <mat-icon style="vertical-align: inherit;" matTooltip="{{'shared.cvss.av' | translate}}" matTooltipShowDelay="1000">info</mat-icon></td>
-    <td>Scope (S) <mat-icon style="vertical-align: inherit;" matTooltip="{{'shared.cvss.s' | translate}}" matTooltipShowDelay="1000">info</mat-icon></td>
+    <td>
+      Attack Vector (AV) 
+      <mat-icon style="vertical-align: inherit;" matTooltip="{{'shared.cvss.av' | translate}}" matTooltipShowDelay="1000">info</mat-icon>
+      <button mat-icon-button matTooltip="{{'general.Notes' | translate}}" (click)="OpenNotes('AV')">
+        <mat-icon [matBadge]="GetNotesCountOfMetric('AV')" matBadgeColor="warn" [matBadgeHidden]="GetNotesCountOfMetric('AV') < 1" matBadgePosition="below">edit_note</mat-icon>
+      </button>
+    </td>
+    <td>
+      Scope (S) 
+      <mat-icon style="vertical-align: inherit;" matTooltip="{{'shared.cvss.s' | translate}}" matTooltipShowDelay="1000">info</mat-icon>
+      <button mat-icon-button matTooltip="{{'general.Notes' | translate}}" (click)="OpenNotes('S')">
+        <mat-icon [matBadge]="GetNotesCountOfMetric('S')" matBadgeColor="warn" [matBadgeHidden]="GetNotesCountOfMetric('S') < 1" matBadgePosition="below">edit_note</mat-icon>
+      </button>
+    </td>
   </tr>
   <tr>
     <td>
@@ -22,8 +34,20 @@
     </td>
   </tr>
   <tr>
-    <td>Attack Complexity (AC) <mat-icon style="vertical-align: inherit;" matTooltip="{{'shared.cvss.ac' | translate}}" matTooltipShowDelay="1000">info</mat-icon></td>
-    <td>Confidentiality (C) <mat-icon style="vertical-align: inherit;" matTooltip="{{'shared.cvss.c' | translate}}" matTooltipShowDelay="1000">info</mat-icon></td>
+    <td>
+      Attack Complexity (AC) 
+      <mat-icon style="vertical-align: inherit;" matTooltip="{{'shared.cvss.ac' | translate}}" matTooltipShowDelay="1000">info</mat-icon>
+      <button mat-icon-button matTooltip="{{'general.Notes' | translate}}" (click)="OpenNotes('AC')">
+        <mat-icon [matBadge]="GetNotesCountOfMetric('AC')" matBadgeColor="warn" [matBadgeHidden]="GetNotesCountOfMetric('AC') < 1" matBadgePosition="below">edit_note</mat-icon>
+      </button>
+    </td>
+    <td>
+      Confidentiality (C) 
+      <mat-icon style="vertical-align: inherit;" matTooltip="{{'shared.cvss.c' | translate}}" matTooltipShowDelay="1000">info</mat-icon>
+      <button mat-icon-button matTooltip="{{'general.Notes' | translate}}" (click)="OpenNotes('C')">
+        <mat-icon [matBadge]="GetNotesCountOfMetric('C')" matBadgeColor="warn" [matBadgeHidden]="GetNotesCountOfMetric('C') < 1" matBadgePosition="below">edit_note</mat-icon>
+      </button>
+    </td>
   </tr>
   <tr>
     <td>
@@ -43,8 +67,20 @@
     </td>
   </tr>
   <tr>
-    <td>Privileges Required (PR) <mat-icon style="vertical-align: inherit;" matTooltip="{{'shared.cvss.pr' | translate}}" matTooltipShowDelay="1000">info</mat-icon></td>
-    <td>Integrity (I) <mat-icon style="vertical-align: inherit;" matTooltip="{{'shared.cvss.i' | translate}}" matTooltipShowDelay="1000">info</mat-icon></td>
+    <td>
+      Privileges Required (PR) 
+      <mat-icon style="vertical-align: inherit;" matTooltip="{{'shared.cvss.pr' | translate}}" matTooltipShowDelay="1000">info</mat-icon>
+      <button mat-icon-button matTooltip="{{'general.Notes' | translate}}" (click)="OpenNotes('PR')">
+        <mat-icon [matBadge]="GetNotesCountOfMetric('PR')" matBadgeColor="warn" [matBadgeHidden]="GetNotesCountOfMetric('PR') < 1" matBadgePosition="below">edit_note</mat-icon>
+      </button>
+    </td>
+    <td>
+      Integrity (I) 
+      <mat-icon style="vertical-align: inherit;" matTooltip="{{'shared.cvss.i' | translate}}" matTooltipShowDelay="1000">info</mat-icon>
+      <button mat-icon-button matTooltip="{{'general.Notes' | translate}}" (click)="OpenNotes('I')">
+        <mat-icon [matBadge]="GetNotesCountOfMetric('I')" matBadgeColor="warn" [matBadgeHidden]="GetNotesCountOfMetric('I') < 1" matBadgePosition="below">edit_note</mat-icon>
+      </button>
+    </td>
   </tr>
   <tr>
     <td>
@@ -65,8 +101,20 @@
     </td>
   </tr>
   <tr>
-    <td>User Interaction (UI) <mat-icon style="vertical-align: inherit;" matTooltip="{{'shared.cvss.ui' | translate}}" matTooltipShowDelay="1000">info</mat-icon></td>
-    <td>Availability (A) <mat-icon style="vertical-align: inherit;" matTooltip="{{'shared.cvss.a' | translate}}" matTooltipShowDelay="1000">info</mat-icon></td>
+    <td>
+      User Interaction (UI) 
+      <mat-icon style="vertical-align: inherit;" matTooltip="{{'shared.cvss.ui' | translate}}" matTooltipShowDelay="1000">info</mat-icon>
+      <button mat-icon-button matTooltip="{{'general.Notes' | translate}}" (click)="OpenNotes('UI')">
+        <mat-icon [matBadge]="GetNotesCountOfMetric('UI')" matBadgeColor="warn" [matBadgeHidden]="GetNotesCountOfMetric('UI') < 1" matBadgePosition="below">edit_note</mat-icon>
+      </button>
+    </td>
+    <td>
+      Availability (A) 
+      <mat-icon style="vertical-align: inherit;" matTooltip="{{'shared.cvss.a' | translate}}" matTooltipShowDelay="1000">info</mat-icon>
+      <button mat-icon-button matTooltip="{{'general.Notes' | translate}}" (click)="OpenNotes('A')">
+        <mat-icon [matBadge]="GetNotesCountOfMetric('A')" matBadgeColor="warn" [matBadgeHidden]="GetNotesCountOfMetric('A') < 1" matBadgePosition="below">edit_note</mat-icon>
+      </button>
+    </td>
   </tr>
   <tr>
     <td>
@@ -86,10 +134,18 @@
     </td>
   </tr>
   <tr>
-    <td></td>
     <td>
-      <mat-form-field appearance="fill">
-        <mat-label>CVSS Score</mat-label>
+      <mat-form-field appearance="fill" style="width: calc(100% - 45px);">
+        <mat-label>{{'report.CvssVector' | translate}}</mat-label>
+        <input matInput [(ngModel)]="Vector">
+      </mat-form-field>
+      <button mat-icon-button style="vertical-align: super; pointer-events: all;" (click)="CopyVector()" matTooltip="{{'general.Copy' | translate}}" matTooltipShowDelay="1000">
+        <mat-icon>content_copy</mat-icon>
+      </button>
+    </td>
+    <td>
+      <mat-form-field appearance="fill" style="width: calc(100% - 45px);">
+        <mat-label>{{'report.CvssScore' | translate}}</mat-label>
         <input matInput type="number" [(ngModel)]="Score">
       </mat-form-field>
       <button mat-icon-button style="vertical-align: super; pointer-events: all;" (click)="OpenCVSS()" matTooltip="{{'general.openInNew' | translate}}" matTooltipShowDelay="1000">

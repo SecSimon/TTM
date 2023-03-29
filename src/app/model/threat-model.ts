@@ -278,6 +278,7 @@ export interface ICVSSEntry {
   Score: number;
   Version: string;
   Vector: string;
+  Notes: {};
 }
 
 export interface IOwaspRREntry {

@@ -1,21 +1,29 @@
 <div cdkDropList class="reorder-list" (cdkDropListDropped)="drop($event)">
-  <div class="reorder-box" [style.color]="theme.IsDarkMode ? 'white' : 'black'" *ngFor="let item of notes; index as index" cdkDrag>
-    <ng-container *ngIf="!isEdtingArray[0][index]">
-      <mat-icon>chevron_right</mat-icon>
-      <mat-checkbox color="primary" [(ngModel)]="item.IsChecked" *ngIf="item.HasCheckbox" style="padding-right: 5px;"></mat-checkbox>
-      <span *ngIf="item.ShowTimestamp" style="padding-right: 5px;">{{item.Date | localDateTime}} - {{item.Author}}: </span> 
-      <span *ngIf="enumerateItems" style="padding-right: 5px;">{{index+1}}. </span>
-      {{item.Note}}
-      <button mat-icon-button *ngIf="canToggleCheckbox || canToggleTimestamp" style="width: 20px; height: 20px; line-height: 20px;" [matMenuTriggerFor]="moreMenu" [matMenuTriggerData]="{item: item}" matTooltip="{{'general.More' | translate}}" matTooltipShowDelay="1000">
-        <mat-icon>more_vert</mat-icon>
-      </button>
-      <button mat-icon-button style="width: 20px; height: 20px; line-height: 20px;" (click)="isEdtingArray[0][index] = true" matTooltip="{{'general.Edit' | translate}}" matTooltipShowDelay="1000">
-        <mat-icon>edit</mat-icon>
-      </button>
-      <button mat-icon-button style="width: 20px; height: 20px; line-height: 20px;" (click)="OnDeleteItem(item)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000">
-        <mat-icon>delete</mat-icon>
-      </button>
-    </ng-container>
+  <div class="reorder-box" [style.color]="theme.IsDarkMode ? 'white' : 'black'" *ngFor="let item of notes; index as index" cdkDrag (contextmenu)="OpenContextMenu($event, item, index)">
+    <table *ngIf="!isEdtingArray[0][index]">
+      <tr>
+        <td><mat-icon>chevron_right</mat-icon></td>
+        <td *ngIf="item.HasCheckbox"><mat-checkbox color="primary" [(ngModel)]="item.IsChecked" style="padding-right: 5px;"></mat-checkbox></td>
+        <td *ngIf="item.ShowTimestamp"><span style="padding-right: 5px;">{{item.Date | localDateTime}} - {{item.Author}}: </span> </td>
+        <td *ngIf="enumerateItems"><span style="padding-right: 5px;">{{index+1}}. </span></td>
+        <td>{{item.Note}}</td>
+        <td *ngIf="canToggleCheckbox || canToggleTimestamp">
+          <button mat-icon-button style="width: 20px; height: 20px; line-height: 20px;" [matMenuTriggerFor]="moreMenu" [matMenuTriggerData]="{item: item}" matTooltip="{{'general.More' | translate}}" matTooltipShowDelay="1000">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+        </td>
+        <td>
+          <button mat-icon-button style="width: 20px; height: 20px; line-height: 20px;" (click)="isEdtingArray[0][index] = true" matTooltip="{{'general.Edit' | translate}}" matTooltipShowDelay="1000">
+            <mat-icon>edit</mat-icon>
+          </button>
+        </td>
+        <td>
+          <button mat-icon-button style="width: 20px; height: 20px; line-height: 20px;" (click)="OnDeleteItem(item)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </tr>
+    </table>
     <input *ngIf="isEdtingArray[0][index]" [spellcheck]="dataService.HasSpellCheck" id="renameBox" type="text" style="width: -webkit-fill-available;" [ngModel]="item.Note" (keydown)="OnRenameItem($event, 0, index)" autofocus (focusout)="OnRenameItem($event, 0, index)" onfocus="this.select();"/>
   </div>
 </div>
@@ -36,5 +44,23 @@
     </button>
   </ng-template> 
 </mat-menu>
-
+<div #ctxMenu="matMenuTrigger" style="visibility: hidden; position: fixed;" [style.left]="menuTopLeftPosition.x" [style.top]="menuTopLeftPosition.y" [matMenuTriggerFor]="rightMenu"></div> 
+<mat-menu #rightMenu="matMenu"> 
+  <ng-template matMenuContent let-item="item" let-index="index">
+    <ng-container *ngIf="item">
+      <button mat-menu-item *ngIf="canToggleCheckbox || canToggleTimestamp" [matMenuTriggerFor]="moreMenu" [matMenuTriggerData]="{item: item}">
+        <mat-icon>more_vert</mat-icon>
+        <span>{{'general.More' | translate}}</span>
+      </button>
+      <button mat-menu-item (click)="isEdtingArray[0][index] = true">
+        <mat-icon>edit</mat-icon>
+        <span>{{'general.Edit' | translate}}</span>
+      </button>
+      <button mat-menu-item (click)="OnDeleteItem(item)">
+        <mat-icon>delete</mat-icon>
+        <span>{{'general.Delete' | translate}}</span>
+      </button>
+    </ng-container>
+  </ng-template> 
+</mat-menu> 
 
