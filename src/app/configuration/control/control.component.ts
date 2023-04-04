@@ -5,7 +5,7 @@ import { IMitigationTip, Control } from '../../model/mitigations';
 import { LifeCycle, LifeCycleUtil, RuleTypes, AttackVectorGroup, ThreatRuleGroup } from '../../model/threat-model';
 import { INavigationNode } from '../../shared/components/nav-tree/nav-tree.component';
 import { DataService } from '../../util/data.service';
-import { DialogService } from '../../util/dialog.service';
+import { DialogService, MyBoolean } from '../../util/dialog.service';
 import { StringExtension } from '../../util/string-extension';
 import { ThemeService } from '../../util/theme.service';
 
@@ -30,10 +30,13 @@ export class ControlComponent implements OnInit {
 
   public selectedMitigationTip: IMitigationTip;
 
-  constructor(@Optional() control: Control, public theme: ThemeService, public dataService: DataService, private dialog: DialogService, private translate: TranslateService) { 
+  constructor(@Optional() control: Control, @Optional() canEdit: MyBoolean, public theme: ThemeService, public dataService: DataService, private dialog: DialogService, private translate: TranslateService) { 
     if (control) {
       this.control = control;
       this.canEdit = false;
+    }
+    if (canEdit != null) {
+      this.canEdit = this.canEditName = this.canEditGroup = canEdit.Value;
     }
   }
 

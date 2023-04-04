@@ -30,6 +30,9 @@
               </button>
             </td>
           </tr>
+          <tr *ngIf="GetThreatQuestions(selectedComponent)?.length == 0">
+            <td>{{'pages.modeling.stack.questiondialog.noConfiguredQuestions' | translate}}</td>
+          </tr>
         </table>
       </ng-template>
     </mat-tab>

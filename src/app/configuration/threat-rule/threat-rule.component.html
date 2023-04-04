@@ -19,13 +19,13 @@
           </mat-option>
         </mat-optgroup>
       </mat-select>
+      <button mat-icon-button matSuffix style="width: 25px;" [disabled]="!threatRule.AttackVector" (click)="EditAttackVector(); $event.stopPropagation()" matTooltip="{{'general.Edit' | translate}}" matTooltipShowDelay="1000">
+        <mat-icon>edit</mat-icon>
+      </button>
+      <button mat-icon-button matSuffix style="width: 25px;" (click)="AddAttackVector(); $event.stopPropagation()" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000">
+        <mat-icon>add</mat-icon>
+      </button>
     </mat-form-field>
-    <button mat-icon-button style="vertical-align: super;" [disabled]="!threatRule.AttackVector" (click)="EditAttackVector()" matTooltip="{{'general.Edit' | translate}}" matTooltipShowDelay="1000">
-      <mat-icon>edit</mat-icon>
-    </button>
-    <button mat-icon-button style="vertical-align: super;" (click)="AddAttackVector()" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000">
-      <mat-icon>add</mat-icon>
-    </button>
     <mat-form-field appearance="fill" style="width: 150px; margin-left: 10px;">
       <mat-label>{{ 'properties.Severity' | translate }}</mat-label>
       <mat-select [(value)]="threatRule.Severity">
@@ -104,7 +104,7 @@
                 {{GetRestrictionTypeName(type) | translate}}
               </mat-option>
             </mat-select>
-            <button matSuffix mat-icon-button (click)="RemoveStencilRestriction(i)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000">
+            <button matSuffix mat-icon-button style="width: 25px;" (click)="RemoveStencilRestriction(i)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000">
               <mat-icon>delete</mat-icon>
             </button>
           </mat-form-field>
@@ -183,7 +183,7 @@
                 {{stencilType?.Name}}
               </mat-option>
             </mat-select>
-            <button matSuffix mat-icon-button *ngIf="!isFirst && !isLast" (click)="RemoveDFDNode(i, typeSelect)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000">
+            <button matSuffix mat-icon-button style="width: 25px;" *ngIf="!isFirst && !isLast" (click)="RemoveDFDNode(i, typeSelect)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000">
               <mat-icon>delete</mat-icon>
             </button>
           </mat-form-field>
@@ -210,7 +210,7 @@
                   {{e}}
                 </mat-option>
               </mat-select>
-              <button matSuffix mat-icon-button (click)="RemoveDFDNodeRestriction(i)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000">
+              <button matSuffix mat-icon-button style="width: 25px;" (click)="RemoveDFDNodeRestriction(i)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000">
                 <mat-icon>delete</mat-icon>
               </button>
             </mat-form-field>
@@ -358,7 +358,7 @@
                 {{GetRestrictionTypeName(type) | translate}}
               </mat-option>
             </mat-select>
-            <button matSuffix mat-icon-button (click)="RemoveComponentRestriction(i)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000">
+            <button matSuffix mat-icon-button style="width: 25px;" (click)="RemoveComponentRestriction(i)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000">
               <mat-icon>delete</mat-icon>
             </button>
           </mat-form-field>
@@ -414,7 +414,7 @@
                 {{GetRestrictionTypeName(type) | translate}}
               </mat-option>
             </mat-select>
-            <button matSuffix mat-icon-button (click)="RemoveProtocolRestriction(i)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000">
+            <button matSuffix mat-icon-button style="width: 25px;" (click)="RemoveProtocolRestriction(i)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000">
               <mat-icon>delete</mat-icon>
             </button>
           </mat-form-field>

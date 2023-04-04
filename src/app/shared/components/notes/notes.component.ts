@@ -18,12 +18,14 @@ export class NotesComponent implements OnInit {
   public get notes(): INote[] { return this._notes; }
   @Input() 
   public set notes(val: INote[]) {
+    this.checkForUnsavedChanges();
     this._notes = val;
     this._strings = val?.map(x => x.Note);
   }
   public get strings(): string[] { return this._strings; }
   @Input() 
   public set strings(val: string[]) {
+    this.checkForUnsavedChanges();
     this._strings = val;
     this._notes = [];
     val?.forEach(x => {
@@ -56,9 +58,7 @@ export class NotesComponent implements OnInit {
   }
 
   ngOnDestroy(): void {
-    if (this.newNote.nativeElement.value.length > 0) {
-      this.addNote(this.newNote.nativeElement.value);
-    }
+    this.checkForUnsavedChanges();
   }
 
   public OnDeleteItem(item: any) {
@@ -107,5 +107,23 @@ export class NotesComponent implements OnInit {
       IsChecked: false
     });
     this.strings.push(val);
+  }
+
+  private checkForUnsavedChanges() {
+    if (this.newNote?.nativeElement?.value.length > 0) {
+      const notesSrc = this.notes;
+      const stringsSrc = this.strings;
+      const val = this.newNote.nativeElement.value;
+      setTimeout(() => {
+        notesSrc.push({
+          Date: Date.now().toString(), Author: this.dataService.UserDisplayName, Note: val,
+          ShowTimestamp: this.showTimestamp,
+          HasCheckbox: this.hasCheckbox,
+          IsChecked: false
+        });
+        stringsSrc.push(val);
+      }, 10);
+      this.newNote.nativeElement.value = null;
+    }
   }
 }

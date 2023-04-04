@@ -852,9 +852,9 @@ export class RestrictionUtil {
   public static DFDToString(rest: IDFDRestriction, dataService: DataService, translate: TranslateService): string {
     let res = '';
 
-    let wrap = (val: string) => { return '{' + val + '}'; }
-    let spaces = (val: string) => { return ' ' + val + ' '; }
-    let getNodeName = (index: number, nodeCount: number) => {
+    const wrap = (val: string) => { return '{' + val + '}'; }
+    const spaces = (val: string) => { return ' ' + val + ' '; }
+    const getNodeName = (index: number, nodeCount: number) => {
       if (index == -1) return 'Data Flow';
       if (index == 0) return translate.instant('properties.Sender');
       if (index == nodeCount - 1) return translate.instant('properties.Receiver');
@@ -909,6 +909,22 @@ export class RestrictionUtil {
         res += '.' + wrap(translate.instant('properties.PhysicalElement')) + '.' + wrap(r.PhyElementRest.Property.ID);
         if (prop && prop.Type == PropertyEditTypes.LowMediumHighSelect) res += wrap(translate.instant(LowMediumHighNumberUtil.ToString(r.PhyElementRest.Property.Value)));
         else res += wrap(String(r.PhyElementRest.Property.Value));
+      }
+      else if (r.RestType == RestrictionTypes.SenderInterface) {
+        res += '.' + wrap(translate.instant('properties.SenderInterface'));
+        const prop = dataService.Config.GetStencilTypes().find(x => x.IsDefault && x.ElementTypeID == ElementTypeIDs.Interface).Properties.find(x => x.ID == r.SenderInterfaceRestriction.Property.ID);
+        res += '.' + wrap((prop && prop.DisplayName) ? prop.DisplayName : r.SenderInterfaceRestriction.Property.ID);
+        res += spaces(r.PropertyRest.ComparisonType);
+        if (prop && prop.Type == PropertyEditTypes.LowMediumHighSelect) res += wrap(translate.instant(LowMediumHighNumberUtil.ToString(r.SenderInterfaceRestriction.Property.Value)));
+        else res += wrap(String(r.SenderInterfaceRestriction.Property.Value));
+      }
+      else if (r.RestType == RestrictionTypes.ReceiverInterface) {
+        res += '.' + wrap(translate.instant('properties.ReceiverInterface'));
+        const prop = dataService.Config.GetStencilTypes().find(x => x.IsDefault && x.ElementTypeID == ElementTypeIDs.Interface).Properties.find(x => x.ID == r.ReceiverInterfaceRestriction.Property.ID);
+        res += '.' + wrap((prop && prop.DisplayName) ? prop.DisplayName : r.ReceiverInterfaceRestriction.Property.ID);
+        res += spaces(r.PropertyRest.ComparisonType);
+        if (prop && prop.Type == PropertyEditTypes.LowMediumHighSelect) res += wrap(translate.instant(LowMediumHighNumberUtil.ToString(r.ReceiverInterfaceRestriction.Property.Value)));
+        else res += wrap(String(r.ReceiverInterfaceRestriction.Property.Value));
       }
     }
 

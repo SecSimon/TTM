@@ -1,3 +1,10 @@
+## 0.4.7
+
+* Added glossary
+* UI: Minor improvements in style and text
+* Fix: Add unsaved notes automatically
+* Fix (Desktop): Open save dialog on diagram
+ 
 ## 0.4.6
 
 * Fix: Diagram instantiate reference

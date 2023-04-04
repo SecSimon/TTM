@@ -106,8 +106,12 @@
           <span>{{'side-nav.messages' | translate}}</span>
         </button>
         <button mat-menu-item (click)="OpenYouTubePlaylist()">
-          <mat-icon>help</mat-icon>
+          <mat-icon>video_library</mat-icon>
           <span>{{'side-nav.YouTubePlaylist' | translate}}</span>
+        </button>
+        <button mat-menu-item (click)="OpenGlossary()">
+          <mat-icon>menu_book</mat-icon>
+          <span>{{'side-nav.Glossary' | translate}}</span>
         </button>
       </mat-menu>
       <mat-menu #languages="matMenu">

@@ -60,7 +60,7 @@
         (click)="SelectCountermeasure(row)" (dblclick)="OnMappingDblClick(row, $event)" (contextmenu)="OpenContextMenu($event, row)">
       </tr>
       <tr class="mat-row" *matNoDataRow>
-        <td class="mat-cell" colspan="9" (contextmenu)="OpenContextMenu($event, null)">{{'pages.modeling.mitigationtable.noMitigations' | translate}}</td>
+        <td class="mat-cell" colspan="9" (contextmenu)="OpenContextMenu($event, null)">{{'pages.modeling.countermeasuretable.noCountermeasures' | translate}}</td>
       </tr>
     </table>
     <!-- Second table for not applicable Countermeasures -->

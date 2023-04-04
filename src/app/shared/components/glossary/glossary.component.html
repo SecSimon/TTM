@@ -1,0 +1,15 @@
+<img #termsImg [src]="termsImageSrc" style="width: 800px;" (click)="ViewImage()"/>
+<div>
+  <ng-container *ngFor="let letter of alphabet; last as isLast">
+    <button class="buttonAsText" [class.primary-color]="glossary[letter] != null" [style.color]="theme.IsDarkMode ? 'white' : 'black'" (click)="ScrollTo(letter)">{{letter}}</button>
+    <span *ngIf="!isLast"> | </span>
+  </ng-container>
+</div>
+<div style="overflow: auto; width: 800px;">
+  <ng-container *ngFor="let letter of alphabet">
+    <div *ngIf="glossary[letter]">
+      <h3>{{letter}}</h3>
+      <p *ngFor="let entry of glossary[letter]"><strong>{{entry['name']}}:</strong> {{entry['description']}}</p>
+    </div>
+  </ng-container>
+</div>

@@ -20,6 +20,7 @@ import { faArrowsAltH, faLongArrowAltRight } from '@fortawesome/free-solid-svg-i
 import { LocalStorageService, LocStorageKeys } from '../../util/local-storage.service';
 import { TranslateService } from '@ngx-translate/core';
 import { ThreatRuleGroup } from '../../model/threat-model';
+import { NodeTypes } from '../modeling.component';
 
 interface IKeyValuePair {
   key: any;
@@ -513,37 +514,41 @@ export abstract class CanvasBase {
   }
 
   public SaveImage() {
-    /*
-    let obj = this.Canvas.getActiveObject();
-    if (obj) {
-      if (this.theme.IsDarkMode) this.SetColors(false);
-      let newTab = window.open();
-      let img = new Image();
-      img.onload = () => {
-        newTab.document.body.append(img);
-        if (this.theme.IsDarkMode) this.SetColors(true);
-      }
-      img.src = this.Canvas.toDataURL({
-        format: 'image/png',
-        left: obj.left,
-        top: obj.top,
-        width: obj.width,
-        height: obj.height
-      });
-    }
-     */
+    // work with copy of diagram
+    const diagram = Diagram.FromJSON(JSON.parse(JSON.stringify(this.Diagram.ToJSON())), this.dataService.Project, this.dataService.Project.Config);
+    const width = 1500;
+    const height = 750;
+    const div = document.createElement('div');
+    div.style.width = width.toString() + 'px';
+    div.style.height = height.toString() + 'px';
+    div.style.pointerEvents = 'none';
+    let event = new ResizedEvent(new DOMRectReadOnly(0, 0, width, height), null);
+    let dia: CanvasBase;
+    if (diagram instanceof CtxDiagram) dia = new CtxCanvas(diagram, this.dataService, this.theme, this.dialog, this.locStorage, this.translate, diagram.IsUseCaseDiagram ? NodeTypes.UseCase : NodeTypes.Context);
+    else dia = new HWDFCanvas(diagram, this.dataService, this.theme, this.dialog, this.locStorage, this.translate);
+    dia.OnResized(event, div);
+    dia.PrintMode(this.SaveImageWithGrid);
+    const size = dia.FitToCanvas(width);
+    event = new ResizedEvent(new DOMRectReadOnly(0, 0, width+10, size[1]+10), null);
+    div.style.height = size[1].toString() + 'px';
+    dia.OnResized(event, div, false);
 
-    const showGrid = this.ShowGrid;
-    if (this.ShowGrid != this.SaveImageWithGrid) this.ShowGrid = this.SaveImageWithGrid;
-    if (this.theme.IsDarkMode) this.SetColors(false);
-    let newTab = window.open();
-    let img = new Image();
+    const newTab = window.open();
+    const img = new Image();
     img.onload = () => {
       newTab.document.body.append(img);
-      if (this.theme.IsDarkMode) this.SetColors(true);
+      if (this.theme.IsDarkMode) dia.SetColors(true);
     }
-    img.src = this.GetImage();
-    if (this.ShowGrid != showGrid) this.ShowGrid = showGrid;
+    img.src = dia.GetImage();
+
+    const downloadLink = document.createElement('a');
+    document.body.appendChild(downloadLink);
+
+    downloadLink.href = img.src;
+    downloadLink.target = '_self';
+    downloadLink.download = this.Diagram.Name+'.png';
+    downloadLink.click(); 
+    document.body.removeChild(downloadLink);
   }
 
   public SetColors(isDarkMode: boolean) {

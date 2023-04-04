@@ -859,7 +859,7 @@ export class ModelingComponent extends SideNavBase implements OnInit {
     };
 
     const useCases: INavigationNode = {
-      name: () => this.translate.instant('pages.modeling.useCases'),
+      name: () => this.translate.instant('pages.modeling.useCaseDFDs'),
       icon: 'account_tree',
       iconAlignLeft: false,
       canSelect: false,

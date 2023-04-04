@@ -18,21 +18,6 @@
     </mat-hint>
   </mat-form-field>
   <br/>
-  <mat-form-field appearance="fill" class="property-form-field">
-    <mat-label>{{'general.AttackVector' | translate}}</mat-label>
-    <mat-select [(value)]="attackScenario.AttackVector" matTooltip="{{attackScenario.AttackVector?.Name}}" matTooltipShowDelay="1000">
-      <mat-option>{{'properties.selectNone' | translate}}</mat-option>
-      <mat-optgroup *ngFor="let group of GetAttackVectorGroups()" [label]="group.Name">
-        <mat-option *ngFor="let threat of group.AttackVectors" [value]="threat">
-          {{threat.Name}}
-        </mat-option>
-      </mat-optgroup>
-    </mat-select>
-  </mat-form-field>
-  <button mat-icon-button style="vertical-align: super;" (click)="AddAttackVector()">
-    <mat-icon>add</mat-icon>
-  </button>
-  <br/>
   <mat-form-field appearance="fill" class="property-form-field disable">
     <mat-label>{{ 'general.Target' | translate }}</mat-label>
     <input matInput [spellcheck]="dataService.HasSpellCheck" [value]="attackScenario.Target?.Name" matTooltip="{{attackScenario.Target?.GetProperty('Name')}}" matTooltipShowDelay="1000"/>
@@ -45,15 +30,30 @@
     <mat-label>{{ 'general.Diagram' | translate }}</mat-label>
     <input matInput [spellcheck]="dataService.HasSpellCheck" [value]="attackScenario.GetDiagram()?.Name" matTooltip="{{attackScenario.GetDiagram()?.Name}}" matTooltipShowDelay="1000"/>
   </mat-form-field>
-  <mat-form-field appearance="fill" style="width: 100%;">
-    <mat-label>{{'general.ThreatCategories' | translate}}</mat-label>
-      <mat-select [(value)]="attackScenario.ThreatCategories" multiple>
-        <mat-optgroup *ngFor="let group of GetThreatCategoryGroups()" [label]="group.Name">
-          <mat-option *ngFor="let cat of group.ThreatCategories" [value]="cat" matTooltip="{{cat.Description}}" matTooltipShowDelay="1000">
-            {{cat.Name}}
-          </mat-option>
-        </mat-optgroup>
-      </mat-select>
+  <br/>
+  <mat-form-field appearance="fill" class="property-form-field">
+    <mat-label>{{'general.AttackVector' | translate}} ({{'general.Informative' | translate}})</mat-label>
+    <mat-select [(value)]="attackScenario.AttackVector" matTooltip="{{attackScenario.AttackVector?.Name}}" matTooltipShowDelay="1000">
+      <mat-option>{{'properties.selectNone' | translate}}</mat-option>
+      <mat-optgroup *ngFor="let group of GetAttackVectorGroups()" [label]="group.Name">
+        <mat-option *ngFor="let threat of group.AttackVectors" [value]="threat">
+          {{threat.Name}}
+        </mat-option>
+      </mat-optgroup>
+    </mat-select>
+    <button mat-icon-button matSuffix style="width: 25px;" (click)="AddAttackVector(); $event.stopPropagation()" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000">
+      <mat-icon>add</mat-icon>
+    </button>
+  </mat-form-field>
+  <mat-form-field appearance="fill" style="margin-left: 10px; width: calc(100% - 300px - 15px);">
+    <mat-label>{{'general.ThreatCategories' | translate}}*</mat-label>
+    <mat-select [(value)]="attackScenario.ThreatCategories" multiple>
+      <mat-optgroup *ngFor="let group of GetThreatCategoryGroups()" [label]="group.Name">
+        <mat-option *ngFor="let cat of group.ThreatCategories" [value]="cat" matTooltip="{{cat.Description}}" matTooltipShowDelay="1000">
+          {{cat.Name}}
+        </mat-option>
+      </mat-optgroup>
+    </mat-select>
   </mat-form-field>
   <mat-form-field appearance="fill" style="width: 100%;">
     <mat-label>{{'general.SystemThreats' | translate}}</mat-label>

@@ -30,6 +30,7 @@ import { CveSearchComponent } from '../shared/components/cve-search/cve-search.c
 import { TestCase } from '../model/test-case';
 import { TestCaseComponent } from '../modeling/test-case/test-case.component';
 import { ImageViewComponent } from '../shared/components/image-view/image-view.component';
+import { GlossaryComponent } from '../shared/components/glossary/glossary.component';
 
 export class MyBoolean {
   public Value: boolean;
@@ -124,7 +125,7 @@ export class DialogService {
       hasResultFalse: isNew,
       resultFalseText: this.translate.instant('general.Cancel'),
       resultTrueEnabled: () => {
-        return !isNew || scenario.AttackVector != null || scenario.ThreatCategories.length > 0;
+        return !isNew || scenario.ThreatCategories.length > 0;
       },
       initalTrue: false,
       component: AttackScenarioComponent,
@@ -170,7 +171,7 @@ export class DialogService {
   }
 
   public OpenViewAttackVectorDialog(vector: AttackVector, canEdit) {
-    let edit = new MyBoolean();
+    const edit = new MyBoolean();
     edit.Value = canEdit;
     const data: ITwoOptionDialogData = {
       title: this.translate.instant('pages.config.attackVectorViewDialogTitle'),
@@ -313,6 +314,8 @@ export class DialogService {
   }
 
   public OpenAddControlDialog(mit: Control) {
+    const edit = new MyBoolean();
+    edit.Value = true;
     const data: ITwoOptionDialogData = {
       title: this.translate.instant('pages.config.control.dialogTitle'),
       resultTrueText: this.translate.instant('general.Add'),
@@ -324,7 +327,8 @@ export class DialogService {
       initalTrue: false,
       component: ControlComponent,
       componentInputData: [
-        { Key: Control, Value: mit }
+        { Key: Control, Value: mit },
+        { Key: MyBoolean, Value: edit }
       ]
     };
     return this.OpenTwoOptionsDialog(data);
@@ -448,6 +452,19 @@ export class DialogService {
     return dialogRef;
   }
 
+  public OpenGlossaryDialog() {
+    const data: ITwoOptionDialogData = {
+      title: this.translate.instant('side-nav.Glossary'),
+      resultTrueText: this.translate.instant('general.Close'),
+      hasResultFalse: false,
+      resultFalseText: '',
+      resultTrueEnabled: () => true,
+      initalTrue: true,
+      component: GlossaryComponent
+    };
+    return this.OpenTwoOptionsDialog(data);
+  }
+
   public OpenRenameDialog(obj: DatabaseBase, prop: IProperty) {
     const data: IRenameDialogData = { Object: obj, Property: prop };
     const dialogRef = this.dialog.open(RenameDialogComponent, { data: data });
@@ -467,7 +484,7 @@ export class DialogService {
     return this.OpenTwoOptionsDialog(data, true, '700px');
   }
 
-  public OpenViewImageDialog(img: string) {
+  public OpenViewImageDialog(img: string, wid = '700px') {
     const myStr = new MyString();
     myStr.Value = img;
     const data: ITwoOptionDialogData = {
@@ -482,6 +499,6 @@ export class DialogService {
         { Key: MyString, Value: myStr }
       ]
     };
-    return this.OpenTwoOptionsDialog(data, true, '700px');
+    return this.OpenTwoOptionsDialog(data, true, wid);
   }
 }

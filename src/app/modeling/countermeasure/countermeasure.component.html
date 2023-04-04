@@ -16,13 +16,13 @@
       <mat-option>{{'properties.selectNone' | translate}} </mat-option>
       <mat-option *ngFor="let proc of GetMitigationProcesses()" [value]="proc">{{proc.Name}}</mat-option>
     </mat-select>
+    <button mat-icon-button matSuffix style="width: 25px;" [disabled]="!countermeasure.MitigationProcess" (click)="EditMitigationProcess(); $event.stopPropagation()" matTooltip="{{'general.Edit' | translate}}" matTooltipShowDelay="1000">
+      <mat-icon>edit</mat-icon>
+    </button>
+    <button mat-icon-button matSuffix style="width: 25px;" (click)="AddMitigationProcess(); $event.stopPropagation()" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000">
+      <mat-icon>add</mat-icon>
+    </button>
   </mat-form-field>
-  <button mat-icon-button style="vertical-align: super;" [disabled]="!countermeasure.MitigationProcess" (click)="EditMitigationProcess()">
-    <mat-icon>edit</mat-icon>
-  </button>
-  <button mat-icon-button style="vertical-align: super;" (click)="AddMitigationProcess()">
-    <mat-icon>add</mat-icon>
-  </button>
   <mat-form-field appearance="fill" style="width: 70px; float: right; margin-left: 10px;">
     <mat-label>{{ 'general.Number' | translate }}</mat-label>
     <input matInput type="number" min="0" [(ngModel)]="countermeasure.Number" required matTooltip="{{countermeasure.Number}}" matTooltipShowDelay="1000"/>
@@ -30,21 +30,6 @@
       {{'messages.error.numberAlreadyExists' | translate}}
     </mat-hint>
   </mat-form-field>
-  <br/>
-  <mat-form-field appearance="fill" class="property-form-field">
-    <mat-label>{{'general.Control' | translate}}</mat-label>
-    <mat-select [(value)]="countermeasure.Control" matTooltip="{{countermeasure.Control?.Name}}" matTooltipShowDelay="1000">
-      <mat-option>{{'properties.selectNone' | translate}}</mat-option>
-      <mat-optgroup *ngFor="let group of GetControlGroups()" [label]="group.Name">
-        <mat-option *ngFor="let mit of group.Controls" [value]="mit">
-          {{mit.Name}}
-        </mat-option>
-      </mat-optgroup>
-    </mat-select>
-  </mat-form-field>
-  <button mat-icon-button style="vertical-align: super;" (click)="AddControl()">
-    <mat-icon>add</mat-icon>
-  </button>
   <br/>
   <mat-form-field appearance="fill" class="disable" style="width: calc(100% - 300px - 15px);" *ngIf="!isManualEntry">
     <mat-label>{{ 'general.Targets' | translate }}</mat-label>
@@ -62,6 +47,21 @@
   <mat-form-field appearance="fill" class="property-form-field disable" style="margin-left: 10px;">
     <mat-label>{{ 'general.Diagram' | translate }}</mat-label>
     <input matInput [spellcheck]="dataService.HasSpellCheck" [value]="countermeasure.GetDiagram()?.Name" matTooltip="{{countermeasure.GetDiagram()?.Name}}" matTooltipShowDelay="1000"/>
+  </mat-form-field>
+  <br/>
+  <mat-form-field appearance="fill" class="property-form-field">
+    <mat-label>{{'general.Control' | translate}} ({{'general.Informative' | translate}})</mat-label>
+    <mat-select [(value)]="countermeasure.Control" matTooltip="{{countermeasure.Control?.Name}}" matTooltipShowDelay="1000">
+      <mat-option>{{'properties.selectNone' | translate}}</mat-option>
+      <mat-optgroup *ngFor="let group of GetControlGroups()" [label]="group.Name">
+        <mat-option *ngFor="let mit of group.Controls" [value]="mit">
+          {{mit.Name}}
+        </mat-option>
+      </mat-optgroup>
+    </mat-select>
+    <button mat-icon-button matSuffix style="width: 25px;" (click)="AddControl(); $event.stopPropagation()" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000">
+      <mat-icon>add</mat-icon>
+    </button>
   </mat-form-field>
   <mat-form-field appearance="fill" style="width: 100%;">
     <mat-label>{{ 'properties.Description' | translate }}</mat-label>
