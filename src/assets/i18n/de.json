@@ -223,6 +223,7 @@
   "pages.modeling.testcasetable.noTestCases": "Keine Anwendungsfälle",
   "pages.modeling.threatsources.howto.d": "Identifizieren Sie die Bedrohungsquellen:<ul><li>Listen Sie alle potentiellen Bedrohungsquellen, z. B. Cyberkriminelle, staatlich unterstützte Akteure, Insider, Konkurrenten, etc.</li><li>Beschreiben Sie deren Motiv, das Gerät anzugreifen</li><li>Bewerten Sie die Wahrscheinlichkeit eines Angriffs</li></ul>",
   "pages.modeling.threatsources.notDefined": "Nicht definiert",
+  "pages.modeling.threattable.applicable": "{0}/{1} anwendbar",
   "pages.modeling.threattable.autoRefresh": "Automatische Aktualisierung",
   "pages.modeling.threattable.deleteEntry": "Eintrag löschen",
   "pages.modeling.threattable.noEntrySelected": "Kein Eintrag ausgewählt",

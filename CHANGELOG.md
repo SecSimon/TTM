@@ -1,3 +1,10 @@
+## 0.4.8
+
+* Attack scenario/Countermeasure table: show number of applicable ones
+* Report improvements for test cases
+* Minor UI improvements
+* Fix: CVSS calculator set vector
+
 ## 0.4.7
 
 * Added glossary

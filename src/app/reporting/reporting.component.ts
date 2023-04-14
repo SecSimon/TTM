@@ -576,13 +576,14 @@ export class ReportingComponent implements OnInit {
           if (tc.LinkedScenarios.length == 1) this.createParagraph(this.translate.instant('properties.LinkedScenarios') + ': ' + tc.LinkedScenarios[0].GetProperty('Name') + ' in ' + this.Project.GetView(tc.LinkedScenarios[0].ViewID).Name);
           if (tc.LinkedScenarios.length > 1) {
             this.createParagraph(this.translate.instant('properties.LinkedScenarios'));
-            this.createUL(tc.LinkedScenarios.map(x => x.GetProperty('Name') + ' in ' + this.Project.GetView(x.ViewID).Name));
+            this.createUL(tc.LinkedScenarios.map(x => x.GetLongName() + ' in ' + this.Project.GetView(x.ViewID).Name));
           }
           if (tc.LinkedMeasures.length == 1) this.createParagraph(this.translate.instant('properties.LinkedMeasures') + ': ' + tc.LinkedMeasures[0].GetProperty('Name') + ' in ' + this.Project.GetView(tc.LinkedMeasures[0].ViewID).Name);
           if (tc.LinkedMeasures.length > 1) {
             this.createParagraph(this.translate.instant('properties.LinkedMeasures'));
-            this.createUL(tc.LinkedMeasures.map(x => x.GetProperty('Name') + ' in ' + this.Project.GetView(x.ViewID).Name));
+            this.createUL(tc.LinkedMeasures.map(x => x.GetLongName() + ' in ' + this.Project.GetView(x.ViewID).Name));
           }
+          this.createParagraph('');
         }
       }
 

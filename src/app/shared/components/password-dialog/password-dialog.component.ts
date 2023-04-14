@@ -10,7 +10,7 @@ export class PasswordDialogComponent implements OnInit {
 
   public show: boolean = false;
 
-  constructor(public dialogRef: MatDialogRef<PasswordDialogComponent>, @Inject(MAT_DIALOG_DATA) public pw: {}) { }
+  constructor(public dialogRef: MatDialogRef<PasswordDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: {}) { }
 
   ngOnInit(): void {
   }

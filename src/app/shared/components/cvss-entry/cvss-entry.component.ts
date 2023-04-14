@@ -70,7 +70,7 @@ export class CvssEntryComponent implements OnInit {
             if (validMetrics.includes(parts[0])) {
               switch (parts[0]) {
                 case 'AV':
-                  if (['N', 'AN', 'L', 'P'].includes(parts[1])) { res[parts[0]] = parts[1]; removeMetric(parts[0]); }
+                  if (['N', 'A', 'L', 'P'].includes(parts[1])) { res[parts[0]] = parts[1]; removeMetric(parts[0]); }
                   else valid = false;
                   break;
                 case 'AC':

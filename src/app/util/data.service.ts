@@ -679,13 +679,13 @@ export class DataService {
   }
 
   private loadEncryptedProject(proj: IGHFile, projContent: IGHFileContent) {
-    let pw = { 'pw': '' };
+    const data = { 'pw': '', 'file': proj.name };
     this.isLoading.add();
-    const dialogRef = this.dialog.open(PasswordDialogComponent, { hasBackdrop: false, data: pw });
+    const dialogRef = this.dialog.open(PasswordDialogComponent, { hasBackdrop: false, data: data });
     dialogRef.afterClosed().subscribe((res) => {
       if (res) {
         try {
-          this.projectContentCrypto = new MyCrypto(pw.pw);
+          this.projectContentCrypto = new MyCrypto(data.pw);
           const keycheck = this.projectContentCrypto.Decrypt(projContent.encrypted);
           projContent.content = JSON.parse(this.projectContentCrypto.Decrypt(projContent.content));
           delete projContent['encrypted'];

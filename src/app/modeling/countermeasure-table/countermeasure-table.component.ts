@@ -12,6 +12,8 @@ import { DataService } from '../../util/data.service';
 import { DialogService } from '../../util/dialog.service';
 import { MitigationEngineService } from '../../util/mitigation-engine.service';
 import { ThemeService } from '../../util/theme.service';
+import { StringExtension } from '../../util/string-extension';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-countermeasure-table',
@@ -60,12 +62,16 @@ export class CountermeasureTableComponent implements OnInit {
       return res != -1;
     };
 
-    this.dataSourceActive = new MatTableDataSource(val.filter(x => ![MitigationStates.NotApplicable, MitigationStates.Rejected, MitigationStates.Duplicate].includes(x.MitigationState)));
+    const actives = val.filter(x => ![MitigationStates.NotApplicable, MitigationStates.Rejected, MitigationStates.Duplicate].includes(x.MitigationState));
+    actives.sort((a, b) => { return Number(a.Number) < Number(b.Number) ? -1 : 1; });
+    this.dataSourceActive = new MatTableDataSource(actives);
     this.dataSourceActive.sort = this.sort;
     this.dataSourceActive.sortingDataAccessor = mySort;
     this.dataSourceActive.filterPredicate = myFilter;
 
-    this.dataSourceNA = new MatTableDataSource(val.filter(x => [MitigationStates.NotApplicable, MitigationStates.Rejected, MitigationStates.Duplicate].includes(x.MitigationState)));
+    const nas = val.filter(x => [MitigationStates.NotApplicable, MitigationStates.Rejected, MitigationStates.Duplicate].includes(x.MitigationState));
+    nas.sort((a, b) => { return Number(a.Number) < Number(b.Number) ? -1 : 1; });
+    this.dataSourceNA = new MatTableDataSource(nas);
     this.dataSourceNA.sort = this.sort;
     this.dataSourceNA.sortingDataAccessor = mySort;
     this.dataSourceNA.filterPredicate = myFilter;
@@ -97,7 +103,7 @@ export class CountermeasureTableComponent implements OnInit {
   
   @ViewChild(MatSort) sort: MatSort;
 
-  constructor(public theme: ThemeService, public dataService: DataService, private mitigationEngine: MitigationEngineService, private dialog: DialogService) { 
+  constructor(public theme: ThemeService, public dataService: DataService, private mitigationEngine: MitigationEngineService, private dialog: DialogService, private translate: TranslateService) { 
     let onDataChanged = () => {
       if (this.autoRefreshCountermeasures) {
         if (this.changesCounter == 0) {
@@ -138,7 +144,7 @@ export class CountermeasureTableComponent implements OnInit {
       }
     }
 
-    this.countermeasureCountChanged.emit(this.Countermeasures.length);
+    this.countermeasureCountChanged.emit(this.dataSourceActive.data.length);
     
     this.isCalculatingCountermeasures = false;
     }, 10);
@@ -257,6 +263,10 @@ export class CountermeasureTableComponent implements OnInit {
 
   public GetTargets(entry: Countermeasure) {
     return entry.Targets.filter(x => x).map(x => x.GetProperty('Name')).join(', ');
+  }
+
+  public GetApplicableCount() {
+    return StringExtension.Format(this.translate.instant('pages.modeling.threattable.applicable'), this.dataSourceActive.data.length.toString(), this.Countermeasures.length.toString());
   }
 
   public GetMitigationStates() {

@@ -13,6 +13,7 @@ import { DialogService } from '../../util/dialog.service';
 import { DataChangedTypes, ViewElementBase } from '../../model/database';
 import { TranslateService } from '@ngx-translate/core';
 import { Control, Countermeasure, MitigationStates } from '../../model/mitigations';
+import { StringExtension } from '../../util/string-extension';
 
 @Component({
   selector: 'app-threat-table',
@@ -66,12 +67,16 @@ export class ThreatTableComponent implements OnInit {
       return res != -1;
     };
 
-    this.dataSourceActive = new MatTableDataSource(val.filter(x => ![ThreatStates.NotApplicable, ThreatStates.Duplicate].includes(x.ThreatState)));
+    const actives = val.filter(x => ![ThreatStates.NotApplicable, ThreatStates.Duplicate].includes(x.ThreatState));
+    actives.sort((a, b) => { return Number(a.Number) < Number(b.Number) ? -1 : 1; });
+    this.dataSourceActive = new MatTableDataSource(actives);
     this.dataSourceActive.sort = this.sort;
     this.dataSourceActive.sortingDataAccessor = mySort;
     this.dataSourceActive.filterPredicate = myFilter;
 
-    this.dataSourceNA = new MatTableDataSource(val.filter(x => [ThreatStates.NotApplicable, ThreatStates.Duplicate].includes(x.ThreatState)));
+    const nas = val.filter(x => [ThreatStates.NotApplicable, ThreatStates.Duplicate].includes(x.ThreatState));
+    nas.sort((a, b) => { return Number(a.Number) < Number(b.Number) ? -1 : 1; });
+    this.dataSourceNA = new MatTableDataSource(nas);
     this.dataSourceNA.sort = this.sort;
     this.dataSourceNA.sortingDataAccessor = mySort;
     this.dataSourceNA.filterPredicate = myFilter;
@@ -156,7 +161,7 @@ export class ThreatTableComponent implements OnInit {
         }
       }
 
-      this.threatCountChanged.emit(this.AttackScenarios.length);
+      this.threatCountChanged.emit(this.dataSourceActive.data.length);
       this.countermeasureCounts = {};
       this.isCalculatingThreats = false;
     }, 10);
@@ -284,6 +289,10 @@ export class ThreatTableComponent implements OnInit {
     } 
 
     return this.countermeasureCounts[entry.ID];
+  }
+
+  public GetApplicableCount() {
+    return StringExtension.Format(this.translate.instant('pages.modeling.threattable.applicable'), this.dataSourceActive.data.length.toString(), this.AttackScenarios.length.toString());
   }
 
   public GetThreatStates() {
