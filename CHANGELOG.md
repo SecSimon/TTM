@@ -1,3 +1,8 @@
+## 0.4.9
+
+* Fix: Threat engine
+* DFD update: Visualize physical element, used sender/receiver interface, and protocol stack
+
 ## 0.4.8
 
 * Attack scenario/Countermeasure table: show number of applicable ones

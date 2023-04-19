@@ -56,7 +56,8 @@ export class ThreatEngineService {
             let existing = this.checkForExistingMapping(rule, m.target, rule.RuleGenerationType == RuleGenerationTypes.EachElement ? m.elements : null);
             if (existing) {
               existing.MappingState = MappingStates.Stable;
-              mappingsBefore.splice(mappingsBefore.findIndex(x => x.ID == existing.ID), 1); // remove from list as this mapping still applies
+              const index = mappingsBefore.findIndex(x => x.ID == existing.ID);
+              if (index >= 0) mappingsBefore.splice(index, 1); // remove from list as this mapping still applies
             }
             else {
               const map = pf.CreateAttackScenario(diagram.ID, true);
@@ -95,7 +96,8 @@ export class ThreatEngineService {
           }
           if (existing) {
             existing.MappingState = MappingStates.Stable;
-            mappingsBefore.splice(mappingsBefore.findIndex(x => x.ID == existing.ID), 1); // remove from list as this mapping still applies
+            const index = mappingsBefore.findIndex(x => x.ID == existing.ID);
+            if (index >= 0) mappingsBefore.splice(index, 1); // remove from list as this mapping still applies
           }
           else {
             let map = pf.CreateAttackScenario(diagram.ID, true);
@@ -149,7 +151,8 @@ export class ThreatEngineService {
               if (existings.length > 0) {
                 existings.forEach(x => {
                   x.MappingState = MappingStates.Stable;
-                  mappingsBefore.splice(mappingsBefore.findIndex(y => y.ID == x.ID), 1); // remove from list as this mapping still applies
+                  const index = mappingsBefore.findIndex(y => y.ID == x.ID);
+                  if (index >= 0) mappingsBefore.splice(index, 1); // remove from list as this mapping still applies
                 });
               }
               else {
@@ -191,7 +194,8 @@ export class ThreatEngineService {
             let existing = this.checkForExistingMapping(rule, m.target, m.elements);
             if (existing) {
               existing.MappingState = MappingStates.Stable;
-              mappingsBefore.splice(mappingsBefore.findIndex(x => x.ID == existing.ID), 1); // remove from list as this mapping still applies
+              const index = mappingsBefore.findIndex(x => x.ID == existing.ID);
+              if (index >= 0) mappingsBefore.splice(index, 1); // remove from list as this mapping still applies
             }
             else {
               const map = pf.CreateAttackScenario(stack.ID, true);

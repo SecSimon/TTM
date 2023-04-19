@@ -329,9 +329,13 @@ export abstract class DFDElement extends ViewElementBase implements IElementType
 
   public get IsPhysical(): boolean { return this.Data['IsPhyiscal']; }
   public get PhysicalElement(): DataFlowEntity { return this.project.GetDFDElement(this.Data['physicalElementID']) as DataFlowEntity; }
-  public set PhysicalElement(val: DataFlowEntity) { this.Data['physicalElementID'] = val?.ID; }
+  public set PhysicalElement(val: DataFlowEntity) { 
+    this.Data['physicalElementID'] = val?.ID; 
+    this.PhysicalElementChanged.emit(val);
+  }
 
   public TypeChanged = new EventEmitter<StencilType>();
+  public PhysicalElementChanged = new EventEmitter<DataFlowEntity>();
 
   constructor(data: {}, type: StencilType, pf: ProjectFile, cf: ConfigFile) {
     super(data);
@@ -850,9 +854,15 @@ export class DataFlow extends DFDElement implements ICanvasFlow {
   public get Receiver(): DataFlowEntity { return this.project.GetDFDElement(this.Data['receiverID']) as DataFlowEntity; }
   public set Receiver(val: DataFlowEntity) { this.Data['receiverID'] = val?.ID; }
   public get SenderInterface(): Interface { return this.project.GetDFDElement(this.Data['senderInterfaceID']) as Interface; }
-  public set SenderInterface(val: Interface) { this.Data['senderInterfaceID'] = val?.ID; }
+  public set SenderInterface(val: Interface) { 
+    this.Data['senderInterfaceID'] = val?.ID; 
+    this.NameChanged.emit(this.GetProperty('Name'));
+  }
   public get ReceiverInterface(): Interface { return this.project.GetDFDElement(this.Data['receiverInterfaceID']) as Interface; }
-  public set ReceiverInterface(val: Interface) { this.Data['receiverInterfaceID'] = val?.ID; }
+  public set ReceiverInterface(val: Interface) { 
+    this.Data['receiverInterfaceID'] = val?.ID;
+    this.NameChanged.emit(this.GetProperty('Name'));
+  }
 
   public get OverwriteProtocolProperties(): boolean { return this.Data['OverwriteProtocolProperties']; }
   public set OverwriteProtocolProperties(val: boolean) { 
@@ -866,7 +876,10 @@ export class DataFlow extends DFDElement implements ICanvasFlow {
     this.Data['protocolStackIDs'].forEach(x => res.push(this.config.GetProtocol(x)));
     return res;
   }
-  public set ProtocolStack(val: Protocol[]) {  this.Data['protocolStackIDs'] = val?.map(x => x?.ID ? x.ID : x); }
+  public set ProtocolStack(val: Protocol[]) { 
+    this.Data['protocolStackIDs'] = val?.map(x => x?.ID ? x.ID : x); 
+    this.NameChanged.emit(this.GetProperty('Name'));
+  }
 
   public get ProcessedData(): MyData[] {
     if (this.OverwriteDataProperties) {
@@ -917,6 +930,12 @@ export class DataFlow extends DFDElement implements ICanvasFlow {
     this.NameChanged.emit(this.GetProperty('Name'));
   }
   
+  public get ShowProtocolDetails(): boolean { return this.Data['ShowProtocolDetails']; }
+  public set ShowProtocolDetails(val: boolean) { 
+    this.Data['ShowProtocolDetails'] = val; 
+    this.NameChanged.emit(this.GetProperty('Name'));
+  }
+  
   public get BendFlow(): boolean { return this.Data['BendFlow']; }
   public set BendFlow(val: boolean) { 
     this.Data['BendFlow'] = val;
@@ -951,6 +970,7 @@ export class DataFlow extends DFDElement implements ICanvasFlow {
     else this.OverwriteDataProperties = this.OverwriteDataProperties; // update editable
 
     if (this.Data['ShowName'] == null) this.ShowName = true;
+    if (this.Data['ShowProtocolDetails'] == null) this.ShowProtocolDetails = true;
     if (this.Data['LineType'] == null) this.LineType = FlowLineTypes.Solid;
     if (this.Data['ArrowPos'] == null) this.ArrowPos = FlowArrowPositions.End;
 
@@ -980,6 +1000,7 @@ export class DataFlow extends DFDElement implements ICanvasFlow {
     this.AddProperty('properties.Receiver', 'Receiver', '', true, PropertyEditTypes.ElementName, true);
     this.AddProperty('properties.ReceiverInterface', 'ReceiverInterface', '', true, PropertyEditTypes.InterfaceElementSelect, true);
     this.AddProperty('properties.ShowName', 'ShowName', '', true, PropertyEditTypes.CheckBox, true);
+    this.AddProperty('properties.ShowProtocolDetails', 'ShowProtocolDetails', '', true, PropertyEditTypes.CheckBox, true);
     this.AddProperty('properties.BendFlow', 'BendFlow', '', true, PropertyEditTypes.CheckBox, true);
     this.AddProperty('properties.ArrowPos', 'ArrowPos', '', true, PropertyEditTypes.ArrowPosition, true);
   }

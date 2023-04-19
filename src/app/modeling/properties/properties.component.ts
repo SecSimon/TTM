@@ -3,7 +3,7 @@ import { Router, ActivatedRoute, Params } from '@angular/router';
 import { LowMediumHighNumber, LowMediumHighNumberUtil } from '../../model/assets';
 import { MyComponent } from '../../model/component';
 import { DatabaseBase, IProperty, ViewElementBase } from '../../model/database';
-import { DataFlowEntity, DFDElement, ElementTypeIDs, IElementTypeThreat, StencilType } from '../../model/dfd-model';
+import { DataFlowEntity, DFDElement, ElementTypeIDs, IElementTypeThreat, StencilType, TrustArea } from '../../model/dfd-model';
 import { DiagramTypes } from '../../model/diagram';
 import { Device, DeviceInterfaceNameUtil, FlowArrowPositions, FlowArrowPositionUtil, FlowLineTypes, FlowLineTypeUtil, FlowTypes, FlowTypeUtil, SystemUseCase } from '../../model/system-context';
 import { DataService } from '../../util/data.service';
@@ -89,6 +89,12 @@ export class PropertiesComponent implements OnInit {
     }
   }
 
+  public SetPhysicalElement(prop: IProperty, ID: string) {
+    if (this.selectedObject instanceof DFDElement) {
+      this.selectedObject.PhysicalElement = this.dataService.Project.GetDFDElement(ID) as DataFlowEntity;
+    }
+  }
+
   public GetStencilType() {
     if (this.selectedObject instanceof DFDElement) return this.selectedObject.GetProperty('Type').ID;
     return null;
@@ -150,6 +156,9 @@ export class PropertiesComponent implements OnInit {
   public GetAvailablePhysicalElements(element: DatabaseBase) {
     if (element instanceof DataFlowEntity) {
       return this.dataService.Project.GetDFDElements().filter(x => x.IsPhysical && x.GetProperty('Type').ElementTypeID == element.GetProperty('Type').ElementTypeID+1);
+    }
+    else if (element instanceof TrustArea) {
+      return this.dataService.Project.GetDFDElements().filter(x => x.Type.ElementTypeID == ElementTypeIDs.PhyTrustArea);
     }
     return [];
   }

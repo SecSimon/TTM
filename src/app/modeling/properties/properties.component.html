@@ -61,7 +61,7 @@
           <option *ngFor="let type of GetLMHValues()" [value]="type">{{GetLMHName(type) | translate}}</option>
         </select>
         <!--Physical Element Select-->
-        <select *ngIf="prop.Type == 'Physical Element Select'" style="width: 100%;" [ngModel]="GetValue(prop)?.ID" (change)="selectedObject['Data']['physicalElementID']=$event['target']['value']">
+        <select *ngIf="prop.Type == 'Physical Element Select'" style="width: 100%;" [ngModel]="GetValue(prop)?.ID" (change)="SetPhysicalElement(prop, $event['target']['value'])">
           <option *ngFor="let element of GetAvailablePhysicalElements(selectedObject)" [value]="element.ID">{{element.Name}}</option>
         </select>
         <!--Protocol Select-->

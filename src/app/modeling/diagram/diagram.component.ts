@@ -3,7 +3,7 @@ import { ThemeService } from '../../util/theme.service';
 
 import { v4 as uuidv4 } from 'uuid';
 import { fabric } from "fabric";
-import { DFDElement, ElementTypeIDs, StencilType, DFDContainer, DataFlow, DFDElementRef, DFDContainerRef } from '../../model/dfd-model';
+import { DFDElement, ElementTypeIDs, StencilType, DFDContainer, DataFlow, DFDElementRef, DFDContainerRef, DataFlowEntity } from '../../model/dfd-model';
 import { DataService } from '../../util/data.service';
 import { ResizedEvent } from 'angular-resize-event';
 
@@ -138,6 +138,7 @@ enum CTypes {
   ElementBorder = 'ElementBorder',
   ElementName = 'ElementName',
   ElementType = 'ElementType',
+  ElementPhyElement = 'ElementPhyElement',
   FlowAnchor = 'FA',
   TextPosPoint = 'TXT-POS-P',
 
@@ -568,7 +569,7 @@ export abstract class CanvasBase {
   public PrintMode(showGrid: boolean) {
     this.SetColors(false);
 
-    let setColor = (obj: any) => {
+    const setColor = (obj: any) => {
       if (obj.stroke && obj.stroke == this.theme.Primary) {
         obj.set('stroke', this.StrokeColor);
       }
@@ -579,6 +580,7 @@ export abstract class CanvasBase {
         else if (obj.fill == 'transparent') fill = obj.fill;
         else if (obj.fill == CanvasBase.BackgroundColorDark) fill = CanvasBase.BackgroundColorLight;
         else if (obj.fill == CanvasBase.BackgroundColorLight) fill = CanvasBase.BackgroundColorDark;
+        else if (obj.fill == this.theme.Primary) fill = this.theme.Primary;
         obj.set('fill', fill);
       }
       if (obj.cornerColor && obj.cornerColor == this.theme.Primary) {
@@ -589,12 +591,12 @@ export abstract class CanvasBase {
         obj.set('cornerColor', col);
       }
     };
-    let setGridLine = (obj: any) => {
+    const setGridLine = (obj: any) => {
       if (obj[CProps.myType] == CTypes.GridLine) {
         obj[CProps.visible] = showGrid;
       }
     };
-    let checkObjects = (objs: any[]) => {
+    const checkObjects = (objs: any[]) => {
       objs.forEach(x => {
         setColor(x);
         setGridLine(x);
@@ -712,7 +714,10 @@ export abstract class CanvasBase {
 
     this.Diagram.Elements.GetChildrenFlat().forEach(x => {
       x.NameChanged.subscribe(y => this.changeObjectName(x.ID));
-      if (x instanceof DFDElement) x.TypeChanged.subscribe(y => this.changeObjectType(x.ID, y.Name));
+      if (x instanceof DFDElement) {
+        x.TypeChanged.subscribe(y => this.changeObjectType(x.ID, y.Name));
+        x.PhysicalElementChanged.subscribe(y => this.changeObjectPhysicalElement(x.ID, y));
+      }
       else if (x instanceof ContextElement) x.TypeChanged.subscribe(y => this.changeObjectType(x.ID, ContextElementTypeUtil.ToString(y)));
     });
 
@@ -906,6 +911,16 @@ export abstract class CanvasBase {
 
     // updates
     this.Canvas.getObjects().filter(x => x[CProps.myType] == CTypes.DataFlowCircle).forEach(x => x.selectable = false);
+    this.Canvas.getObjects().filter(x => [ElementTypeIDs.LogDataStore, ElementTypeIDs.LogProcessing, ElementTypeIDs.LogProcessing, ElementTypeIDs.LogTrustArea].includes(x[CProps.elementTypeID])).forEach(obj => {
+      const ele = this.getViewBaseElement(obj[CProps.ID]);
+      if (ele['PhysicalElement'] != null) this.changeObjectPhysicalElement(obj[CProps.ID], ele['PhysicalElement']);
+    });
+    this.Canvas.getObjects().forEach(obj => {
+      if (obj['_objects']) {
+        const type = obj['_objects'].find(x => x[CProps.myType] == CTypes.ElementType);
+        if (type) type.text = type.text.replace('<<', '«').replace('>>', '»');
+      }
+    });
 
     this.Canvas.getObjects().forEach(x => this.fireScaling(x));
 
@@ -1278,7 +1293,7 @@ export abstract class CanvasBase {
       }
       else if (this.tmpFlowLineEndpoint[CProps.canvasID] != activeObj[CProps.canvasID]) {
         // two points defined
-        let flow = this.instantiateFlow();
+        const flow = this.instantiateFlow();
         if (this.instanceOfCanvasFlow(flow)) {
           flow.ArrowPos = this.FlowArrowPosition;
           flow.BendFlow = this.BendFlow;
@@ -1543,9 +1558,10 @@ export abstract class CanvasBase {
   };
 
   protected flowUpdateText(flowObj) {
-    let oldText = this.getCanvasElementByCanvasID(flowObj[CProps.textID]);
+    const oldText = this.getCanvasElementByCanvasID(flowObj[CProps.textID]);
     this.Canvas.remove(oldText);
-    let textObj = this.flowCreateText(flowObj.path[0][1], flowObj.path[0][2], flowObj.path[1][3], flowObj.path[1][4], flowObj.path[1][1], flowObj.path[1][2], oldText.text);
+    const textObj = this.flowCreateText(flowObj.path[0][1], flowObj.path[0][2], flowObj.path[1][3], flowObj.path[1][4], flowObj.path[1][1], flowObj.path[1][2], oldText.text);
+    textObj['styles'] = oldText['styles']; 
     textObj[CProps.canvasID] = oldText[CProps.canvasID];
     textObj[CProps.visible] = oldText[CProps.visible];
     this.Canvas.add(textObj);
@@ -1812,6 +1828,7 @@ export abstract class CanvasBase {
   protected onScaleElement(event) {
     let g = event.transform.target;
     let etype = g._objects.find(x => x[CProps.myType] == CTypes.ElementType);
+    let ephy = g._objects.find(x => x[CProps.myType] == CTypes.ElementPhyElement);
     let etxt = g._objects.find(x => x[CProps.myType] == CTypes.ElementName);
 
     let wg = g.width * g.scaleX, hg = g.height * g.scaleY;
@@ -1824,6 +1841,11 @@ export abstract class CanvasBase {
     if (etype) etype.set({
       'left': 0,
       'top': -hg / 2 + 5
+    });
+
+    if (ephy) ephy.set({
+      'left': 0,
+      'top': hg / 2 - 15
     });
 
     // if (etxt) etxt.set({
@@ -1876,7 +1898,7 @@ export abstract class CanvasBase {
     if (obj['_objects']) {
       let txt = obj['_objects'].find(x => x[CProps.myType] == CTypes.ElementType);
       if (txt) {
-        txt.text = '<<' + newType + '>>';
+        txt.text = '«' + newType + '»';
         obj.dirty = true;
         this.Canvas.requestRenderAll();
         this.onCanvasModified();
@@ -1884,7 +1906,46 @@ export abstract class CanvasBase {
     }
     else if (obj[CProps.textID]) {
       let txt = this.getCanvasElementByCanvasID(obj[CProps.textID]);
-      txt.text = '<<' + newType + '>>';
+      txt.text = '«' + newType + '»';
+      txt.dirty = true;
+      this.Canvas.requestRenderAll();
+      this.onCanvasModified();
+    }
+  }
+
+  protected changeObjectPhysicalElement(id: string, phyEle: DataFlowEntity) {
+    const obj = this.Canvas.getObjects().find(x => x[CProps.ID] == id);
+    if (obj['_objects']) {
+      let txt = obj['_objects'].find(x => x[CProps.myType] == CTypes.ElementPhyElement);
+      if (txt) {
+        txt.text = phyEle ? phyEle.GetProperty('Name') : '';
+        obj.dirty = true;
+        this.Canvas.requestRenderAll();
+        this.onCanvasModified();
+      }
+      else {
+        const ephy = new fabric.Text(phyEle ? phyEle.GetProperty('Name') : '', {
+          fontSize: 12, fill: this.theme.Primary,
+          originX: 'center', left: 0, top: obj.height / 2 - 15,
+          myType: CTypes.ElementPhyElement
+        });
+        if (obj[CProps.elementTypeID] == ElementTypeIDs.LogTrustArea) {
+          ephy[CProps.originX] = 'left';
+          ephy[CProps.originY] = 'top';
+          ephy.set({
+            'left': -obj['width'] / 2 + 5,
+            'top': -obj['height'] / 2 + 35
+          });
+        }
+
+        obj.add(ephy);
+        this.Canvas.requestRenderAll();
+        this.onCanvasModified();
+      }
+    }
+    else if (obj[CProps.textID]) {
+      let txt = this.getCanvasElementByCanvasID(obj[CProps.textID]);
+      txt.text = phyEle ? phyEle.GetProperty('Name') : '';
       txt.dirty = true;
       this.Canvas.requestRenderAll();
       this.onCanvasModified();
@@ -1908,6 +1969,22 @@ export abstract class CanvasBase {
       if (ele instanceof ContextFlow || ele instanceof DataFlow) {
         if (ele.FlowType == FlowTypes.Extend) txt.text = '«extend»';
         else if (ele.FlowType == FlowTypes.Include) txt.text = '«include»';
+        if (txt.styles) delete txt.styles[0];
+        if (ele instanceof DataFlow && ele.ShowProtocolDetails) {
+          if (ele.ProtocolStack?.length > 0) {
+            txt.text = txt.text + ' (' + ele.ProtocolStack.map(x => x.NameRaw).join(', ') + ')';
+          }
+          if (ele.SenderInterface) {
+            txt.text = ele.SenderInterface.Name + ': ' + txt.text;
+            if (!txt.styles || !txt.styles[0]) txt.styles = { 0: {} };
+            for (let i = 0; i < ele.SenderInterface.Name.length; i++) txt.styles[0][i] = { fill: this.theme.Primary };
+          }
+          if (ele.ReceiverInterface) {
+            txt.text =  txt.text + ' :' + ele.ReceiverInterface.Name;
+            if (!txt.styles || !txt.styles[0]) txt.styles = { 0: {} };
+            for (let i = txt.text.length - ele.ReceiverInterface.Name.length; i < txt.text.length; i++) txt.styles[0][i] = { fill: this.theme.Primary };
+          }
+        }
         txt = this.flowUpdateText(obj);
         txt.set(CProps.visible, ele.Data['ShowName'] == null || ele.Data['ShowName']);
       }
@@ -2197,6 +2274,7 @@ export class HWDFCanvas extends CanvasBase {
 
     element.NameChanged.subscribe(x => this.changeObjectName(element.ID));
     element.TypeChanged.subscribe(x => this.changeObjectType(element.ID, x.Name));
+    element.PhysicalElementChanged.subscribe(x => this.changeObjectPhysicalElement(element.ID, x));
     let x = 0; //ev.e.dataTransfer.getData("offsetX");
     let y = 0; //ev.e.dataTransfer.getData("offsetY");
     let visElement = null;
@@ -2249,26 +2327,31 @@ export class HWDFCanvas extends CanvasBase {
   }
 
   private createDataStore(left: number, top: number, element: DFDElement): fabric.Object {
-    let wid = 140;
-    let hei = 75;
+    const wid = 140;
+    const hei = 75;
 
     // M 0 8 L 0 66 A 10 1.3 0 0 0 140 66 L 140 8 A 10 1.3 0 0 0 0 8 A 10 1.3 0 0 0 140 8
-    let e = new fabric.Path(this.createDataStorePath(wid, hei), {
+    const e = new fabric.Path(this.createDataStorePath(wid, hei), {
       fill: 'transparent', stroke: this.StrokeColor, strokeWidth: this.StrokeWidth, objectCaching: false,
       myType: CTypes.ElementBorder
     });
-    let etype = new fabric.Text('<<' + element.GetProperty('Type').GetProperty('Name') + '>>', {
+    const etype = new fabric.Text('«' + element.GetProperty('Type').GetProperty('Name') + '»', {
       fontSize: 12, fill: this.StrokeColor,
       originX: 'center', left: wid / 2, top: 2,
       myType: CTypes.ElementType
     });
-    let etxt = new fabric.Text(element.GetProperty('Name'), {
+    const ephy = new fabric.Text(element.PhysicalElement ? element.PhysicalElement.GetProperty('Name') : '', {
+      fontSize: 12, fill: this.theme.Primary,
+      originX: 'center', left: wid / 2, top: hei-16,
+      myType: CTypes.ElementPhyElement
+    });
+    const etxt = new fabric.Text(element.GetProperty('Name'), {
       fontSize: 16, fill: this.StrokeColor,
       originX: 'center', left: wid / 2, top: hei / 2 - 8, textAlign: 'center',
       myType: CTypes.ElementName
     });
 
-    let g = new fabric.Group([e, etype, etxt, ...this.createFlowAnchors(wid, hei)], {
+    const g = new fabric.Group([e, etype, etxt, ephy, ...this.createFlowAnchors(wid, hei)], {
       left: left, top: top,
       hasControls: true, lockRotation: true, lockScalingX: false, lockScalingY: false,
       hasBorders: false, subTargetCheck: true,
@@ -2323,9 +2406,9 @@ export class HWDFCanvas extends CanvasBase {
   }
 
   private createProcessing(left: number, top: number, element: DFDElement): fabric.Object {
-    let wid = 140;
-    let hei = 75;
-    let e = new fabric.Rect({
+    const wid = 140;
+    const hei = 75;
+    const e = new fabric.Rect({
       stroke: this.StrokeColor, strokeWidth: this.StrokeWidth,
       rx: 15, ry: 15,
       width: wid, height: hei, fill: 'transparent',
@@ -2346,22 +2429,27 @@ export class HWDFCanvas extends CanvasBase {
       });
     }
 
-    let etype = new fabric.Text('<<' + element.GetProperty('Type').GetProperty('Name') + '>>', {
+    const etype = new fabric.Text('«' + element.GetProperty('Type').GetProperty('Name') + '»', {
       fontSize: 12, fill: this.StrokeColor,
       originX: 'center', left: wid / 2, top: 5,
       myType: CTypes.ElementType
     });
-    let etxt = new fabric.Text(element.GetProperty('Name'), {
+    const ephy = new fabric.Text(element.PhysicalElement ? element.PhysicalElement.GetProperty('Name') : '', {
+      fontSize: 12, fill: this.theme.Primary,
+      originX: 'center', left: wid / 2, top: hei-16,
+      myType: CTypes.ElementPhyElement
+    });
+    const etxt = new fabric.Text(element.GetProperty('Name'), {
       fontSize: 16, fill: this.StrokeColor,
       originX: 'center', left: wid / 2, top: hei / 2 - 8, textAlign: 'center',
       myType: CTypes.ElementName
     });
 
-    let parts = [e];
+    const parts = [e];
     if (spl) parts.push(...[spl, spr]);
-    parts.push(...[etype, etxt, ...this.createFlowAnchors(wid, hei)]);
+    parts.push(...[etype, etxt, ephy, ...this.createFlowAnchors(wid, hei)]);
 
-    let g = new fabric.Group(parts, {
+    const g = new fabric.Group(parts, {
       left: left, top: top,
       hasControls: true, lockRotation: true, lockScalingX: false, lockScalingY: false, hasBorders: false,
       ID: element.ID, canvasID: uuidv4(),
@@ -2390,24 +2478,29 @@ export class HWDFCanvas extends CanvasBase {
   }
 
   private createExternalEntity(left: number, top: number, element: DFDElement): fabric.Object {
-    let wid = 140;
-    let hei = 75;
-    let e = new fabric.Rect({
+    const wid = 140;
+    const hei = 75;
+    const e = new fabric.Rect({
       stroke: element instanceof DFDElementRef ? this.theme.Primary : this.StrokeColor, strokeWidth: this.StrokeWidth,
       width: wid, height: hei, fill: 'transparent', myType: CTypes.ElementBorder
     });
-    let etype = new fabric.Text('<<' + element.GetProperty('Type').GetProperty('Name') + '>>', {
+    const etype = new fabric.Text('«' + element.GetProperty('Type').GetProperty('Name') + '»', {
       fontSize: 12, fill: this.StrokeColor,
       originX: 'center', left: wid / 2, top: 5,
       myType: CTypes.ElementType
     });
-    let etxt = new fabric.Text(element.GetProperty('Name'), {
+    const ephy = new fabric.Text(element.PhysicalElement ? element.PhysicalElement.GetProperty('Name') : '', {
+      fontSize: 12, fill: this.theme.Primary,
+      originX: 'center', left: wid / 2, top: hei-16,
+      myType: CTypes.ElementPhyElement
+    });
+    const etxt = new fabric.Text(element.GetProperty('Name'), {
       fontSize: 16, fill: this.StrokeColor,
       originX: 'center', left: wid / 2, top: hei / 2 - 8, textAlign: 'center',
       myType: CTypes.ElementName
     });
 
-    let g = new fabric.Group([e, etype, etxt, ...this.createFlowAnchors(wid, hei)], {
+    const g = new fabric.Group([e, etype, etxt, ephy, ...this.createFlowAnchors(wid, hei)], {
       left: left, top: top,
       hasControls: true,
       lockRotation: true, lockScalingX: false, lockScalingY: false,
@@ -2449,7 +2542,7 @@ export class HWDFCanvas extends CanvasBase {
       stroke: element instanceof DFDElementRef ? this.theme.Primary : this.StrokeColor, strokeWidth: this.StrokeWidth,
       fill: 'transparent', myType: CTypes.ElementBorder
     });
-    let etype = new fabric.Text('<<' + element.GetProperty('Type').GetProperty('Name') + '>>', {
+    let etype = new fabric.Text('«' + element.GetProperty('Type').GetProperty('Name') + '»', {
       fontSize: 12, fill: this.StrokeColor,
       originX: 'center', left: wid / 2 + 5, top: 5,
       myType: CTypes.ElementType
@@ -2515,7 +2608,7 @@ export class HWDFCanvas extends CanvasBase {
     ], {
       stroke: this.StrokeColor, strokeWidth: this.StrokeWidth, fill: 'transparent', myType: CTypes.ElementBorder
     });
-    let etype = new fabric.Text('<<' + element.GetProperty('Type').GetProperty('Name') + '>>', {
+    let etype = new fabric.Text('«' + element.GetProperty('Type').GetProperty('Name') + '»', {
       fontSize: 12, fill: this.StrokeColor,
       originX: 'center', left: wid / 2 + 5, top: 5,
       myType: CTypes.ElementType
@@ -2566,25 +2659,30 @@ export class HWDFCanvas extends CanvasBase {
   }
 
   private createTrustArea(left: number, top: number, element: DFDElement, width = 350, height = 200): fabric.Object {
-    let e = new fabric.Rect({
+    const e = new fabric.Rect({
       stroke: (element instanceof DFDElementRef || element instanceof DFDContainerRef) ? this.theme.Primary : this.StrokeColor, strokeWidth: this.StrokeWidth,
       width: width, height: height,
       strokeDashArray: [10, 5], fill: 'transparent',
       myType: CTypes.ElementBorder
     });
-    let etype = new fabric.Text('<<' + element.GetProperty('Type').GetProperty('Name') + '>>', {
+    const etype = new fabric.Text('«' + element.GetProperty('Type').GetProperty('Name') + '»', {
       fontSize: 12, fill: this.StrokeColor,
       originX: 'left', originY: 'top', left: 5, top: 20,
       myType: CTypes.ElementType
     });
-    let etxt = new fabric.Text(element.GetProperty('Name'), {
+    const ephy = new fabric.Text(element.PhysicalElement ? element.PhysicalElement.GetProperty('Name') : '', {
+      fontSize: 12, fill: this.theme.Primary,
+      originX: 'left', originY: 'top', left: 5, top: 35,
+      myType: CTypes.ElementPhyElement
+    });
+    const etxt = new fabric.Text(element.GetProperty('Name'), {
       fontSize: 12, fill: this.StrokeColor,
       originX: 'left', originY: 'top',
       left: 5, top: 5,
       myType: CTypes.ElementName
     });
 
-    let g = new fabric.Group([e, etxt, etype], {
+    const g = new fabric.Group([e, etxt, etype, ephy], {
       left: left, top: top,
       hasControls: true,
       hasBorders: false,
@@ -2601,12 +2699,13 @@ export class HWDFCanvas extends CanvasBase {
 
   private onScaleTrustArea(event) {
     this.onScaleElement(event);
-    let g = event.transform.target;
-    let e = g._objects.find(x => x[CProps.myType] == CTypes.ElementBorder);
-    let etype = g._objects.find(x => x[CProps.myType] == CTypes.ElementType);
-    let etxt = g._objects.find(x => x[CProps.myType] == CTypes.ElementName);
+    const g = event.transform.target;
+    const e = g._objects.find(x => x[CProps.myType] == CTypes.ElementBorder);
+    const etype = g._objects.find(x => x[CProps.myType] == CTypes.ElementType);
+    const ephy = g._objects.find(x => x[CProps.myType] == CTypes.ElementPhyElement);
+    const etxt = g._objects.find(x => x[CProps.myType] == CTypes.ElementName);
 
-    let wg = g.width * g.scaleX, hg = g.height * g.scaleY;
+    const wg = g.width * g.scaleX, hg = g.height * g.scaleY;
     e.set({
       'height': hg, 'width': wg,
       'scaleX': 1, 'scaleY': 1,
@@ -2616,6 +2715,10 @@ export class HWDFCanvas extends CanvasBase {
     etype.set({
       'left': -wg / 2 + 5,
       'top': -hg / 2 + 20
+    });
+    ephy?.set({
+      'left': -wg / 2 + 5,
+      'top': -hg / 2 + 35
     });
     etxt.set({
       'left': -wg / 2 + 5,
@@ -2840,7 +2943,7 @@ export class CtxCanvas extends CanvasBase {
       width: wid, height: hei, fill: 'transparent', myType: CTypes.ElementBorder
     });
 
-    let etype = new fabric.Text('<<Device>>', {
+    let etype = new fabric.Text('«Device»', {
       fontSize: 12, fill: this.StrokeColor,
       originX: 'center', left: wid / 2, top: 25,
       myType: CTypes.ElementType
@@ -3022,7 +3125,7 @@ export class CtxCanvas extends CanvasBase {
       width: wid, height: hei, fill: 'transparent', myType: CTypes.ElementBorder
     });
 
-    let etype = new fabric.Text('<<App>>', {
+    let etype = new fabric.Text('«App»', {
       fontSize: 12, fill: this.StrokeColor,
       originX: 'center', left: wid / 2, top: 25,
       myType: CTypes.ElementType
@@ -3428,7 +3531,7 @@ export class CtxCanvas extends CanvasBase {
       stroke: element instanceof DFDElementRef ? this.theme.Primary : this.StrokeColor, strokeWidth: this.StrokeWidth,
       width: wid, height: hei, fill: 'transparent', myType: CTypes.ElementBorder
     });
-    let etype = new fabric.Text('<<External Entity>>', {
+    let etype = new fabric.Text('«External Entity»', {
       fontSize: 12, fill: this.StrokeColor,
       originX: 'center', left: wid / 2, top: 5,
       myType: CTypes.ElementType
