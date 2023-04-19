@@ -3338,7 +3338,7 @@
   "myComponentPTypes": [
     {
       "ID": "25032887-439e-4599-84bf-05d906641a0b",
-      "Name": "Incident Reponse",
+      "Name": "Incident Response",
       "Description": "See IoT Security Foundation: Vulnerability Disclosure",
       "ComponentTypeID": 2,
       "IsActive": true,
@@ -6666,7 +6666,7 @@
     },
     {
       "ID": "6509fe5f-7e27-40ec-bd08-97e29c67f8c1",
-      "Name": "Use of expired certifcate",
+      "Name": "Use of expired certificate",
       "Description": "",
       "OriginTypes": [
         1
@@ -6685,7 +6685,7 @@
         "f7639a0c-e85b-4947-bbec-2ac4a0911827"
       ],
       "Weakness": {
-        "CWEID": 323
+        "CWEID": 324
       },
       "Severity": 2
     },
