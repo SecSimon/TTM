@@ -31,6 +31,7 @@ import { TestCase } from '../model/test-case';
 import { TestCaseComponent } from '../modeling/test-case/test-case.component';
 import { ImageViewComponent } from '../shared/components/image-view/image-view.component';
 import { GlossaryComponent } from '../shared/components/glossary/glossary.component';
+import { ChangelogDialogComponent } from '../shared/components/changelog-dialog/changelog-dialog.component';
 
 export class MyBoolean {
   public Value: boolean;
@@ -500,5 +501,10 @@ export class DialogService {
       ]
     };
     return this.OpenTwoOptionsDialog(data, true, wid);
+  }
+
+  public OpenChangelogDialog() {
+    const dialogRef = this.dialog.open(ChangelogDialogComponent, { hasBackdrop: true, width: '1000px' });
+    return dialogRef.afterClosed();
   }
 }

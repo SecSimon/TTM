@@ -51,6 +51,12 @@ export class MessagesService {
     return res == 'true';
   } 
   public set ShowInfos(val: boolean) { this.locStorage.Set(LocStorageKeys.MSG_SHOW_INFO, String(val)); }
+  public get ShowUnsavedChanges(): boolean {
+    let res = this.locStorage.Get(LocStorageKeys.MSG_SHOW_UNSAVED_CHANGED);
+    if (res == null) return true;
+    return res == 'true';
+  } 
+  public set ShowUnsavedChanges(val: boolean) { this.locStorage.Set(LocStorageKeys.MSG_SHOW_UNSAVED_CHANGED, String(val)); }
 
   constructor(private snackBar: MatSnackBar, private translateService: TranslateService, 
     private locStorage: LocalStorageService, public dialog: MatDialog) {
@@ -83,6 +89,11 @@ export class MessagesService {
     this.Messages.unshift({ text: translatedMessage, type: 'error', time: new Date().toString() });
     console.error(translatedMessage);
     if (this.ShowErrors) this.snackBar.open(translatedMessage, null, { duration: this.TIMEOUT, panelClass: 'messages-error' });
+  }
+
+  public UnsavedChanges(text: string, params?: any) {
+    let translatedMessage = this.buildMsg(text, params);
+    this.snackBar.open(translatedMessage, null, { duration: this.TIMEOUT, panelClass: 'messages-warning' });
   }
 
   public ShowHistory() {

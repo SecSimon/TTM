@@ -94,6 +94,7 @@ export class DataService {
 
   private project: ProjectFile;
   private config: ConfigFile;
+  private projectCopy: string;
 
   constructor(private locStorage: LocalStorageService, private isLoading: IsLoadingService, private http: HttpClient, private router: Router, private clipboard: Clipboard,
     private dialog: MatDialog, private messagesService: MessagesService, private translate: TranslateService, private fileUpdate: FileUpdateService, private zone: NgZone, 
@@ -214,7 +215,9 @@ export class DataService {
         val = null;
       }
       this.project = val;
+      this.projectCopy = null;
       if (val) {
+        this.projectCopy = JSON.stringify(val.ToJSON());
         val.TTModelerVersion = versionFile.version;
         this.Config = val.Config;
         this.Config.ProjectFile = val;
@@ -1587,7 +1590,7 @@ export class DataService {
     this.userEmail = this.locStorage.Get(LocStorageKeys.GH_USER_EMAIL);
     if (this.UserMode == UserModes.LoggedIn) {
       setTimeout(() => {
-        this.messagesService.Success('messages.success.welcomeBack', this.UserDisplayName);
+        this.messagesService.Success('messages.success.welcomeBack', this.UserDisplayName ? this.UserDisplayName : '');
       }, 500);
     }
   }
@@ -1611,8 +1614,8 @@ export class DataService {
       this.unsavedChangesMinutes = 0;
       this.unsavedChangesTimer = setInterval(() => {
         this.unsavedChangesMinutes++;
-        if (this.unsavedChangesMinutes % 5 == 0) {
-          this.messagesService.Warning(StringExtension.Format(this.translate.instant('messages.warning.unsavedChanges'), this.unsavedChangesMinutes.toString()));
+        if (this.unsavedChangesMinutes % 5 == 0 && this.messagesService.ShowUnsavedChanges) {
+          this.messagesService.UnsavedChanges(StringExtension.Format(this.translate.instant('messages.warning.unsavedChanges'), this.unsavedChangesMinutes.toString()));
           this.ConsistencyCheck();
         }
       }, 60*1000);

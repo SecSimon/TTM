@@ -144,6 +144,11 @@
             {{'general.Info' | translate}}
           </mat-slide-toggle>
         </button>
+        <button mat-menu-item>
+          <mat-slide-toggle color="primary" [(ngModel)]="messagesService.ShowUnsavedChanges" (click)="$event.stopPropagation()">
+            {{'messages.UnsavedChanges' | translate}}
+          </mat-slide-toggle>
+        </button>
       </mat-menu>
     </div>
   </div>

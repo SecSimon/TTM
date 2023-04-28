@@ -1,6 +1,6 @@
 import { MyComponentStack } from "./component";
 import { ConfigFile } from "./config-file";
-import { DatabaseBase, DataReferenceTypes, IDataReferences, INote, ViewElementBase } from "./database";
+import { DatabaseBase, DataReferenceTypes, ICustomNumber, IDataReferences, INote, ViewElementBase } from "./database";
 import { Diagram } from "./diagram";
 import { Countermeasure } from "./mitigations";
 import { ProjectFile } from "./project-file";
@@ -29,7 +29,7 @@ export class TestCaseStateUtil {
   }
 }
 
-export class TestCase extends DatabaseBase {
+export class TestCase extends DatabaseBase implements ICustomNumber {
   private project: ProjectFile;
 
   public get Number(): string { return this.Data['Number']; }

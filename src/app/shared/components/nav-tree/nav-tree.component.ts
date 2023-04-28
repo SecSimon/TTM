@@ -188,4 +188,8 @@ export class NavTreeComponent implements OnInit {
   }
 
   public HasChild = (_: number, node: INavigationNode) => !!node.children && node.children.length > 0;
+
+  public CanSelet(node: INavigationNode): boolean {
+    return (node.canSelect && !(node.isInactive && node.isInactive()));
+  }
 }

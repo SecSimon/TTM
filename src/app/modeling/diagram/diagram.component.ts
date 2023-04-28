@@ -2201,7 +2201,8 @@ export class HWDFCanvas extends CanvasBase {
     if (src) {
       const copy = this.createElement({ stencilRef: { name: '', stencilID: src.GetProperty('Type').ID } }, srcObj.left +  srcObj.width + 10, srcObj.top);
       copy.CopyFrom(src.Data);
-      copy.Name = StringExtension.FindUniqueName(src.GetProperty('Type').Name, this.getViewBaseElements().map(x => x.Name));
+      //copy.Name = StringExtension.FindUniqueName(src.GetProperty('Type').Name, this.getViewBaseElements().map(x => x.Name));
+      copy.Name += '-Copy';
       const copyObj = this.getCanvasElementByID(copy.ID);
       copyObj.set('width', srcObj.width);
       copyObj.set('height', srcObj.height);
@@ -2755,7 +2756,8 @@ export class CtxCanvas extends CanvasBase {
     if (src) {
       const copy = this.createElement({ contextRef: { name: ContextElementTypeUtil.ToString(src.Type) } }, srcObj.left +  srcObj.width + 10, srcObj.top);
       copy.CopyFrom(src.Data);
-      copy.Name = StringExtension.FindUniqueName(ContextElementTypeUtil.ToString(src.Type), this.getViewBaseElements().map(x => x.Name));
+      //copy.Name = StringExtension.FindUniqueName(ContextElementTypeUtil.ToString(src.Type), this.getViewBaseElements().map(x => x.Name));
+      copy.Name += '-Copy';
       const copyObj = this.getCanvasElementByID(copy.ID);
       copyObj.set('width', srcObj.width);
       copyObj.set('height', srcObj.height);

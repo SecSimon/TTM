@@ -18,6 +18,7 @@
 .prop-list {
   .mat-list-item {
     height: 48px;
+    cursor: pointer;
   }
 
   ::ng-deep .mat-list-item-content {

@@ -1,0 +1,12 @@
+<h2 mat-dialog-title>CHANGELOG</h2>
+<mat-dialog-content>
+  <div *ngFor="let vers of Versions" [style.opacity]="IsNewerVersion(vers.Key) ? 0.5 : 1">
+    <h3 [class.color-primary]="vers.Key == Version">{{vers.Key}}</h3>
+    <ul>
+      <li *ngFor="let item of vers.Value">{{item}}</li>
+    </ul>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button cdkFocusInitial [mat-dialog-close]="true">{{'general.Close' | translate}}</button>
+</mat-dialog-actions>

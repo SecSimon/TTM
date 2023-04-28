@@ -1,3 +1,9 @@
+## 0.4.10
+
+* Default config update
+* UI/Usability improvements (guest login on home page, de-/activatable unsaved changes, cursor update)
+* Change log integration
+
 ## 0.4.9
 
 * Fix: Threat engine

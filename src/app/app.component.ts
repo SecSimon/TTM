@@ -134,6 +134,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.createDiffer(project.GetComponents(), null, project.MyComponentsChanged);
       this.createDiffer(project.GetComponents(), 'threatQuestions');
       this.createDiffer(project.GetDevices(), null, null);
+      this.createDiffer(project.GetDiagrams(), null, project.DiagramsChanged);
       // this.createDiffer(project.GetContextFlows(), null, null);
       // this.createDiffer(project.GetSystemUseCases(), null, null);
       // this.createDiffer(project.GetDeviceInterfaces(), null, null);

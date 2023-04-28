@@ -3279,6 +3279,64 @@
       ],
       "ComponentTypeID": 1,
       "IsActive": true
+    },
+    {
+      "ID": "aa2ca59f-4045-4cb4-a25d-b23c4b456be5",
+      "Name": "WebSocket",
+      "Description": "https://devcenter.heroku.com/articles/websocket-security\nhttps://brightsec.com/blog/websocket-security-top-vulnerabilities/",
+      "Properties": [
+        {
+          "DisplayName": "Uses WSS",
+          "ID": "cb908fd2-f59c-4f56-ac91-bc1192df5af0",
+          "Tooltip": "Is the secure wss:// protocol used over the unsecure ws:// protocol?",
+          "HasGetter": false,
+          "Editable": true,
+          "Type": "Check Box"
+        },
+        {
+          "DisplayName": "Is Tunneled",
+          "ID": "0d2c8df9-271f-42e2-b3fe-cb74719ff39b",
+          "Tooltip": "Is the connection tunneled to any other service (e.g. a database)?",
+          "HasGetter": false,
+          "Editable": true,
+          "Type": "Check Box"
+        },
+        {
+          "DisplayName": "Validates Client Input",
+          "ID": "8cd86481-a82f-490d-8d62-2195981779e9",
+          "Tooltip": "Is client data validated before processing on the server?",
+          "HasGetter": false,
+          "Editable": true,
+          "Type": "Check Box"
+        },
+        {
+          "DisplayName": "Validates Server Data",
+          "ID": "92c3d3ef-aa2d-4920-978e-ff1755479308",
+          "Tooltip": "Is server data validated and parsed before processing on the client?",
+          "HasGetter": false,
+          "Editable": true,
+          "Type": "Check Box"
+        },
+        {
+          "DisplayName": "Implements Authentication",
+          "ID": "485ff476-0c99-41de-b90a-4fdd27730685",
+          "Tooltip": "Is authentication and authorization handled separately (e.g. ticket-based)? ",
+          "HasGetter": false,
+          "Editable": true,
+          "Type": "Check Box"
+        },
+        {
+          "DisplayName": "Limits Connections",
+          "ID": "9616fd88-1e3d-4d72-9178-ad81d793a744",
+          "Tooltip": "Is the number of connections limited?",
+          "HasGetter": false,
+          "Editable": true,
+          "Type": "Check Box"
+        }
+      ],
+      "ComponentTypeID": 1,
+      "IsActive": false,
+      "IsThirdParty": true
     }
   ],
   "myComponentSWTypeGroups": [
@@ -3319,7 +3377,8 @@
         "693eb3c8-9d8a-42ce-91aa-0ac4c190d7dc",
         "c80fa1ff-def0-49b3-ad47-0c9f56c21fe6",
         "fe464818-7cef-4aba-9d18-0bc2357ca56c",
-        "2673ba36-ece0-462b-b115-0edb2c17828f"
+        "2673ba36-ece0-462b-b115-0edb2c17828f",
+        "aa2ca59f-4045-4cb4-a25d-b23c4b456be5"
       ],
       "ComponentTypeID": 1
     },
@@ -3807,7 +3866,8 @@
       "Likelihood": 2,
       "Motive": [
         "Blackmail the victim to get money"
-      ]
+      ],
+      "Capabilities": []
     },
     {
       "ID": "90cc276e-cfc5-4e37-afa0-b14f96f2d231",
@@ -3817,7 +3877,8 @@
       "Motive": [
         "Citizen espionage",
         "Disruption of critical infrastructures"
-      ]
+      ],
+      "Capabilities": []
     },
     {
       "ID": "b5ee94b3-703f-4cdd-92bd-64bd73975cb8",
@@ -3826,7 +3887,8 @@
       "Likelihood": 2,
       "Motive": [
         "Know-how theft"
-      ]
+      ],
+      "Capabilities": []
     },
     {
       "ID": "127b2c1d-e8c5-4225-a03f-7169cceab3a9",
@@ -3836,28 +3898,32 @@
       "Motive": [
         "Financial gain",
         "Anger"
-      ]
+      ],
+      "Capabilities": []
     },
     {
       "ID": "445bb063-8765-4224-8c44-86b8c38d16e0",
       "Name": "Hacktivists",
       "Description": "",
       "Likelihood": 2,
-      "Motive": []
+      "Motive": [],
+      "Capabilities": []
     },
     {
       "ID": "d8135bb6-9891-4038-9fe8-707c9426b42b",
       "Name": "Terrorists",
       "Description": "",
       "Likelihood": 2,
-      "Motive": []
+      "Motive": [],
+      "Capabilities": []
     },
     {
       "ID": "b334caef-05f2-417f-a664-6a56ea83657d",
       "Name": "Script kiddies",
       "Description": "",
       "Likelihood": 2,
-      "Motive": []
+      "Motive": [],
+      "Capabilities": []
     }
   ],
   "threatCategoryGroups": [
@@ -9834,6 +9900,144 @@
       "componentTypeID": "02b94aae-efea-451e-a017-81be68db03d7",
       "Question": "Does the system provide the ability to synchronize the system time?",
       "propertyID": "8643278b-1ab3-4359-9ab9-f3911bf336e6"
+    },
+    {
+      "ID": "983e0974-75fe-4359-9384-52654c317b42",
+      "Name": "Message sniffing",
+      "Description": "Like HTTPS, WSS (WebSockets over SSL/TLS) is encrypted, thus protecting against man-in-the-middle attacks.",
+      "ChangesPerOption": {
+        "general.Yes": {
+          "Active": true,
+          "Value": true
+        },
+        "general.No": {
+          "Active": true,
+          "Value": false
+        },
+        "general.N/A": {
+          "Active": true,
+          "Value": "undefined"
+        }
+      },
+      "OptionType": 1,
+      "componentTypeID": "aa2ca59f-4045-4cb4-a25d-b23c4b456be5",
+      "Question": "Is the secure wss:// protocol used over the unsecure ws:// protocol?",
+      "propertyID": "cb908fd2-f59c-4f56-ac91-bc1192df5af0"
+    },
+    {
+      "ID": "846dce78-6858-4d22-8564-6b384e07e53f",
+      "Name": "Security breach",
+      "Description": "It’s relatively easy to tunnel arbitrary TCP services through a WebSocket. So you could, for example, tunnel a database connection directly through to the browser. This is very dangerous, however. Doing so would enable access to these services to an in-browser attacker in the case of a cross-site scripting attack, thus allowing an escalation of a XSS attack into a complete remote breach.",
+      "ChangesPerOption": {
+        "general.Yes": {
+          "Active": true,
+          "Value": true
+        },
+        "general.No": {
+          "Active": true,
+          "Value": false
+        },
+        "general.N/A": {
+          "Active": true,
+          "Value": "undefined"
+        }
+      },
+      "OptionType": 1,
+      "componentTypeID": "aa2ca59f-4045-4cb4-a25d-b23c4b456be5",
+      "Question": "Is the connection tunneled to any other service (e.g. a database)?",
+      "propertyID": "0d2c8df9-271f-42e2-b3fe-cb74719ff39b"
+    },
+    {
+      "ID": "03467a8a-5fc2-4d72-b496-592985cf5a77",
+      "Name": "Missing client data validation",
+      "Description": "WebSocket connections are easily established outside of a browser, so you should assume that you need to deal with arbitrary data. Just as with any data coming from a client, you should carefully validate input before processing it.",
+      "ChangesPerOption": {
+        "general.Yes": {
+          "Active": true,
+          "Value": true
+        },
+        "general.No": {
+          "Active": true,
+          "Value": false
+        },
+        "general.N/A": {
+          "Active": true,
+          "Value": "undefined"
+        }
+      },
+      "OptionType": 1,
+      "componentTypeID": "aa2ca59f-4045-4cb4-a25d-b23c4b456be5",
+      "Question": "Is client data validated before processing on the server?",
+      "propertyID": "8cd86481-a82f-490d-8d62-2195981779e9"
+    },
+    {
+      "ID": "13a95615-356c-438e-be7e-b1d78c4fe46c",
+      "Name": "Missing server data validation",
+      "Description": "You should apply equal suspicion to data returned from the server. Always process messages received on the client side as data. Don’t try to assign them directly to the DOM, nor evaluate as code. If the response is JSON, always use JSON.parse() to safely parse the data.",
+      "ChangesPerOption": {
+        "general.Yes": {
+          "Active": true,
+          "Value": true
+        },
+        "general.No": {
+          "Active": true,
+          "Value": false
+        },
+        "general.N/A": {
+          "Active": true,
+          "Value": "undefined"
+        }
+      },
+      "OptionType": 1,
+      "componentTypeID": "aa2ca59f-4045-4cb4-a25d-b23c4b456be5",
+      "Question": "Is server data validated and parsed before processing on the client?",
+      "propertyID": "92c3d3ef-aa2d-4920-978e-ff1755479308"
+    },
+    {
+      "ID": "087222e9-70de-463c-8d00-b6e783f7def6",
+      "Name": "Missing authentication and authorization",
+      "Description": "The WebSocket protocol doesn’t handle authorization or authentication. Practically, this means that a WebSocket opened from a page behind auth doesn’t “automatically” receive any sort of auth; you need to take steps to also secure the WebSocket connection.",
+      "ChangesPerOption": {
+        "general.Yes": {
+          "Active": true,
+          "Value": true
+        },
+        "general.No": {
+          "Active": true,
+          "Value": false
+        },
+        "general.N/A": {
+          "Active": true,
+          "Value": "undefined"
+        }
+      },
+      "OptionType": 1,
+      "componentTypeID": "aa2ca59f-4045-4cb4-a25d-b23c4b456be5",
+      "Question": "Is authentication and authorization handled separately (e.g. ticket-based)? ",
+      "propertyID": "485ff476-0c99-41de-b90a-4fdd27730685"
+    },
+    {
+      "ID": "0fdc96b6-5786-4d72-bd28-3683fd6c4169",
+      "Name": "Denial of service attack",
+      "Description": "WebSockets let an unlimited number of connections reach the server. This lets an attacker flood the server with a DOS attack. This greatly strains the server and exhausts the resources on that server. Then the website slows down greatly.",
+      "ChangesPerOption": {
+        "general.Yes": {
+          "Active": true,
+          "Value": true
+        },
+        "general.No": {
+          "Active": true,
+          "Value": false
+        },
+        "general.N/A": {
+          "Active": true,
+          "Value": "undefined"
+        }
+      },
+      "OptionType": 1,
+      "componentTypeID": "aa2ca59f-4045-4cb4-a25d-b23c4b456be5",
+      "Question": "Is the number of connections limited?",
+      "propertyID": "9616fd88-1e3d-4d72-9178-ad81d793a744"
     }
   ],
   "threatRuleGroups": [
@@ -10047,7 +10251,13 @@
         "105910c0-a5b5-4496-a2f7-99f11422e4b0",
         "8f8d0183-5a29-451a-bb84-df061c0728d4",
         "b274e8f6-5a0f-4efc-bc4e-40210c2035ad",
-        "ea3713af-49ae-4069-8353-78141725af6f"
+        "ea3713af-49ae-4069-8353-78141725af6f",
+        "b8d4d723-fe3b-4288-87da-c73fc2412fc5",
+        "fa8d45ee-bfc7-47d7-9eed-4b38bc797336",
+        "db990108-a992-40e4-b2fc-d4dd00d42431",
+        "ac0e3170-0187-47e8-a2ed-6671cc24137e",
+        "7d0edcb5-7eff-490e-8d29-db68172ddd20",
+        "cc7e24ac-cfc0-4cf8-a291-386735862947"
       ]
     },
     {
@@ -16659,7 +16869,7 @@
     },
     {
       "ID": "a89ed38a-c36b-445b-a8c2-89e7289cdb9e",
-      "Name": "Unsecure message",
+      "Name": "Message sniffing",
       "Description": "",
       "IsActive": true,
       "RuleGenerationType": 1,
@@ -19552,6 +19762,199 @@
           }
         ]
       }
+    },
+    {
+      "ID": "b8d4d723-fe3b-4288-87da-c73fc2412fc5",
+      "Name": "Message sniffing",
+      "Description": "You should strongly prefer the secure wss:// protocol over the insecure ws:// transport. Like HTTPS, WSS (WebSockets over SSL/TLS) is encrypted, thus protecting against man-in-the-middle attacks. A variety of attacks against WebSockets become impossible if the transport is secured.",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "AttackVectorID": "e58fcbde-e429-4704-9f22-c00d187994bc",
+        "ThreatCategoryIDs": [
+          "8a3d81d9-3317-4e5d-88fe-a0e0592295fe",
+          "d0bcd70c-fbad-4a16-a606-8b0682ae7afe",
+          "f7639a0c-e85b-4947-bbec-2ac4a0911827"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 3,
+      "ComponentRestriction": {
+        "componentTypeID": "aa2ca59f-4045-4cb4-a25d-b23c4b456be5",
+        "DetailRestrictions": [
+          {
+            "IsOR": true,
+            "Layer": 0,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "cb908fd2-f59c-4f56-ac91-bc1192df5af0",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          }
+        ]
+      },
+      "Severity": 3
+    },
+    {
+      "ID": "fa8d45ee-bfc7-47d7-9eed-4b38bc797336",
+      "Name": "Tunneling",
+      "Description": "It’s relatively easy to tunnel arbitrary TCP services through a WebSocket. So you could, for example, tunnel a database connection directly through to the browser. This is very dangerous, however. Doing so would enable access to these services to an in-browser attacker in the case of a cross-site scripting attack, thus allowing an escalation of a XSS attack into a complete remote breach.",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "f19e41bd-9fd9-4046-a195-28d441207fa0",
+          "b869918c-0b47-45c3-8fab-0b698043aa66",
+          "c0bd6e2f-9784-4c11-9aee-115a966e0a4d",
+          "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
+          "c46b7c74-5979-409d-8ceb-631b8833c596"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 3,
+      "ComponentRestriction": {
+        "componentTypeID": "aa2ca59f-4045-4cb4-a25d-b23c4b456be5",
+        "DetailRestrictions": [
+          {
+            "IsOR": true,
+            "Layer": 0,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "0d2c8df9-271f-42e2-b3fe-cb74719ff39b",
+              "ComparisonType": "==",
+              "Value": true
+            }
+          }
+        ]
+      },
+      "Severity": 3
+    },
+    {
+      "ID": "db990108-a992-40e4-b2fc-d4dd00d42431",
+      "Name": "Missing client data validation",
+      "Description": "WebSocket connections are easily established outside of a browser, so you should assume that you need to deal with arbitrary data. Just as with any data coming from a client, you should carefully validate input before processing it.",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "f19e41bd-9fd9-4046-a195-28d441207fa0",
+          "c0bd6e2f-9784-4c11-9aee-115a966e0a4d",
+          "6382e7ee-efbd-40c3-8064-1a1fdd87cdaf",
+          "c46b7c74-5979-409d-8ceb-631b8833c596"
+        ],
+        "AttackVectorID": "b48781b2-24a2-481b-b7c1-3390dbeeb973"
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 3,
+      "ComponentRestriction": {
+        "componentTypeID": "aa2ca59f-4045-4cb4-a25d-b23c4b456be5",
+        "DetailRestrictions": [
+          {
+            "IsOR": true,
+            "Layer": 0,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "8cd86481-a82f-490d-8d62-2195981779e9",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          }
+        ]
+      },
+      "Severity": 3
+    },
+    {
+      "ID": "ac0e3170-0187-47e8-a2ed-6671cc24137e",
+      "Name": "Missing server data validation",
+      "Description": "You should apply equal suspicion to data returned from the server, as well. Always process messages received on the client side as data. Don’t try to assign them directly to the DOM, nor evaluate as code. If the response is JSON, always use JSON.parse() to safely parse the data.",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "c0bd6e2f-9784-4c11-9aee-115a966e0a4d"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 3,
+      "ComponentRestriction": {
+        "componentTypeID": "aa2ca59f-4045-4cb4-a25d-b23c4b456be5",
+        "DetailRestrictions": [
+          {
+            "IsOR": true,
+            "Layer": 0,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "92c3d3ef-aa2d-4920-978e-ff1755479308",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          }
+        ]
+      },
+      "Severity": 3
+    },
+    {
+      "ID": "7d0edcb5-7eff-490e-8d29-db68172ddd20",
+      "Name": "Missing authentication and authorization",
+      "Description": "The WebSocket protocol doesn’t handle authorization or authentication. Practically, this means that a WebSocket opened from a page behind auth doesn’t “automatically” receive any sort of auth; you need to take steps to also secure the WebSocket connection.",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "AttackVectorID": "d46f6e31-ae41-4d6e-93fc-0e6c3bbb295d",
+        "ThreatCategoryIDs": [
+          "c46b7c74-5979-409d-8ceb-631b8833c596"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 3,
+      "ComponentRestriction": {
+        "componentTypeID": "aa2ca59f-4045-4cb4-a25d-b23c4b456be5",
+        "DetailRestrictions": [
+          {
+            "IsOR": true,
+            "Layer": 0,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "485ff476-0c99-41de-b90a-4fdd27730685",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          }
+        ]
+      },
+      "Severity": 3
+    },
+    {
+      "ID": "cc7e24ac-cfc0-4cf8-a291-386735862947",
+      "Name": "Denial of service attack",
+      "Description": "WebSockets let an unlimited number of connections reach the server. This lets an attacker flood the server with a DOS attack. This greatly strains the server and exhausts the resources on that server. Then the website slows down greatly.",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "AttackVectorID": "8f9a24d4-e962-4136-b0ec-8e9f797a6f62",
+        "ThreatCategoryIDs": [
+          "b869918c-0b47-45c3-8fab-0b698043aa66"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 3,
+      "ComponentRestriction": {
+        "componentTypeID": "aa2ca59f-4045-4cb4-a25d-b23c4b456be5",
+        "DetailRestrictions": [
+          {
+            "IsOR": true,
+            "Layer": 0,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "9616fd88-1e3d-4d72-9178-ad81d793a744",
+              "ComparisonType": "==",
+              "Value": false
+            }
+          }
+        ]
+      },
+      "Severity": 3
     }
   ],
   "controls": [
@@ -20113,6 +20516,72 @@
           ]
         }
       ]
+    },
+    {
+      "ID": "fd548c36-f9ae-4c1e-8244-477c7d121c36",
+      "Name": "WebSocket security",
+      "Description": "https://devcenter.heroku.com/articles/websocket-security\nhttps://brightsec.com/blog/websocket-security-top-vulnerabilities/#vulnerability-to-input-data",
+      "mitigatedAttackVectorIDs": [],
+      "mitigatedThreatRuleIDs": [
+        "b8d4d723-fe3b-4288-87da-c73fc2412fc5",
+        "fa8d45ee-bfc7-47d7-9eed-4b38bc797336",
+        "db990108-a992-40e4-b2fc-d4dd00d42431",
+        "ac0e3170-0187-47e8-a2ed-6671cc24137e",
+        "7d0edcb5-7eff-490e-8d29-db68172ddd20",
+        "cc7e24ac-cfc0-4cf8-a291-386735862947"
+      ],
+      "MitigationTips": [
+        {
+          "Name": "Avoid tunneling",
+          "Description": "Tunneling arbitrary TCP services via a WebSocket is easy. This is a risk that needs to be prevented. The best way to avoid this issue? Just avoid tunneling whenever possible.",
+          "LifeCycles": [
+            "C",
+            "I"
+          ]
+        },
+        {
+          "Name": "Use secure wss://",
+          "Description": "",
+          "LifeCycles": [
+            "I"
+          ]
+        },
+        {
+          "Name": "Validate client input",
+          "Description": "Carefully validate input before processing it",
+          "LifeCycles": [
+            "I"
+          ]
+        },
+        {
+          "Name": "Validate server data",
+          "Description": "lways process messages received on the client side as data. Don’t try to assign them directly to the DOM, nor evaluate as code. If the response is JSON, always use JSON.parse() to safely parse the data.",
+          "LifeCycles": [
+            "I"
+          ]
+        },
+        {
+          "Name": "Authentication / authorization",
+          "Description": "https://devcenter.heroku.com/articles/websocket-security#authentication-authorization\nImplement a ticket-based authentication",
+          "LifeCycles": [
+            "I"
+          ]
+        },
+        {
+          "Name": "Limit rate",
+          "Description": "Rate limiting is an important way to prevent abuse of your web application or web service. It can protect against bad bots, scraping attacks, and small-scale denial of service (DoS) attacks. In some cases, a malfunctioning client can result in an accidental DoS attack.",
+          "LifeCycles": [
+            "I"
+          ]
+        },
+        {
+          "Name": "Use origin header",
+          "Description": "The WebSocket standard defines an Origin header field, which web browsers set to the URL that originates a WebSocket request. This can be used to differentiate between WebSocket connections from different hosts, or between those made from a browser and some other kind of network client.",
+          "LifeCycles": [
+            "I"
+          ]
+        }
+      ]
     }
   ],
   "controlGroups": [
@@ -20160,7 +20629,8 @@
         "ea061d92-c31b-4644-8f5f-5093f513dd9d",
         "113386c4-73e2-4e37-a390-83c3ef939633",
         "6986a3d3-c10f-4ffb-a348-fafe9c8c9150",
-        "76ed8c24-b89e-4eb1-9d09-a97548729ba5"
+        "76ed8c24-b89e-4eb1-9d09-a97548729ba5",
+        "fd548c36-f9ae-4c1e-8244-477c7d121c36"
       ]
     },
     {

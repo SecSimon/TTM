@@ -20,6 +20,7 @@ export enum LocStorageKeys {
   MSG_SHOW_WARNING            = "msg_show_warning",
   MSG_SHOW_SUCCESS            = "msg_show_success",
   MSG_SHOW_INFO               = "msg_show_info",
+  MSG_SHOW_UNSAVED_CHANGED    = "msg_show_unsaved_changes",
   PAGE_CONFIG_TAB_INDEX       = "page_config_tab_index",
   PAGE_CONFIG_SPLIT_SIZE_1    = "page_config_split_size_1",
   PAGE_CONFIG_CHECKLISTS_TAB_INDEX = "page_config_checklists_tab_index",

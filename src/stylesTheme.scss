@@ -71,29 +71,31 @@
 .splitter-light1 {
   @extend .splitter;
   ::ng-deep .as-split-gutter {
-    //@extend .bg-color-light1;
-    background-color: #e7e5e5 !important;
+    @extend .bg-color-light1;
+    //background-color: #e7e5e5 !important;
   }
 }
 
 .splitter-dark1 {
   @extend .splitter;
   ::ng-deep .as-split-gutter {
-    //@extend .bg-color-dark1; 
-    background-color: #333333 !important;
+    @extend .bg-color-dark1; 
+    //background-color: #333333 !important;
   }
 }
 
 .splitter-light2 {
   @extend .splitter;
   ::ng-deep .as-split-gutter {
-    @extend .bg-color-light2;
+    //@extend .bg-color-light2;
+    @extend .bg-color-light1;
   }
 }
 
 .splitter-dark2 {
   @extend .splitter;
   ::ng-deep .as-split-gutter {
-    @extend .bg-color-dark2;
+    //@extend .bg-color-dark2;
+    @extend .bg-color-dark1;
   }
 }

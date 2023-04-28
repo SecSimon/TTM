@@ -57,9 +57,18 @@ export interface IUserInfo {
   Email: string;
 }
 
+interface IChangeLogEntry {
+  ID: string;
+  Type: DataChangedTypes;
+  Title: string;
+  Name?: string;
+}
+
 export class ProjectFile extends DatabaseBase {
   private config: ConfigFile;
   private fileChanged = false;
+  private changeLog: IChangeLogEntry[] = [];
+  private projectCopy: IProjectFile;
 
   private charScope: CharScope;
   private objImpact: ObjImpact;
@@ -104,6 +113,10 @@ export class ProjectFile extends DatabaseBase {
   public set FileChanged(val: boolean) { 
     this.fileChanged = val;
     if (val) this.DataChanged.emit();
+    else {
+      this.changeLog = [];
+      this.projectCopy = JSON.parse(JSON.stringify(this.ToJSON()));
+    }
   }
 
   public get UserVersion(): string { return this.Data['UserVersion']; }
@@ -161,11 +174,15 @@ export class ProjectFile extends DatabaseBase {
 
   public get Config(): ConfigFile { return this.config; }
 
+  public AssetsChanged = new EventEmitter<IDataChanged>();
   public DevicesChanged = new EventEmitter<IDataChanged>();
   public MobileAppsChanged = new EventEmitter<IDataChanged>();
   public ContextElementsChanged = new EventEmitter<IDataChanged>();
   public DFDElementsChanged = new EventEmitter<IDataChanged>();
   public MyComponentsChanged = new EventEmitter<IDataChanged>();
+  public DiagramsChanged = new EventEmitter<IDataChanged>();
+  public ThreatActorsChanged = new EventEmitter<IDataChanged>();
+  public SystemThreatsChanged = new EventEmitter<IDataChanged>();
   public AttackScenariosChanged = new EventEmitter<IDataChanged>();
   public CountermeasuresChanged = new EventEmitter<IDataChanged>();
   public MitigationProcessesChanged = new EventEmitter<IDataChanged>();
@@ -185,6 +202,45 @@ export class ProjectFile extends DatabaseBase {
       let newGroup = this.InitializeNewAssetGroup(cf);
       this.Data['projectAssetGroupId'] = newGroup.ID;
     }
+
+    const arrayItemChanged = (event: IDataChanged, array: string, constr, getItem: string, title: string) => {
+      if (this.changeLog.findIndex(x => x.ID == event.ID && x.Type == event.Type) < 0  && !this.changeLog.some(y => y.ID == event.ID && y.Type > event.Type)) {
+        if (event.Type == DataChangedTypes.Removed) {
+          const exstingEntry = this.changeLog.find(x => x.ID == event.ID);
+          let objName = null;
+          if (exstingEntry) objName = exstingEntry.Name;
+          else {
+            const obj = this.projectCopy[array].find(x => x['ID'] == event.ID);
+            if (obj) {
+              const o = constr.FromJSON(obj, this, this.Config);
+              if (o && o['GetLongName']) objName = o.GetLongName(); 
+              else objName = obj['Name'];
+            }
+          }
+          if (objName) this.changeLog.push({ Title: title, Name: objName, ID: event.ID, Type: event.Type });
+          else console.error('Missing object');
+        }
+        else {
+          const obj = this[getItem](event.ID);
+          let objName = obj['Name'];
+          if (obj['GetLongName']) objName = obj.GetLongName();
+          this.changeLog.push({ Title: title, Name: objName, ID: event.ID, Type: event.Type });
+        }
+        console.log(this.changeLog);
+      }
+    };
+    
+    this.AssetsChanged.subscribe(event => setTimeout(() => { arrayItemChanged(event, 'assetGroups', AssetGroup, 'GetAssetGroup', 'general.Asset') }, 200));
+    this.DiagramsChanged.subscribe(event => setTimeout(() => { arrayItemChanged(event, 'diagrams', Diagram, 'GetDiagram', 'general.Diagram') }, 200));
+    this.ContextElementsChanged.subscribe(event => setTimeout(() => { arrayItemChanged(event, 'contextElements', ContextElement, 'GetContextElement', 'general.Element') }, 200));
+    this.DFDElementsChanged.subscribe(event => setTimeout(() => { arrayItemChanged(event, 'dfdElements', DFDElement, 'GetDFDElement', 'general.Element') }, 200));
+    this.MyComponentsChanged.subscribe(event => setTimeout(() => { arrayItemChanged(event, 'components', MyComponent, 'GetComponent', 'general.Component') }, 200));
+    this.SystemThreatsChanged.subscribe(event => setTimeout(() => { arrayItemChanged(event, 'systemThreats', SystemThreat, 'GetSystemThreat', 'general.SystemThreat') }, 200));
+    this.ThreatActorsChanged.subscribe(event => setTimeout(() => { arrayItemChanged(event, 'threatActors', ThreatActor, 'GetThreatActor', 'general.ThreatActor') }, 200));
+    this.AttackScenariosChanged.subscribe(event => setTimeout(() => { arrayItemChanged(event, 'attackScenarios', AttackScenario, 'GetAttackScenario', 'general.AttackScenario') }, 200));
+    this.CountermeasuresChanged.subscribe(event => setTimeout(() => { arrayItemChanged(event, 'countermeasures', Countermeasure, 'GetCountermeasure', 'general.Countermeasure') }, 200));
+    this.MitigationProcessesChanged.subscribe(event => setTimeout(() => { arrayItemChanged(event, 'mitigationProcesses', MitigationProcess, 'GetMitigationProcess', 'general.MitigationProcess') }, 200));
+    this.TestCasesChanged.subscribe(event => setTimeout(() => { arrayItemChanged(event, 'testCases', TestCase, 'GetTestCase', 'general.TestCase') }, 200));
   }
 
   public InitializeNewProject() {
@@ -192,6 +248,47 @@ export class ProjectFile extends DatabaseBase {
     this.objImpact = new ObjImpact({}, this, this.config);
     this.sysContext = new SystemContext({}, this, this.config);
     this.threatSources = new ThreatSources({}, this, this.config);
+  }
+
+  public GetLog() {
+    if (this.projectCopy) {
+      const obj1 = this.ToJSON();
+      const obj2 = this.projectCopy;
+      const res = this.deepDiffMapper.map(obj2, obj1);
+      const removeUnchanged = (obj) => {
+        Object.keys(obj).forEach(key => {
+          const val = obj[key];
+          if (typeof val === 'object' && !Array.isArray(val) && val !== null) {
+            if (Object.keys(val).length == 0) { delete obj[key]; }
+            else if (this.deepDiffMapper.KEY_CHANGETYP in val && val[this.deepDiffMapper.KEY_CHANGETYP] === 0) { delete obj[key]; }
+            else {
+              removeUnchanged(val);
+            }
+
+            if (Object.keys(val).length == 0) { delete obj[key]; }
+          }
+        });
+      };
+      removeUnchanged(res);
+
+      const changes: IChangeLogEntry[] = [];
+      Object.keys(res).forEach(key => {
+        if (key === 'Data') {
+          Object.keys(res[key]).forEach(item => {
+            let name: string = 'general.' + item;
+            // if (name.includes('general.')) name = this.translate.instant('properties.' + item);
+            // if (name.includes('properties.')) name = StringExtension.FromCamelCase(item);
+            //changes.push([this.deepDiffMapper.VALUE_UPDATED, name]);
+            changes.push({ ID: null, Title: name, Type: DataChangedTypes.Changed });
+          });
+        }
+      });
+      //console.log(changes);
+      console.log([...this.changeLog, ...changes]);
+      // changes.forEach(c => {
+      //   console.log(StringExtension.Format(this.translate.instant('messages.changes.' + c[0]), c[1]) + (c.length > 2 ? ': ' + c[2] : ''));
+      // });
+    }
   }
 
   public CreateDevice(): Device {
@@ -250,6 +347,7 @@ export class ProjectFile extends DatabaseBase {
     if (this.GetNewAssets().length == 0) res.Number = '1';
     else res.Number = (Math.max(...this.GetNewAssets().map(x => Number(x.Number)))+1).toString();
     res.IsNewAsset = true;
+    this.AssetsChanged.emit({ ID: res.ID, Type: DataChangedTypes.Added });
     return res;
   }
 
@@ -258,6 +356,7 @@ export class ProjectFile extends DatabaseBase {
     if (index >= 0) {
       group.OnDelete(this, this.config);
       this.assetGroups.splice(index, 1);
+      this.AssetsChanged.emit({ ID: group.ID, Type: DataChangedTypes.Removed });
     }
     return index >= 0;
   }
@@ -331,6 +430,7 @@ export class ProjectFile extends DatabaseBase {
     if (this.GetThreatActors().length == 0) res.Number = '1';
     else res.Number = (Math.max(...this.GetThreatActors().map(x => Number(x.Number)))+1).toString();
     this.threatActors.push(res);
+    this.ThreatActorsChanged.emit({ ID: res.ID, Type: DataChangedTypes.Added });
     return res;
   }
 
@@ -339,6 +439,7 @@ export class ProjectFile extends DatabaseBase {
     if (index >= 0) {
       ta.OnDelete(this, this.config);
       this.threatActors.splice(index, 1);
+      this.ThreatActorsChanged.emit({ ID: ta.ID, Type: DataChangedTypes.Removed });
     }
     return index >= 0;
   }
@@ -354,14 +455,16 @@ export class ProjectFile extends DatabaseBase {
     if (this.GetSystemThreats().length == 0) res.Number = '1';
     else res.Number = (Math.max(...this.GetSystemThreats().map(x => Number(x.Number)))+1).toString();
     this.systemThreats.push(res);
+    this.SystemThreatsChanged.emit({ ID: res.ID, Type: DataChangedTypes.Added });
     return res;
   }
 
-  public DeleteSystemThreat(dt: SystemThreat): boolean {
-    const index = this.systemThreats.indexOf(dt);
+  public DeleteSystemThreat(st: SystemThreat): boolean {
+    const index = this.systemThreats.indexOf(st);
     if (index >= 0) {
-      dt.OnDelete(this, this.config);
+      st.OnDelete(this, this.config);
       this.systemThreats.splice(index, 1);
+      this.SystemThreatsChanged.emit({ ID: st.ID, Type: DataChangedTypes.Removed });
     }
     return index >= 0;
   }
@@ -406,6 +509,7 @@ export class ProjectFile extends DatabaseBase {
     else if (type == DiagramTypes.DataFlow) name = 'Data Flow';
     dia.Name = StringExtension.FindUniqueName(name + ' Diagram', this.diagrams.filter(x => x.DiagramType == type).map(x => x.Name));
     this.diagrams.push(dia);
+    this.DiagramsChanged.emit({ ID: dia.ID, Type: DataChangedTypes.Added });
     return dia;
   }
 
@@ -418,6 +522,7 @@ export class ProjectFile extends DatabaseBase {
     if (index >= 0) {
       diagram.OnDelete(this, this.config);
       this.diagrams.splice(index, 1);
+      this.DiagramsChanged.emit({ ID: diagram.ID, Type: DataChangedTypes.Removed });
     }
     return index >= 0;
   }
@@ -442,6 +547,7 @@ export class ProjectFile extends DatabaseBase {
   public CreateComponent(type: MyComponentType): MyComponent {
     let comp = new MyComponent({}, type, this, this.Config);
     this.componentMap.set(comp.ID, comp);
+    this.MyComponentsChanged.emit({ ID: comp.ID, Type: DataChangedTypes.Added });
     return comp;
   }
 
@@ -449,6 +555,7 @@ export class ProjectFile extends DatabaseBase {
     if (this.componentMap.has(comp.ID)) {
       comp.OnDelete(this, this.config);
       this.componentMap.delete(comp.ID);
+      this.AssetsChanged.emit({ ID: comp.ID, Type: DataChangedTypes.Removed });
       return true;
     }
     return false;
@@ -739,6 +846,80 @@ export class ProjectFile extends DatabaseBase {
     arr.splice(currIndex, 0, arr.splice(prevIndex, 1)[0]);
     this[mapName] = new Map<string, Type>(arr);
   }
+
+  private deepDiffMapper = function () {
+    return {
+      KEY_CHANGETYP: 'cT',
+      KEY_OLDDATA: 'oD',
+      KEY_NEWDATA: 'nD',
+      map: function(obj1, obj2) {
+        if (this.isFunction(obj1) || this.isFunction(obj2)) {
+          throw 'Invalid argument. Function given, object expected.';
+        }
+        if (this.isValue(obj1) || this.isValue(obj2)) {
+          return {
+            cT: this.compareValues(obj1, obj2), // change type
+            oD: obj1, // old data
+            nD: obj2 // new data
+          };
+        }
+  
+        var diff = {};
+        for (var key in obj1) {
+          if (this.isFunction(obj1[key])) {
+            continue;
+          }
+  
+          var value2 = undefined;
+          if (obj2[key] !== undefined) {
+            value2 = obj2[key];
+          }
+  
+          diff[key] = this.map(obj1[key], value2);
+        }
+        for (var key in obj2) {
+          if (this.isFunction(obj2[key]) || diff[key] !== undefined) {
+            continue;
+          }
+  
+          diff[key] = this.map(undefined, obj2[key]);
+        }
+  
+        return diff;
+  
+      },
+      compareValues: function (value1, value2) {
+        if (value1 === value2) {
+          return 0;
+        }
+        if (this.isDate(value1) && this.isDate(value2) && value1.getTime() === value2.getTime()) {
+          return 0;
+        }
+        if (value1 === undefined) {
+          return DataChangedTypes.Added;
+        }
+        if (value2 === undefined) {
+          return DataChangedTypes.Removed;
+        }
+        return DataChangedTypes.Changed;
+      },
+      isFunction: function (x) {
+        return Object.prototype.toString.call(x) === '[object Function]';
+      },
+      isArray: function (x) {
+        return Object.prototype.toString.call(x) === '[object Array]';
+      },
+      isDate: function (x) {
+        return Object.prototype.toString.call(x) === '[object Date]';
+      },
+      isObject: function (x) {
+        return Object.prototype.toString.call(x) === '[object Object]';
+      },
+      isValue: function (x) {
+        return !this.isObject(x) && !this.isArray(x);
+      }
+    }
+  }();
 
   public FindReferences(pf: ProjectFile, cf: ConfigFile): IDataReferences[] {
     return null;

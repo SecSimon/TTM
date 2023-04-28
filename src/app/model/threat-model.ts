@@ -1363,11 +1363,15 @@ export class AttackScenario extends DatabaseBase implements ITagable, ICustomNum
     this.Mapping.Threat = { AttackVectorID: attackVectorID, ThreatCategoryIDs: categoryIDs };
     if (rule) {
       this.ThreatRule = rule;
+      this.Description = rule.Description;
       if (rule.Severity) this.Severity = rule.Severity;
       else if (this.AttackVector) this.Severity = this.AttackVector.Severity;
       if (rule.AttackVector?.AttackTechnique?.CVSS) this.ScoreCVSS = JSON.parse(JSON.stringify(rule.AttackVector.AttackTechnique.CVSS));
     }
-    if (question) this.ThreatQuestion = question;
+    if (question) {
+      this.ThreatQuestion = question;
+      if (this.Description.length == 0) this.Description = question.Description;
+    }
     if (mnemonic && letter) {
       this.ThreatMnemonicLetterID = letter.ID;
       this.Name = letter.Name + ' on ' + target?.GetProperty('Name');
