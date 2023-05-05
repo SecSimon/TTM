@@ -69,9 +69,9 @@
           <mat-option class="matOption" color="primary" *ngFor="let protocol of GetProtocols()" [value]="protocol">{{protocol.Name}}</mat-option>
         </mat-select>
         <!--Open Notes-->
-        <button mat-raised-button *ngIf="prop.Type == 'Open Notes'" (click)="OpenNotes()">{{'properties.openNotes' | translate}}</button>
+        <button mat-raised-button *ngIf="prop.Type == 'Open Notes'" (click)="OpenNotes()" [matBadge]="NotesBadge()" matBadgeColor="primary" [matBadgeHidden]="NotesBadge().length == 0" matBadgeSize="small" matBadgePosition="below">{{'properties.openNotes' | translate}}</button>
         <!--Open Questionnaire-->
-        <button mat-raised-button *ngIf="prop.Type == 'Open Questionnaire'" (click)="OpenQuestionnaire()">{{'properties.openQuestionnaire' | translate}}</button>
+        <button mat-raised-button *ngIf="prop.Type == 'Open Questionnaire'" (click)="OpenQuestionnaire()" [matBadge]="QuestionnaireBadge()" matBadgeColor="primary" [matBadgeHidden]="QuestionnaireBadge().length == 0" matBadgeSize="small" matBadgePosition="below">{{'properties.openQuestionnaire' | translate}}</button>
         <!--Stencil Type-->
         <select *ngIf="prop.Type == 'Stencil Type'" style="width: 100%;" [ngModel]="GetStencilType()" (change)="SetType(prop, $event['target']['value'])">
           <option *ngFor="let type of GetAvailableTypes(selectedObject)" [value]="type.ID">{{type.Name}}</option>

@@ -76,6 +76,7 @@ import { CveEntryComponent } from './components/cve-entry/cve-entry.component';
 import { ImageViewComponent } from './components/image-view/image-view.component';
 import { GlossaryComponent } from './components/glossary/glossary.component';
 import { ChangelogDialogComponent } from './components/changelog-dialog/changelog-dialog.component';
+import { FileInfoDialogComponent } from './components/file-info-dialog/file-info-dialog.component';
 
 @NgModule({
   declarations: [
@@ -83,7 +84,7 @@ import { ChangelogDialogComponent } from './components/changelog-dialog/changelo
     StatusBarComponent, SideNavComponent, SaveDialogComponent, PasswordDialogComponent, MessagesDialogComponent, 
     TwoOptionsDialogComponent, CweEntryComponent, CapecEntryComponent, NavTreeComponent, CvssEntryComponent, OwaspRREntryComponent,
     ProgressTrackerComponent, ModelInfoComponent, NotesComponent, 
-    LocalDatePipe, LocalDateTimePipe, RenameDialogComponent, TagsComponent, CveSearchComponent, CveEntryComponent, ImageViewComponent, GlossaryComponent, ChangelogDialogComponent
+    LocalDatePipe, LocalDateTimePipe, RenameDialogComponent, TagsComponent, CveSearchComponent, CveEntryComponent, ImageViewComponent, GlossaryComponent, ChangelogDialogComponent, FileInfoDialogComponent
   ],
   imports: [
     CommonModule, 

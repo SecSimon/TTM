@@ -94,7 +94,6 @@ export class DataService {
 
   private project: ProjectFile;
   private config: ConfigFile;
-  private projectCopy: string;
 
   constructor(private locStorage: LocalStorageService, private isLoading: IsLoadingService, private http: HttpClient, private router: Router, private clipboard: Clipboard,
     private dialog: MatDialog, private messagesService: MessagesService, private translate: TranslateService, private fileUpdate: FileUpdateService, private zone: NgZone, 
@@ -215,9 +214,7 @@ export class DataService {
         val = null;
       }
       this.project = val;
-      this.projectCopy = null;
       if (val) {
-        this.projectCopy = JSON.stringify(val.ToJSON());
         val.TTModelerVersion = versionFile.version;
         this.Config = val.Config;
         this.Config.ProjectFile = val;

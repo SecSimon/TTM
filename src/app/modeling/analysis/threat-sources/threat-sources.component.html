@@ -16,7 +16,7 @@
   </mat-accordion>
   <div class="row">
     <div class="column1">
-      <mat-list cdkDropList (cdkDropListDropped)="drop($event, threatSources.Sources)" class="prop-list reorder-list" [class.prop-list-light]="!theme.IsDarkMode" [class.prop-list-dark]="theme.IsDarkMode">
+      <mat-list cdkDropList (cdkDropListDropped)="drop($event)" class="prop-list reorder-list" [class.prop-list-light]="!theme.IsDarkMode" [class.prop-list-dark]="theme.IsDarkMode">
         <div mat-subheader>{{'general.ThreatSources' | translate}} <button mat-icon-button [matMenuTriggerFor]="addMenu" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000" style="margin-left: 15px;"><mat-icon>add</mat-icon></button>
           <mat-menu #addMenu="matMenu">
             <button mat-menu-item (click)="AddSource()">{{'general.New' | translate}}</button>

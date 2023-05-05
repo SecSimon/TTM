@@ -5,10 +5,13 @@ export class StringExtension {
       for (let i = 0; i < str?.length; i++) { if (!(str[i] >= '0' && str[i] <= '9')) return false; }
       return true;
     };
-    let similar = database.filter(x => x.startsWith(name));
-    let existing = similar.filter(x => isNumber(x[name.length])).map(x => x.replace('-Reference', ''));
-    let nums = existing.map(x => Number(x.replace(name, '')));
-    if (nums.length == 0) return name + '1';
+    const similar = database.filter(x => x.startsWith(name));
+    const existing = similar.filter(x => isNumber(x[name.length])).map(x => x.replace('-Reference', ''));
+    const nums = existing.map(x => Number(x.replace(name, '')));
+    if (nums.length == 0) {
+      if (similar.length == 0 || (similar.length == 1 && similar[0] != name)) return name;
+      return name + '2';
+    }
     return name + (Math.max(...nums)+1).toString();
   }
 

@@ -103,6 +103,7 @@ enum CTypes {
   DataFlowArrowS = 'DF-AS',
 
   Device = 'DEV',
+  DeviceReference = 'DEV-REF',
   DeviceLabel1 = 'DEV-LBL1',
   DeviceLabel1Line = 'DEV-LBL1-L',
   DeviceLabel2 = 'DEV-LBL2',
@@ -2905,6 +2906,8 @@ export class CtxCanvas extends CanvasBase {
     switch (obj[CProps.myType]) {
       case CTypes.Device: obj.on('scaling', (e) => this.onScaleDevice(e));
         break;
+      case CTypes.DeviceReference: obj.on('scaling', (e) => this.onScaleDevice(e));
+        break;
       case CTypes.MobileApp: obj.on('scaling', (e) => this.onScaleMobileApp(e));
         break;
       case CTypes.Interactor: obj.on('scaling', (e) => this.onScaleInteractor(e));
@@ -2940,73 +2943,74 @@ export class CtxCanvas extends CanvasBase {
       wid = 250;
       hei = 350;
     }
-    let e = new fabric.Rect({
-      stroke: element instanceof ContextElementRef ? this.theme.Primary : this.StrokeColor, strokeWidth: this.StrokeWidth,
+    const isReference = element instanceof ContextElementRef;
+    const e = new fabric.Rect({
+      stroke: isReference ? this.theme.Primary : this.StrokeColor, strokeWidth: this.StrokeWidth,
       width: wid, height: hei, fill: 'transparent', myType: CTypes.ElementBorder
     });
 
-    let etype = new fabric.Text('«Device»', {
+    const etype = new fabric.Text('«Device»', {
       fontSize: 12, fill: this.StrokeColor,
       originX: 'center', left: wid / 2, top: 25,
       myType: CTypes.ElementType
     });
-    let etxt = new fabric.Text(element.GetProperty('Name'), {
+    const etxt = new fabric.Text(element.GetProperty('Name'), {
       fontSize: 16, fill: this.StrokeColor,
-      originX: 'center', left: wid / 2, top: hei / 2 - 8, textAlign: 'center',
+      originX: 'center', left: wid / 2, top: isReference ? (5) : (hei / 2 - 8), textAlign: 'center',
       myType: CTypes.ElementName
     });
 
-    let parts = [e, etype, etxt];
+    const parts = [e, etype, etxt];
     // detailed interfaces
-    let elbl1 = new fabric.Text('', {
+    const elbl1 = new fabric.Text('', {
       fontSize: 12, fill: this.StrokeColor, angle: 90,
       originX: 'center', left: 20, top: hei / 2,
       myType: CTypes.DeviceLabel1
     });
-    let elbl1l = new fabric.Line([20, 0, 20, hei], {
+    const elbl1l = new fabric.Line([20, 0, 20, hei], {
       stroke: this.StrokeColor, strokeWidth: 1, myType: CTypes.DeviceLabel1Line
     });
 
-    let elbl2 = new fabric.Text('', {
+    const elbl2 = new fabric.Text('', {
       fontSize: 12, fill: this.StrokeColor,
       originX: 'center', left: wid / 2, top: hei - 16,
       myType: CTypes.DeviceLabel2
     });
-    let elbl2l = new fabric.Line([0, hei - 20, wid, hei - 20], {
+    const elbl2l = new fabric.Line([0, hei - 20, wid, hei - 20], {
       stroke: this.StrokeColor, strokeWidth: 1, myType: CTypes.DeviceLabel2Line
     });
 
-    let elbl3 = new fabric.Text('', {
+    const elbl3 = new fabric.Text('', {
       fontSize: 12, fill: this.StrokeColor, angle: 90,
       originX: 'center', left: wid, top: hei / 2,
       myType: CTypes.DeviceLabel3
     });
-    let elbl3l = new fabric.Line([wid - 20, 0, wid - 20, hei], {
+    const elbl3l = new fabric.Line([wid - 20, 0, wid - 20, hei], {
       stroke: this.StrokeColor, strokeWidth: 1, myType: CTypes.DeviceLabel3Line
     });
 
-    let elbl4 = new fabric.Text('', {
+    const elbl4 = new fabric.Text('', {
       fontSize: 12, fill: this.StrokeColor,
       originX: 'center', left: wid / 2, top: 5,
       myType: CTypes.DeviceLabel4
     });
-    let elbl4l = new fabric.Line([0, 20, wid, 20], {
+    const elbl4l = new fabric.Line([0, 20, wid, 20], {
       stroke: this.StrokeColor, strokeWidth: 1, myType: CTypes.DeviceLabel4Line
     });
 
     let dev: Device = null;
     if (element instanceof Device) dev = element;
-    else if (element instanceof ContextElementRef && element.Ref instanceof Device) dev = element.Ref;
+    else if (isReference && element.Ref instanceof Device) dev = element.Ref;
     if (detailedInterfaces) dev.DeviceInterfaceNameChanged.subscribe(x => this.changeDeviceInterfaceVisibility(dev));
     parts.push(...[elbl1, elbl1l, elbl2, elbl2l, elbl3, elbl3l, elbl4, elbl4l]);
 
     parts.push(...this.createFlowAnchors(wid, hei, true, true, true, true));
 
-    let g = new fabric.Group(parts, {
+    const g = new fabric.Group(parts, {
       left: left, top: top,
       hasControls: true, lockRotation: true, lockScalingX: false, lockScalingY: false, hasBorders: false,
       ID: element.ID, canvasID: uuidv4(),
-      myType: CTypes.Device, subTargetCheck: true
+      myType: isReference ? CTypes.DeviceReference : CTypes.Device, subTargetCheck: true
     });
 
     g.on('scaling', (e) => this.onScaleDevice(e));
@@ -3018,17 +3022,18 @@ export class CtxCanvas extends CanvasBase {
 
   private onScaleDevice(event) {
     this.onScaleElement(event);
-    let g = event.transform.target;
-    let e = g._objects.find(x => x[CProps.myType] == CTypes.ElementBorder);
-    let etype = g._objects.find(x => x[CProps.myType] == CTypes.ElementType);
-    let elbl1 = g._objects.find(x => x[CProps.myType] == CTypes.DeviceLabel1);
-    let elbl1l = g._objects.find(x => x[CProps.myType] == CTypes.DeviceLabel1Line);
-    let elbl2 = g._objects.find(x => x[CProps.myType] == CTypes.DeviceLabel2);
-    let elbl2l = g._objects.find(x => x[CProps.myType] == CTypes.DeviceLabel2Line);
-    let elbl3 = g._objects.find(x => x[CProps.myType] == CTypes.DeviceLabel3);
-    let elbl3l = g._objects.find(x => x[CProps.myType] == CTypes.DeviceLabel3Line);
-    let elbl4 = g._objects.find(x => x[CProps.myType] == CTypes.DeviceLabel4);
-    let elbl4l = g._objects.find(x => x[CProps.myType] == CTypes.DeviceLabel4Line);
+    const g = event.transform.target;
+    const e = g._objects.find(x => x[CProps.myType] == CTypes.ElementBorder);
+    const etxt = g._objects.find(x => x[CProps.myType] == CTypes.ElementName);
+    const etype = g._objects.find(x => x[CProps.myType] == CTypes.ElementType);
+    const elbl1 = g._objects.find(x => x[CProps.myType] == CTypes.DeviceLabel1);
+    const elbl1l = g._objects.find(x => x[CProps.myType] == CTypes.DeviceLabel1Line);
+    const elbl2 = g._objects.find(x => x[CProps.myType] == CTypes.DeviceLabel2);
+    const elbl2l = g._objects.find(x => x[CProps.myType] == CTypes.DeviceLabel2Line);
+    const elbl3 = g._objects.find(x => x[CProps.myType] == CTypes.DeviceLabel3);
+    const elbl3l = g._objects.find(x => x[CProps.myType] == CTypes.DeviceLabel3Line);
+    const elbl4 = g._objects.find(x => x[CProps.myType] == CTypes.DeviceLabel4);
+    const elbl4l = g._objects.find(x => x[CProps.myType] == CTypes.DeviceLabel4Line);
 
 
     let wg = g.width * g.scaleX, hg = g.height * g.scaleY;
@@ -3037,6 +3042,11 @@ export class CtxCanvas extends CanvasBase {
       'scaleX': 1, 'scaleY': 1,
       'left': -wg / 2,
       'top': -hg / 2
+    });
+
+    if (g[CProps.myType] == CTypes.DeviceReference) etxt.set({
+      'left': 0,
+      'top': -hg / 2 + 5
     });
 
     etype?.set({

@@ -144,11 +144,12 @@ export class TransferProjectDialogComponent implements OnInit {
       }
       else if (key.Value === 'dialog.transferproject.d.ThreatSources') {
         const srcTS = srcProj.GetThreatSources();
-        const destTS = currProj.GetThreatSources()
+        const destTS = currProj.GetThreatSources();
         srcTS.Sources.forEach(ts => {
           if (!destTS.Sources.some(x => x.Name == ts.Name)) {
             const actor = currProj.CreateThreatActor();
             actor.CopyFrom(ts.Data);
+            destTS.AddThreatActor(actor);
             this.TransferLog += this.translate.instant('dialog.transferproject.l.createThreatActor') + ': ' + actor.Name + '\n';
           }
         });

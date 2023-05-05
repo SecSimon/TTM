@@ -32,6 +32,7 @@ import { TestCaseComponent } from '../modeling/test-case/test-case.component';
 import { ImageViewComponent } from '../shared/components/image-view/image-view.component';
 import { GlossaryComponent } from '../shared/components/glossary/glossary.component';
 import { ChangelogDialogComponent } from '../shared/components/changelog-dialog/changelog-dialog.component';
+import { FileInfoDialogComponent } from '../shared/components/file-info-dialog/file-info-dialog.component';
 
 export class MyBoolean {
   public Value: boolean;
@@ -434,6 +435,11 @@ export class DialogService {
       component: ModelInfoComponent
     };
     return this.OpenTwoOptionsDialog(data);
+  }
+
+  public OpenFileInfoDialog() {
+    const dialogRef = this.dialog.open(FileInfoDialogComponent, { hasBackdrop: true, width: '1000px' });
+    return dialogRef.afterClosed();
   }
 
   public OpenCookieConsentDialog() {

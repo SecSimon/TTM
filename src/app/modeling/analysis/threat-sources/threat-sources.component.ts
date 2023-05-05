@@ -45,8 +45,8 @@ export class ThreatSourcesComponent implements OnInit {
     this.dataService.Project.DeleteThreatActor(ta);
   }
 
-  public drop(event: CdkDragDrop<string[]>, selectedArray) {
-    moveItemInArray(selectedArray, event.previousIndex, event.currentIndex);
+  public drop(event: CdkDragDrop<string[]>) {
+    moveItemInArray(this.threatSources.Data['sourceIDs'], event.previousIndex, event.currentIndex);
   }
 
   public GetLMHValues() {

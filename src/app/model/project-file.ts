@@ -175,6 +175,7 @@ export class ProjectFile extends DatabaseBase {
   public get Config(): ConfigFile { return this.config; }
 
   public AssetsChanged = new EventEmitter<IDataChanged>();
+  public MyDatasChanged = new EventEmitter<IDataChanged>();
   public DevicesChanged = new EventEmitter<IDataChanged>();
   public MobileAppsChanged = new EventEmitter<IDataChanged>();
   public ContextElementsChanged = new EventEmitter<IDataChanged>();
@@ -206,9 +207,9 @@ export class ProjectFile extends DatabaseBase {
     const arrayItemChanged = (event: IDataChanged, array: string, constr, getItem: string, title: string) => {
       if (this.changeLog.findIndex(x => x.ID == event.ID && x.Type == event.Type) < 0  && !this.changeLog.some(y => y.ID == event.ID && y.Type > event.Type)) {
         if (event.Type == DataChangedTypes.Removed) {
-          const exstingEntry = this.changeLog.find(x => x.ID == event.ID);
+          const existingEntry = this.changeLog.find(x => x.ID == event.ID);
           let objName = null;
-          if (exstingEntry) objName = exstingEntry.Name;
+          if (existingEntry) objName = existingEntry.Name;
           else {
             const obj = this.projectCopy[array].find(x => x['ID'] == event.ID);
             if (obj) {
@@ -226,7 +227,6 @@ export class ProjectFile extends DatabaseBase {
           if (obj['GetLongName']) objName = obj.GetLongName();
           this.changeLog.push({ Title: title, Name: objName, ID: event.ID, Type: event.Type });
         }
-        console.log(this.changeLog);
       }
     };
     
@@ -275,20 +275,22 @@ export class ProjectFile extends DatabaseBase {
       Object.keys(res).forEach(key => {
         if (key === 'Data') {
           Object.keys(res[key]).forEach(item => {
-            let name: string = 'general.' + item;
-            // if (name.includes('general.')) name = this.translate.instant('properties.' + item);
-            // if (name.includes('properties.')) name = StringExtension.FromCamelCase(item);
-            //changes.push([this.deepDiffMapper.VALUE_UPDATED, name]);
-            changes.push({ ID: null, Title: name, Type: DataChangedTypes.Changed });
+            changes.push({ ID: null, Title: item, Type: DataChangedTypes.Changed });
           });
         }
+        else if (key === 'config') changes.push({ ID: null, Title: 'side-nav.configuration', Type: DataChangedTypes.Changed });
+        else if (key === 'charSope') changes.push({ ID: null, Title: 'dialog.transferproject.d.CharScope', Type: DataChangedTypes.Changed });
+        else if (key === 'objImpact') changes.push({ ID: null, Title: 'dialog.transferproject.d.ObjImpact', Type: DataChangedTypes.Changed });
+        else if (key === 'tagCharts') changes.push({ ID: null, Title: 'dialog.tagcharts.title', Type: DataChangedTypes.Changed });
+        else if (key === 'exportTemplates') changes.push({ ID: null, Title: 'pages.reporting.Templates', Type: DataChangedTypes.Changed });
+        // else {
+        //   console.log(key);
+        // }
       });
-      //console.log(changes);
-      console.log([...this.changeLog, ...changes]);
-      // changes.forEach(c => {
-      //   console.log(StringExtension.Format(this.translate.instant('messages.changes.' + c[0]), c[1]) + (c.length > 2 ? ': ' + c[2] : ''));
-      // });
+
+      return [...this.changeLog, ...changes];
     }
+    return [];
   }
 
   public CreateDevice(): Device {
@@ -403,6 +405,7 @@ export class ProjectFile extends DatabaseBase {
     if (this.GetNewAssets().length == 0) res.Number = '1';
     else res.Number = (Math.max(...this.GetNewAssets().map(x => Number(x.Number)))+1).toString();
     res.IsNewAsset = true;
+    this.MyDatasChanged.emit({ ID: res.ID, Type: DataChangedTypes.Added });
     return res;
   }
 
@@ -411,6 +414,7 @@ export class ProjectFile extends DatabaseBase {
     if (index >= 0) {
       data.OnDelete(this, this.config);
       this.myData.splice(index, 1);
+      this.MyDatasChanged.emit({ ID: data.ID, Type: DataChangedTypes.Removed });
     }
     return index >= 0;
   }

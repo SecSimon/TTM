@@ -7,7 +7,7 @@
   </button>
   
   <ng-container *ngIf="!!dataService.Project">
-    <button mat-icon-button class="msgBtn" style="margin-left: 20px;"  (click)="dialogService.OpenModelInfoDialog()">
+    <button mat-icon-button class="msgBtn" style="margin-left: 20px;" (click)="dialogService.OpenFileInfoDialog()">
       <mat-icon class="iconBtn">source</mat-icon>  <span [style.color]="dataService.Project?.FileChanged ? 'yellow' : 'white'">{{dataService.Project?.Name}}</span>
     </button>
     <button mat-icon-button class="msgBtn" style="margin-left: 5px;" matTooltip="{{'status-bar.ConsistencyCheck' | translate}}" matTooltipShowDelay="1000" (click)="dataService.ManualConsistencyCheck()">
@@ -27,7 +27,7 @@
     </button>
   </ng-container>
   <ng-container *ngIf="!dataService.Project && dataService.Config">
-    <button mat-icon-button class="msgBtn" style="margin-left: 20px;">
+    <button mat-icon-button class="msgBtn" style="margin-left: 20px;" (click)="dialogService.OpenFileInfoDialog()">
       <mat-icon class="iconBtn">source</mat-icon>  <span [style.color]="dataService.Config?.FileChanged ? 'yellow' : 'white'">{{dataService.SelectedGHConfig ? dataService.SelectedGHConfig.name : dataService.Config?.Name}}</span>
     </button>
     <button mat-icon-button class="msgBtn" style="margin-left: 5px;" matTooltip="{{'status-bar.ConsistencyCheck' | translate}}" matTooltipShowDelay="1000" (click)="dataService.ManualConsistencyCheck()">

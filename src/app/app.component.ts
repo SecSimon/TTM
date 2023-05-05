@@ -131,10 +131,17 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.projectID = project.ID;
       this.createDiffer(project.GetDFDElements(), null, project.DFDElementsChanged);
       this.createDiffer(project.GetAttackScenarios(), null, project.AttackScenariosChanged);
+      this.createDiffer(project.GetCountermeasures(), null, project.CountermeasuresChanged);
+      this.createDiffer(project.GetMitigationProcesses(), null, project.MitigationProcessesChanged);
       this.createDiffer(project.GetComponents(), null, project.MyComponentsChanged);
       this.createDiffer(project.GetComponents(), 'threatQuestions');
       this.createDiffer(project.GetDevices(), null, null);
       this.createDiffer(project.GetDiagrams(), null, project.DiagramsChanged);
+      this.createDiffer(project.GetSystemThreats(), null, project.SystemThreatsChanged);
+      this.createDiffer(project.GetThreatActors(), null, project.ThreatActorsChanged);
+      this.createDiffer(project.GetAssetGroups(), null, project.AssetsChanged);
+      this.createDiffer(project.GetMyDatas(), null, project.MyDatasChanged);
+      this.createDiffer(project.GetTestCases(), null, project.TestCasesChanged);
       // this.createDiffer(project.GetContextFlows(), null, null);
       // this.createDiffer(project.GetSystemUseCases(), null, null);
       // this.createDiffer(project.GetDeviceInterfaces(), null, null);

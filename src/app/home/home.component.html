@@ -157,13 +157,16 @@
               <mat-paginator class="paginator" *ngIf="dataService.AvailableGHConfigs.length > 0" [length]="dataService.AvailableGHConfigs.length" [pageSize]="pageConfigSize" [hidePageSize]="true" (page)="pageGHConfigIndex = $event.pageIndex"> </mat-paginator>
 
               <div style="margin-top: 50px;">
-                <mat-icon class="iconBtn" style="vertical-align: top; font-size: 20px; margin-right: 5px;" matTooltip="{{'pages.home.storedOnline' | translate}}" matTooltipShowDelay="1000">waving_hand</mat-icon>
+                <mat-icon class="iconBtn" style="vertical-align: top; font-size: 20px; margin-right: 5px;">waving_hand</mat-icon>
                 <button class="color-primary astext" (click)="tourService.start()">{{'pages.home.welcomeTour' | translate}}</button>
                 <ng-container *ngIf="!electron?.isElectron">
                   <br/>
-                  <mat-icon class="iconBtn" style="vertical-align: top; font-size: 20px; margin-right: 5px;" matTooltip="{{'pages.home.storedOnline' | translate}}" matTooltipShowDelay="1000">install_desktop</mat-icon>
+                  <mat-icon class="iconBtn" style="vertical-align: top; font-size: 20px; margin-right: 5px; margin-bottom: 5px;">install_desktop</mat-icon>
                   <a href="https://github.com/SecSimon/TTM/releases" target="_blank">{{'pages.home.downloadDesktop' | translate}}</a>
                 </ng-container>
+                <br/>
+                <mat-icon class="iconBtn" style="vertical-align: top; font-size: 20px; margin-right: 5px;">code</mat-icon>
+                <a href="https://github.com/SecSimon/TTM" target="_blank">{{'pages.home.viewSourceCode' | translate}}</a>
               </div>
             </ng-container>
 

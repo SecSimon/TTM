@@ -1,3 +1,11 @@
+## 0.4.11
+
+* Added file info dialog with (incomplete) list of changes
+* Naming convention update
+* UI improvements (use case diagram, properties window)
+* Fix: Transfer project details dialog (threat sources)
+* Fix: Reorder threat actors
+
 ## 0.4.10
 
 * Default config update

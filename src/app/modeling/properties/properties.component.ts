@@ -263,6 +263,22 @@ export class PropertiesComponent implements OnInit {
     this.openQuestionnaire.emit(this.selectedObject as MyComponent);
   }
 
+  public QuestionnaireBadge(): string {
+    if (this.selectedObject instanceof MyComponent && this.selectedObject.IsActive) {
+      const unanswered = Object.values(this.selectedObject.ThreatQuestions).filter(x => x == null).length;
+      if (unanswered > 0) return unanswered.toString();
+    }
+    return '';
+  }
+
+  public NotesBadge(): string {
+    if (this.selectedObject instanceof MyComponent) {
+      const count = this.selectedObject.Notes.length;
+      if (count > 0) return count.toString();
+    }
+    return '';
+  }
+
   public CreateUseCaseDiagram() {
     let dia = this.dataService.Project.CreateDiagram(DiagramTypes.DataFlow);
     dia.Name = (this.selectedObject as SystemUseCase).Name;
