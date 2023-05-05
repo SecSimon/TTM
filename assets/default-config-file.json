@@ -10979,7 +10979,7 @@
     },
     {
       "ID": "821594a6-02e5-4a15-9a72-9cca5b57ee92",
-      "Name": "FW Dumping",
+      "Name": "Firmware Readout",
       "Description": "This enables IP theft and allows debugging of binaries to find further vulnerabilities that can be exploited",
       "IsActive": true,
       "RuleGenerationType": 2,
@@ -11011,7 +11011,7 @@
     },
     {
       "ID": "7cfa63f6-262b-4da3-aa88-6478522b45c5",
-      "Name": "FW Overwrite",
+      "Name": "Firmware Overwrite",
       "Description": "",
       "IsActive": true,
       "RuleGenerationType": 2,
