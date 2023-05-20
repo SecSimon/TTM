@@ -640,6 +640,7 @@ export abstract class CanvasBase {
     this.Canvas.selection = false;
     this.Canvas.selectionFullyContained = true;
     this.Canvas.targetFindTolerance = 2;
+    this.Canvas.uniformScaling = false; // scale not proportionally
 
     this.Canvas.setWidth(cc.clientWidth);
     this.CanvasScreenWidth = cc.clientWidth;
@@ -715,6 +716,7 @@ export abstract class CanvasBase {
 
     this.Diagram.Elements.GetChildrenFlat().forEach(x => {
       x.NameChanged.subscribe(y => this.changeObjectName(x.ID));
+      x.OutOfScopeChanged.subscribe(y => this.changeObjectBorder(x.ID));
       if (x instanceof DFDElement) {
         x.TypeChanged.subscribe(y => this.changeObjectType(x.ID, y.Name));
         x.PhysicalElementChanged.subscribe(y => this.changeObjectPhysicalElement(x.ID, y));
@@ -1301,6 +1303,7 @@ export abstract class CanvasBase {
           flow.ShowName = this.ShowName;
           let flowObj = this.createFlow(this.tmpFlowLine.x1, this.tmpFlowLine.y1, start[0], start[1], flow);
           flow.NameChanged.subscribe(x => this.changeObjectName(flow.ID));
+          flow.OutOfScopeChanged.subscribe(x => this.changeObjectBorder(flow.ID));
           flow.LineTypeChanged?.subscribe(x => this.flowChangeLineType(flow.ID, x));
           flow.ArrowPosChanged?.subscribe(y => this.flowUpdateFlowArrow(flow.ID));
           flow.BendFlowChanged?.subscribe(y => this.flowChangeBending(flow.ID, y));
@@ -2006,6 +2009,30 @@ export abstract class CanvasBase {
     }
   }
 
+  protected changeObjectBorder(id: string) {
+    const obj = this.getCanvasElementByID(id);
+    const ele = this.getViewBaseElement(id);
+    let border = null;
+    if (obj['_objects']) {
+      border = obj['_objects'].find(x => x[CProps.myType] == CTypes.ElementBorder);
+    }
+    else if (obj[CProps.myType] == CTypes.DataFlowLine) {
+      border = obj;
+    }
+
+    if (border && ele) {
+      if (ele.OutOfScope) {
+        border.set('strokeDashArray', [2, 2]);
+      }
+      else {
+        delete border['strokeDashArray'];
+      }
+
+      border.set('dirty', true);
+      this.Canvas.requestRenderAll();
+    }
+  }
+
   protected renderIcon(ctx: CanvasRenderingContext2D, left, top, styleOverride, fabricObject) {
     //if (fabricObject[CProps.myType] == 'Annotation') return;
     var size = 24;
@@ -2218,7 +2245,7 @@ export class HWDFCanvas extends CanvasBase {
     if (!this.Diagram.Canvas && this.Diagram.DiagramType == DiagramTypes.Hardware) {
       let stencil = this.dataService.Config.GetStencilTypes().find(x => x.ElementTypeID == ElementTypeIDs.PhyTrustArea && x.Name == 'Device Casing');
       if (!stencil) stencil = this.dataService.Config.GetStencilTypes().find(x => x.IsDefault && x.ElementTypeID == ElementTypeIDs.PhyTrustArea);
-      let element = this.createElement({ stencilRef: { name: '', stencilID: stencil.ID } }, 100, 10);
+      const element = this.createElement({ stencilRef: { name: '', stencilID: stencil.ID } }, 5, 5);
       let obj = this.getCanvasElementByID(element.ID);
       element.Name = this.dataService.Project.FindDeviceOfDiagram(this.Diagram)?.Name + "'s Casing";
       obj.set('scaleX', (cc.clientWidth - 200) / obj.width);
@@ -2275,6 +2302,7 @@ export class HWDFCanvas extends CanvasBase {
     }
 
     element.NameChanged.subscribe(x => this.changeObjectName(element.ID));
+    element.OutOfScopeChanged.subscribe(x => this.changeObjectBorder(element.ID));
     element.TypeChanged.subscribe(x => this.changeObjectType(element.ID, x.Name));
     element.PhysicalElementChanged.subscribe(x => this.changeObjectPhysicalElement(element.ID, x));
     let x = 0; //ev.e.dataTransfer.getData("offsetX");
@@ -2892,6 +2920,7 @@ export class CtxCanvas extends CanvasBase {
     }
 
     element.NameChanged.subscribe(x => this.changeObjectName(element.ID));
+    element.OutOfScopeChanged.subscribe(x => this.changeObjectBorder(element.ID));
     element.TypeChanged.subscribe(x => this.changeObjectType(element.ID, ContextElementTypeUtil.ToString(element.Type)));
 
     this.Diagram.Elements.AddChild(element);

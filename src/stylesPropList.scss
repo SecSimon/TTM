@@ -27,6 +27,10 @@
   ::ng-deep .mat-list-text {
     padding-left: 8px !important;
   }
+
+  .mat-subheader {
+    display: contents;
+  }
 }
 
 .prop-list-light {

@@ -45,6 +45,13 @@ export class ThreatSourcesComponent implements OnInit {
     this.dataService.Project.DeleteThreatActor(ta);
   }
 
+  public ResetNumbers() {
+    const arr = this.threatSources.Sources;
+    for (let i = 0; i < arr.length; i++) {
+      arr[i].Number = (i+1).toString();
+    }
+  }
+
   public drop(event: CdkDragDrop<string[]>) {
     moveItemInArray(this.threatSources.Data['sourceIDs'], event.previousIndex, event.currentIndex);
   }

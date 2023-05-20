@@ -8,6 +8,9 @@ import { NavTreeBase } from './nav-tree-base';
 
 export interface INavigationNode {
   name: () => string;
+  tooltip?: string;
+  nameExtension?: string;
+  tooltipExtension?: string;
   canCheck?: boolean;
   checkEnabled?: boolean;
   isChecked?: boolean;

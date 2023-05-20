@@ -24,11 +24,11 @@
                     <span>{{'pages.home.menu.saveProject' | translate}}</span>
                   </button>
                   <button mat-menu-item [disabled]="!dataService.Project" (click)="dataService.ExportFile(true)" matTooltip="{{'pages.home.menu.downloadProject.tt' | translate}}" matTooltipShowDelay="1000">
-                    <mat-icon matBadge="P" matBadgeOverlap="true" matBadgeColor="primary" matBadgeSize="small" matBadgePosition="below">file_download</mat-icon>
+                    <mat-icon>file_download</mat-icon>
                     <span>{{'pages.home.menu.downloadProject' | translate}}</span>
                   </button>
                   <button mat-menu-item [disabled]="!dataService.Project" class="exportBtn" (click)="dataService.ExportFile(false)" matTooltip="{{'pages.home.menu.downloadConfig.tt' | translate}}" matTooltipShowDelay="1000">
-                    <mat-icon matBadge="C" matBadgeOverlap="true" matBadgeColor="primary" matBadgeSize="small" matBadgePosition="below">file_download</mat-icon>
+                    <mat-icon>file_download</mat-icon>
                     <span>{{'pages.home.menu.downloadConfig' | translate}}</span>
                   </button>
                   <button mat-menu-item [disabled]="!dataService.SelectedGHProject" (click)="dataService.OnExportConfig()" matTooltip="{{'pages.home.menu.exportConfig.tt' | translate}}" matTooltipShowDelay="1000">
@@ -36,12 +36,12 @@
                     <span>{{'pages.home.menu.exportConfig' | translate}}</span>
                   </button>
                   <button mat-menu-item [disabled]="!dataService.Project" class="exportBtn" [matMenuTriggerFor]="exchangeMenu" matTooltip="{{'pages.home.menu.exchangeConfig.tt' | translate}}" matTooltipShowDelay="1000">
-                    <mat-icon matBadge="C" matBadgeOverlap="true" matBadgeColor="primary" matBadgeSize="small" matBadgePosition="below">wifi_protected_setup</mat-icon>
+                    <mat-icon>wifi_protected_setup</mat-icon>
                     <span>{{'pages.home.menu.exchangeConfig' | translate}}</span>
                   </button>
                   <mat-menu #exchangeMenu="matMenu">
                     <button mat-menu-item [disabled]="true">
-                      <mat-icon matBadge="C" matBadgeOverlap="true" matBadgeColor="primary" matBadgeSize="small" matBadgePosition="below">file_upload</mat-icon>
+                      <mat-icon>file_upload</mat-icon>
                       {{'pages.home.menu.importConfig' | translate}}
                     </button>
                     <button mat-menu-item (click)="dataService.ExchangeConfigWithDefault()">Default Configuration</button>
@@ -58,7 +58,7 @@
                   <mat-divider></mat-divider>
                   <input hidden type="file" accept=".ttmp" #projectUploader (change)="dataService.ImportFile(true, $event)"/>
                   <button mat-menu-item (click)="projectUploader.click()" matTooltip="{{'pages.home.menu.importProject.tt' | translate}}" matTooltipShowDelay="1000">
-                    <mat-icon matBadge="P" matBadgeOverlap="true" matBadgeColor="primary" matBadgeSize="small" matBadgePosition="below">file_upload</mat-icon>
+                    <mat-icon>file_upload</mat-icon>
                     <span>{{'pages.home.menu.importProject' | translate}}</span>
                   </button>
                 </mat-menu>
@@ -78,7 +78,7 @@
                 <div id="project">
                   <mat-icon class="iconBtn" style="vertical-align: top; font-size: 20px; margin-right: 5px;" matTooltip="{{'pages.home.storedOnline' | translate}}" matTooltipShowDelay="1000">cloud_queue</mat-icon>
                   <button class="color-primary astext" (click)="dataService.LoadProject(proj)">{{proj.name}}</button>
-                  in {{GetRepoName(proj)}} 
+                  <span style="font-size: small; margin-left: 5px;">in {{GetRepoName(proj)}}</span> 
                   <mat-icon *ngIf="IsProtected(proj)" class="iconBtn" style="vertical-align: top; margin-right: 5px;" matTooltip="{{'pages.home.notWritable' | translate}}" matTooltipShowDelay="1000">edit_off</mat-icon>
                   <button mat-icon-button class="show-on-hover iconBtn" style="margin-right: 5px;" [matMenuTriggerFor]="moreGHProject" matTooltip="{{'general.More' | translate}}" matTooltipShowDelay="1000">
                     <mat-icon>more_vert</mat-icon>
@@ -101,7 +101,7 @@
                 <div id="project">
                   <mat-icon class="iconBtn" style="vertical-align: top; font-size: 20px; margin-right: 5px;" matTooltip="{{'pages.home.storedOffline' | translate}}" matTooltipShowDelay="1000">file_present</mat-icon>
                   <button class="color-primary astext" (click)="dataService.LoadProjectFS(proj)">{{GetFileName(proj)}}</button>
-                  in {{GetFilePath(proj)}}
+                  <span style="font-size: small; margin-left: 5px;">in {{GetFilePath(proj)}}</span>
                   <button mat-icon-button class="show-on-hover iconBtn" style="margin-right: 5px;" [matMenuTriggerFor]="moreFSProject" matTooltip="{{'general.More' | translate}}" matTooltipShowDelay="1000">
                     <mat-icon>more_vert</mat-icon>
                   </button>
@@ -127,7 +127,7 @@
                 <mat-menu #confMenu="matMenu">
                   <input hidden type="file" accept=".ttmc" #configUploader (change)="dataService.ImportFile(false, $event)"/>
                   <button mat-menu-item (click)="configUploader.click()">
-                    <mat-icon matBadge="C" matBadgeOverlap="true" matBadgeColor="primary" matBadgeSize="small" matBadgePosition="below">file_upload</mat-icon>
+                    <mat-icon>file_upload</mat-icon>
                     <span>{{'pages.home.menu.importConfig' | translate}}</span>
                   </button>
                 </mat-menu>
@@ -137,7 +137,7 @@
                 <div id="config">
                   <mat-icon class="iconBtn" style="vertical-align: top; font-size: 20px; margin-right: 5px;" matTooltip="{{'pages.home.storedOnline' | translate}}" matTooltipShowDelay="1000">cloud_queue</mat-icon>
                   <button class="color-primary astext" (click)="dataService.LoadConfig(conf)">{{conf.name}}</button>
-                  in {{GetRepoName(conf)}}
+                  <span style="font-size: small; margin-left: 5px;">in {{GetRepoName(conf)}}</span>
                   <mat-icon *ngIf="IsProtected(conf)" class="iconBtn" style="vertical-align: top; margin-right: 5px;" matTooltip="{{'pages.home.notWritable' | translate}}" matTooltipShowDelay="1000">edit_off</mat-icon>
                   <button mat-icon-button class="show-on-hover iconBtn" style="margin-right: 5px;" [matMenuTriggerFor]="moreGHConfig" matTooltip="{{'general.More' | translate}}" matTooltipShowDelay="1000">
                     <mat-icon>more_vert</mat-icon>

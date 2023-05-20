@@ -63,7 +63,7 @@
       </ng-container>
   
       <tr mat-header-row style="height: 30px;" *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;" [class.selected-threat]="IsThreatSelected(row)" [class.removed-threat]="IsThreatRemoved(row) || IsThreatNotApplying(row)" 
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" [class.selected-item]="IsThreatSelected(row)" [class.removed-item]="IsThreatRemoved(row) || IsThreatNotApplying(row)" 
         (click)="SelectThreat(row)" (dblclick)="OnMappingDblClick(row, $event)" (contextmenu)="OpenContextMenu($event, row)">
       </tr>
       <tr class="mat-row" *matNoDataRow>
@@ -122,7 +122,7 @@
         </td>
       </ng-container>
   
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;" [class.selected-threat]="IsThreatSelected(row)" [class.removed-threat]="IsThreatRemoved(row) || IsThreatNotApplying(row)" 
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" [class.selected-item]="IsThreatSelected(row)" [class.removed-item]="IsThreatRemoved(row) || IsThreatNotApplying(row)" 
         (click)="SelectThreat(row)" (dblclick)="OnMappingDblClick(row, $event)" (contextmenu)="OpenContextMenu($event, row)">
       </tr>
     </table>

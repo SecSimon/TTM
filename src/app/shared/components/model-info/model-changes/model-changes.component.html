@@ -1,0 +1,11 @@
+<div *ngIf="dataService.Project">
+  <ng-container *ngIf="!dataService.Project.FileChanged">
+    <p>{{ 'dialog.modelchanges.noChanges' | translate }}</p>
+  </ng-container>
+  <ng-container *ngIf="dataService.Project.FileChanged">
+    <p>{{ 'dialog.modelchanges.incompleteList' | translate }}:</p>
+    <ul>
+      <li *ngFor="let e of Changes">{{ e }}</li>
+    </ul>
+  </ng-container>
+</div>

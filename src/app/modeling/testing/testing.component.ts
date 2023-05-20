@@ -31,6 +31,13 @@ export class TestingComponent implements OnInit {
     this.dataService.Project.DeleteTestCase(tc);
   }
 
+  public ResetNumbers() {
+    const arr = this.dataService.Project.GetTestCases();
+    for (let i = 0; i < arr.length; i++) {
+      arr[i].Number = (i+1).toString();
+    }
+  }
+
   public drop(event: CdkDragDrop<string[]>) {
     moveItemInArray(this.testing.Data['testCaseIDs'], event.previousIndex, event.currentIndex);
   }

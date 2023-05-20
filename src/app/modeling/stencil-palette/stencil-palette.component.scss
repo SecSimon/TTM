@@ -1,9 +1,13 @@
-
-.example-headers-align .mat-expansion-panel-header-description {
-  justify-content: right;
+.stencil-headers-align .mat-expansion-panel-header {
+  height: 35px !important;
 }
 
-.example-headers-align .mat-expansion-panel {
+.stencil-headers-align .mat-expansion-panel-header-description {
+  justify-content: right;
+  flex-grow: 1;
+}
+
+.stencil-headers-align .mat-expansion-panel {
   background-color: transparent;
 }
 
@@ -74,7 +78,7 @@
 }
 
 .draggable-element {
-  margin: 3px;
+  margin: 2px 2px -3px 2px;
   cursor: pointer;
 }
 

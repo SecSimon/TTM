@@ -505,11 +505,13 @@ export class DFDElementRef extends DFDElement {
   public GetProperty(id: string) {
     if (id == 'Ref') return this.Ref;
     else if (id == 'diagramID') return this.diagramID;
+    else if (id == 'OutOfScope') return this.OutOfScope;
     return this.Ref.GetProperty(id);
   }
 
   public SetProperty(id: string, value: any) {
-    this.Ref.SetProperty(id, value);
+    if (id == 'OutOfScope') this.OutOfScope = value;
+    else this.Ref.SetProperty(id, value);
   }
 
   protected initProperties() {
@@ -523,6 +525,7 @@ export class DFDElementRef extends DFDElement {
     this.Ref.NameChanged.subscribe(x => this.NameChanged.emit(x));
     this.Ref.DataChanged.subscribe(x => this.DataChanged.emit(x));
     this.Ref.TypeChanged.subscribe(x => this.TypeChanged.emit(x));
+    this.Ref.OutOfScopeChanged.subscribe(x => this.OutOfScopeChanged.emit(x));
   }
 
   public static InstantiateRef(ref: DFDElement, pf: ProjectFile, cf: ConfigFile): DFDElement {

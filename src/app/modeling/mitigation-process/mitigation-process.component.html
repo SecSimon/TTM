@@ -1,15 +1,12 @@
 <div *ngIf="mitigationProcess" [class.disable]="!canEdit">
-  <mat-form-field appearance="fill" class="property-form-field">
+  <mat-form-field appearance="fill" style="width: calc(100% - 85px);">
     <mat-label>{{ 'properties.Name' | translate }}</mat-label>
     <input matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="mitigationProcess.Name" matTooltip="{{mitigationProcess.Name}}" matTooltipShowDelay="1000"/>
+    <button *ngIf="mitigationProcess.Name" matSuffix mat-icon-button (click)="mitigationProcess.Name=''" matTooltip="{{'general.Clear' | translate}}" matTooltipShowDelay="1000">
+      <mat-icon>close</mat-icon>
+    </button>
   </mat-form-field>
-  <mat-form-field appearance="fill" class="property-form-field" style="margin-left: 10px;">
-    <mat-label>{{'properties.Status' | translate}}</mat-label>
-    <mat-select [(value)]="mitigationProcess.MitigationProcessState" (selectionChange)="OnStateChange($event.value)" matTooltip="{{GetMitigationProcessStateName(mitigationProcess.MitigationProcessState) | translate}}" matTooltipShowDelay="1000">
-      <mat-option *ngFor="let state of GetMitigationProcessStates()" [value]="state">{{GetMitigationProcessStateName(state) | translate}}</mat-option>
-    </mat-select>
-  </mat-form-field>
-  <mat-form-field appearance="fill" style="width: 70px; float: right; margin-left: 10px;">
+  <mat-form-field appearance="fill" style="width: 70px; float: right;">
     <mat-label>{{ 'general.Number' | translate }}</mat-label>
     <input matInput type="number" min="0" [(ngModel)]="mitigationProcess.Number" required matTooltip="{{mitigationProcess.Number}}" matTooltipShowDelay="1000"/>
     <mat-hint *ngIf="NumberAlreadyExists()" style="color: red;" class="alert alert-danger">
@@ -18,13 +15,19 @@
   </mat-form-field>
   <br/>
   <mat-form-field appearance="fill" class="property-form-field">
+    <mat-label>{{'properties.Status' | translate}}</mat-label>
+    <mat-select [(value)]="mitigationProcess.MitigationProcessState" (selectionChange)="OnStateChange($event.value)" matTooltip="{{GetMitigationProcessStateName(mitigationProcess.MitigationProcessState) | translate}}" matTooltipShowDelay="1000">
+      <mat-option *ngFor="let state of GetMitigationProcessStates()" [value]="state">{{GetMitigationProcessStateName(state) | translate}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-icon style="margin-left: 10px;" matTooltip="{{'general.Progress' | translate}}" matTooltipShowDelay="1000">north_east</mat-icon>
+  <mat-slider style="width: 276px;" color="primary" thumbLabel [displayWith]="formatLabel" tickInterval="5" step="5" min="0" max="100" [(ngModel)]="mitigationProcess.Progress" (change)="OnProgressChange($event.value)"></mat-slider>
+  <mat-form-field appearance="fill" style="width: 100%;">
     <mat-label>{{'general.Countermeasures' | translate}}</mat-label>
     <mat-select [(value)]="mitigationProcess.Countermeasures" multiple (selectionChange)="countermeasuresChange.emit()" matTooltip="{{GetCountermeasuresName(mitigationProcess.Countermeasures)}}" matTooltipShowDelay="1000">
       <mat-option *ngFor="let map of GetCountermeasures()" [value]="map">{{map.Name}}</mat-option>
     </mat-select>
   </mat-form-field>
-  <mat-icon style="margin-left: 10px;" matTooltip="{{'general.Progress' | translate}}" matTooltipShowDelay="1000">north_east</mat-icon>
-  <mat-slider style="width: 276px;" color="primary" thumbLabel [displayWith]="formatLabel" tickInterval="5" step="5" min="0" max="100" [(ngModel)]="mitigationProcess.Progress" (change)="OnProgressChange($event.value)"></mat-slider>
   <mat-form-field appearance="fill" style="width: 100%;">
     <mat-label>{{ 'properties.Description' | translate }}</mat-label>
     <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="2" cdkAutosizeMaxRows="5" [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="mitigationProcess.Description"></textarea>

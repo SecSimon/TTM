@@ -25,7 +25,9 @@ export class CountermeasureTableComponent implements OnInit {
   private isCalculatingCountermeasures = false;
   private _selectedNode: INavigationNode;
   private _selectedObject: ViewElementBase;
+  private _filteredObject: ViewElementBase;
   private _countermeasures: Countermeasure[] = [];
+  private _unfilteredCountermeasuers: Countermeasure[] = [];
   private _selectedCountermeasures: Countermeasure[] = [];
 
   public displayedColumns = [];
@@ -41,8 +43,9 @@ export class CountermeasureTableComponent implements OnInit {
   
   public get Countermeasures(): Countermeasure[] { return this._countermeasures; }
   public set Countermeasures(val: Countermeasure[]) {
+    if (this._filteredObject) val = val.filter(x => x.Targets.includes(this._filteredObject));
     this._countermeasures = val;
-    let mySort = (data: Countermeasure, sortHeaderId: string) => {
+    const mySort = (data: Countermeasure, sortHeaderId: string) => {
       if (sortHeaderId == 'name') return data.Name;
       if (sortHeaderId == 'number') return Number(data.Number);
       if (sortHeaderId == 'state') return data.MappingState; 
@@ -53,7 +56,7 @@ export class CountermeasureTableComponent implements OnInit {
       if (sortHeaderId == 'targets') return this.GetTargets(data);
       console.error('Missing sorting header'); 
     };
-    let myFilter = (data: Countermeasure, filter: string) => {
+    const myFilter = (data: Countermeasure, filter: string) => {
       let search = filter.trim().toLowerCase();
       let res = data.Name.toLowerCase().indexOf(search);
       if (res == -1 && data.Control) res = data.Control.Name.toLowerCase().indexOf(search);
@@ -95,7 +98,11 @@ export class CountermeasureTableComponent implements OnInit {
   @Input() public set selectedObject(val: ViewElementBase) {
     if (val && this._selectedObject?.ID == val.ID) return;
     this._selectedObject = val;
-    this.selectedCountermeasures = this.Countermeasures.filter(x => x.Targets.includes(val));
+    this.selectedCountermeasures = this._unfilteredCountermeasuers.filter(x => x.Targets.includes(val));
+  }
+  @Input() public set filteredObject(val: ViewElementBase) {
+    this._filteredObject = val;
+    this.RefreshCountermeasures();
   }
   @Output() public selectedObjectChanged = new EventEmitter<ViewElementBase>();
 
@@ -135,18 +142,19 @@ export class CountermeasureTableComponent implements OnInit {
   public RefreshCountermeasures() {
     setTimeout(() => {
       this.Countermeasures = [];
-    if (this._selectedNode?.data) {
-      if (this._selectedNode?.data instanceof Diagram) {
-        this.Countermeasures = this.mitigationEngine.GenerateDiagramMitigations(this._selectedNode.data);
+      this._unfilteredCountermeasuers = [];
+      if (this._selectedNode?.data) {
+        if (this._selectedNode?.data instanceof Diagram) {
+          this.Countermeasures = this._unfilteredCountermeasuers = this.mitigationEngine.GenerateDiagramMitigations(this._selectedNode.data);
+        }
+        else if (this._selectedNode?.data instanceof MyComponentStack) {
+          this.Countermeasures = this._unfilteredCountermeasuers = this.mitigationEngine.GenerateStackMitigations(this._selectedNode.data);
+        }
       }
-      else if (this._selectedNode?.data instanceof MyComponentStack) {
-        this.Countermeasures = this.mitigationEngine.GenerateStackMitigations(this._selectedNode.data);
-      }
-    }
 
-    this.countermeasureCountChanged.emit(this.dataSourceActive.data.length);
-    
-    this.isCalculatingCountermeasures = false;
+      this.countermeasureCountChanged.emit(this.dataSourceActive.data.length);
+      
+      this.isCalculatingCountermeasures = false;
     }, 10);
   }
 

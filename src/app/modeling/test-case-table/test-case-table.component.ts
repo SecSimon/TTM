@@ -19,7 +19,9 @@ export class TestCaseTableComponent implements OnInit {
   private isCalculatingTestCases = false;
   private _selectedNode: INavigationNode;
   private _selectedObject: ViewElementBase;
-  private testCases: TestCase[] = [];
+  private _filteredObject: ViewElementBase;
+  private _testCases: TestCase[] = [];
+  private _unfilteredTestCases: TestCase[] = [];
   private _selectedTestCases: TestCase[] = [];
 
   public autoRefreshTestCases = true;
@@ -46,15 +48,20 @@ export class TestCaseTableComponent implements OnInit {
   @Input() public set selectedObject(val: ViewElementBase) {
     if (val && this._selectedObject?.ID == val.ID) return;
     this._selectedObject = val;
-    this.selectedTestCases = this.TestCases.filter(x => this.GetElements(x).includes(val));
+    this.selectedTestCases = this._unfilteredTestCases.filter(x => this.GetElements(x).includes(val));
+  }
+  @Input() public set filteredObject(val: ViewElementBase) {
+    this._filteredObject = val;
+    this.RefreshTestCases();
   }
   @Output() public selectedObjectChanged = new EventEmitter<ViewElementBase>();
 
   @Output() public testCaseCountChanged = new EventEmitter<number>();
 
-  public get TestCases(): TestCase[] { return this.testCases; }
+  public get TestCases(): TestCase[] { return this._testCases; }
   public set TestCases(val: TestCase[]) {
-    this.testCases = val;
+    if (this._filteredObject) val = val.filter(x => x.LinkedElements.includes(this._filteredObject));
+    this._testCases = val;
     this.dataSource = new MatTableDataSource(val);
     this.dataSource.sort = this.sort;
     this.dataSource.sortingDataAccessor = (data: TestCase, sortHeaderId: string) => {
@@ -102,8 +109,9 @@ export class TestCaseTableComponent implements OnInit {
   public RefreshTestCases() {
     setTimeout(() => {
       this.TestCases = [];
+      this._unfilteredTestCases = [];
       if (this._selectedNode?.data) {
-        this.TestCases = this.dataService.Project.GetTestCases().filter(x => this.GetElements(x).length > 0);
+        this.TestCases = this._unfilteredTestCases = this.dataService.Project.GetTestCases().filter(x => this.GetElements(x).length > 0);
       }
 
       this.testCaseCountChanged.emit(this.TestCases.length);

@@ -4,6 +4,7 @@ import { MyComponent } from '../../../model/component';
 import { OptionTypes, OptionTypesUtil, RuleTypes, AttackVector, ThreatQuestion } from '../../../model/threat-model';
 import { DataService } from '../../../util/data.service';
 import { DialogService } from '../../../util/dialog.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-question-dialog',
@@ -34,7 +35,7 @@ export class QuestionDialogComponent implements OnInit {
     return this.selectedComponent != this.components[0];
   }
 
-  constructor(public dialogRef: MatDialogRef<QuestionDialogComponent>, @Inject(MAT_DIALOG_DATA) public data, public dataService: DataService, private dialog: DialogService) { 
+  constructor(public dialogRef: MatDialogRef<QuestionDialogComponent>, @Inject(MAT_DIALOG_DATA) public data, public dataService: DataService, private dialog: DialogService, private router: Router) { 
   }
 
   ngOnInit(): void {
@@ -120,5 +121,11 @@ export class QuestionDialogComponent implements OnInit {
 
   public Prev() {
     this.selectedComponent = this.components[this.components.indexOf(this.selectedComponent)-1];
+  }
+
+  public NavigateToSettings() {
+    this.router.navigate(['configuration'], {
+      queryParams: { index: this.selectedComponent.Type.ComponentTypeID }
+    });
   }
 }

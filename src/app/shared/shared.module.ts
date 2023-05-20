@@ -76,7 +76,8 @@ import { CveEntryComponent } from './components/cve-entry/cve-entry.component';
 import { ImageViewComponent } from './components/image-view/image-view.component';
 import { GlossaryComponent } from './components/glossary/glossary.component';
 import { ChangelogDialogComponent } from './components/changelog-dialog/changelog-dialog.component';
-import { FileInfoDialogComponent } from './components/file-info-dialog/file-info-dialog.component';
+import { ModelTasksComponent } from './components/model-info/model-tasks/model-tasks.component';
+import { ModelChangesComponent } from './components/model-info/model-changes/model-changes.component';
 
 @NgModule({
   declarations: [
@@ -84,7 +85,7 @@ import { FileInfoDialogComponent } from './components/file-info-dialog/file-info
     StatusBarComponent, SideNavComponent, SaveDialogComponent, PasswordDialogComponent, MessagesDialogComponent, 
     TwoOptionsDialogComponent, CweEntryComponent, CapecEntryComponent, NavTreeComponent, CvssEntryComponent, OwaspRREntryComponent,
     ProgressTrackerComponent, ModelInfoComponent, NotesComponent, 
-    LocalDatePipe, LocalDateTimePipe, RenameDialogComponent, TagsComponent, CveSearchComponent, CveEntryComponent, ImageViewComponent, GlossaryComponent, ChangelogDialogComponent, FileInfoDialogComponent
+    LocalDatePipe, LocalDateTimePipe, RenameDialogComponent, TagsComponent, CveSearchComponent, CveEntryComponent, ImageViewComponent, GlossaryComponent, ChangelogDialogComponent, ModelTasksComponent, ModelChangesComponent
   ],
   imports: [
     CommonModule, 

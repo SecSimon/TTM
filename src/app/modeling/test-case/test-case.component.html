@@ -1,25 +1,27 @@
 <div *ngIf="testCase">
-  <mat-form-field appearance="fill" class="property-form-field">
+  <mat-form-field appearance="fill" style="width: calc(100% - 85px);">
     <mat-label>{{'general.Name' | translate}}</mat-label>
     <input matInput type="text" [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="testCase.Name" matTooltip="{{testCase.Name}}" matTooltipShowDelay="1000">
     <button *ngIf="testCase.Name" matSuffix mat-icon-button (click)="testCase.Name=''" matTooltip="{{'general.Clear' | translate}}" matTooltipShowDelay="1000">
       <mat-icon>close</mat-icon>
     </button>
   </mat-form-field>
-  <mat-form-field appearance="fill" style="margin-left: 10px; width: 200px;">
-    <mat-label>{{'properties.Status' | translate}}</mat-label>
-    <mat-select [(value)]="testCase.Status" matTooltip="{{GetTestCaseStateName(testCase.Status) | translate}}" matTooltipShowDelay="1000">
-      <mat-option *ngFor="let state of GetTestCaseStates()" [value]="state">{{GetTestCaseStateName(state) | translate}}</mat-option>
-    </mat-select>
-  </mat-form-field>
-  <button mat-icon-button [disabled]="!canAddAttackScenario" style="vertical-align: super;" matTooltip="{{'pages.modeling.diagram.addAttackScenario' | translate}}" (click)="AddAttackScenario()" matTooltipShowDelay="1000"><mat-icon>flash_on</mat-icon></button>
-  <mat-form-field appearance="fill" style="width: 70px; float: right; margin-left: 10px;">
+  <mat-form-field appearance="fill" style="width: 70px; float: right;">
     <mat-label>{{ 'general.Number' | translate }}</mat-label>
     <input matInput type="number" min="0" [(ngModel)]="testCase.Number" required matTooltip="{{testCase.Number}}" matTooltipShowDelay="1000"/>
     <mat-hint *ngIf="NumberAlreadyExists()" style="color: red;" class="alert alert-danger">
       {{'messages.error.numberAlreadyExists' | translate}}
     </mat-hint>
   </mat-form-field>
+  <br/>
+  <mat-form-field appearance="fill" class="property-form-field">
+    <mat-label>{{'properties.Status' | translate}}</mat-label>
+    <mat-select [(value)]="testCase.Status" matTooltip="{{GetTestCaseStateName(testCase.Status) | translate}}" matTooltipShowDelay="1000">
+      <mat-option *ngFor="let state of GetTestCaseStates()" [value]="state">{{GetTestCaseStateName(state) | translate}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <button mat-icon-button [disabled]="!canAddAttackScenario" style="vertical-align: super;" matTooltip="{{'pages.modeling.diagram.addAttackScenario' | translate}}" (click)="AddAttackScenario()" matTooltipShowDelay="1000"><mat-icon>flash_on</mat-icon></button>
+  <br/>
   <mat-form-field appearance="fill" style="width: 100%;">
     <mat-label>{{ 'properties.Description' | translate }}</mat-label>
     <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="2" cdkAutosizeMaxRows="5" [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="testCase.Description"></textarea>

@@ -32,7 +32,8 @@ import { TestCaseComponent } from '../modeling/test-case/test-case.component';
 import { ImageViewComponent } from '../shared/components/image-view/image-view.component';
 import { GlossaryComponent } from '../shared/components/glossary/glossary.component';
 import { ChangelogDialogComponent } from '../shared/components/changelog-dialog/changelog-dialog.component';
-import { FileInfoDialogComponent } from '../shared/components/file-info-dialog/file-info-dialog.component';
+import { ModelTasksComponent } from '../shared/components/model-info/model-tasks/model-tasks.component';
+import { ModelChangesComponent } from '../shared/components/model-info/model-changes/model-changes.component';
 
 export class MyBoolean {
   public Value: boolean;
@@ -296,7 +297,7 @@ export class DialogService {
         onChange.emit(curr);
       };
     }
-    return this.OpenTwoOptionsDialog(data);
+    return this.OpenTwoOptionsDialog(data, false, '800px');
   }
 
   public OpenTestCaseDialog(tc: TestCase, isNew: boolean) {
@@ -312,7 +313,7 @@ export class DialogService {
         { Key: TestCase, Value: tc }
       ]
     };
-    return this.OpenTwoOptionsDialog(data);
+    return this.OpenTwoOptionsDialog(data, false, '800px');
   }
 
   public OpenAddControlDialog(mit: Control) {
@@ -437,9 +438,30 @@ export class DialogService {
     return this.OpenTwoOptionsDialog(data);
   }
 
-  public OpenFileInfoDialog() {
-    const dialogRef = this.dialog.open(FileInfoDialogComponent, { hasBackdrop: true, width: '1000px' });
-    return dialogRef.afterClosed();
+  public OpenModelTasksNotesDialog() {
+    const data: ITwoOptionDialogData = {
+      title: this.translate.instant('dialog.modelinfo.title') + ': ' + this.translate.instant('status-bar.TasksAndNotes'),
+      resultTrueText: this.translate.instant('general.Close'),
+      hasResultFalse: false,
+      resultFalseText: '',
+      resultTrueEnabled: () => true,
+      initalTrue: true,
+      component: ModelTasksComponent
+    };
+    return this.OpenTwoOptionsDialog(data);
+  }
+
+  public OpenModelChangesDialog() {
+    const data: ITwoOptionDialogData = {
+      title: this.translate.instant('dialog.modelinfo.title') + ': ' + this.translate.instant('dialog.modelchanges.Changes'),
+      resultTrueText: this.translate.instant('general.Close'),
+      hasResultFalse: false,
+      resultFalseText: '',
+      resultTrueEnabled: () => true,
+      initalTrue: true,
+      component: ModelChangesComponent
+    };
+    return this.OpenTwoOptionsDialog(data);
   }
 
   public OpenCookieConsentDialog() {

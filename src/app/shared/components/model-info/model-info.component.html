@@ -1,110 +1,130 @@
 <div style="margin: 0 10px;" *ngIf="!!Project">
-  <h3>{{Project.Name}}</h3>
-  <div>
-    <div class="row">
-      <div class="col1">
-        <mat-form-field appearance="fill" style="width: 350px;">
-          <mat-label>{{ 'properties.Description' | translate }}</mat-label>
-          <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="Project.Description"></textarea>
-        </mat-form-field>
-        <mat-form-field appearance="fill" style="width: 350px;">
-          <mat-label>{{ 'properties.Version' | translate }}</mat-label>
-          <input matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="Project.UserVersion"/>
-        </mat-form-field>
-      </div>
-      <div class="col2">
-        <div class="imgContainer">
-          <img #projImg [src]="Project.Image" (click)="ViewImage(Project.Image)">
-          <input #fileUpload type="file" class="fileInput" accept="image/*" (change)="OnFileSelected($event)">
-          <div class="removeBtn" *ngIf="Project.Image" [style.left]="GetRemoveBtnLeft(projImg)">
-            <button mat-icon-button color="primary" (click)="Project.Image=''">
-              <mat-icon>remove</mat-icon>
-            </button>
+  <mat-tab-group dynamicHeight [selectedIndex]="GetSelectedTabIndex()" (selectedIndexChange)="SetSelectedTabIndex($event)" (selectedTabChange)="changes.UpdateChanges()">
+    <mat-tab>
+      <ng-template mat-tab-label>
+        {{ 'dialog.modelinfo.general' | translate }}
+      </ng-template>
+      <ng-template matTabContent>
+        <h3>{{Project.Name}}</h3>
+        <div>
+          <div class="row">
+            <div class="col1">
+              <mat-form-field appearance="fill" style="width: 350px;">
+                <mat-label>{{ 'properties.Description' | translate }}</mat-label>
+                <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="Project.Description"></textarea>
+              </mat-form-field>
+              <mat-form-field appearance="fill" style="width: 350px;">
+                <mat-label>{{ 'properties.Version' | translate }}</mat-label>
+                <input matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="Project.UserVersion"/>
+              </mat-form-field>
+            </div>
+            <div class="col2">
+              <div class="imgContainer">
+                <img #projImg [src]="Project.Image" (click)="ViewImage(Project.Image)">
+                <input #fileUpload type="file" class="fileInput" accept="image/*" (change)="OnFileSelected($event)">
+                <div class="removeBtn" *ngIf="Project.Image" [style.left]="GetRemoveBtnLeft(projImg)">
+                  <button mat-icon-button color="primary" (click)="Project.Image=''">
+                    <mat-icon>remove</mat-icon>
+                  </button>
+                </div>
+                <div class="uploadBtn">
+                  <button mat-mini-fab color="primary" (click)="fileUpload.click()">
+                    <mat-icon>add_photo_alternate</mat-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="uploadBtn">
-            <button mat-mini-fab color="primary" (click)="fileUpload.click()">
-              <mat-icon>add_photo_alternate</mat-icon>
-            </button>
+          <div class="row">
+            <div class="column1">
+              <mat-list class="prop-list" [class.prop-list-light]="!theme.IsDarkMode" [class.prop-list-dark]="theme.IsDarkMode">
+                <div mat-subheader>{{ 'properties.Participants' | translate }} <button mat-icon-button (click)="AddUser()" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000" style="margin-left: 15px;"><mat-icon>add</mat-icon></button></div>
+                <mat-list-item *ngFor="let user of Project.Participants" (click)="selectedUser = user"
+                [class.highlight-light]="selectedUser === user && !theme.IsDarkMode" [class.highlight-dark]="selectedUser === user && theme.IsDarkMode"
+                matTooltip="{{user.Name}}" matTooltipShowDelay="1000">
+                  <mat-icon mat-list-icon>person</mat-icon>
+                  <div mat-line>{{user.Name}}</div>
+                  <div mat-line><a class="primary-color" [href]="'mailto:' + user.Email">{{user.Email}}</a></div>
+                  <button mat-icon-button style="margin-left: auto;" (click)="DeleteUser(user)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000"><mat-icon>delete</mat-icon></button>
+                </mat-list-item>
+              </mat-list>
+            </div>
+            <div class="column2">
+              <div *ngIf="selectedUser" style="margin: 10px 0 10px 10px">
+                <mat-form-field appearance="fill" class="property-form-field">
+                  <mat-label>{{ 'properties.Name' | translate }}</mat-label>
+                  <input matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="selectedUser.Name"/>
+                  <button *ngIf="selectedUser.Name" matSuffix mat-icon-button (click)="selectedUser.Name=''" matTooltip="{{'general.Clear' | translate}}" matTooltipShowDelay="1000">
+                    <mat-icon>close</mat-icon>
+                  </button>
+                </mat-form-field>
+                <br/>
+                <mat-form-field appearance="fill" class="property-form-field">
+                  <mat-label>{{ 'properties.Email' | translate }}</mat-label>
+                  <input matInput [(ngModel)]="selectedUser.Email"/>
+                </mat-form-field>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="column1">
-        <mat-list class="prop-list" [class.prop-list-light]="!theme.IsDarkMode" [class.prop-list-dark]="theme.IsDarkMode">
-          <div mat-subheader>{{ 'properties.Participants' | translate }} <button mat-icon-button (click)="AddUser()" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000" style="margin-left: 15px;"><mat-icon>add</mat-icon></button></div>
-          <mat-list-item *ngFor="let user of Project.Participants" (click)="selectedUser = user"
-          [class.highlight-light]="selectedUser === user && !theme.IsDarkMode" [class.highlight-dark]="selectedUser === user && theme.IsDarkMode"
-          matTooltip="{{user.Name}}" matTooltipShowDelay="1000">
-            <mat-icon mat-list-icon>person</mat-icon>
-            <div mat-line>{{user.Name}}</div>
-            <div mat-line><a class="primary-color" [href]="'mailto:' + user.Email">{{user.Email}}</a></div>
-            <button mat-icon-button style="margin-left: auto;" (click)="DeleteUser(user)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000"><mat-icon>delete</mat-icon></button>
-          </mat-list-item>
-        </mat-list>
-      </div>
-      <div class="column2">
-        <div *ngIf="selectedUser" style="margin: 10px 0 10px 10px">
-          <mat-form-field appearance="fill" class="property-form-field">
-            <mat-label>{{ 'properties.Name' | translate }}</mat-label>
-            <input matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="selectedUser.Name"/>
-            <button *ngIf="selectedUser.Name" matSuffix mat-icon-button (click)="selectedUser.Name=''" matTooltip="{{'general.Clear' | translate}}" matTooltipShowDelay="1000">
-              <mat-icon>close</mat-icon>
-            </button>
-          </mat-form-field>
-          <br/>
-          <mat-form-field appearance="fill" class="property-form-field">
-            <mat-label>{{ 'properties.Email' | translate }}</mat-label>
-            <input matInput [(ngModel)]="selectedUser.Email"/>
-          </mat-form-field>
+        <div>
+          <h4>{{'general.Settings' | translate}}</h4>
+          <div style="margin-left: 20px; margin-bottom: 15px;">
+            <mat-slide-toggle color="primary" [checked]="Project.HasTesting" (change)="OnTestingChanged($event)">{{'general.TestCases' | translate}}</mat-slide-toggle>
+          </div>
         </div>
-      </div>
-    </div>
-  </div>
-  <div>
-    <h4>{{'general.Tasks' | translate}}</h4>
-    <app-notes [showTimestamp]="false" [hasCheckbox]="true" [canToggleTimestamp]="true" [notes]="Project.Tasks"></app-notes>
-  </div>
-  <div>
-    <h4>{{'general.Notes' | translate}}</h4>
-    <app-notes [showTimestamp]="true" [hasCheckbox]="false" [canToggleCheckbox]="true" [notes]="Project.Notes"></app-notes>
-  </div>
-  <div>
-    <h4>{{'general.Settings' | translate}}</h4>
-    <div style="margin-left: 20px; margin-bottom: 15px;">
-      <mat-slide-toggle color="primary" [checked]="Project.HasTesting" (change)="OnTestingChanged($event)">{{'general.TestCases' | translate}}</mat-slide-toggle>
-    </div>
-  </div>
-  <div>
-    <mat-accordion class="expansion-panel-headers-align">
-      <mat-expansion-panel *ngIf="GHProject">
-        <mat-expansion-panel-header>
-          <mat-panel-title>
-            {{'dialog.modelinfo.History' | translate}}
-          </mat-panel-title>
-          <mat-panel-description>
-            {{GHProject.name}}
-            <mat-icon>history</mat-icon>
-          </mat-panel-description>
-        </mat-expansion-panel-header>
-        <ng-template matExpansionPanelContent>
-          <table>
-            <tr *ngFor="let commit of commits; index as index; count as count">
-              <td style="text-align: right;">{{count-index}})</td>
-              <td>{{commit.date | localDateTime}}</td>
-              <td>-</td>
-              <td>{{commit.commiter}}</td>
-              <td>:</td>
-              <td>
-                {{commit.message}}
-                <button mat-icon-button style="width: 20px; height: 20px; line-height: 20px;" (click)="dataService.RestoreCommit(commit)" matTooltip="{{'dialog.modelinfo.Restore' | translate}}" matTooltipShowDelay="1000">
-                  <mat-icon>restore</mat-icon>
-                </button>
-              </td>
-            </tr>
-          </table>
-        </ng-template>
-      </mat-expansion-panel>
-    </mat-accordion>
-  </div>
+        <div>
+          <mat-accordion class="expansion-panel-headers-align">
+            <mat-expansion-panel *ngIf="GHProject">
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  {{'dialog.modelinfo.History' | translate}}
+                </mat-panel-title>
+                <mat-panel-description>
+                  {{GHProject.name}}
+                  <mat-icon>history</mat-icon>
+                </mat-panel-description>
+              </mat-expansion-panel-header>
+              <ng-template matExpansionPanelContent>
+                <table>
+                  <tr *ngFor="let commit of commits; index as index; count as count">
+                    <td style="text-align: right;">{{count-index}})</td>
+                    <td>{{commit.date | localDateTime}}</td>
+                    <td>-</td>
+                    <td>{{commit.commiter}}</td>
+                    <td>:</td>
+                    <td>
+                      {{commit.message}}
+                      <button mat-icon-button style="width: 20px; height: 20px; line-height: 20px;" (click)="dataService.RestoreCommit(commit)" matTooltip="{{'dialog.modelinfo.Restore' | translate}}" matTooltipShowDelay="1000">
+                        <mat-icon>restore</mat-icon>
+                      </button>
+                    </td>
+                  </tr>
+                </table>
+              </ng-template>
+            </mat-expansion-panel>
+          </mat-accordion>
+        </div>
+      </ng-template>
+    </mat-tab>
+    <mat-tab>
+      <ng-template mat-tab-label>
+        {{ 'status-bar.TasksAndNotes' | translate }}
+      </ng-template>
+      <app-model-tasks></app-model-tasks>
+    </mat-tab>
+    <mat-tab>
+      <ng-template mat-tab-label>
+        {{ 'dialog.modelchanges.Changes' | translate }}
+      </ng-template>
+      <app-model-changes #changes></app-model-changes>
+    </mat-tab>
+    <mat-tab>
+      <ng-template mat-tab-label>
+        {{ 'dialog.progress.title' | translate }}
+      </ng-template>
+      <h4>{{ 'status-bar.progress' | translate }}: {{GetProgress()}}</h4>
+      <app-progress-tracker></app-progress-tracker>
+    </mat-tab>
+  </mat-tab-group>
 </div>

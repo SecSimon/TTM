@@ -14,6 +14,15 @@
   list-style-type: none;
 }
 
+.onHover {
+  .hoverIcon {
+    display: none;
+  }
+  &:hover .hoverIcon {
+    display: block;
+  }
+}
+
 /*
   * This padding sets alignment of the nested nodes.
   */

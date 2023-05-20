@@ -13,7 +13,7 @@ import { ThemeService } from '../../util/theme.service';
   styleUrls: ['./container-tree.component.scss']
 })
 export class ContainerTreeComponent implements OnInit {
-
+  private _filteredElement: ViewElementBase;
   private subscription: Subscription;
   private _elements: IContainer;
   private infoMap = new Map<string, string>();
@@ -34,14 +34,27 @@ export class ContainerTreeComponent implements OnInit {
   public set elements(val: IContainer) { 
     this._elements = val;
     this.selectedElement = null;
+    this.filteredElement = null;
     this.RefreshTree();
   };
 
   @Input()
   public selectedElement: ViewElementBase;
 
+  public get filteredElement(): ViewElementBase {
+    return this._filteredElement;
+  }
+  @Input()
+  public set filteredElement(val: ViewElementBase) {
+    this._filteredElement = val;
+    this.filterChanged.emit(val);
+  }
+
   @Output()
   public selectionChanged = new EventEmitter<ViewElementBase>();
+
+  @Output()
+  public filterChanged = new EventEmitter<ViewElementBase>();
 
   constructor(public dataService: DataService, public theme: ThemeService) {
   }

@@ -102,12 +102,18 @@
         <div class="row">
           <div class="column1">
             <mat-list class="prop-list" [class.prop-list-light]="!theme.IsDarkMode" [class.prop-list-dark]="theme.IsDarkMode">
-              <div mat-subheader>{{ 'general.Datas' | translate }} <button mat-icon-button (click)="AddMyData(assetGroup, $event)" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000" style="margin-left: 15px;"><mat-icon>add</mat-icon></button></div>
+              <div mat-subheader>{{ 'general.Datas' | translate }} 
+                <button mat-icon-button (click)="AddMyData(assetGroup, $event)" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000" style="margin-left: 15px;"><mat-icon>add</mat-icon></button>
+                <button mat-icon-button [matMenuTriggerFor]="moreMenu" matTooltip="{{'general.More' | translate}}" matTooltipShowDelay="1000" style="float: right;"><mat-icon>more_vert</mat-icon></button>
+                <mat-menu #moreMenu="matMenu">
+                  <button mat-menu-item [disabled]="assetGroup.GetMyDataFlat().length < 2" (click)="ResetNumbers()">{{'pages.modeling.threattable.resetNumbers' | translate}}</button>
+                </mat-menu>
+              </div>
               <mat-list-item *ngFor="let data of assetGroup.GetMyDataFlat()" (click)="selectedMyData = data"
               [class.highlight-light]="selectedMyData === data && !theme.IsDarkMode" [class.highlight-dark]="selectedMyData === data && theme.IsDarkMode"
               matTooltip="{{data.Name}}" matTooltipShowDelay="1000">
                 <mat-icon mat-list-icon>chevron_right</mat-icon>
-                <div mat-line>{{data.Name}}</div>
+                <div mat-line>{{data.GetLongName()}}</div>
                 <div mat-line>{{'properties.Sensitivity' | translate}}: {{GetSensitivity(data.Sensitivity) | translate}}</div>
                 <button mat-icon-button style="margin-left: auto;" (click)="DeleteMyData(data)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000"><mat-icon>delete</mat-icon></button>
               </mat-list-item>

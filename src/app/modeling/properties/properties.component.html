@@ -64,6 +64,8 @@
         <select *ngIf="prop.Type == 'Physical Element Select'" style="width: 100%;" [ngModel]="GetValue(prop)?.ID" (change)="SetPhysicalElement(prop, $event['target']['value'])">
           <option *ngFor="let element of GetAvailablePhysicalElements(selectedObject)" [value]="element.ID">{{element.Name}}</option>
         </select>
+        <!--Port Box-->
+        <input *ngIf="prop.Type == 'Port Box'" type="text" [spellcheck]="dataService.HasSpellCheck" style="width: 100%;" [value]="GetValue(prop)" (input)="SetValue(prop, $event['target']['value'])" [disabled]="!prop.Editable">
         <!--Protocol Select-->
         <mat-select class="matSelect" *ngIf="prop.Type == 'Protocol Select'" style="width: 100%;" multiple [value]="GetValue(prop)" (selectionChange)="SetValue(prop, $event['value'])">
           <mat-option class="matOption" color="primary" *ngFor="let protocol of GetProtocols()" [value]="protocol">{{protocol.Name}}</mat-option>

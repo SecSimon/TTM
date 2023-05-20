@@ -132,3 +132,37 @@ html, body {
   justify-content: space-between;
   align-items: center;
 }
+
+// mat form field
+.mat-form-field-appearance-fill .mat-form-field-flex {
+  padding: 0.5em .5em 0 .5em !important
+}
+
+.mat-form-field-appearance-fill .mat-form-field-infix {
+  padding: 0.25em 0 0.5em 0 !important;
+}
+
+.mat-form-field-wrapper {
+  padding-bottom: 10px !important;
+}
+
+.mat-form-field-underline {
+  bottom: 10px !important;
+}
+
+// context menu
+::ng-deep .mat-menu-content {
+  padding-top: 0px !important;
+  padding-bottom: 0px !important;
+}
+
+.mat-menu-item {
+  line-height: 35px !important;
+  height: 35px !important;
+}
+
+// select
+.mat-option {
+  line-height: 35px !important;
+  height: 35px !important;
+}

@@ -1,14 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { DataService } from '../../../util/data.service';
 import { TranslateService } from '@ngx-translate/core';
-import { StringExtension } from '../../../util/string-extension';
+import { DataService } from '../../../../util/data.service';
+import { StringExtension } from '../../../../util/string-extension';
 
 @Component({
-  selector: 'app-file-info-dialog',
-  templateUrl: './file-info-dialog.component.html',
-  styleUrls: ['./file-info-dialog.component.scss']
+  selector: 'app-model-changes',
+  templateUrl: './model-changes.component.html',
+  styleUrls: ['./model-changes.component.scss']
 })
-export class FileInfoDialogComponent implements OnInit {
+export class ModelChangesComponent implements OnInit {
 
   public Changes: string[] = [];
 

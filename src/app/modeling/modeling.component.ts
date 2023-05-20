@@ -53,6 +53,7 @@ interface ITabContainer {
 export class ModelingComponent extends SideNavBase implements OnInit {
   private nodes: INavigationNode[];
   private _selectedObject: any;
+  private _filteredObject: ViewElementBase;
   private _selectedTabIndex = 0;
 
   public get selectedNode(): INavigationNode { 
@@ -85,6 +86,11 @@ export class ModelingComponent extends SideNavBase implements OnInit {
   public get selectedObject(): any { return this._selectedObject; }
   public set selectedObject(val: any) { 
     this._selectedObject = val; 
+  }
+
+  public get filteredObject(): ViewElementBase { return this._filteredObject; }
+  public set filteredObject(val: ViewElementBase) { 
+    this._filteredObject = val; 
   }
 
   public get selectedComponent(): MyComponent { return this.selectedObject instanceof MyComponent ? this.selectedObject as MyComponent : null; }
@@ -177,6 +183,7 @@ export class ModelingComponent extends SideNavBase implements OnInit {
     this.selectedTabIndex = event;
 
     this.selectedObject = null;
+    this.filteredObject = null;
 
     if (this.tabs.length > previousIndex && this.tabs[previousIndex] && !this.tabs[previousIndex].keepOpen) {
       setTimeout(() => {
@@ -749,6 +756,8 @@ export class ModelingComponent extends SideNavBase implements OnInit {
       children: [
         {
           name: () => 'Characterization & Scope',
+          nameExtension: '(opt)',
+          tooltipExtension: this.translate.instant('pages.modeling.optionalStep'),
           canSelect: true,
           iconAlignLeft: true,
           icon: 'edit_note', 
@@ -757,6 +766,8 @@ export class ModelingComponent extends SideNavBase implements OnInit {
         },
         {
           name: () => 'Business Objectives & Impact',
+          nameExtension: '(opt)',
+          tooltipExtension: this.translate.instant('pages.modeling.optionalStep'),
           canSelect: true,
           iconAlignLeft: true,
           icon: 'outlined_flag',
@@ -765,6 +776,8 @@ export class ModelingComponent extends SideNavBase implements OnInit {
         },
         {
           name: () => 'System Interaction',
+          nameExtension: '(opt)',
+          tooltipExtension: this.translate.instant('pages.modeling.optionalStep'),
           canSelect: true,
           iconAlignLeft: true,
           icon: 'signpost',
@@ -773,6 +786,8 @@ export class ModelingComponent extends SideNavBase implements OnInit {
         }, 
         {
           name: () => 'Use Cases',
+          nameExtension: '(opt)',
+          tooltipExtension: this.translate.instant('pages.modeling.optionalStep'),
           canSelect: true,
           iconAlignLeft: true,
           icon: 'explore',
@@ -781,6 +796,8 @@ export class ModelingComponent extends SideNavBase implements OnInit {
         },  
         {
           name: () => 'Assets',
+          nameExtension: '(opt*)',
+          tooltipExtension: this.translate.instant('pages.modeling.optionalAsset'),
           canSelect: true,
           iconAlignLeft: true,
           icon: AssetGroup.Icon,
@@ -803,6 +820,8 @@ export class ModelingComponent extends SideNavBase implements OnInit {
         },       
         {
           name: () => 'Threat Sources',
+          nameExtension: '(opt)',
+          tooltipExtension: this.translate.instant('pages.modeling.optionalStep'),
           canSelect: true,
           iconAlignLeft: true,
           icon: 'portrait',

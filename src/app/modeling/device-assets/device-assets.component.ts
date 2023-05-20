@@ -137,6 +137,13 @@ export class DeviceAssetsComponent implements OnInit {
     this.SelectObject(event, data);
   }
 
+  public ResetNumbers() {
+    const arr = this.assetGroup.GetMyDataFlat();
+    for (let i = 0; i < arr.length; i++) {
+      arr[i].Number = (i+1).toString();
+    }
+  }
+
   public GetSensitivity(val: LowMediumHighNumber): string {
     return LowMediumHighNumberUtil.ToString(val);
   }

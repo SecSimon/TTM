@@ -7,10 +7,13 @@
   </button>
   
   <ng-container *ngIf="!!dataService.Project">
-    <button mat-icon-button class="msgBtn" style="margin-left: 20px;" (click)="dialogService.OpenFileInfoDialog()">
+    <button mat-icon-button class="msgBtn" style="margin-left: 20px;" (click)="dialogService.OpenModelChangesDialog()">
       <mat-icon class="iconBtn">source</mat-icon>  <span [style.color]="dataService.Project?.FileChanged ? 'yellow' : 'white'">{{dataService.Project?.Name}}</span>
     </button>
-    <button mat-icon-button class="msgBtn" style="margin-left: 5px;" matTooltip="{{'status-bar.ConsistencyCheck' | translate}}" matTooltipShowDelay="1000" (click)="dataService.ManualConsistencyCheck()">
+    <button mat-icon-button class="msgBtn" style="margin-left: 5px;" matTooltip="{{'status-bar.TasksAndNotes' | translate}}" matTooltipShowDelay="1000" (click)="dialogService.OpenModelTasksNotesDialog()">
+      <mat-icon class="iconBtn">edit_note</mat-icon> 
+    </button>
+    <button mat-icon-button class="msgBtn" matTooltip="{{'status-bar.ConsistencyCheck' | translate}}" matTooltipShowDelay="1000" (click)="dataService.ManualConsistencyCheck()">
       <mat-icon class="iconBtn">flaky</mat-icon> 
     </button>
     <button mat-icon-button tourAnchor="save-file" [disabled]="!dataService.CanSaveProjectBtn" class="msgBtn" matTooltip="{{'general.Save' | translate}}" matTooltipShowDelay="1000" (click)="dataService.OnSave()">
@@ -27,10 +30,13 @@
     </button>
   </ng-container>
   <ng-container *ngIf="!dataService.Project && dataService.Config">
-    <button mat-icon-button class="msgBtn" style="margin-left: 20px;" (click)="dialogService.OpenFileInfoDialog()">
+    <button mat-icon-button class="msgBtn" style="margin-left: 20px;" (click)="dialogService.OpenModelChangesDialog()">
       <mat-icon class="iconBtn">source</mat-icon>  <span [style.color]="dataService.Config?.FileChanged ? 'yellow' : 'white'">{{dataService.SelectedGHConfig ? dataService.SelectedGHConfig.name : dataService.Config?.Name}}</span>
     </button>
-    <button mat-icon-button class="msgBtn" style="margin-left: 5px;" matTooltip="{{'status-bar.ConsistencyCheck' | translate}}" matTooltipShowDelay="1000" (click)="dataService.ManualConsistencyCheck()">
+    <button mat-icon-button class="msgBtn" [disabled]="true" style="margin-left: 5px;" matTooltip="{{'status-bar.TasksAndNotes' | translate}}" matTooltipShowDelay="1000" (click)="dialogService.OpenModelTasksNotesDialog()">
+      <mat-icon class="iconBtn">edit_note</mat-icon> 
+    </button>
+    <button mat-icon-button class="msgBtn" matTooltip="{{'status-bar.ConsistencyCheck' | translate}}" matTooltipShowDelay="1000" (click)="dataService.ManualConsistencyCheck()">
       <mat-icon class="iconBtn">flaky</mat-icon> 
     </button>
     <button mat-icon-button tourAnchor="save-file" class="msgBtn" [disabled]="!dataService.CanSaveConfigBtn" matTooltip="{{'general.Save' | translate}}" matTooltipShowDelay="1000" (click)="dataService.OnSave()">

@@ -43,7 +43,8 @@
   }
 
   ::ng-deep .as-split-gutter-icon:hover {
-    opacity: 0.1;
+    opacity: 1;
+    background-color: #2196F3;
   }
 
   ::ng-deep .as-split-gutter.as-dragged .as-split-gutter-icon {

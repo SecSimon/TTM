@@ -19,7 +19,9 @@ export class IssueTableComponent implements OnInit {
   private isCalculatingIssues = false;
   private _selectedNode: INavigationNode;
   private _selectedObject: ViewElementBase;
-  private issues: IDFDIssue[] = [];
+  private _filteredObject: ViewElementBase;
+  private _issues: IDFDIssue[] = [];
+  private _unfilteredIssues: IDFDIssue[] = [];
   private _selectedIssues: IDFDIssue[] = [];
 
   public displayedColumns = [];
@@ -41,15 +43,20 @@ export class IssueTableComponent implements OnInit {
   @Input() public set selectedObject(val: ViewElementBase) {
     if (val && this._selectedObject?.ID == val.ID) return;
     this._selectedObject = val;
-    this.selectedIssues = this.Issues.filter(x => x.Element?.ID == val?.ID);
+    this.selectedIssues = this._unfilteredIssues.filter(x => x.Element?.ID == val?.ID);
+  }
+  @Input() public set filteredObject(val: ViewElementBase) {
+    this._filteredObject = val;
+    this.RefreshIssues();
   }
   @Output() public selectedObjectChanged = new EventEmitter<ViewElementBase>();
 
   @Output() public issueCountChanged = new EventEmitter<number>();
 
-  public get Issues(): IDFDIssue[] { return this.issues; }
+  public get Issues(): IDFDIssue[] { return this._issues; }
   public set Issues(val: IDFDIssue[]) {
-    this.issues = val;
+    if (this._filteredObject) val = val.filter(x => x.Element == this._filteredObject);
+    this._issues = val;
     this.dataSource = new MatTableDataSource(val);
     this.dataSource.sort = this.sort;
     this.dataSource.sortingDataAccessor = (data: IDFDIssue, sortHeaderId: string) => {
@@ -93,7 +100,7 @@ export class IssueTableComponent implements OnInit {
   public RefreshIssues() {
     if (this._selectedNode?.data) {
       if (this._selectedNode?.data instanceof HWDFDiagram) {
-        this.Issues = this.dfdCop.CheckDFDRules(this._selectedNode.data);
+        this.Issues = this._unfilteredIssues = this.dfdCop.CheckDFDRules(this._selectedNode.data);
       }
       else if (this._selectedNode?.data instanceof MyComponentStack) {
         //this.Issues = this.dfdCop.CheckDFDRules(this._selectedNode.data);
@@ -101,6 +108,7 @@ export class IssueTableComponent implements OnInit {
     }
     else {
       this.Issues = [];
+      this._unfilteredIssues = [];
     }
 
     setTimeout(() => {

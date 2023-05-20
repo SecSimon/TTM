@@ -12,7 +12,7 @@ import { INavigationNode } from '../../shared/components/nav-tree/nav-tree.compo
 import { DialogService } from '../../util/dialog.service';
 import { DataChangedTypes, ViewElementBase } from '../../model/database';
 import { TranslateService } from '@ngx-translate/core';
-import { Control, Countermeasure, MitigationStates } from '../../model/mitigations';
+import { Countermeasure } from '../../model/mitigations';
 import { StringExtension } from '../../util/string-extension';
 
 @Component({
@@ -25,7 +25,9 @@ export class ThreatTableComponent implements OnInit {
   private isCalculatingThreats = false;
   private _selectedNode: INavigationNode;
   private _selectedObject: ViewElementBase;
+  private _filteredObject: ViewElementBase;
   private _attackScenarios: AttackScenario[] = [];
+  private _unfilteredAttackScenarios: AttackScenario[] = [];
   private _selectedThreats: AttackScenario[] = [];
 
   private countermeasureCounts = {}; 
@@ -43,8 +45,9 @@ export class ThreatTableComponent implements OnInit {
   
   public get AttackScenarios(): AttackScenario[] { return this._attackScenarios; }
   public set AttackScenarios(val: AttackScenario[]) {
+    if (this._filteredObject) val = val.filter(x => x.Targets.includes(this._filteredObject) || x.Target == this._filteredObject);
     this._attackScenarios = val;
-    let mySort = (data: AttackScenario, sortHeaderId: string) => {
+    const mySort = (data: AttackScenario, sortHeaderId: string) => {
       if (sortHeaderId == 'name') return data.Name;
       if (sortHeaderId == 'number') return Number(data.Number);
       if (sortHeaderId == 'state') return data.MappingState; 
@@ -57,7 +60,7 @@ export class ThreatTableComponent implements OnInit {
       if (sortHeaderId == 'elements') return this.GetTargets(data);
       console.error('Missing sorting header'); 
     };
-    let myFilter = (data: AttackScenario, filter: string) => {
+    const myFilter = (data: AttackScenario, filter: string) => {
       let search = filter.trim().toLowerCase();
       let res = data.Name.toLowerCase().indexOf(search);
       if (res == -1 && data.AttackVector) res = data.AttackVector.Name.toLowerCase().indexOf(search);
@@ -104,7 +107,11 @@ export class ThreatTableComponent implements OnInit {
   @Input() public set selectedObject(val: ViewElementBase) {
     if (val && this._selectedObject?.ID == val.ID) return;
     this._selectedObject = val;
-    this.selectedThreats = this.AttackScenarios.filter(x => x.Targets.includes(val));
+    this.selectedThreats = this._unfilteredAttackScenarios.filter(x => x.Targets.includes(val));
+  }
+  @Input() public set filteredObject(val: ViewElementBase) {
+    this._filteredObject = val;
+    this.RefreshThreats();
   }
   @Output() public selectedObjectChanged = new EventEmitter<ViewElementBase>();
 
@@ -152,12 +159,13 @@ export class ThreatTableComponent implements OnInit {
   public RefreshThreats() {
     setTimeout(() => {
       this.AttackScenarios = [];
+      this._unfilteredAttackScenarios = [];
       if (this._selectedNode?.data) {
         if (this._selectedNode?.data instanceof Diagram) {
-          this.AttackScenarios = this.threatEngine.GenerateDiagramThreats(this._selectedNode.data);
+          this.AttackScenarios = this._unfilteredAttackScenarios = this.threatEngine.GenerateDiagramThreats(this._selectedNode.data);
         }
         else if (this._selectedNode?.data instanceof MyComponentStack) {
-          this.AttackScenarios = this.threatEngine.GenerateStackThreats(this._selectedNode.data);
+          this.AttackScenarios = this._unfilteredAttackScenarios = this.threatEngine.GenerateStackThreats(this._selectedNode.data);
         }
       }
 

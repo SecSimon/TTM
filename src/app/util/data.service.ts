@@ -97,7 +97,7 @@ export class DataService {
 
   constructor(private locStorage: LocalStorageService, private isLoading: IsLoadingService, private http: HttpClient, private router: Router, private clipboard: Clipboard,
     private dialog: MatDialog, private messagesService: MessagesService, private translate: TranslateService, private fileUpdate: FileUpdateService, private zone: NgZone, 
-    public electron: ElectronService) { 
+    public electron: ElectronService) {
     this.restoreUserAccount();
     if (this.UserMode == UserModes.None) {
       if (this.locStorage.Get(LocStorageKeys.AUTH_GUEST) == 'true') this.userMode = UserModes.Guest;

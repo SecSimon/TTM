@@ -939,6 +939,7 @@ export class SystemContextContainerRef extends SystemContextContainer {
     if (!this.Ref) return; 
     this.Ref.NameChanged.subscribe(x => this.NameChanged.emit(x));
     this.Ref.DataChanged.subscribe(x => this.DataChanged.emit(x));
+    this.Ref.OutOfScopeChanged.subscribe(x => this.OutOfScopeChanged.emit(x));
   }
 
   public static InstantiateRef(ref: SystemContextContainer, pf: ProjectFile, cf: ConfigFile): ContextElement {

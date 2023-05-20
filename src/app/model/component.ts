@@ -124,6 +124,11 @@ export class MyComponent extends ViewElementBase {
     this.Data['typeID'] = type.ID; 
     this.setTypeProperties(type);
     this.TypeID = type.ComponentTypeID;
+    if (this.TypeID == MyComponentTypeIDs.Software) {
+      // not a good solution but can't find a better one
+      this.AddProperty('properties.Version', 'Version', '', true, PropertyEditTypes.TextBox, true); 
+      this.AddProperty('properties.Port', 'Port', '', true, PropertyEditTypes.PortBox, true); 
+    }
   }
   public get TypeID(): MyComponentTypeIDs { return this.Data['TypeID']; }
   public set TypeID(val: MyComponentTypeIDs) { this.Data['TypeID'] = val; }
@@ -132,10 +137,22 @@ export class MyComponent extends ViewElementBase {
 
   public get Version(): string { return this.Data['Version']; }
   public set Version(val: string) { this.Data['Version'] = val; }
+  public get Port(): string { return this.Data['Port']; }
+  public set Port(val: string) { this.Data['Port'] = val; }
   public get Notes(): INote[] { return this.Data['Notes']; }
   public set Notes(val: INote[]) { this.Data['Notes'] = val; }
   public get NotesPerQuestion(): {} { return this.Data['notesPerQuestion']; }
   public set NotesPerQuestion(val: {}) { this.Data['notesPerQuestion'] = val; }
+
+  public get SyncNameToTypeName(): boolean { return this.Data['SyncNameToTypeName']; }
+  public set SyncNameToTypeName(val: boolean) { this.Data['SyncNameToTypeName'] = val; }
+
+  public get Name(): string { return this.Data['Name'].replace(/\n/g, ' '); }
+  public set Name(val: string) { 
+    this.Data['Name'] = val;
+    if (this.SyncNameToTypeName) this.Type.Name = val;
+    this.NameChanged.emit(val); 
+  }
 
   constructor(data: {}, type: MyComponentType, pf: ProjectFile, cf: ConfigFile) {
     super(data);
@@ -153,6 +170,7 @@ export class MyComponent extends ViewElementBase {
     if (!this.Data['Notes']) this.Data['Notes'] = [];
     if (!this.Data['notesPerQuestion']) this.Data['notesPerQuestion'] = {};
     if (!this.Version) this.Version = '';
+    if (!this.Port) this.Port = '';
 
     cf.GetThreatQuestions().filter(x => x.ComponentType.ID == type.ID).forEach(x => this.AddThreatQuestion(x));
   }
@@ -194,7 +212,10 @@ export class MyComponent extends ViewElementBase {
 
     this.AddProperty('properties.IsActive', 'IsActive', '', true, PropertyEditTypes.CheckBox, true);
     this.AddProperty('properties.IsThirdParty', 'IsThirdParty', '', true, PropertyEditTypes.CheckBox, true);
-    if (this.TypeID == MyComponentTypeIDs.Software) this.AddProperty('properties.Version', 'Version', '', true, PropertyEditTypes.TextBox, true);
+    if (this.TypeID == MyComponentTypeIDs.Software) {
+      this.AddProperty('properties.Version', 'Version', '', true, PropertyEditTypes.TextBox, true);
+      this.AddProperty('properties.Port', 'Port', '', true, PropertyEditTypes.PortBox, true);
+    }
     this.AddProperty('properties.Questionnaire', '', '', false, PropertyEditTypes.OpenQuestionnaire, true);
     this.AddProperty('general.Notes', '', '', false, PropertyEditTypes.OpenNotes, true);
   }

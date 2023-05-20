@@ -2,20 +2,32 @@
   <!-- This is the tree node template for leaf nodes -->
   <!-- There is inline padding applied to this node using styles.
     This padding value depends on the mat-icon-button width. -->
-  <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle (click)="OnNodeClicked(node)" [class.highlight-light]="isSelected(node) && !theme.IsDarkMode" [class.highlight-dark]="isSelected(node) && theme.IsDarkMode">
-      <span style="font-size: small;">{{node.GetProperty('Name')}} {{GetNodeInfo(node)}}</span>
-      <mat-icon *ngIf="GetNodeThreats(node) > 0" [matBadge]="GetNodeThreats(node)" matBadgeColor="warn" matBadgeSize="small" matBadgePosition="below" style="margin-left: 5px; margin-right: 8px;">bolt</mat-icon>
+  <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle (click)="OnNodeClicked(node)" class="onHover" [class.highlight-light]="isSelected(node) && !theme.IsDarkMode" [class.highlight-dark]="isSelected(node) && theme.IsDarkMode">
+    <span style="font-size: small;">{{node.GetProperty('Name')}} {{GetNodeInfo(node)}}</span>
+    <mat-icon *ngIf="GetNodeThreats(node) > 0" [matBadge]="GetNodeThreats(node)" matBadgeColor="warn" matBadgeSize="small" matBadgePosition="below">bolt</mat-icon>
+    <button mat-icon-button *ngIf="node !== filteredElement" class="hoverIcon" (click)="filteredElement = node" matTooltip="{{'pages.modeling.containertree.filter' | translate}}" matTooltipShowDelay="1000">
+      <mat-icon>filter_alt</mat-icon>
+    </button>
+    <button mat-icon-button *ngIf="node === filteredElement" (click)="filteredElement = null" matTooltip="{{'pages.modeling.containertree.filterOff' | translate}}" matTooltipShowDelay="1000">
+      <mat-icon>filter_alt_off</mat-icon>
+    </button>
   </mat-tree-node>
   <!-- This is the tree node template for expandable nodes -->
   <mat-nested-tree-node *matTreeNodeDef="let node; when: hasChild">
-    <div class="mat-tree-node" (click)="OnNodeClicked(node)" [class.highlight-light]="isSelected(node) && !theme.IsDarkMode" [class.highlight-dark]="isSelected(node) && theme.IsDarkMode">
+    <div class="mat-tree-node onHover" (click)="OnNodeClicked(node)" [class.highlight-light]="isSelected(node) && !theme.IsDarkMode" [class.highlight-dark]="isSelected(node) && theme.IsDarkMode">
       <button mat-icon-button matTreeNodeToggle>
         <mat-icon class="mat-icon-rtl-mirror">
           {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
         </mat-icon>
       </button>
       <span style="font-size: small;">{{node.GetProperty('Name')}}</span>
-      <mat-icon *ngIf="GetNodeThreats(node) > 0" [matBadge]="GetNodeThreats(node)" matBadgeColor="warn" matBadgeSize="small" matBadgePosition="below" style="margin-left: 5px; margin-right: 8px;">bolt</mat-icon>
+      <mat-icon *ngIf="GetNodeThreats(node) > 0" [matBadge]="GetNodeThreats(node)" matBadgeColor="warn" matBadgeSize="small" matBadgePosition="below">bolt</mat-icon>
+      <button mat-icon-button *ngIf="node !== filteredElement" class="hoverIcon" (click)="filteredElement = node" matTooltip="{{'pages.modeling.containertree.filter' | translate}}" matTooltipShowDelay="1000">
+        <mat-icon>filter_alt</mat-icon>
+      </button>
+      <button mat-icon-button *ngIf="node === filteredElement" (click)="filteredElement = null" matTooltip="{{'pages.modeling.containertree.filterOff' | translate}}" matTooltipShowDelay="1000">
+        <mat-icon>filter_alt_off</mat-icon>
+      </button>
     </div>
     <!-- There is inline padding applied to this div using styles.
         This padding value depends on the mat-icon-button width.  -->

@@ -94,6 +94,13 @@ export class ThreatIdentificationComponent implements OnInit {
     this.selectedThreat = dt;
   }
 
+  public ResetNumbers() {
+    const arr = this.systemThreats;
+    for (let i = 0; i < arr.length; i++) {
+      arr[i].Number = (i+1).toString();
+    }
+  }
+
   public GetLMHValues() {
     return LowMediumHighNumberUtil.GetKeys();
   }

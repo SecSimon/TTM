@@ -14,7 +14,7 @@
     </ng-container>
 
     <tr mat-header-row style="height: 30px;" *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;" [class.selected-issue]="IsIssueSelected(row)" (click)="SelectIssue(row)">
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;" [class.selected-item]="IsIssueSelected(row)" (click)="SelectIssue(row)">
     </tr>
     <tr class="mat-row" *matNoDataRow>
       <td class="mat-cell" colspan="4">{{'pages.modeling.issuetable.noIssues' | translate}}</td>

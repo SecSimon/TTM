@@ -1,0 +1,11 @@
+<mat-form-field [class.cdk-visually-hidden]="true">
+  <input matInput>
+</mat-form-field>
+<div>
+  <h4 style="margin-top: 0px;">{{'general.Tasks' | translate}}</h4>
+  <app-notes [showTimestamp]="false" [hasCheckbox]="true" [canToggleTimestamp]="true" [notes]="Project.Tasks"></app-notes>
+</div>
+<div>
+  <h4>{{'general.Notes' | translate}}</h4>
+  <app-notes [showTimestamp]="true" [hasCheckbox]="false" [canToggleCheckbox]="true" [notes]="Project.Notes"></app-notes>
+</div>

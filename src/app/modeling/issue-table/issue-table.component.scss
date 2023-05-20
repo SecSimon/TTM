@@ -1,11 +1,1 @@
-@import 'stylesTheme.scss';
-
-.selected-issue {
-  td {
-    @extend .primary-color;
-  }
-}
-
-th, td {
-  font-size: small;
-}
+@import 'stylesTable.scss';

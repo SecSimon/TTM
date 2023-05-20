@@ -1,22 +1,26 @@
 <div *ngIf="attackScenario" [class.disable]="!canEdit">
-  <mat-form-field appearance="fill" class="property-form-field">
+  <mat-form-field appearance="fill" style="width: calc(100% - 85px)">
     <mat-label>{{ 'properties.Name' | translate }}</mat-label>
     <input matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="attackScenario.Name" matTooltip="{{attackScenario.Name}}" matTooltipShowDelay="1000"/>
+    <button *ngIf="attackScenario.Name" matSuffix mat-icon-button (click)="attackScenario.Name=''" matTooltip="{{'general.Clear' | translate}}" matTooltipShowDelay="1000">
+      <mat-icon>close</mat-icon>
+    </button>
   </mat-form-field>
-  <mat-form-field appearance="fill" class="property-form-field" style="margin-left: 10px;">
-    <mat-label>{{'properties.Status' | translate}}</mat-label>
-    <mat-select [(value)]="attackScenario.ThreatState" matTooltip="{{GetThreatStateName(attackScenario.ThreatState) | translate}}" matTooltipShowDelay="1000">
-      <mat-option *ngFor="let state of GetThreatStates()" [value]="state">{{GetThreatStateName(state) | translate}}</mat-option>
-    </mat-select>
-  </mat-form-field>
-  <mat-icon color="warn" *ngIf="!attackScenario.RuleStillApplies" style="margin-left: 5px;" matTooltip="{{'pages.modeling.attackscenario.ruleNotApplyingAnymore' | translate}}">sync_problem</mat-icon>
-  <mat-form-field appearance="fill" style="width: 70px; float: right; margin-left: 10px;">
+  <mat-form-field appearance="fill" style="width: 70px; float: right;">
     <mat-label>{{ 'general.Number' | translate }}</mat-label>
     <input matInput type="number" min="0" [(ngModel)]="attackScenario.Number" required matTooltip="{{attackScenario.Number}}" matTooltipShowDelay="1000"/>
     <mat-hint *ngIf="NumberAlreadyExists()" style="color: red;" class="alert alert-danger">
       {{'messages.error.numberAlreadyExists' | translate}}
     </mat-hint>
   </mat-form-field>
+  <br/>
+  <mat-form-field appearance="fill" class="property-form-field">
+    <mat-label>{{'properties.Status' | translate}}</mat-label>
+    <mat-select [(value)]="attackScenario.ThreatState" matTooltip="{{GetThreatStateName(attackScenario.ThreatState) | translate}}" matTooltipShowDelay="1000">
+      <mat-option *ngFor="let state of GetThreatStates()" [value]="state">{{GetThreatStateName(state) | translate}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-icon color="warn" *ngIf="!attackScenario.RuleStillApplies" style="margin-left: 5px;" matTooltip="{{'pages.modeling.attackscenario.ruleNotApplyingAnymore' | translate}}">sync_problem</mat-icon>
   <br/>
   <mat-form-field appearance="fill" class="property-form-field disable">
     <mat-label>{{ 'general.Target' | translate }}</mat-label>

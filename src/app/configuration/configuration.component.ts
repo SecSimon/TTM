@@ -7,6 +7,8 @@ import { LocalStorageService, LocStorageKeys } from '../util/local-storage.servi
 import { ThemeService } from '../util/theme.service';
 
 import { WarningDialogComponent } from './warning-dialog/warning-dialog.component';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { NavTreeBase } from '../shared/components/nav-tree/nav-tree-base';
 
 @Component({
   selector: 'app-configuration',
@@ -22,7 +24,8 @@ export class ConfigurationComponent extends SideNavBase implements OnInit {
     this._selectedNode = val;
   }
 
-  constructor(public theme: ThemeService, public dataService: DataService, private locStorageService: LocalStorageService, private dialog: MatDialog) { 
+  constructor(public theme: ThemeService, public dataService: DataService, private locStorageService: LocalStorageService, private dialog: MatDialog, 
+    private router: Router, private route: ActivatedRoute) { 
     super();
   }
 
@@ -48,6 +51,16 @@ export class ConfigurationComponent extends SideNavBase implements OnInit {
         });
       }
     }
+
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        this.route.queryParams.subscribe(params => {
+          if (params['index'] != null) {
+            this.SetSelectedTabIndex(params['index']);
+          }
+        });
+      }
+    });
   }
 
   public GetSelectedTabIndex() {

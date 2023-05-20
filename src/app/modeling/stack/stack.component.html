@@ -25,12 +25,15 @@
     <tbody>
       <tr *ngFor="let group of GetGroups(); let index = index" (drop)="OnDrop($event, group)">
         <td><p class="group">{{group.Name}}</p></td>
-        <td>
-          <button *ngFor="let comp of GetComponents(group)" class="component" [class.component-dark]="theme.IsDarkMode" [class.component-third-party]="comp.IsThirdParty"
-            [style.opacity]="comp.IsActive ? 1 : 0.5" [style.border-color]="GetComponentColor(comp)" (click)="OnComponentClick(comp)" (dblclick)="OnComponentDblClick(comp)"
-            (contextmenu)="OpenContextMenu($event, comp)" [matBadge]="CompBadge(comp)" matBadgeColor="primary" [matBadgeHidden]="CompBadge(comp).length == 0" matBadgePosition="below">
-            {{comp.Name}}
-          </button>
+        <td style="display: flex; flex-wrap: wrap;">
+          <div *ngFor="let comp of GetComponents(group)" style="position: relative;">
+            <button class="component" [class.component-dark]="theme.IsDarkMode" [class.component-third-party]="comp.IsThirdParty"
+              [style.opacity]="comp.IsActive ? 1 : 0.5" [style.border-color]="GetComponentColor(comp)" [style.border-style]="comp.OutOfScope ? 'dotted' : 'solid'" (click)="OnComponentClick(comp)" (dblclick)="OnComponentDblClick(comp)"
+              (contextmenu)="OpenContextMenu($event, comp)" [matBadge]="CompBadge(comp)" matBadgeColor="primary" [matBadgeHidden]="CompBadge(comp).length == 0" matBadgePosition="below">
+              {{comp.Name}}
+            </button>
+            <div *ngIf="GetComponentPort(comp)?.length > 0" class="component-base component-port" [class.component-dark]="theme.IsDarkMode">{{GetComponentPort(comp)}}</div>
+          </div>
           <button *ngIf="GetComponents(group) == null || GetComponents(group).length == 0" style="visibility: hidden;" class="component">Temp</button>
         </td>
       </tr>
@@ -57,6 +60,14 @@
         <button mat-menu-item (click)="AddCountermeasure(item)">
           <mat-icon>security</mat-icon>
           <span>{{'pages.modeling.diagram.addCountermeasure' | translate}}</span>
+        </button>
+        <button mat-menu-item (click)="MoveLeft(item)">
+          <mat-icon>arrow_back</mat-icon>
+          <span>{{'pages.modeling.stack.moveLeft' | translate}}</span>
+        </button>
+        <button mat-menu-item (click)="MoveRight(item)">
+          <mat-icon>arrow_forward</mat-icon>
+          <span>{{'pages.modeling.stack.moveRight' | translate}}</span>
         </button>
       </ng-container>
     </ng-template> 

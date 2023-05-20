@@ -48,6 +48,7 @@ export enum PropertyEditTypes {
   LowMediumHighSelect = 'Low Medium High Select',
   MyDataSelect = 'Data Select',
   PhysicalElementSelect = 'Physical Element Select',
+  PortBox = 'Port Box',
   ProtocolSelect = 'Protocol Select',
   OpenNotes = 'Open Notes',
   OpenQuestionnaire = 'Open Questionnaire',
@@ -209,7 +210,7 @@ export abstract class DatabaseBase implements IDatabaseBase {
   public set Description(val: string) { this.Data['Description'] = val; }
 
   public NameChanged = new EventEmitter<string>();
-  public DataChanged = new EventEmitter<IDataChanged>(); // property name as parameter
+  public DataChanged = new EventEmitter<IDataChanged>();
 
   constructor(data: {}) {
     this.Data = data;
@@ -282,7 +283,12 @@ export abstract class ViewElementBase extends DatabaseBase {
   public set UserCheckedElement(val: boolean) { this.Data['UserCheckedElement'] = val; }
 
   public get OutOfScope(): boolean { return this.Data['OutOfScope']; }
-  public set OutOfScope(val: boolean) { this.Data['OutOfScope'] = val; }
+  public set OutOfScope(val: boolean) { 
+    this.Data['OutOfScope'] = val;
+    this.OutOfScopeChanged.emit(val);
+  }
+
+  public OutOfScopeChanged = new EventEmitter<boolean>();
 
   constructor(data: {}) {
     super(data);

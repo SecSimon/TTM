@@ -36,7 +36,7 @@
       </ng-container>
   
       <tr mat-header-row style="height: 30px;" *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;" [class.selected-test-case]="IsTestCaseSelected(row)" (click)="SelectTestCase(row)" (dblclick)="OpenTestCase(row)"  (contextmenu)="OpenContextMenu($event, row)">
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" [class.selected-item]="IsTestCaseSelected(row)" (click)="SelectTestCase(row)" (dblclick)="OpenTestCase(row)"  (contextmenu)="OpenContextMenu($event, row)">
       </tr>
       <tr class="mat-row" *matNoDataRow>
         <td class="mat-cell" colspan="5">{{'pages.modeling.testcasetable.noTestCases' | translate}}</td>

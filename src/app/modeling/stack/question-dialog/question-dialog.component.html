@@ -31,7 +31,12 @@
             </td>
           </tr>
           <tr *ngIf="GetThreatQuestions(selectedComponent)?.length == 0">
-            <td>{{'pages.modeling.stack.questiondialog.noConfiguredQuestions' | translate}}</td>
+            <td>
+              {{'pages.modeling.stack.questiondialog.noConfiguredQuestions' | translate}}
+              <button mat-button class="toolBtn" (click)="NavigateToSettings()" matTooltip="{{'general.openInNew' | translate}}" matTooltipShowDelay="1000">
+                <mat-icon>open_in_new</mat-icon>
+              </button>
+            </td>
           </tr>
         </table>
       </ng-template>

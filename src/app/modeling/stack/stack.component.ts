@@ -1,13 +1,14 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuTrigger } from '@angular/material/menu';
-import { MyComponentTypeGroup, MyComponent, MyComponentStack, MyComponentType } from '../../model/component';
+import { MyComponentTypeGroup, MyComponent, MyComponentStack, MyComponentType, MyComponentTypeIDs } from '../../model/component';
 import { DataService } from '../../util/data.service';
 import { DialogService } from '../../util/dialog.service';
 import { StringExtension } from '../../util/string-extension';
 import { ThemeService } from '../../util/theme.service';
 import { IDragDropData } from '../stencil-palette/stencil-palette.component';
 import { QuestionDialogComponent } from './question-dialog/question-dialog.component';
+import { PropertyEditTypes } from '../../model/database';
 
 @Component({
   selector: 'app-stack',
@@ -68,11 +69,12 @@ export class StackComponent implements OnInit {
   }
 
   public OnDrop(event, group: MyComponentTypeGroup) {
-    let data: IDragDropData = JSON.parse(event.dataTransfer.getData('dragDropData'));
+    const data: IDragDropData = JSON.parse(event.dataTransfer.getData('dragDropData'));
     let type: MyComponentType;
     if (data.componentTypeID) type = this.dataService.Config.GetMyComponentType(data.componentTypeID);
     if (!type) type = this.dataService.Config.CreateMyComponentType(group);
-    let c = this.dataService.Project.CreateComponent(type);
+    const c = this.dataService.Project.CreateComponent(type);
+    c.SyncNameToTypeName = true;
     c.Name = type.Name;
     c.IsActive = true;
     c.IsThirdParty = false;
@@ -87,6 +89,15 @@ export class StackComponent implements OnInit {
     if (comp == this.selectedComponent) return this.theme.Primary;
     if (this.theme.IsDarkMode) return 'white';
     else return 'black';
+  }
+
+  public GetComponentPort(comp: MyComponent): string {
+    if (comp.TypeID == MyComponentTypeIDs.Software) {
+      const port = comp.GetProperties().find(x => x.Type == PropertyEditTypes.PortBox);
+      if (port) return comp.GetProperty(port.ID);
+    }
+
+    return null;
   }
 
   public AddThreat(item: MyComponent) {
@@ -137,6 +148,30 @@ export class StackComponent implements OnInit {
     this.dialogService.OpenDeleteObjectDialog(component).subscribe(res => {
       if (res) this.dataService.Project.DeleteComponent(component);
     });
+  }
+
+  public MoveLeft(item: MyComponent) {
+    const group = this.GetGroups().find(x => this.GetComponents(x).includes(item));
+    const groupComps = this.GetComponents(group);
+    const allComps = this.stack.GetChildren();
+    const prevIndex = allComps.indexOf(item);
+    const newIndex = allComps.indexOf(groupComps[groupComps.indexOf(item)-1]);
+    if (prevIndex > 0 && newIndex >= 0) {
+      const arr = this.stack.Data['childrenIDs'];
+      arr.splice(newIndex, 0, arr.splice(prevIndex, 1)[0]);
+    }
+  }
+
+  public MoveRight(item: MyComponent) {
+    const group = this.GetGroups().find(x => this.GetComponents(x).includes(item));
+    const groupComps = this.GetComponents(group);
+    const allComps = this.stack.GetChildren();
+    const prevIndex = allComps.indexOf(item);
+    const newIndex = allComps.indexOf(groupComps[groupComps.indexOf(item)+1]);
+    if (prevIndex < allComps.length-1 && newIndex >= 0) {
+      const arr = this.stack.Data['childrenIDs'];
+      arr.splice(newIndex, 0, arr.splice(prevIndex, 1)[0]);
+    }
   }
 
   public OpenContextMenu(event, comp: MyComponent) {

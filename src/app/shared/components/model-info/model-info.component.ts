@@ -6,6 +6,7 @@ import { ThemeService } from '../../../util/theme.service';
 
 import imageCompression from 'browser-image-compression';
 import { DialogService } from '../../../util/dialog.service';
+import { LocStorageKeys, LocalStorageService } from '../../../util/local-storage.service';
 
 @Component({
   selector: 'app-model-info',
@@ -17,15 +18,13 @@ export class ModelInfoComponent implements OnInit {
   public GHProject: IGHFile;
   public Project: ProjectFile;
 
-  public isEdtingArray: boolean[][] = [[], []];
-
   public selectedUser: IUserInfo;
-
   public commits: IGHCommitInfo[];
+
 
   @Output() public refreshNodes = new EventEmitter();
 
-  constructor(public dataService: DataService, public theme: ThemeService, private dialog: DialogService) { }
+  constructor(public dataService: DataService, public theme: ThemeService, private dialog: DialogService, private locStorage: LocalStorageService) { }
 
   ngOnInit(): void {
     this.GHProject = this.dataService.SelectedGHProject;
@@ -95,5 +94,24 @@ export class ModelInfoComponent implements OnInit {
   public GetRemoveBtnLeft(projImg) {
     if (!projImg || projImg['width'] < 25) return '25px';
     return (projImg['width'] - 25).toString() + 'px';
+  }
+
+  public GetProgress() {
+    if (this.dataService.Project) {
+      let vals = Object.values(this.dataService.Project.ProgressTracker);
+      if (vals.length == 0) return '0%';
+      
+      return  (100 * vals.filter(x => x == true).length / vals.length).toFixed(0) + '%';
+    }
+  }
+
+  public GetSelectedTabIndex() {
+    let index = this.locStorage.Get(LocStorageKeys.PAGE_MODELING_MODEL_TAB_INDEX);
+    if (index != null) return index;
+    else return 0;
+  }
+
+  public SetSelectedTabIndex(event) {
+    this.locStorage.Set(LocStorageKeys.PAGE_MODELING_MODEL_TAB_INDEX, event);
   }
 }

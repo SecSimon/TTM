@@ -15,7 +15,13 @@
     <as-split-area [size]="GetSplitSize(0, 1, $any('*'))" [order]=2 [class.bg-color-light3]="!theme.IsDarkMode" [class.bg-color-dark3]="theme.IsDarkMode">
       <as-split direction="vertical" unit="pixel" [gutterSize]="3" [restrictMove]="true" (dragEnd)="OnSplitSizeChange($event, 2)">
         <div style="font-weight: bold; text-align: center;">{{'general.SystemThreats' | translate}}</div>
-        <div mat-subheader style="padding-bottom: 0px;">{{ 'general.Threats' | translate }} <button mat-icon-button (click)="AddThreat()" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000" style="margin-left: 15px;"><mat-icon>add</mat-icon></button></div>
+        <div mat-subheader style="padding-bottom: 0px;">{{ 'general.Threats' | translate }} 
+          <button mat-icon-button (click)="AddThreat()" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000" style="margin-left: 15px;"><mat-icon>add</mat-icon></button>
+          <button mat-icon-button [matMenuTriggerFor]="moreMenu" matTooltip="{{'general.More' | translate}}" matTooltipShowDelay="1000" style="float: right;"><mat-icon>more_vert</mat-icon></button>
+          <mat-menu #moreMenu="matMenu">
+            <button mat-menu-item [disabled]="systemThreats.length < 2" (click)="ResetNumbers()">{{'pages.modeling.threattable.resetNumbers' | translate}}</button>
+          </mat-menu>
+        </div>
         <as-split-area style="margin-bottom: 10px;" [size]="GetSplitSize(2, 0, 200)" [order]=1 [class.splitter-light2]="!theme.IsDarkMode" [class.splitter-dark2]="theme.IsDarkMode">
           <div style="padding: 10px;">
             <mat-list cdkDropList (cdkDropListDropped)="drop($event, systemThreats)" class="prop-list reorder-list">
@@ -24,7 +30,7 @@
                 [class.highlight-light]="selectedThreat === dt && !theme.IsDarkMode" [class.highlight-dark]="selectedThreat === dt && theme.IsDarkMode"
                 matTooltip="{{dt.Name}}" matTooltipShowDelay="1000">
                   <mat-icon mat-list-icon>chevron_right</mat-icon>
-                  <div mat-line>{{dt.Name}}</div>
+                  <div mat-line>{{dt.GetLongName()}}</div>
                   <div mat-line>{{'properties.Impact' | translate}}: {{GetLMHName(dt.Impact) | translate}}</div>
                   <button mat-icon-button style="margin-left: auto;" (click)="DeleteThreat(dt)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000"><mat-icon>delete</mat-icon></button>
                 </mat-list-item>

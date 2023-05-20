@@ -25,12 +25,18 @@
   max-width: 100px;
 }
 
-.component {
+.component-base {
   background: none;
   margin: 5px;
   cursor: pointer;
+  border-radius: 5px;
+}
+
+.component {
+  @extend .component-base;
   font-size: large;
   height: 75px;
+  min-width: 130px;
   border-radius: 10px;
 }
 
@@ -41,6 +47,14 @@
 
 .component-third-party {
   background-color: rgba(255, 255, 255, 0.1);
+}
+
+.component-port {
+  position: absolute; 
+  left: 4px; 
+  bottom: 4px; 
+  border: 2px solid; 
+  padding: 0 2px;
 }
 
 .tools {

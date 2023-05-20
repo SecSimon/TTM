@@ -51,6 +51,8 @@ export abstract class Diagram extends DatabaseBase {
     if (!this.Settings) {
       this.Settings = { GenerationThreatLibrary: true, GenerationAssetBased: false, GenerationMnemonics: {}, GenerationRules: {} };
     }
+    if (!this.Settings.GenerationMnemonics) this.Settings.GenerationMnemonics = {};
+    if (!this.Settings.GenerationRules) this.Settings.GenerationRules = {};
   }
 
   public static FromJSON(data, pf: ProjectFile, cf: ConfigFile): Diagram {

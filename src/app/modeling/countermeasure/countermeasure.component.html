@@ -1,9 +1,20 @@
 <div *ngIf="countermeasure" [class.disable]="!canEdit">
-  <mat-form-field appearance="fill" class="property-form-field">
+  <mat-form-field appearance="fill" style="width: calc(100% - 85px);">
     <mat-label>{{ 'properties.Name' | translate }}</mat-label>
     <input matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="countermeasure.Name" matTooltip="{{countermeasure.Name}}" matTooltipShowDelay="1000"/>
+    <button *ngIf="countermeasure.Name" matSuffix mat-icon-button (click)="countermeasure.Name=''" matTooltip="{{'general.Clear' | translate}}" matTooltipShowDelay="1000">
+      <mat-icon>close</mat-icon>
+    </button>
   </mat-form-field>
-  <mat-form-field appearance="fill" class="property-form-field" style="margin-left: 10px;">
+  <mat-form-field appearance="fill" style="width: 70px; float: right;">
+    <mat-label>{{ 'general.Number' | translate }}</mat-label>
+    <input matInput type="number" min="0" [(ngModel)]="countermeasure.Number" required matTooltip="{{countermeasure.Number}}" matTooltipShowDelay="1000"/>
+    <mat-hint *ngIf="NumberAlreadyExists()" style="color: red;" class="alert alert-danger">
+      {{'messages.error.numberAlreadyExists' | translate}}
+    </mat-hint>
+  </mat-form-field>
+  <br/>
+  <mat-form-field appearance="fill" class="property-form-field">
     <mat-label>{{'properties.Status' | translate}}</mat-label>
     <mat-select [(value)]="countermeasure.MitigationState" matTooltip="{{GetMitigationStateName(countermeasure.MitigationState) | translate}}" matTooltipShowDelay="1000">
       <mat-option *ngFor="let state of GetMitigationStates()" [value]="state">{{GetMitigationStateName(state) | translate}}</mat-option>
@@ -22,13 +33,6 @@
     <button mat-icon-button matSuffix style="width: 25px;" (click)="AddMitigationProcess(); $event.stopPropagation()" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000">
       <mat-icon>add</mat-icon>
     </button>
-  </mat-form-field>
-  <mat-form-field appearance="fill" style="width: 70px; float: right; margin-left: 10px;">
-    <mat-label>{{ 'general.Number' | translate }}</mat-label>
-    <input matInput type="number" min="0" [(ngModel)]="countermeasure.Number" required matTooltip="{{countermeasure.Number}}" matTooltipShowDelay="1000"/>
-    <mat-hint *ngIf="NumberAlreadyExists()" style="color: red;" class="alert alert-danger">
-      {{'messages.error.numberAlreadyExists' | translate}}
-    </mat-hint>
   </mat-form-field>
   <br/>
   <mat-form-field appearance="fill" class="disable" style="width: calc(100% - 300px - 15px);" *ngIf="!isManualEntry">

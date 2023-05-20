@@ -1,3 +1,12 @@
+## 0.4.12
+
+* Project information: separate tabs for general, tasks and notes, changes, and progress tracker
+* Out of scope: visualized as dotted line
+* Diagram: allow flexible resizing
+* Object Tree: filter for element/component
+* UI improvements: name field width, reorder components, table row height, visualization of optional steps, software component with optional port
+* Fix: undefined generation settings in new diagram 
+
 ## 0.4.11
 
 * Added file info dialog with (incomplete) list of changes
