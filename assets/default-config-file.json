@@ -4939,7 +4939,8 @@
           "C": "H",
           "I": "H",
           "A": "L",
-          "Score": 9.4
+          "Score": 9.4,
+          "Notes": {}
         }
       },
       "threatCategorieIDs": [
@@ -10257,7 +10258,8 @@
         "db990108-a992-40e4-b2fc-d4dd00d42431",
         "ac0e3170-0187-47e8-a2ed-6671cc24137e",
         "7d0edcb5-7eff-490e-8d29-db68172ddd20",
-        "cc7e24ac-cfc0-4cf8-a291-386735862947"
+        "cc7e24ac-cfc0-4cf8-a291-386735862947",
+        "341eaf3e-808c-45de-9445-6be3cc66777b"
       ]
     },
     {
@@ -12856,7 +12858,7 @@
     },
     {
       "ID": "4e5318de-8259-41cd-8704-8842a959b9c6",
-      "Name": "Sufficient entropy",
+      "Name": "Insufficient entropy",
       "Description": "",
       "IsActive": true,
       "RuleGenerationType": 1,
@@ -19955,6 +19957,36 @@
         ]
       },
       "Severity": 3
+    },
+    {
+      "ID": "341eaf3e-808c-45de-9445-6be3cc66777b",
+      "Name": "Access restriction for authorized users",
+      "Description": "Access could be restricted for authorized users if attackers use all available connections ",
+      "IsActive": true,
+      "RuleGenerationType": 1,
+      "Mapping": {
+        "ThreatCategoryIDs": [
+          "b869918c-0b47-45c3-8fab-0b698043aa66"
+        ]
+      },
+      "overridenRuleIDs": [],
+      "RuleType": 3,
+      "ComponentRestriction": {
+        "componentTypeID": "aa2ca59f-4045-4cb4-a25d-b23c4b456be5",
+        "DetailRestrictions": [
+          {
+            "IsOR": true,
+            "Layer": 0,
+            "RestType": 1,
+            "PropertyRest": {
+              "ID": "9616fd88-1e3d-4d72-9178-ad81d793a744",
+              "ComparisonType": "==",
+              "Value": true
+            }
+          }
+        ]
+      },
+      "Severity": 2
     }
   ],
   "controls": [
