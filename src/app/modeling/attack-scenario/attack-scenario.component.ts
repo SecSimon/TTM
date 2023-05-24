@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Optional } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Optional, ViewChild } from '@angular/core';
 import { LowMediumHighNumber, LowMediumHighNumberUtil } from '../../model/assets';
 import { Countermeasure } from '../../model/mitigations';
 import { RiskStrategies, RiskStrategyUtil, ThreatCategoryGroup, AttackScenario, AttackVectorGroup, ThreatSeverities, ThreatSeverityUtil, ThreatStates, ThreatStateUtil, ICVSSEntry, IOwaspRREntry } from '../../model/threat-model';
@@ -31,6 +31,13 @@ export class AttackScenarioComponent implements OnInit {
   public selectedLinkedScenario: AttackScenario;
 
   @Input() canEdit: boolean = true;
+
+  @ViewChild('searchASBox', { static: false }) public searchASBox: any;
+  public searchASString: string = '';
+  @ViewChild('searchLinkedASBox', { static: false }) public searchLinkedASBox: any;
+  public searchLinkedASString: string = '';
+  @ViewChild('searchCMBox', { static: false }) public searchCMBox: any;
+  public searchCMString: string = '';
 
   constructor(@Optional() mapping: AttackScenario, @Optional() onChange: EventEmitter<AttackScenario>, public theme: ThemeService, public dataService: DataService, private dialog: DialogService) {
     this.attackScenario = mapping;
@@ -165,6 +172,14 @@ export class AttackScenarioComponent implements OnInit {
     return LowMediumHighNumberUtil.ToString(type);
   }
 
+  public GetFilteredAttackScenarios() {
+    return this.dataService.Project.GetAttackScenariosApplicable().filter(x => x.Name.toLowerCase().includes(this.searchASString.toLowerCase()) &&  x != this.attackScenario);
+  }
+
+  public GetFilteredLinkedAttackScenarios() {
+    return this.dataService.Project.GetAttackScenariosApplicable().filter(x => x.Name.toLowerCase().includes(this.searchLinkedASString.toLowerCase()) &&  x != this.attackScenario && !this.attackScenario.LinkedScenarios.includes(x));
+  }
+
   private attackScenarioGroups: any[];
   public GetAttackScenarioGroups() {
     if (this.attackScenarioGroups == null) {
@@ -206,8 +221,27 @@ export class AttackScenarioComponent implements OnInit {
     return RiskStrategyUtil.ToString(type);
   }
 
-  public GetPossibleCountermeasures() {
-    return this.dataService.Project.GetCountermeasuresApplicable().filter(x => !x.AttackScenarios.includes(this.attackScenario));
+  public GetFilteredCountermeasures() {
+    return this.dataService.Project.GetCountermeasuresApplicable().filter(x => x.Name.toLowerCase().includes(this.searchCMString.toLowerCase()) && !x.AttackScenarios.includes(this.attackScenario));
+  }
+
+  private countermeasureGroups: any[];
+  public GetCountermeasureGroups() {
+    if (this.countermeasureGroups == null) {
+      this.countermeasureGroups = [];
+      const cmsByView = this.dataService.Project.GetCountermeasuresApplicable().filter(x => !this.countermeasures.includes(x)).reduce((ubc, u) => ({
+        ...ubc,
+        [u.ViewID]: [ ...(ubc[u.ViewID] || []), u ],
+      }), {});
+      Object.keys(cmsByView).forEach(viewID => {
+        this.countermeasureGroups.push({ name: this.dataService.Project.GetView(viewID)?.Name, countermeasures: cmsByView[viewID] });
+      });
+      this.countermeasureGroups.forEach(x => x['countermeasures'].sort((a: Countermeasure, b: Countermeasure) => {
+        return a.MitigationState > b.MitigationState ? -1 : (a.MitigationState == b.MitigationState ? 0 : 1);
+      }));
+    }
+
+    return this.countermeasureGroups;
   }
 
   public AddExistingCountermeasure(cm: Countermeasure) {
@@ -256,5 +290,17 @@ export class AttackScenarioComponent implements OnInit {
 
   public NumberAlreadyExists() {
     return this.dataService.Project.GetAttackScenarios().some(x => x.Number == this.attackScenario.Number && x.ID != this.attackScenario.ID);
+  }
+
+  public OnSearchASBoxClick() {
+    this.searchASBox?._elementRef?.nativeElement?.focus();
+  }
+
+  public OnSearchLinkedASBoxClick() {
+    this.searchLinkedASBox?._elementRef?.nativeElement?.focus();
+  }
+
+  public OnSearchCMBoxClick() {
+    this.searchCMBox?._elementRef?.nativeElement?.focus();
   }
 }

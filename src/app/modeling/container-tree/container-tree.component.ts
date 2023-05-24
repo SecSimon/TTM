@@ -1,11 +1,13 @@
 import { NestedTreeControl } from '@angular/cdk/tree';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { Subscription } from 'rxjs';
 import { IContainer, ViewElementBase } from '../../model/database';
 import { DataFlow } from '../../model/dfd-model';
 import { DataService } from '../../util/data.service';
 import { ThemeService } from '../../util/theme.service';
+import { FlowArrowPositions } from '../../model/system-context';
+import { LocStorageKeys, LocalStorageService } from '../../util/local-storage.service';
 
 @Component({
   selector: 'app-container-tree',
@@ -29,12 +31,21 @@ export class ContainerTreeComponent implements OnInit {
   });
   public dataSource = new MatTreeNestedDataSource<ViewElementBase>();
 
+  public searchString: string = null;
+  public get keepTreeStructure(): boolean {
+    const res = this.locStorage.Get(LocStorageKeys.PAGE_MODELING_CONTAINERTREE_KEEP_STRUC);
+    return res == 'true' || res == null;
+  };
+  public set keepTreeStructure(val: boolean) {
+    this.locStorage.Set(LocStorageKeys.PAGE_MODELING_CONTAINERTREE_KEEP_STRUC, String(val));
+  }
+
   public get elements(): IContainer { return this._elements; }
   @Input()
   public set elements(val: IContainer) { 
     this._elements = val;
-    this.selectedElement = null;
-    this.filteredElement = null;
+    this.selectedElement = this.filteredElement = null;
+    if (this.searchString != null) this.searchString = '';
     this.RefreshTree();
   };
 
@@ -56,7 +67,14 @@ export class ContainerTreeComponent implements OnInit {
   @Output()
   public filterChanged = new EventEmitter<ViewElementBase>();
 
-  constructor(public dataService: DataService, public theme: ThemeService) {
+  @ViewChild('search', { static: false })
+  public set input(element: ElementRef<HTMLInputElement>) {
+    if(element) {
+      setTimeout(() => { element.nativeElement.focus(); });
+    }
+  }
+
+  constructor(public dataService: DataService, public theme: ThemeService, private locStorage: LocalStorageService) {
   }
 
   ngOnInit(): void {
@@ -68,7 +86,10 @@ export class ContainerTreeComponent implements OnInit {
     if (this.infoMap.has(node.ID)) return this.infoMap.get(node.ID);
 
     if (node instanceof DataFlow && node.Sender && node.Receiver && !node.ShowName) {
-      return '(' + node.Sender?.GetProperty('Name') + '->' + node.Receiver?.GetProperty('Name') + ')';
+      let arrow = '→';
+      if (node.ArrowPos == FlowArrowPositions.Both) arrow = '↔';
+      else if (node.ArrowPos == FlowArrowPositions.Start) arrow = '←';
+      return '(' + node.Sender?.GetProperty('Name') + arrow + node.Receiver?.GetProperty('Name') + ')';
     }
     else {
       this.infoMap.set(node.ID, '');
@@ -103,6 +124,15 @@ export class ContainerTreeComponent implements OnInit {
       this.selectedElement = node;
       this.selectionChanged?.emit(node);
     }
+  }
+
+  public hideLeafNode(node: ViewElementBase): boolean {
+    return new RegExp(this.searchString, 'i').test(node.GetProperty('Name')) === false;
+  }
+
+  public hideParentNode(node: ViewElementBase): boolean {
+    return this.hideLeafNode(node) && (!this.keepTreeStructure || this.treeControl.getDescendants(node).every(node => this.hideLeafNode(node)));
+    // return this.hideLeafNode(node) && this.treeControl.getDescendants(node).filter(node => this.isContainer(node)).every(node => this.hideLeafNode(node));
   }
 
   public isSelected(node: ViewElementBase) { return this.selectedElement?.ID == node?.ID; }

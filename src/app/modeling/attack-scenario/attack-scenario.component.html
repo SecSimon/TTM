@@ -84,12 +84,16 @@
     <button mat-menu-item [matMenuTriggerFor]="viewList">{{'pages.modeling.attackscenario.takeRiskValuesFrom' | translate}}</button>
   </mat-menu>
   <mat-menu #viewList="matMenu">
+    <input mat-menu-item #searchASBox [(ngModel)]="searchASString" [matMenuTriggerFor]="filteredScenarioList" (click)="OnSearchASBoxClick()" placeholder="{{ 'general.Search' | translate }}"/>
     <button mat-menu-item *ngFor="let group of GetAttackScenarioGroups()" [matMenuTriggerFor]="scenarioList" [matMenuTriggerData]="{ item: group.scenarios }">{{group.name}}</button>
   </mat-menu>
   <mat-menu #scenarioList="matMenu">
     <ng-template matMenuContent let-item="item">
       <button mat-menu-item *ngFor="let scenario of item" matTooltip="{{scenario.Name}}" matTooltipShowDelay="1000" (click)="AdoptRiskValuesFrom(scenario)">{{scenario.Name}}</button>
     </ng-template> 
+  </mat-menu>
+  <mat-menu #filteredScenarioList="matMenu">
+    <button mat-menu-item *ngFor="let ascen of GetFilteredAttackScenarios()" matTooltip="{{ascen.Name}}" matTooltipShowDelay="1000" (click)="AdoptRiskValuesFrom(ascen)">{{ascen.Name}}</button>
   </mat-menu>
   <mat-form-field appearance="fill" *ngIf="attackScenario.ScoreCVSS" style="width: 200px; margin-left: 10px;">
     <mat-label>{{'shared.cvss.name.s' | translate}}</mat-label>
@@ -183,10 +187,19 @@
           <button mat-icon-button style="margin-left: 15px;" [matMenuTriggerFor]="addMenu" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000"><mat-icon>add</mat-icon></button>
           <mat-menu #addMenu="matMenu">
             <button mat-menu-item (click)="AddCountermeasure()">{{'general.New' | translate}}</button>
-            <button mat-menu-item [matMenuTriggerFor]="existing">{{'general.Existing' | translate}}</button>
+            <button mat-menu-item [matMenuTriggerFor]="existingMenu">{{'general.Existing' | translate}}</button>
           </mat-menu>
-          <mat-menu #existing="matMenu">
-            <button mat-menu-item *ngFor="let cm of GetPossibleCountermeasures()" (click)="AddExistingCountermeasure(cm)">{{cm.Name}}</button>
+          <mat-menu #existingMenu="matMenu">
+            <input mat-menu-item #searchCMBox [(ngModel)]="searchCMString" [matMenuTriggerFor]="filteredCountermeasureList" (click)="OnSearchCMBoxClick()" placeholder="{{ 'general.Search' | translate }}"/>
+            <button mat-menu-item *ngFor="let group of GetCountermeasureGroups()" [matMenuTriggerFor]="countermeasureList" [matMenuTriggerData]="{ item: group.countermeasures }">{{group.name}}</button>
+          </mat-menu>
+          <mat-menu #countermeasureList="matMenu">
+            <ng-template matMenuContent let-item="item">
+              <button mat-menu-item *ngFor="let cm of item" matTooltip="{{cm.Name}}" matTooltipShowDelay="1000" (click)="AddExistingCountermeasure(cm)">{{cm.Name}}</button>
+            </ng-template> 
+          </mat-menu>
+          <mat-menu #filteredCountermeasureList="matMenu">
+            <button mat-menu-item *ngFor="let cm of GetFilteredCountermeasures()" matTooltip="{{cm.Name}}" matTooltipShowDelay="1000" (click)="AddExistingCountermeasure(cm)">{{cm.Name}}</button>
           </mat-menu>
         </div>
         <mat-list-item *ngFor="let cm of countermeasures" (click)="selectedCountermeasure = cm"
@@ -270,12 +283,16 @@
         <div mat-subheader>{{ 'properties.LinkedScenarios' | translate }} 
           <button mat-icon-button style="margin-left: 15px;" [matMenuTriggerFor]="addLinkedMenu" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000"><mat-icon>add</mat-icon></button>
           <mat-menu #addLinkedMenu="matMenu">
+            <input mat-menu-item #searchLinkedASBox [(ngModel)]="searchLinkedASString" [matMenuTriggerFor]="filteredLinkedScenarioList" (click)="OnSearchLinkedASBoxClick()" placeholder="{{ 'general.Search' | translate }}"/>
             <button mat-menu-item *ngFor="let group of GetAttackScenarioGroups()" [matMenuTriggerFor]="linkedScenarioList" [matMenuTriggerData]="{ item: group.scenarios }">{{group.name}}</button>
           </mat-menu>
           <mat-menu #linkedScenarioList="matMenu">
             <ng-template matMenuContent let-item="item">
               <button mat-menu-item *ngFor="let scenario of item" matTooltip="{{scenario.Name}}" matTooltipShowDelay="1000" (click)="OnLinkScenario(scenario)">{{scenario.Name}}</button>
             </ng-template> 
+          </mat-menu>
+          <mat-menu #filteredLinkedScenarioList="matMenu">
+            <button mat-menu-item *ngFor="let ascen of GetFilteredLinkedAttackScenarios()" matTooltip="{{ascen.Name}}" matTooltipShowDelay="1000" (click)="OnLinkScenario(ascen)">{{ascen.Name}}</button>
           </mat-menu>
         </div>
         <mat-list-item *ngFor="let scenario of attackScenario.LinkedScenarios" (click)="selectedLinkedScenario = scenario"

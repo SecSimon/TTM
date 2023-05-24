@@ -2024,6 +2024,9 @@ export abstract class CanvasBase {
       if (ele.OutOfScope) {
         border.set('strokeDashArray', [2, 2]);
       }
+      else if (obj[CProps.myType] == CTypes.TrustArea) {
+        border.set('strokeDashArray', [10, 5]);
+      }// else if dashed data flow, but this case is rarely
       else {
         delete border['strokeDashArray'];
       }

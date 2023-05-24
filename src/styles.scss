@@ -151,6 +151,10 @@ html, body {
 }
 
 // context menu
+.mat-menu-panel {
+  min-height: 35px !important;
+}
+
 ::ng-deep .mat-menu-content {
   padding-top: 0px !important;
   padding-bottom: 0px !important;

@@ -57,6 +57,10 @@
           <mat-icon>flash_on</mat-icon>
           <span>{{'pages.modeling.diagram.addAttackScenario' | translate}}</span>
         </button>
+        <button mat-menu-item *ngIf="dataService.Project.HasTesting" (click)="AddTestCase(item)">
+          <mat-icon>checklist</mat-icon>
+          <span>{{'pages.modeling.diagram.addTestCase' | translate}}</span>
+        </button>
         <button mat-menu-item (click)="AddCountermeasure(item)">
           <mat-icon>security</mat-icon>
           <span>{{'pages.modeling.diagram.addCountermeasure' | translate}}</span>

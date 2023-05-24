@@ -62,7 +62,7 @@ export class PropertiesComponent implements OnInit {
     const table = document.getElementById('proptable');
     if (table) {
       if (table.children.length > 0 && table.children[1].children.length > 0 && table.children[1].children[1].children.length > 0) {
-        (table.children[1].children[1].children[0] as HTMLElement).focus();
+        (table.children[1].children[1].children[0] as HTMLInputElement).select();
       }
     }
   }

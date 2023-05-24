@@ -1,3 +1,10 @@
+## 0.4.13
+
+* Attack scenario: added search for countermeasures and linked attack scenarios
+* Object Tree: search for element/component
+* UI improvements
+* Fix: Undefined number for predefined threat actor
+
 ## 0.4.12
 
 * Project information: separate tabs for general, tasks and notes, changes, and progress tracker

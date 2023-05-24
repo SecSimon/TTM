@@ -33,6 +33,7 @@ export enum LocStorageKeys {
   PAGE_MODELING_SPLIT_SIZE_X  = "page_modeling_split_size_",
   PAGE_MODELING_ASSETS_SPLIT_SIZE_X = "page_modeling_assets_split_size_",
   PAGE_MODELING_ASSETS_TAB_INDEX = "page_modeling_assets_tab_index",
+  PAGE_MODELING_CONTAINERTREE_KEEP_STRUC ="page_modeling_containertree_keep_struc",
   PAGE_MODELING_DIAGRAM_ARROW_BEND ="page_modeling_diagram_arrow_bend",
   PAGE_MODELING_DIAGRAM_ARROW_NAME ="page_modeling_diagram_arrow_name",
   PAGE_MODELING_DIAGRAM_ARROW_POS ="page_modeling_diagram_arrow_pos",

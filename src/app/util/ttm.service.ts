@@ -144,8 +144,8 @@ export class TTMService {
               link: 'modeling?tab=' + NodeTypes.SystemThreats
             },
             {
-              name: this.translate.instant('ttm.5.3.n'),
-              desc: this.translate.instant('ttm.5.3.d') + ' [Optional]',
+              name: this.translate.instant('ttm.5.3.n') + ' [Optional]',
+              desc: this.translate.instant('ttm.5.3.d'),
               link: 'configuration'
             }
           ],
