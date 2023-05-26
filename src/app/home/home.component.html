@@ -174,7 +174,7 @@
               <h2>{{'pages.home.welcome' | translate}}!</h2>
               <p>{{'pages.home.need_login' | translate}}:</p>
               <button mat-button routerLink="/login">{{'pages.home.go_to_login' | translate}}</button>
-              <button mat-button (click)="dataService.GuestLogin()">{{'pages.login.loginAsGuest' | translate}}</button>
+              <button mat-button (click)="dataService.GuestLogin(); CheckTourStart()">{{'pages.login.loginAsGuest' | translate}}</button>
             </ng-container>
           </div>
         </div>

@@ -46,7 +46,7 @@ export class HomeComponent implements OnInit {
     }
 
   ngOnInit(): void {
-    let createStep = (anchor: string) => {
+    const createStep = (anchor: string) => {
       return {
         anchorId: anchor,
         content: this.translate.instant('tour.' + anchor + '.content'),
@@ -60,7 +60,7 @@ export class HomeComponent implements OnInit {
     }
 
     this.translate.get('tour.change-settings.title').subscribe(() => {
-      const startTourGetConsent = () => {
+      const getConsentInitTour = () => {
         this.tourService.initialize([
           createStep('change-settings'),
           createStep('message-history'),
@@ -68,30 +68,24 @@ export class HomeComponent implements OnInit {
           createStep('set-progress')
         ]);
 
-        if ([UserModes.LoggedIn, UserModes.Guest].includes(this.dataService.UserMode)) {
-          let wcs = this.locStorage.Get(LocStorageKeys.WELCOME_TOUR_STARTED);
-          if (!wcs) {
-            this.tourService.start();
-            this.locStorage.Set(LocStorageKeys.WELCOME_TOUR_STARTED, JSON.stringify(true));
-          }
-        }
-
-        let consent = this.locStorage.Get(LocStorageKeys.COOKIE_CONSENT);
-        if (consent == null) this.dialogService.OpenCookieConsentDialog();
+        const consent = this.locStorage.Get(LocStorageKeys.COOKIE_CONSENT);
+        if (consent == null) this.dialogService.OpenCookieConsentDialog().subscribe(x => this.CheckTourStart());
+        else this.CheckTourStart();
       };
+
       // wait until translate service is available
-      let lang = this.locStorage.Get(LocStorageKeys.LANGUAGE);
+      const lang = this.locStorage.Get(LocStorageKeys.LANGUAGE);
       if (!lang || lang.length == 0) {
         // this.dialog.open(WelcomeDialogComponent);
         // skip welcome, set language
         // if ((navigator.language || navigator.languages).includes('de')) this.locStorage.Set(LocStorageKeys.LANGUAGE, 'de');
         // else this.locStorage.Set(LocStorageKeys.LANGUAGE, 'en');
         this.dialog.open(LanguageDialogComponent).afterClosed().subscribe(x => {
-          startTourGetConsent();
+          getConsentInitTour();
         });
       }
       else {
-        startTourGetConsent();
+        getConsentInitTour();
       }
     });
 
@@ -109,6 +103,16 @@ export class HomeComponent implements OnInit {
     }
 
     this.dataService.ProjectChanged.subscribe(x => this.router.navigate(['/' + dest]));
+  }
+
+  public CheckTourStart() {
+    if ([UserModes.LoggedIn, UserModes.Guest].includes(this.dataService.UserMode)) {
+      const wcs = this.locStorage.Get(LocStorageKeys.WELCOME_TOUR_STARTED);
+      if (!wcs) {
+        this.tourService.start();
+        this.locStorage.Set(LocStorageKeys.WELCOME_TOUR_STARTED, JSON.stringify(true));
+      }
+    }
   }
 
   public GetRepoName(file) {
