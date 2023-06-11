@@ -1,12 +1,14 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { ExportAttackScenarioPropertyUtil, ExportClasses, ExportClassUtil, ExportCommonPropertyUtil, ExportCountermeasurePropertyUtil, ExportFilters, ExportFilterUtil, ExportMitigationProcessPropertyUtil, ExportSystemThreatPropertyUtil, ExportTemplate, ExportThreatSourcePropertyUtil, ExportTypes, ExportTypeUtil, IExportCell } from '../../model/export-template';
+import { ExportAttackScenarioPropertyUtil, ExportClasses, ExportClassUtil, ExportCommonPropertyUtil, ExportCountermeasurePropertyUtil, ExportFilters, ExportFilterUtil, ExportMitigationProcessPropertyUtil, ExportSystemThreatPropertyUtil, ExportTemplate, ExportTestCasePropertyUtil, ExportThreatSourcePropertyUtil, ExportTypes, ExportTypeUtil, IExportCell } from '../../model/export-template';
 import { DataService } from '../../util/data.service';
 import { ThemeService } from '../../util/theme.service';
 
-import { saveAs } from 'file-saver';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+
+import { saveAs } from 'file-saver';
+import writeXlsxFile from 'write-excel-file';
 
 @Component({
   selector: 'app-export-template',
@@ -45,58 +47,10 @@ export class ExportTemplateComponent implements OnInit {
   }
 
   public GeneratePreview() {
-    const rows = [];
-    let src: any[];
-    if (this.template.ExportType == ExportTypes.AttackScenarios) {
-      if (this.template.ExportFilter == ExportFilters.Applicable) src = this.dataService.Project.GetAttackScenariosApplicable();
-      else if (this.template.ExportFilter == ExportFilters.NotApplicable) src = this.dataService.Project.GetAttackScenariosNotApplicable();
-      else src = this.dataService.Project.GetAttackScenarios();
-    }
-    else if (this.template.ExportType == ExportTypes.Countermeasures) {
-      if (this.template.ExportFilter == ExportFilters.Applicable) src = this.dataService.Project.GetCountermeasuresApplicable();
-      else if (this.template.ExportFilter == ExportFilters.NotApplicable) src = this.dataService.Project.GetCountermeasuresNotApplicable();
-      else src = this.dataService.Project.GetCountermeasures();
-    }
-    else if (this.template.ExportType == ExportTypes.MitigationProcesses) src = this.dataService.Project.GetMitigationProcesses();
-    else if (this.template.ExportType == ExportTypes.SystemThreats) src = this.dataService.Project.GetSystemThreats();
-    else if (this.template.ExportType == ExportTypes.ThreatSources) src = this.dataService.Project.GetThreatActors();
-    src.forEach(entry => {
-      let row = [];
-      const rowBuffer = [];
-      for (let i = 0; i < this.template.Template.length; i++) {
-        if (this.template.Template[i].value) {
-          let vals = ExportClassUtil.GetValues(this.template.Template[i].value, entry, this.translate); 
-          if (vals.length >= 1) {
-            if (vals[0]?.length > 0) row.push(this.translate.instant(vals[0]));
-            else row.push(vals[0]);
-          }
-          if (vals.length > 1) {
-            rowBuffer[i] = [];
-            for (let k = 1; k < vals.length; k++) {
-              if (vals[k]?.length > 0) rowBuffer[i].push(this.translate.instant(vals[k]));
-              else rowBuffer[i].push(vals[k]);
-            }
-          }
-        }
-      }
-      rows.push(row);
-      if (rowBuffer.length > 0) {
-        const len = Math.max(...rowBuffer.map(x => x?.length).filter(x => x));
-        for (let k = 0; k < len; k++) {
-          row = [];
-          for (let i = 0; i < this.template.Template.length; i++) {
-            if (rowBuffer[i]?.length > k) row.push(rowBuffer[i][k]);
-            else row.push('');
-          }
-          rows.push(row);
-        }
-      }
-    });
-
-    this.dataRows = new MatTableDataSource(rows);
+    this.dataRows = new MatTableDataSource(this.template.GetRowData(this.translate));
     setTimeout(() => {
       this.dataRows.sort = this.sort;
-    }, 100);
+    });
   }
 
   public SaveCSV() {
@@ -112,6 +66,23 @@ export class ExportTemplateComponent implements OnInit {
 
     const blob = new Blob([res]);
     saveAs(blob, this.dataService.Project.Name.replace('.ttmp', '.csv'), {type: "text/plain;charset=utf-8"});
+  }
+
+  public async SaveExcel() {
+    const data = [];
+    const header = [];
+    this.template.Template.map(x => x.name).forEach(x => header.push({ value: x, fontWeight: 'bold' }));
+    data.push(header);
+    this.dataRows.sortData(this.dataRows.filteredData, this.dataRows.sort).forEach(row => {
+      const d = [];
+      row.forEach(x => d.push({ value: x }));
+      data.push(d);
+    });
+
+    await writeXlsxFile([data], {
+      fileName: this.dataService.Project.Name.replace('.ttmp', '.xlsx'),
+      sheets: [this.template.Name]
+    })
   }
 
   public OnCellChanged(event, i) {
@@ -156,6 +127,7 @@ export class ExportTemplateComponent implements OnInit {
     if (ExportMitigationProcessPropertyUtil.GetKeys().includes(prop)) return ExportMitigationProcessPropertyUtil.ToString(prop);
     if (ExportSystemThreatPropertyUtil.GetKeys().includes(prop)) return ExportSystemThreatPropertyUtil.ToString(prop);
     if (ExportThreatSourcePropertyUtil.GetKeys().includes(prop)) return ExportThreatSourcePropertyUtil.ToString(prop);
+    if (ExportTestCasePropertyUtil.GetKeys().includes(prop)) return ExportTestCasePropertyUtil.ToString(prop);
   }
 
   public GetExportTypeValues() {

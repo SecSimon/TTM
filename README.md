@@ -21,8 +21,8 @@ TTModeler has the following benefits:
 - Diagramming: data flow diagram, hardware diagram, context diagram, use case diagram
 - Risk assessment (CVSS, OWASP Risk Rating)
 - Threat and mitigation dashboard
-- Out of box reports (DOCX, HTML)
-- CSV export
+- Out of box reports (Word, HTML)
+- Excel and CSV export
 - Support of multiple languages (English, German)
 - Collaboration with other persons (online storage only)
 

@@ -1,3 +1,13 @@
+## 0.4.14
+
+* Added risk overview page
+* Export: Excel export
+* Diagram: adjustable text size
+* Stack: show legend
+* Asset view: drag and drop elements
+* UI improvements
+* Fix: Tour start after guest login
+
 ## 0.4.13
 
 * Attack scenario: added search for countermeasures and linked attack scenarios

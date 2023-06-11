@@ -29,7 +29,7 @@ export class TestCaseTableComponent implements OnInit {
     return this.changesCounter > 0 || this.isCalculatingTestCases;
   }
 
-  public displayedColumns = ['number', 'name', 'status', 'elements', 'description'];
+  public displayedColumns = ['number', 'name', 'status', 'elements', 'description', 'more'];
   public dataSource: MatTableDataSource<TestCase>;
 
   public get selectedTestCases(): TestCase[] { return this._selectedTestCases; }

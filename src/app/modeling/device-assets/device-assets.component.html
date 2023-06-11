@@ -7,15 +7,14 @@
 
       <ng-template #assetGroupTemplate let-item let-colCnt="colCnt" let-isFirst="isFirst">
         <div [class.disableAsset]="!item.IsActive" [class.highlight-dark]="theme.IsDarkMode && selectedObject == item" [class.highlight-light]="!theme.IsDarkMode && selectedObject == item" (click)="SelectObject($event, item)">
-          <div [style.textAlign]="isFirst ? 'center' : 'left'" [style.height]="isFirst ? '40px' : 'auto'">
-            <!--<mat-icon *ngIf="IsNewAssetGroup(item)" style="vertical-align: bottom;">add_circle_outline</mat-icon>-->
+          <div [style.textAlign]="isFirst ? 'center' : 'left'" [style.height]="isFirst ? '40px' : 'auto'" class="draggable" draggable="true" (dragstart)="onDrag($event, item)" (drop)="onDrop($event, item)" (dragover)="onAllowDrop($event)">
             <span [style.fontWeight]="isFirst ? 'bold' : 'normal'">{{item.Name}}</span>
             <button mat-icon-button *ngIf="!hideButtons" class="assetButton" (click)="DeleteGroup(item)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000"><mat-icon>delete</mat-icon></button>
             <button mat-icon-button *ngIf="!hideButtons" class="assetButton" (click)="AddGroup(item, $event)" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000"><mat-icon>add</mat-icon></button>
             <button mat-icon-button *ngIf="!hideButtons" class="assetButton" (click)="AddMyData(item, $event)" matTooltip="{{'general.Data' | translate}}" matTooltipShowDelay="1000"><mat-icon>description</mat-icon></button>
           </div>
           <div>
-            <div *ngFor="let data of item.AssociatedData" style="margin-left: 20px;" (click)="SelectObject($event, data)" [class.highlight-dark]="theme.IsDarkMode && selectedObject == data" [class.highlight-light]="!theme.IsDarkMode && selectedObject == data">
+            <div *ngFor="let data of item.AssociatedData" style="margin-left: 20px;" (click)="SelectObject($event, data)" class="draggable" [class.highlight-dark]="theme.IsDarkMode && selectedObject == data" [class.highlight-light]="!theme.IsDarkMode && selectedObject == data" draggable="true" (dragstart)="onDrag($event, data)">
               <mat-icon>description</mat-icon><span style="vertical-align: super;">{{data.Name}}</span> <button mat-icon-button *ngIf="!hideButtons" class="assetButton" style="vertical-align: super;" (click)="DeleteMyData(data)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000"><mat-icon>delete</mat-icon></button>
             </div>
           </div>
@@ -23,12 +22,13 @@
             <div class="row">
               <div *ngFor="let col of GetColArray(colCnt); index as i" style="float: left;" [style.width]="(100/colCnt).toString() + '%'">
                 <div *ngFor="let group of GetArrayRange(item.SubGroups, i, colCnt)" [class.disableAsset]="!group.IsActive" [style.marginLeft]="isFirst ? '0px' : '20px'" (click)="SelectObject($event, group)" [class.highlight-dark]="theme.IsDarkMode && selectedObject == group" [class.highlight-light]="!theme.IsDarkMode && selectedObject == group">
-                  <!--<mat-icon *ngIf="IsNewAssetGroup(group)" style="vertical-align: bottom;">add_circle_outline</mat-icon>-->
-                  <span>{{group.Name}}</span>
-                  <button mat-icon-button *ngIf="!hideButtons" class="assetButton" (click)="DeleteGroup(group)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000"><mat-icon>delete</mat-icon></button>
-                  <button mat-icon-button *ngIf="!hideButtons" class="assetButton" (click)="AddGroup(group, $event)" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000"><mat-icon>add</mat-icon></button>
-                  <button mat-icon-button *ngIf="!hideButtons" class="assetButton" (click)="AddMyData(group, $event)" matTooltip="{{'general.Data' | translate}}" matTooltipShowDelay="1000"><mat-icon>description</mat-icon></button>
-                  <div *ngFor="let data of group.AssociatedData" style="margin-left: 20px;" (click)="SelectObject($event, data)" [class.highlight-dark]="theme.IsDarkMode && selectedObject == data" [class.highlight-light]="!theme.IsDarkMode && selectedObject == data">
+                  <div class="draggable" draggable="true" (dragstart)="onDrag($event, group)" (drop)="onDrop($event, group)" (dragover)="onAllowDrop($event)">
+                    <span>{{group.Name}}</span>
+                    <button mat-icon-button *ngIf="!hideButtons" class="assetButton" (click)="DeleteGroup(group)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000"><mat-icon>delete</mat-icon></button>
+                    <button mat-icon-button *ngIf="!hideButtons" class="assetButton" (click)="AddGroup(group, $event)" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000"><mat-icon>add</mat-icon></button>
+                    <button mat-icon-button *ngIf="!hideButtons" class="assetButton" (click)="AddMyData(group, $event)" matTooltip="{{'general.Data' | translate}}" matTooltipShowDelay="1000"><mat-icon>description</mat-icon></button>
+                  </div>
+                  <div *ngFor="let data of group.AssociatedData" style="margin-left: 20px;" (click)="SelectObject($event, data)" class="draggable" [class.highlight-dark]="theme.IsDarkMode && selectedObject == data" [class.highlight-light]="!theme.IsDarkMode && selectedObject == data" draggable="true" (dragstart)="onDrag($event, data)">
                     <mat-icon>description</mat-icon><span style="vertical-align: super;">{{data.Name}}</span> <button mat-icon-button *ngIf="!hideButtons" class="assetButton" style="vertical-align: super;" (click)="DeleteMyData(data)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000"><mat-icon>delete</mat-icon></button>
                   </div>
                   <div style="margin-left: 20px;">

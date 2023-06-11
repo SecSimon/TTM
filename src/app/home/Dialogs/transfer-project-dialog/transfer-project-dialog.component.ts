@@ -49,6 +49,8 @@ export class TransferProjectDialogComponent implements OnInit {
     this.Details.push({ Key: false, Value: 'dialog.transferproject.d.Assets' });
     this.Details.push({ Key: false, Value: 'dialog.transferproject.d.ThreatSources' });
     this.Details.push({ Key: false, Value: 'dialog.transferproject.d.ThreatIdentification' });
+    this.Details.push({ Key: false, Value: 'dialog.transferproject.d.Tags' });
+    this.Details.push({ Key: false, Value: 'dialog.transferproject.d.ExportTemplates' });
   }
 
   public LoadProject() {
@@ -174,6 +176,24 @@ export class TransferProjectDialogComponent implements OnInit {
               if (match) threat.AffectedAssetObjects = [...threat.AffectedAssetObjects, match];
             });
             this.TransferLog += this.translate.instant('dialog.transferproject.l.createSystemThreat') + ': ' + threat.Name + '\n';
+          }
+        });
+      }
+      else if (key.Value === 'dialog.transferproject.d.Tags') {
+        srcProj.GetMyTags().forEach(tag => {
+          if (!currProj.GetMyTags().some(x => x.Name == tag.Name)) {
+            const t = currProj.CreateMyTag();
+            t.CopyFrom(tag.Data);
+            this.TransferLog += this.translate.instant('dialog.transferproject.l.createTag') + ': ' + t.Name + '\n';
+          }
+        });
+      }
+      else if (key.Value === 'dialog.transferproject.d.ExportTemplates') {
+        srcProj.GetExportTemplates().forEach(temp => {
+          if (!currProj.GetExportTemplates().some(x => x.Name == temp.Name)) {
+            const t = currProj.CreateExportTemplate();
+            t.CopyFrom(temp.Data);
+            this.TransferLog += this.translate.instant('dialog.transferproject.l.createExportTemplate') + ': ' + t.Name + '\n';
           }
         });
       }

@@ -78,7 +78,7 @@
                 <div id="project">
                   <mat-icon class="iconBtn" style="vertical-align: top; font-size: 20px; margin-right: 5px;" matTooltip="{{'pages.home.storedOnline' | translate}}" matTooltipShowDelay="1000">cloud_queue</mat-icon>
                   <button class="color-primary astext" (click)="dataService.LoadProject(proj)">{{proj.name}}</button>
-                  <span style="font-size: small; margin-left: 5px;">in {{GetRepoName(proj)}}</span> 
+                  <span style="font-size: small; margin-left: 5px;" matTooltip="{{GetRepoName(proj)}}" matTooltipShowDelay="1000">in {{CutName(GetRepoName(proj))}}</span> 
                   <mat-icon *ngIf="IsProtected(proj)" class="iconBtn" style="vertical-align: top; margin-right: 5px;" matTooltip="{{'pages.home.notWritable' | translate}}" matTooltipShowDelay="1000">edit_off</mat-icon>
                   <button mat-icon-button class="show-on-hover iconBtn" style="margin-right: 5px;" [matMenuTriggerFor]="moreGHProject" matTooltip="{{'general.More' | translate}}" matTooltipShowDelay="1000">
                     <mat-icon>more_vert</mat-icon>
@@ -101,7 +101,7 @@
                 <div id="project">
                   <mat-icon class="iconBtn" style="vertical-align: top; font-size: 20px; margin-right: 5px;" matTooltip="{{'pages.home.storedOffline' | translate}}" matTooltipShowDelay="1000">file_present</mat-icon>
                   <button class="color-primary astext" (click)="dataService.LoadProjectFS(proj)">{{GetFileName(proj)}}</button>
-                  <span style="font-size: small; margin-left: 5px;">in {{GetFilePath(proj)}}</span>
+                  <span style="font-size: small; margin-left: 5px;" matTooltip="{{GetFilePath(proj)}}" matTooltipShowDelay="1000">in {{CutName(GetFilePath(proj))}}</span>
                   <button mat-icon-button class="show-on-hover iconBtn" style="margin-right: 5px;" [matMenuTriggerFor]="moreFSProject" matTooltip="{{'general.More' | translate}}" matTooltipShowDelay="1000">
                     <mat-icon>more_vert</mat-icon>
                   </button>
@@ -165,7 +165,7 @@
                   <a href="https://github.com/SecSimon/TTM/releases" target="_blank">{{'pages.home.downloadDesktop' | translate}}</a>
                 </ng-container>
                 <br/>
-                <mat-icon class="iconBtn" style="vertical-align: top; font-size: 20px; margin-right: 5px;">code</mat-icon>
+                <mat-icon class="iconBtn" style="vertical-align: top; font-size: 20px; margin-right: 5px; margin-bottom: 10px;">code</mat-icon>
                 <a href="https://github.com/SecSimon/TTM" target="_blank">{{'pages.home.viewSourceCode' | translate}}</a>
               </div>
             </ng-container>

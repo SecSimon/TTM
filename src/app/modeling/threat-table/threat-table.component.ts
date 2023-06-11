@@ -101,7 +101,7 @@ export class ThreatTableComponent implements OnInit {
     if (this._selectedNode?.data instanceof HWDFDiagram) {
       this.displayedColumns.push('elements');
     }
-    this.displayedColumns.push(...['countermeasures', 'status']);
+    this.displayedColumns.push(...['countermeasures', 'status', 'more']);
     this.RefreshThreats();
   }
   @Input() public set selectedObject(val: ViewElementBase) {
@@ -118,6 +118,8 @@ export class ThreatTableComponent implements OnInit {
   @Output() public threatCountChanged = new EventEmitter<number>();
   
   @ViewChild(MatSort) sort: MatSort;
+  @ViewChild('searchCMBox', { static: false }) public searchCMBox: any;
+  public searchCMString: string = '';
 
   constructor(public theme: ThemeService, public dataService: DataService, private threatEngine: ThreatEngineService, 
     private dialog: DialogService, private translate: TranslateService) { 
@@ -208,30 +210,47 @@ export class ThreatTableComponent implements OnInit {
     if (threat.Target) this.selectedObjectChanged.emit(threat.Target);
   }
 
+  public GetFilteredCountermeasures(as: AttackScenario) {
+    return this.dataService.Project.GetCountermeasuresApplicable().filter(x => x.Name.toLowerCase().includes(this.searchCMString.toLowerCase()) && !x.AttackScenarios.includes(as));
+  }
+
+  private countermeasureGroups: any[];
+  public GetCountermeasureGroups(as: AttackScenario) {
+    if (this.countermeasureGroups == null) {
+      this.countermeasureGroups = [];
+      const cmsByView = this.dataService.Project.GetCountermeasuresApplicable().filter(x => !as.GetCountermeasures().includes(x)).reduce((ubc, u) => ({
+        ...ubc,
+        [u.ViewID]: [ ...(ubc[u.ViewID] || []), u ],
+      }), {});
+      Object.keys(cmsByView).forEach(viewID => {
+        this.countermeasureGroups.push({ name: this.dataService.Project.GetView(viewID)?.Name, countermeasures: cmsByView[viewID] });
+      });
+      this.countermeasureGroups.forEach(x => x['countermeasures'].sort((a: Countermeasure, b: Countermeasure) => {
+        return a.MitigationState > b.MitigationState ? -1 : (a.MitigationState == b.MitigationState ? 0 : 1);
+      }));
+    }
+
+    return this.countermeasureGroups;
+  }
+
   public AddCountermeasure(entry: AttackScenario) {
-    let map = this.dataService.Project.CreateCountermeasure(this.selectedNode.data['ID'], false);
-    map.SetMapping(null, entry.Targets, [entry]);
+    const cm = this.dataService.Project.CreateCountermeasure(this.selectedNode.data['ID'], false);
+    cm.SetMapping(null, entry.Targets, [entry]);
     let elements: ViewElementBase[] = [];
     if (this.selectedNode.data instanceof Diagram) elements = this.selectedNode.data.Elements.GetChildrenFlat();
     else if (this.selectedNode.data instanceof MyComponentStack) elements = this.selectedNode.data.GetChildrenFlat();
-    this.dialog.OpenCountermeasureDialog(map, true, elements).subscribe(result => {
+    this.dialog.OpenCountermeasureDialog(cm, true, elements).subscribe(result => {
       if (!result) {
-        this.dataService.Project.DeleteCountermeasure(map);
+        this.dataService.Project.DeleteCountermeasure(cm);
       }
       this.countermeasureCounts[entry.ID] = null;
     });
   }
 
-  public AddExistingCountermeasure(entry: AttackScenario, mit: Countermeasure) {
-    mit.AddAttackScenario(entry);
+  public AddExistingCountermeasure(entry: AttackScenario, cm: Countermeasure) {
+    cm.AddAttackScenario(entry);
     this.countermeasureCounts[entry.ID] = null;
-    if (entry.Target) mit.AddTarget(entry.Target);
-  }
-
-  public GetPossibleCountermeasures(entry: AttackScenario) {
-    return this.dataService.Project.GetCountermeasuresApplicable().filter(x => !x.AttackScenarios.includes(entry)).sort((a,b) => {
-      return a.GetDiagram()?.Name.localeCompare(b.GetDiagram()?.Name);
-    });
+    if (entry.Target) cm.AddTarget(entry.Target);
   }
 
   public OnViewCountermeasures(entry: AttackScenario) {
@@ -309,5 +328,9 @@ export class ThreatTableComponent implements OnInit {
 
   public GetThreatStateName(ts: ThreatStates) {
     return ThreatStateUtil.ToString(ts);
+  }
+
+  public OnSearchCMBoxClick() {
+    this.searchCMBox?._elementRef?.nativeElement?.focus();
   }
 }

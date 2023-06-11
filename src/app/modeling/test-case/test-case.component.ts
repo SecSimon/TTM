@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, Optional } from '@angular/core';
+import { Component, Input, OnInit, Optional, ViewChild } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import imageCompression from 'browser-image-compression';
 import { MyComponentStack } from '../../model/component';
@@ -28,6 +28,9 @@ export class TestCaseComponent implements OnInit {
 
   public linkLists: IKeyValue[] = [];
   public selectedLinks: IKeyValue = null;
+
+  @ViewChild('searchBox', { static: false }) public searchBox: any;
+  public searchString: string = '';
 
   public get canAddAttackScenario(): boolean { return this.testCase.LinkedElements.length > 0; }
 
@@ -71,6 +74,13 @@ export class TestCaseComponent implements OnInit {
     if (this.selectedLinks.Key === 'properties.LinkedElements') this.testCase.AddLinkedElement(item);
     else if (this.selectedLinks.Key === 'properties.LinkedScenarios') this.testCase.AddLinkedAttackScenario(item);
     else if (this.selectedLinks.Key === 'properties.LinkedMeasures') this.testCase.AddLinkedCountermeasure(item);
+    this.RefreshLinks(this.selectedLinks.Key);
+  }
+
+  public RemoveLink(item) {
+    if (this.selectedLinks.Key === 'properties.LinkedElements') this.testCase.RemoveLinkedElement(item.ID);
+    else if (this.selectedLinks.Key === 'properties.LinkedScenarios') this.testCase.RemoveLinkedAttackScenario(item.ID);
+    else if (this.selectedLinks.Key === 'properties.LinkedMeasures') this.testCase.RemoveLinkedCountermeasure(item.ID);
     this.RefreshLinks(this.selectedLinks.Key);
   }
 
@@ -179,5 +189,13 @@ export class TestCaseComponent implements OnInit {
 
   public NumberAlreadyExists() {
     return this.dataService.Project.GetTestCases().some(x => x.Number == this.testCase.Number && x.ID != this.testCase.ID);
+  }
+
+  public GetFilteredList(groups: IKeyValue[]) {
+    return groups.flatMap(x => x.Value).filter(x => x.Name.toLowerCase().includes(this.searchString.toLowerCase()));
+  }
+
+  public OnSearchBoxClick() {
+    this.searchBox?._elementRef?.nativeElement?.focus();
   }
 }

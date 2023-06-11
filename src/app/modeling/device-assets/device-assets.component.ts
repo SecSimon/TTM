@@ -188,6 +188,33 @@ export class DeviceAssetsComponent implements OnInit {
     this.router.navigate([], { relativeTo: this.activatedRoute, queryParams: queryParams, replaceUrl: true });
   }
 
+  public onAllowDrop(ev) {
+    ev.preventDefault();
+  }
+
+  public onDrag(ev, obj: MyData|AssetGroup) {
+    ev.dataTransfer.setData('ID', obj.ID);
+    if (obj instanceof MyData) ev.dataTransfer.setData('type', 'MyData');
+    else if (obj instanceof AssetGroup) ev.dataTransfer.setData('type', 'AssetGroup');
+  }
+
+  public onDrop(ev, target: AssetGroup) {
+    ev.preventDefault();
+    if (ev.dataTransfer.getData('type') == 'MyData') {
+      const data = this.dataService.Project.GetMyData(ev.dataTransfer.getData('ID'));
+      data.FindAssetGroup().RemoveMyData(data);
+      target.AddMyData(data);
+    }
+    else if (ev.dataTransfer.getData('type') == 'AssetGroup') {
+      const group = this.dataService.Project.GetAssetGroup(ev.dataTransfer.getData('ID'));
+      if (!group.GetGroupsFlat().includes(target)) {
+        group.Parent.RemoveAssetGroup(group);
+        target.AddAssetGroup(group);
+      }
+    }
+  }
+
+
   public GetSelectedTabIndex() {
     let index = this.locStorage.Get(LocStorageKeys.PAGE_MODELING_ASSETS_TAB_INDEX);
     if (index != null) return index;

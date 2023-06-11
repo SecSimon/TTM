@@ -13,19 +13,17 @@
       </button>
     </button>
   </div>
-  <!--
-  <div>
-    <button name="/analysis" class="sidenav-icon-button" [class.disabled]="!dataService.HasProject" [class.btn-selected-light]="IsSelected('/analysis')" [class.btn-selected-dark]="IsSelected('/analysis', true)" (click)="OnClick('/analysis')"  (mouseenter)="OnMouseEnter('/analysis')" (mouseleave)="OnMouseLeave()" matTooltip="{{'side-nav.analysis' | translate}}" matTooltipPosition="right">
-      <button mat-icon-button [class.btn-light]="!theme.IsDarkMode" [class.btn-dark]="theme.IsDarkMode">
-        <mat-icon [class.icon-selected-light]="IsHoveredOrSelected('/analysis')" [class.icon-selected-dark]="IsHoveredOrSelected('/analysis', true)">create</mat-icon> 
-      </button>
-    </button>
-  </div>
-  -->
   <div>
     <button name="/modeling" class="sidenav-icon-button" [class.disabled]="!dataService.HasProject" [class.btn-selected-light]="IsSelected('/modeling')" [class.btn-selected-dark]="IsSelected('/modeling', true)" (click)="OnClick('/modeling')"  (mouseenter)="OnMouseEnter('/modeling')" (mouseleave)="OnMouseLeave()" matTooltip="{{'side-nav.modeling' | translate}}" matTooltipPosition="right">
       <button mat-icon-button [class.btn-light]="!theme.IsDarkMode" [class.btn-dark]="theme.IsDarkMode">
         <mat-icon [class.icon-selected-light]="IsHoveredOrSelected('/modeling')" [class.icon-selected-dark]="IsHoveredOrSelected('/modeling', true)">architecture</mat-icon> 
+      </button>
+    </button>
+  </div>
+  <div>
+    <button name="/risk" class="sidenav-icon-button" [class.disabled]="!dataService.HasProject" [class.btn-selected-light]="IsSelected('/risk')" [class.btn-selected-dark]="IsSelected('/risk', true)" (click)="OnClick('/risk')"  (mouseenter)="OnMouseEnter('/risk')" (mouseleave)="OnMouseLeave()" matTooltip="{{'side-nav.risk' | translate}}" matTooltipPosition="right">
+      <button mat-icon-button [class.btn-light]="!theme.IsDarkMode" [class.btn-dark]="theme.IsDarkMode">
+        <mat-icon [class.icon-selected-light]="IsHoveredOrSelected('/risk')" [class.icon-selected-dark]="IsHoveredOrSelected('/risk', true)">crisis_alert</mat-icon> 
       </button>
     </button>
   </div>
@@ -36,15 +34,6 @@
       </button>
     </button>
   </div>
-  <!--
-  <div>
-    <button name="/validation" class="sidenav-icon-button" [class.disabled]="!dataService.HasProject" [class.btn-selected-light]="IsSelected('/validation')" [class.btn-selected-dark]="IsSelected('/validation', true)" (click)="OnClick('/validation')"  (mouseenter)="OnMouseEnter('/validation')" (mouseleave)="OnMouseLeave()" matTooltip="{{'side-nav.validation' | translate}}" matTooltipPosition="right">
-      <button mat-icon-button [class.btn-light]="!theme.IsDarkMode" [class.btn-dark]="theme.IsDarkMode">
-        <mat-icon [class.icon-selected-light]="IsHoveredOrSelected('/validation')" [class.icon-selected-dark]="IsHoveredOrSelected('/validation', true)">fact_check</mat-icon> 
-      </button>
-    </button>
-  </div>
-  -->
   <div>
     <button name="/reporting" class="sidenav-icon-button" [class.disabled]="!dataService.HasProject" [class.btn-selected-light]="IsSelected('/reporting')" [class.btn-selected-dark]="IsSelected('/reporting', true)" (click)="OnClick('/reporting')"  (mouseenter)="OnMouseEnter('/reporting')" (mouseleave)="OnMouseLeave()" matTooltip="{{'side-nav.reporting' | translate}}" matTooltipPosition="right">
       <button mat-icon-button [class.btn-light]="!theme.IsDarkMode" [class.btn-dark]="theme.IsDarkMode">
@@ -59,6 +48,7 @@
       </button>
     </button>
   </div>
+
   <div style="position: absolute; bottom: 0px;">
     <div class="sidenav-icon-button" [class.btn-selected-light]="IsSelected('/settings')" [class.btn-selected-dark]="IsSelected('/settings', true)" (mouseenter)="OnMouseEnter('/settings')" (mouseleave)="OnMouseLeave()" matTooltip="{{'side-nav.account' | translate}}" matTooltipPosition="right">
       <button mat-icon-button [class.btn-light]="!theme.IsDarkMode" [class.btn-dark]="theme.IsDarkMode" [matMenuTriggerFor]="menu">

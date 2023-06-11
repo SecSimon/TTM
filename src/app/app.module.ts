@@ -23,6 +23,7 @@ import { ReportingModule } from './reporting/reporting.module';
 import { ConfigurationModule } from './configuration/configuration.module';
 
 import { AppComponent } from './app.component';
+import { RiskOverviewModule } from './risk-overview/risk-overview.module';
 
 // AoT requires an exported function for factories
 const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => {
@@ -43,6 +44,7 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => {
     ModelingModule,
     DashboardModule,
     MitigationOverviewModule,
+    RiskOverviewModule,
     ReportingModule,
     ConfigurationModule,
     AppRoutingModule,

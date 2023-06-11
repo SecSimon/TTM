@@ -1388,6 +1388,31 @@ export class AttackScenario extends DatabaseBase implements ITagable, ICustomNum
     this.RuleStillApplies = true;
   }
 
+  public CalculateRisk() {
+    if (this.Severity != null && this.Likelihood != null) {
+      const like = this.Likelihood;
+      const sev = this.Severity;
+      let risk = ThreatSeverities.Critical;
+      if (sev == ThreatSeverities.None) risk = ThreatSeverities.None;
+      else {
+        if (like == LowMediumHighNumber.High) {
+          if ([ThreatSeverities.High, ThreatSeverities.Medium].includes(sev)) risk = ThreatSeverities.High;
+          else if (sev == ThreatSeverities.Low) risk = ThreatSeverities.Medium;
+        }
+        else if (like == LowMediumHighNumber.Medium) {
+          risk = sev;
+        }
+        else if (like == LowMediumHighNumber.Low) {
+          risk = ThreatSeverities.Low;
+          if ([ThreatSeverities.Medium, ThreatSeverities.High].includes(sev)) risk = ThreatSeverities.Medium;
+          else if (sev == ThreatSeverities.Critical) risk = ThreatSeverities.High;
+        }
+      }
+
+      this.Risk = risk;
+    }
+  }
+
   public AddLinkedAttackScenario(map: AttackScenario) {
     if (!this.LinkedScenarios.includes(map)) {
       this.Data['linkedScenarioIDs'].push(map.ID);
@@ -1416,6 +1441,10 @@ export class AttackScenario extends DatabaseBase implements ITagable, ICustomNum
 
   public GetCountermeasures() {
     return this.project.GetCountermeasuresApplicable().filter(x => x.AttackScenarios.includes(this));
+  }
+
+  public GetTestCases() {
+    return this.project.GetTestCases().filter(x => x.LinkedScenarios.includes(this));
   }
 
   public GetAffectedAssetObjects(): (AssetGroup|MyData)[] {

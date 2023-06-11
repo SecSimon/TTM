@@ -65,6 +65,7 @@
         </mat-list>
         <mat-menu #addMenu="matMenu">
           <ng-template matMenuContent let-groups="groups">
+            <input mat-menu-item #searchBox [(ngModel)]="searchString" [matMenuTriggerFor]="filteredList" [matMenuTriggerData]="{groups: groups}" (click)="OnSearchBoxClick()" placeholder="{{ 'general.Search' | translate }}"/>
             <button mat-menu-item *ngFor="let group of groups" [matMenuTriggerFor]="itemMenu" [matMenuTriggerData]="{items: group.Value}">
               <span>{{group.Key.Name}}</span>
             </button>
@@ -77,6 +78,11 @@
             </button>
           </ng-template> 
         </mat-menu>
+        <mat-menu #filteredList="matMenu">
+          <ng-template matMenuContent let-groups="groups">
+            <button mat-menu-item *ngFor="let res of GetFilteredList(groups)" matTooltip="{{res.Name}}" matTooltipShowDelay="1000" (click)="AddLink(res)">{{res.Name}}</button>
+          </ng-template> 
+        </mat-menu>
       </div>
       <div class="column2">
         <ng-container *ngIf="selectedLinks">
@@ -86,6 +92,7 @@
                 <button class="buttonAsText primary-color" style="font-size: small !important;" (click)="OnItemClick(item)" matTooltipShowDelay="1000">
                   {{item.Name}} in {{GetItemView(item).Name}}
                 </button>
+                <button mat-icon-button (click)="RemoveLink(item)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000"><mat-icon>delete</mat-icon></button>
               </li>
             </ul>
           </div>

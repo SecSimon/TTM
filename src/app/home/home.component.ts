@@ -37,7 +37,7 @@ export class HomeComponent implements OnInit {
   public pageFSProjectIndex = 0;
   public pageFSConfigIndex = 0;
 
-  public toolBenefits = ['platform', 'onlineStorage', 'offlineStorage', 'libraries', 'libraryIntegration', 'guidelines', 'diagramming', 'riskAssessment', 'dashboard', 'reports', 'csv', 'languages', 'collaboration'];
+  public toolBenefits = ['platform', 'onlineStorage', 'offlineStorage', 'libraries', 'libraryIntegration', 'guidelines', 'diagramming', 'riskAssessment', 'dashboard', 'reports', 'export', 'languages', 'collaboration'];
 
   constructor(private router: Router, private route: ActivatedRoute, private theme: ThemeService, public dataService: DataService, private dialogService: DialogService, private dialog: MatDialog,
     private locStorage: LocalStorageService, public tourService: TourService, private translate: TranslateService, public electron: ElectronService, 
@@ -158,5 +158,13 @@ export class HomeComponent implements OnInit {
 
   public GetFilePath(path: string) {
     return path.substring(0, path.lastIndexOf('/'));
+  }
+
+  public CutName(val: string): string {
+    if (val && val.length > 35) {
+      return '[...]' + val.substring(val.length-30);
+    }
+
+    return val;
   }
 }

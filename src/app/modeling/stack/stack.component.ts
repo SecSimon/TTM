@@ -86,7 +86,7 @@ export class StackComponent implements OnInit {
   }
 
   public GetComponentColor(comp: MyComponent): string {
-    if (comp == this.selectedComponent) return this.theme.Primary;
+    if (comp && comp == this.selectedComponent) return this.theme.Primary;
     if (this.theme.IsDarkMode) return 'white';
     else return 'black';
   }

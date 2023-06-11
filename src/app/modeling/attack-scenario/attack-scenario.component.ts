@@ -6,6 +6,7 @@ import { CvssEntryComponent } from '../../shared/components/cvss-entry/cvss-entr
 import { DataService } from '../../util/data.service';
 import { DialogService } from '../../util/dialog.service';
 import { ThemeService } from '../../util/theme.service';
+import { TestCase } from '../../model/test-case';
 
 @Component({
   selector: 'app-attack-scenario',
@@ -18,17 +19,17 @@ export class AttackScenarioComponent implements OnInit {
   public get attackScenario(): AttackScenario { return this._attackScenario; }
   @Input() public set attackScenario(val: AttackScenario) { 
     this._attackScenario = val;
-    this.sysThreatGroups = null;
     if (val) {
       this.countermeasures = val.GetCountermeasures();
     }
-    this.selectedCountermeasure = null;
-    this.selectedLinkedScenario = null;
+    this.sysThreatGroups = this.selectedCountermeasure = this.selectedLinkedScenario = this.selectedTestCase = null;
+    this.attackScenarioGroups = this.countermeasureGroups = null;
   }
 
   public countermeasures: Countermeasure[];
   public selectedCountermeasure: Countermeasure;
   public selectedLinkedScenario: AttackScenario;
+  public selectedTestCase: TestCase;
 
   @Input() canEdit: boolean = true;
 
@@ -38,6 +39,8 @@ export class AttackScenarioComponent implements OnInit {
   public searchLinkedASString: string = '';
   @ViewChild('searchCMBox', { static: false }) public searchCMBox: any;
   public searchCMString: string = '';
+  @ViewChild('searchTCBox', { static: false }) public searchTCBox: any;
+  public searchTCString: string = '';
 
   constructor(@Optional() mapping: AttackScenario, @Optional() onChange: EventEmitter<AttackScenario>, public theme: ThemeService, public dataService: DataService, private dialog: DialogService) {
     this.attackScenario = mapping;
@@ -114,38 +117,13 @@ export class AttackScenarioComponent implements OnInit {
 
   public OnScoreCVSSChanged() {
     this.attackScenario.Severity = CvssEntryComponent.ToThreatSeverity(this.attackScenario.ScoreCVSS.Score);
-    this.CalculateRisk();
+    this.attackScenario.CalculateRisk();
   }
 
   public OnScoreOwaspRRChanged() {
     this.attackScenario.Severity = (this.attackScenario.ScoreOwaspRR.Impact as Number) as ThreatSeverities;
     this.attackScenario.Likelihood = this.attackScenario.ScoreOwaspRR.Likelihood;
-    this.CalculateRisk();
-  }
-
-  public CalculateRisk() {
-    if (this.attackScenario.Severity != null && this.attackScenario.Likelihood != null) {
-      const like = this.attackScenario.Likelihood;
-      const sev = this.attackScenario.Severity;
-      let risk = ThreatSeverities.Critical;
-      if (sev == ThreatSeverities.None) risk = ThreatSeverities.None;
-      else {
-        if (like == LowMediumHighNumber.High) {
-          if ([ThreatSeverities.High, ThreatSeverities.Medium].includes(sev)) risk = ThreatSeverities.High;
-          else if (sev == ThreatSeverities.Low) risk = ThreatSeverities.Medium;
-        }
-        else if (like == LowMediumHighNumber.Medium) {
-          risk = sev;
-        }
-        else if (like == LowMediumHighNumber.Low) {
-          risk = ThreatSeverities.Low;
-          if ([ThreatSeverities.Medium, ThreatSeverities.High].includes(sev)) risk = ThreatSeverities.Medium;
-          else if (sev == ThreatSeverities.Critical) risk = ThreatSeverities.High;
-        }
-      }
-
-      this.attackScenario.Risk = risk;
-    }
+    this.attackScenario.CalculateRisk();
   }
 
   public GetThreatStates() {
@@ -288,6 +266,24 @@ export class AttackScenarioComponent implements OnInit {
     this.dialog.OpenAttackScenarioDialog(scenario, false, [this.attackScenario, ...this.attackScenario.LinkedScenarios]);
   }
 
+  public GetTestCases() {
+    return this.dataService.Project.GetTesting().TestCases.filter(x => !this.attackScenario.GetTestCases().includes(x));
+  }
+
+  public GetFilteredTestCases() {
+    return this.GetTestCases().filter(x => x.Name.toLowerCase().includes(this.searchTCString.toLowerCase()));
+  }
+
+  public OnLinkTestCase(tc: TestCase) {
+    tc.AddLinkedAttackScenario(this.attackScenario);
+    this.selectedTestCase = tc;
+  }
+
+  public OnUnlinkTestCase(tc: TestCase) {
+    tc.RemoveLinkedAttackScenario(this.attackScenario.ID);
+    if (this.selectedTestCase == tc) this.selectedTestCase = null;
+  }
+
   public NumberAlreadyExists() {
     return this.dataService.Project.GetAttackScenarios().some(x => x.Number == this.attackScenario.Number && x.ID != this.attackScenario.ID);
   }
@@ -302,5 +298,9 @@ export class AttackScenarioComponent implements OnInit {
 
   public OnSearchCMBoxClick() {
     this.searchCMBox?._elementRef?.nativeElement?.focus();
+  }
+
+  public OnSearchTCBoxClick() {
+    this.searchTCBox?._elementRef?.nativeElement?.focus();
   }
 }

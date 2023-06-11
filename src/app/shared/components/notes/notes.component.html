@@ -4,7 +4,7 @@
       <tr>
         <td><mat-icon>chevron_right</mat-icon></td>
         <td *ngIf="item.HasCheckbox"><mat-checkbox color="primary" [(ngModel)]="item.IsChecked" style="padding-right: 5px;"></mat-checkbox></td>
-        <td *ngIf="item.ShowTimestamp"><span style="padding-right: 5px;">{{item.Date | localDateTime}} - {{item.Author}}: </span> </td>
+        <td *ngIf="item.ShowTimestamp"><span style="padding-right: 5px;">{{item.Date | localDateTime}}<ng-container *ngIf="item.Author?.length > 0"> - {{item.Author}}</ng-container>: </span></td>
         <td *ngIf="enumerateItems"><span style="padding-right: 5px;">{{index+1}}. </span></td>
         <td>{{item.Note}}</td>
         <td *ngIf="canToggleCheckbox || canToggleTimestamp">

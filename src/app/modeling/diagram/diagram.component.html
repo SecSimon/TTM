@@ -24,6 +24,42 @@
     <button mat-button class="toolBtn" [class.toolBtn-Selected]="Dia.ShowName" (click)="Dia.ShowName = !Dia.ShowName" matTooltip="{{'pages.modeling.diagram.showName' | translate}}" matTooltipShowDelay="1000" *ngIf="Dia.Diagram.DiagramType != 'HW'">
       <mat-icon>text_rotation_none</mat-icon>
     </button>
+    <button mat-button class="toolBtn" [matMenuTriggerFor]="textSizeMenu" matTooltip="{{'pages.modeling.diagram.textFormatSize' | translate}}" matTooltipShowDelay="1000">
+      <mat-icon>format_size</mat-icon>
+    </button>
+    <mat-menu #textSizeMenu="matMenu">
+      <button mat-menu-item style="height: fit-content;" (click)="Dia.FontSizeConfigIndex=1">
+        <mat-radio-group>
+          <mat-radio-button color="primary" value="1" [checked]="Dia.FontSizeConfigIndex==1" >{{'pages.modeling.diagram.fs.textSmaller' | translate}}</mat-radio-button>
+        </mat-radio-group>
+      </button>
+      <button mat-menu-item style="height: fit-content;" (click)="Dia.FontSizeConfigIndex=2">
+        <mat-radio-group>
+          <mat-radio-button color="primary" value="2" [checked]="Dia.FontSizeConfigIndex==2">{{'pages.modeling.diagram.fs.textSmall' | translate}}</mat-radio-button>
+        </mat-radio-group>
+      </button>
+      <button mat-menu-item style="height: fit-content;" (click)="Dia.FontSizeConfigIndex=3">
+        <mat-radio-group>
+          <mat-radio-button color="primary" value="3" [checked]="Dia.FontSizeConfigIndex==3">{{'pages.modeling.diagram.fs.textNormal' | translate}}</mat-radio-button>
+        </mat-radio-group>
+      </button>
+      <button mat-menu-item style="height: fit-content;" (click)="Dia.FontSizeConfigIndex=4">
+        <mat-radio-group>
+          <mat-radio-button color="primary" value="4" [checked]="Dia.FontSizeConfigIndex==4">{{'pages.modeling.diagram.fs.textLarge' | translate}}</mat-radio-button>
+        </mat-radio-group>
+      </button>
+      <button mat-menu-item style="height: fit-content;" (click)="Dia.FontSizeConfigIndex=5">
+        <mat-radio-group>
+          <mat-radio-button color="primary" value="5" [checked]="Dia.FontSizeConfigIndex==5">{{'pages.modeling.diagram.fs.textLarger' | translate}}</mat-radio-button>
+        </mat-radio-group>
+      </button>
+    </mat-menu>
+    <button mat-button class="toolBtn" [disabled]="!selectedElement" (click)="Dia.TextIncrease()" matTooltip="{{'pages.modeling.diagram.textIncrease' | translate}}" matTooltipShowDelay="1000" *ngIf="Dia.Diagram.DiagramType != 'HW'">
+      <mat-icon>text_increase</mat-icon>
+    </button>
+    <button mat-button class="toolBtn" [disabled]="!selectedElement" (click)="Dia.TextDecrease()" matTooltip="{{'pages.modeling.diagram.textDecrease' | translate}}" matTooltipShowDelay="1000" *ngIf="Dia.Diagram.DiagramType != 'HW'">
+      <mat-icon>text_decrease</mat-icon>
+    </button>
     <button mat-button class="toolBtn" [disabled]="!Dia.IsObjectSelected" (click)="Dia.SendToBack()" matTooltip="{{'pages.modeling.diagram.sendBack' | translate}}" matTooltipShowDelay="1000">
       <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" version="1.1">
         <rect [attr.fill]="Dia.IsObjectSelected ? (theme.IsDarkMode ? '#FFF' : '#000') : (theme.IsDarkMode ? '#676767' : '#B6B6B6')" x="7.5" y="9" width="10" height="7" rx="3" ry="3"  stroke-width="1"/>

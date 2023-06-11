@@ -92,7 +92,7 @@ export class CountermeasureTableComponent implements OnInit {
   public get selectedNode(): INavigationNode { return this._selectedNode; }
   @Input() public set selectedNode(val: INavigationNode) {
     this._selectedNode = val;
-    this.displayedColumns = ['state', 'number', 'type', 'name', 'control', 'vectors', 'targets', 'progress', 'status'];
+    this.displayedColumns = ['state', 'number', 'type', 'name', 'control', 'vectors', 'targets', 'progress', 'status', 'more'];
     this.RefreshCountermeasures();
   }
   @Input() public set selectedObject(val: ViewElementBase) {

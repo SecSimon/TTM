@@ -37,6 +37,31 @@
           <button *ngIf="GetComponents(group) == null || GetComponents(group).length == 0" style="visibility: hidden;" class="component">Temp</button>
         </td>
       </tr>
+      <tr>
+        <td><p class="group" style="font-size: x-small;">{{ 'pages.modeling.stack.legend' | translate }}</p></td>
+        <td style="display: flex; flex-wrap: wrap;">
+          <div style="position: relative;">
+            <button class="component component-legend" [class.component-dark]="theme.IsDarkMode" [style.border-color]="GetComponentColor(null)">
+              {{ 'pages.modeling.stack.ActiveComponent' | translate }}
+            </button>
+          </div>
+          <div style="position: relative;">
+            <button class="component component-legend" [class.component-dark]="theme.IsDarkMode" [style.border-color]="GetComponentColor(null)" style="opacity: 0.5;">
+              {{ 'pages.modeling.stack.InactiveComponent' | translate }}
+            </button>
+          </div>
+          <div style="position: relative;">
+            <button class="component component-legend component-third-party" [class.component-dark]="theme.IsDarkMode" [style.border-color]="GetComponentColor(null)">
+              {{ 'pages.modeling.stack.ThirdPartyComponent' | translate }}
+            </button>
+          </div>
+          <div style="position: relative;">
+            <button class="component component-legend" [class.component-dark]="theme.IsDarkMode" [style.border-color]="GetComponentColor(null)" style="border-style: 'dotted';">
+              {{ 'pages.modeling.stack.OutOfScopeComponent' | translate }}
+            </button>
+          </div>
+        </td>
+      </tr>
     </tbody>
   </table>
 

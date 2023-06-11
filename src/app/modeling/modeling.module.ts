@@ -42,6 +42,7 @@ import { TestCaseTableComponent } from './test-case-table/test-case-table.compon
     ConfigurationModule
   ],
   exports: [
+    AttackScenarioComponent,
     CountermeasureComponent,
     MitigationProcessComponent
   ]

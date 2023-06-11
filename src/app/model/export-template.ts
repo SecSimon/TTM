@@ -5,13 +5,16 @@ import { ProjectFile } from "./project-file";
 import { ImpactCategoryUtil, RiskStrategyUtil, ThreatSeverityUtil, ThreatStateUtil } from "./threat-model";
 import { MitigationProcessStateUtil, MitigationStateUtil } from "./mitigations"; 
 import { TranslateService } from "@ngx-translate/core";
+import { TestCaseStateUtil } from "./test-case";
+import { CvssEntryComponent } from "../shared/components/cvss-entry/cvss-entry.component";
 
 export enum ExportTypes {
   AttackScenarios = 1,
   Countermeasures = 2,
   SystemThreats = 3,
   ThreatSources = 4,
-  MitigationProcesses = 5
+  MitigationProcesses = 5,
+  TestCases = 6
 }
 
 class ExportUtil {
@@ -27,7 +30,7 @@ class ExportUtil {
 
 export class ExportTypeUtil {
   public static GetKeys() {
-    return [ExportTypes.AttackScenarios, ExportTypes.Countermeasures, ExportTypes.MitigationProcesses, ExportTypes.SystemThreats, ExportTypes.ThreatSources];
+    return [ExportTypes.AttackScenarios, ExportTypes.Countermeasures, ExportTypes.MitigationProcesses, ExportTypes.SystemThreats, ExportTypes.ThreatSources, ExportTypes.TestCases];
   }
 
   public static ToString(et: ExportTypes): string {
@@ -37,6 +40,7 @@ export class ExportTypeUtil {
       case ExportTypes.MitigationProcesses: return "exporttype.MitigationProcesses";
       case ExportTypes.SystemThreats: return "exporttype.SystemThreats";
       case ExportTypes.ThreatSources: return "exporttype.ThreatSources";
+      case ExportTypes.TestCases: return "exporttype.TestCases";
       default:
         console.error('Missing Export Type in ExportTypeUtil.ToString()')
         return 'Undefined';
@@ -103,7 +107,9 @@ export enum ExportAttackScenarioProperties {
   ThreatCategories = 'ThreatCategories',
   SystemThreats = 'SystemThreats',
   Diagram = 'Diagram',
+  VectorCVSS = 'VectorCVSS',
   ScoreCVSS = 'ScoreCVSS',
+  VectorOwaspRR = 'VectorOwaspRR',
   ScoreOwaspRR = 'ScoreOwaspRR',
   Severity = 'Severity',
   SeverityReason = 'SeverityReason',
@@ -121,7 +127,7 @@ export class ExportAttackScenarioPropertyUtil {
   public static GetKeys() {
     return [ExportAttackScenarioProperties.Number, ExportAttackScenarioProperties.ThreatState, ExportAttackScenarioProperties.AttackVector, ExportAttackScenarioProperties.Targets, 
       ExportAttackScenarioProperties.Diagram, ExportAttackScenarioProperties.ThreatCategories,
-      ExportAttackScenarioProperties.SystemThreats, ExportAttackScenarioProperties.ScoreCVSS, ExportAttackScenarioProperties.ScoreOwaspRR, ExportAttackScenarioProperties.Severity,
+      ExportAttackScenarioProperties.SystemThreats, ExportAttackScenarioProperties.VectorCVSS, ExportAttackScenarioProperties.ScoreCVSS, ExportAttackScenarioProperties.VectorOwaspRR, ExportAttackScenarioProperties.ScoreOwaspRR, ExportAttackScenarioProperties.Severity,
       ExportAttackScenarioProperties.SeverityReason, ExportAttackScenarioProperties.Likelihood, ExportAttackScenarioProperties.LikelihoodReason, ExportAttackScenarioProperties.Risk, 
       ExportAttackScenarioProperties.RiskReason, ExportAttackScenarioProperties.RiskStrategy, ExportAttackScenarioProperties.RiskStrategyReason, ExportAttackScenarioProperties.Countermeasures,
       ExportAttackScenarioProperties.MyTags];
@@ -142,11 +148,17 @@ export class ExportAttackScenarioPropertyUtil {
         return ExportUtil.wrap(translate, ExportCommonPropertyUtil.GetValue('Name', entry[key]));
       }
       else if (key == ExportAttackScenarioProperties.ThreatState) return myToString(ThreatStateUtil.ToString);
+      else if (key == ExportAttackScenarioProperties.VectorCVSS) {
+        const vec = CvssEntryComponent.GetVector(entry.ScoreCVSS);
+        if (vec?.length > 8) return ExportUtil.wrap(translate, vec);
+        return ExportUtil.wrap(translate, '');
+      }
       else if (key == ExportAttackScenarioProperties.ScoreCVSS) {
         let val = ExportCommonPropertyUtil.GetValue(key, entry);
         if (val) val = val.Score;
         return ExportUtil.wrap(translate, val);
       }
+      else if (key == ExportAttackScenarioProperties.VectorOwaspRR) return ExportUtil.wrap(translate, CvssEntryComponent.GetVector(entry.ScoreOwaspRR));
       else if (key == ExportAttackScenarioProperties.ScoreOwaspRR) {
         let val = ExportCommonPropertyUtil.GetValue(key, entry);
         if (val) return ExportUtil.wrap(translate, ThreatSeverityUtil.ToString(val.Score));
@@ -172,8 +184,10 @@ export class ExportAttackScenarioPropertyUtil {
       case ExportAttackScenarioProperties.ThreatCategories: return "general.ThreatCategories";
       case ExportAttackScenarioProperties.SystemThreats: return "general.SystemThreats";
       case ExportAttackScenarioProperties.Diagram: return "general.Diagram";
-      case ExportAttackScenarioProperties.ScoreCVSS: return "CVSS Score";
-      case ExportAttackScenarioProperties.ScoreOwaspRR: return "OWASP RR Score";
+      case ExportAttackScenarioProperties.VectorCVSS: return "report.CvssVector";
+      case ExportAttackScenarioProperties.ScoreCVSS: return "report.CvssScore";
+      case ExportAttackScenarioProperties.VectorOwaspRR: return "report.OwaspRRVector";
+      case ExportAttackScenarioProperties.ScoreOwaspRR: return "report.OwaspRRScore";
       case ExportAttackScenarioProperties.Severity: return "properties.Severity";
       case ExportAttackScenarioProperties.SeverityReason: return "properties.SeverityReason";
       case ExportAttackScenarioProperties.Likelihood: return "general.Likelihood";
@@ -328,6 +342,7 @@ export class ExportMitigationProcessPropertyUtil {
 }
 
 export enum ExportSystemThreatProperties {
+  Number = 'Number',
   Impact = 'Impact',
   ImpactCats = 'ImpactCats',
   ThreatCategory = 'ThreatCategory',
@@ -336,7 +351,7 @@ export enum ExportSystemThreatProperties {
 
 export class ExportSystemThreatPropertyUtil {
   public static GetKeys() {
-    return [ExportSystemThreatProperties.Impact, ExportSystemThreatProperties.ImpactCats, ExportSystemThreatProperties.ThreatCategory, ExportSystemThreatProperties.AffectedAssetObjects];
+    return [ExportSystemThreatProperties.Number, ExportSystemThreatProperties.Impact, ExportSystemThreatProperties.ImpactCats, ExportSystemThreatProperties.ThreatCategory, ExportSystemThreatProperties.AffectedAssetObjects];
   }
 
   public static GetValues(key: string, entry, translate: TranslateService): string[] {
@@ -374,6 +389,7 @@ export class ExportSystemThreatPropertyUtil {
 }
 
 export enum ExportThreatSourceProperties {
+  Number = 'Number',
   Motive = 'Motive',
   Capabilities = 'Capabilities',
   Likelihood = 'Likelihood',
@@ -381,7 +397,7 @@ export enum ExportThreatSourceProperties {
 
 export class ExportThreatSourcePropertyUtil {
   public static GetKeys() {
-    return [ExportThreatSourceProperties.Motive, ExportThreatSourceProperties.Capabilities, ExportThreatSourceProperties.Likelihood];
+    return [ExportThreatSourceProperties.Number, ExportThreatSourceProperties.Motive, ExportThreatSourceProperties.Capabilities, ExportThreatSourceProperties.Likelihood];
   }
 
   public static GetValues(key: string, entry, translate: TranslateService): string[] {
@@ -411,12 +427,63 @@ export class ExportThreatSourcePropertyUtil {
   }
 }
 
+export enum ExportTestCaseProperties {
+  Number = 'Number',
+  Status = 'Status',
+  Version = 'Version',
+  PreConditions = 'PreConditions',
+  Steps = 'Steps',
+  TestData = 'TestData',
+  Summary = 'Summary'
+}
+
+export class ExportTestCasePropertyUtil {
+  public static GetKeys() {
+    return [ExportTestCaseProperties.Number, ExportTestCaseProperties.Status, ExportTestCaseProperties.Version, ExportTestCaseProperties.PreConditions, 
+      ExportTestCaseProperties.Steps, ExportTestCaseProperties.TestData, ExportTestCaseProperties.Summary];
+  }
+
+  public static GetValues(key: string, entry, translate: TranslateService): string[] {
+    const myToString = (method) => {
+      const val = ExportCommonPropertyUtil.GetValue(key, entry);
+      if (val) return ExportUtil.wrap(translate, method(val));
+      return [''];
+    };
+    if (this.GetKeys().includes(key as ExportTestCaseProperties)) {
+      if ([ExportTestCaseProperties.PreConditions, ExportTestCaseProperties.Steps, ExportTestCaseProperties.TestData].includes(key as ExportTestCaseProperties)) {
+        return entry[key];
+      }
+      else if ([ExportTestCaseProperties.Summary].includes(key as ExportTestCaseProperties)) {
+        return entry[key]?.map(x => x.Note);
+      }
+      else if (key == ExportTestCaseProperties.Status) return myToString(TestCaseStateUtil.ToString);
+    }
+    return ExportUtil.wrap(translate, ExportCommonPropertyUtil.GetValue(key, entry));
+  }
+
+  public static ToString(easp: ExportTestCaseProperties): string {
+    switch (easp) {
+      case ExportTestCaseProperties.Number: return "general.Number";
+      case ExportTestCaseProperties.Status: return "properties.Status";
+      case ExportTestCaseProperties.Version: return "properties.Version";
+      case ExportTestCaseProperties.PreConditions: return "properties.PreConditions";
+      case ExportTestCaseProperties.Steps: return "properties.Steps";
+      case ExportTestCaseProperties.TestData: return "properties.TestData";
+      case ExportTestCaseProperties.Summary: return "properties.Summary";
+      default:
+        console.error('Missing Prop in ExportTestCasePropertyUtil.ToString()')
+        return 'Undefined';
+    }
+  }
+}
+
 export enum ExportClasses {
   AttackScenario = 'AttackScenario',
   Countermeasure = 'Countermeasure',
   MitigationProcess = 'MitigationProcess',
   SystemThreat = 'SystemThreat',
-  ThreatSources = 'ThreatSources'
+  ThreatSources = 'ThreatSources',
+  TestCase = 'TestCase'
 }
 
 export class ExportClassUtil {
@@ -427,6 +494,7 @@ export class ExportClassUtil {
     if (type == ExportTypes.MitigationProcesses) return [ExportClasses.MitigationProcess];
     if (type == ExportTypes.SystemThreats) return [ExportClasses.SystemThreat];
     if (type == ExportTypes.ThreatSources) return [ExportClasses.ThreatSources];
+    if (type == ExportTypes.TestCases) return [ExportClasses.TestCase];
   }
 
   public static GetProperties(cl: ExportClasses) {
@@ -435,6 +503,7 @@ export class ExportClassUtil {
     if (cl == ExportClasses.MitigationProcess) return [...ExportCommonPropertyUtil.GetKeys(), ...ExportMitigationProcessPropertyUtil.GetKeys()] as string[];
     if (cl == ExportClasses.SystemThreat) return [...ExportCommonPropertyUtil.GetKeys(), ...ExportSystemThreatPropertyUtil.GetKeys()] as string[];
     if (cl == ExportClasses.ThreatSources) return [...ExportCommonPropertyUtil.GetKeys(), ...ExportThreatSourcePropertyUtil.GetKeys()] as string[];
+    if (cl == ExportClasses.TestCase) return [...ExportCommonPropertyUtil.GetKeys(), ...ExportTestCasePropertyUtil.GetKeys()] as string[];
     return [] as string[];
   }
 
@@ -451,6 +520,8 @@ export class ExportClassUtil {
         return ExportSystemThreatPropertyUtil.GetValues(path[1], entry, translate);
       case ExportClasses.ThreatSources:
         return ExportThreatSourcePropertyUtil.GetValues(path[1], entry, translate);
+        case ExportClasses.TestCase:
+          return ExportTestCasePropertyUtil.GetValues(path[1], entry, translate);
       default: return [''];
     }
   }
@@ -462,6 +533,7 @@ export class ExportClassUtil {
       case ExportClasses.MitigationProcess: return "exportclasses.MitigationProcess";
       case ExportClasses.SystemThreat: return "exportclasses.SystemThreat";
       case ExportClasses.ThreatSources: return "exportclasses.ThreatSource";
+      case ExportClasses.TestCase: return "exportclasses.TestCase";
       default:
         console.error('Missing Export Class in ExportClassUtil.ToString()')
         return 'Undefined';
@@ -496,6 +568,60 @@ export class ExportTemplate extends DatabaseBase {
 
     if (!this.ExportType) this.ExportType = ExportTypes.AttackScenarios;
     if (this.ExportFilter == null) this.ExportFilter = ExportFilters.Applicable;
+  }
+
+  public GetRowData(translate: TranslateService) {
+    const rows = [];
+    let src: any[];
+    if (this.ExportType == ExportTypes.AttackScenarios) {
+      if (this.ExportFilter == ExportFilters.Applicable) src = this.project.GetAttackScenariosApplicable();
+      else if (this.ExportFilter == ExportFilters.NotApplicable) src = this.project.GetAttackScenariosNotApplicable();
+      else src = this.project.GetAttackScenarios();
+    }
+    else if (this.ExportType == ExportTypes.Countermeasures) {
+      if (this.ExportFilter == ExportFilters.Applicable) src = this.project.GetCountermeasuresApplicable();
+      else if (this.ExportFilter == ExportFilters.NotApplicable) src = this.project.GetCountermeasuresNotApplicable();
+      else src = this.project.GetCountermeasures();
+    }
+    else if (this.ExportType == ExportTypes.MitigationProcesses) src = this.project.GetMitigationProcesses();
+    else if (this.ExportType == ExportTypes.SystemThreats) src = this.project.GetSystemThreats();
+    else if (this.ExportType == ExportTypes.ThreatSources) src = this.project.GetThreatSources().Sources;
+    else if (this.ExportType == ExportTypes.TestCases) src = this.project.GetTesting().TestCases;
+    src.forEach(entry => {
+      let row = [];
+      const rowBuffer = [];
+      for (let i = 0; i < this.Template.length; i++) {
+        if (this.Template[i].value) {
+          let vals = ExportClassUtil.GetValues(this.Template[i].value, entry, translate); 
+          if (vals.length >= 1) {
+            if (vals[0]?.length > 0) row.push(translate.instant(vals[0]));
+            else row.push(vals[0]);
+          }
+          else row.push('');
+          if (vals.length > 1) {
+            rowBuffer[i] = [];
+            for (let k = 1; k < vals.length; k++) {
+              if (vals[k]?.length > 0) rowBuffer[i].push(translate.instant(vals[k]));
+              else rowBuffer[i].push(vals[k]);
+            }
+          }
+        }
+      }
+      rows.push(row);
+      if (rowBuffer.length > 0) {
+        const len = Math.max(...rowBuffer.map(x => x?.length).filter(x => x));
+        for (let k = 0; k < len; k++) {
+          row = [];
+          for (let i = 0; i < this.Template.length; i++) {
+            if (rowBuffer[i]?.length > k) row.push(rowBuffer[i][k]);
+            else row.push('');
+          }
+          rows.push(row);
+        }
+      }
+    });
+
+    return rows;
   }
 
   public FindReferences(pf: ProjectFile, cf: ConfigFile): IDataReferences[] {

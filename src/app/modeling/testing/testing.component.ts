@@ -32,7 +32,7 @@ export class TestingComponent implements OnInit {
   }
 
   public ResetNumbers() {
-    const arr = this.dataService.Project.GetTestCases();
+    const arr = this.dataService.Project.GetTesting().TestCases;
     for (let i = 0; i < arr.length; i++) {
       arr[i].Number = (i+1).toString();
     }

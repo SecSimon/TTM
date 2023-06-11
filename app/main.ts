@@ -1,6 +1,8 @@
 import {app, BrowserWindow, screen, Menu, ipcMain, dialog} from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
+const Store = require('electron-store');
+const store = new Store();
 
 let win: BrowserWindow = null;
 const args = process.argv.slice(1),
@@ -44,6 +46,11 @@ function createWindow(): BrowserWindow {
     win.loadURL(url.href);
     pageURL = url.href;
   }
+
+  win.setBounds(store.get('bounds'));
+  win.on('close', () => {
+    store.set('bounds', win.getBounds());
+  });
 
   // Emitted when the window is closed.
   win.on('closed', () => {

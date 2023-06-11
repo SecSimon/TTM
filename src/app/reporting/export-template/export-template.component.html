@@ -46,6 +46,7 @@
   <div style="margin-top: 10px;">
     <button mat-raised-button [disabled]="!canGenerate" (click)="GeneratePreview()">{{'pages.reporting.exporttemplate.Preview' | translate}}</button>
     <button mat-raised-button [disabled]="!canDownload" color="primary" style="margin-left: 10px;" (click)="SaveCSV()">{{'pages.reporting.exporttemplate.DownloadCSV' | translate}}</button>
+    <button mat-raised-button [disabled]="!canDownload" color="primary" style="margin-left: 10px;" (click)="SaveExcel()">{{'pages.reporting.exporttemplate.DownloadExcel' | translate}}</button>
     <br/>
     <mat-form-field *ngIf="dataRows" class="property-form-field" style="margin-top: 10px;">
       <mat-label>{{ 'pages.reporting.exporttemplate.filter' | translate }}</mat-label>

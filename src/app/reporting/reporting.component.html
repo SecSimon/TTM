@@ -58,7 +58,7 @@
           <mat-tab>
             <ng-template mat-tab-label>
               <mat-icon class="tab-icon">table_chart</mat-icon>
-              {{ 'pages.reporting.CSVExport' | translate }}
+              {{ 'pages.reporting.Export' | translate }}
             </ng-template>
             <ng-template matTabContent>
               <div class="row" style="margin-bottom: 10px;">
@@ -72,10 +72,10 @@
                       matTooltip="{{template.Name}}" matTooltipShowDelay="1000">
                       <mat-icon mat-list-icon>chevron_right</mat-icon>
                       <div mat-line style="pointer-events: initial;">{{template.Name}}</div>
-                      <!-- <button mat-icon-button style="margin-left: auto; margin-right: 0px;" (click)="EditAttackScenario(scenario)" matTooltip="{{'general.Edit' | translate}}" matTooltipShowDelay="1000"><mat-icon>edit</mat-icon></button> -->
                       <button mat-icon-button style="margin-left: auto;" (click)="DeleteTemplate(template)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000"><mat-icon>delete</mat-icon></button>
                     </mat-list-item>
                   </mat-list>
+                  <button mat-raised-button [disabled]="exportTemplates.length == 0" color="primary" style="margin-top: 10px; left: 50%; transform: translateX(-50%);" (click)="SaveExcel()">{{'pages.reporting.exporttemplate.DownloadExcel' | translate}}</button>
                 </div>
                 <div class="column2">
                   <div style="margin: 10px;">

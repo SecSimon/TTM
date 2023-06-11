@@ -56,5 +56,9 @@
       <mat-icon>search</mat-icon>
       <span>{{'general.Search' | translate}}</span>
     </button>
+    <button mat-menu-item [disabled]="filteredElement == null" (click)="filteredElement = null">
+      <mat-icon>filter_alt_off</mat-icon>
+      <span>{{'pages.modeling.containertree.filterReset' | translate}}</span>
+    </button>
   </ng-template> 
 </mat-menu>

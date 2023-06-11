@@ -13,7 +13,6 @@ import { CtxDiagram, Diagram, DiagramTypes } from '../model/diagram';
 import { CtxCanvas, HWDFCanvas } from '../modeling/diagram/diagram.component';
 
 import { HttpClient } from '@angular/common/http';
-import { saveAs } from 'file-saver';
 import { LocalStorageService, LocStorageKeys } from '../util/local-storage.service';
 import { NodeTypes } from '../modeling/modeling.component';
 import { ResizedEvent } from 'angular-resize-event';
@@ -42,6 +41,9 @@ import {
 } from 'docx';
 
 import html2canvas from 'html2canvas';
+import { saveAs } from 'file-saver';
+import writeXlsxFile from 'write-excel-file';
+
 import { ExportTemplate } from '../model/export-template';
 import { CvssEntryComponent } from '../shared/components/cvss-entry/cvss-entry.component';
 import { OwaspRREntryComponent } from '../shared/components/owasp-rr-entry/owasp-rr-entry.component';
@@ -530,7 +532,7 @@ export class ReportingComponent implements OnInit {
         this.createSubHeading(this.translate.instant('general.TestCases'));
         this.createParagraph(this.translate.instant('report.testCaseExplanation'));
         this.createParagraph('');
-        const tcs = this.Project.GetTestCases();
+        const tcs = this.Project.GetTesting().TestCases;
         for (let i = 0; i < tcs.length; i++) {
           const tc = tcs[i];
           this.createBoldParagraph(tc.GetLongName());
@@ -670,6 +672,27 @@ export class ReportingComponent implements OnInit {
       const blob = new Blob([buffer]);
       saveAs(blob, this.Project.Name.replace('.ttmp', '.docx'));
     });
+  }
+
+  public async SaveExcel() {
+    const sheets = [];
+    this.exportTemplates.forEach(temp => {
+      const data = [];
+      const header = [];
+      temp.Template.map(x => x.name).forEach(x => header.push({ value: x, fontWeight: 'bold' }));
+      data.push(header);
+      temp.GetRowData(this.translate).forEach(row => {
+        const d = [];
+        row.forEach(x => d.push({ value: x }));
+        data.push(d);
+      });
+      sheets.push(data);
+    });
+
+    await writeXlsxFile(sheets, {
+      fileName: this.dataService.Project.Name.replace('.ttmp', '.xlsx'),
+      sheets: this.exportTemplates.map(x => x.Name)
+    })
   }
 
   public AddTemplate() {

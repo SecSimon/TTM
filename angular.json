@@ -55,7 +55,8 @@
               "html2canvas",
               "once",
               "rxjs",
-              "rxjs/operators"
+              "rxjs/operators",
+              "jszip"
             ]
           },
           "configurations": {

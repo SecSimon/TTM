@@ -27,6 +27,11 @@ interface IKeyValuePair {
   value: any;
 }
 
+interface IFontSizeConfig {
+  Name: number;
+  Type: number;
+}
+
 export enum MouseModes {
   Mouse = 'mouse',
   Pan = 'pan',
@@ -71,6 +76,7 @@ enum CProps {
   visible = 'visible',
   perPixelTargetFind = 'perPixelTargetFind',
   targetFindTolerance = 'targetFindTolerance',
+  fontSize = 'fontSize',
 
   p0ID = 'p0ID',
   p1ID = 'p1ID',
@@ -162,6 +168,15 @@ export abstract class CanvasBase {
   protected tmpFlowLine = null; // flow to create
   protected tmpFlowLineEndpoint = null; // first object to attach the flow
   protected blockCreateLine = false;
+  protected fontSizeConfigs: IFontSizeConfig[] = [
+    { Name: 11, Type: 8 },
+    { Name: 12, Type: 9 },
+    { Name: 14, Type: 10 },
+    { Name: 16, Type: 12 },
+    { Name: 18, Type: 14 },
+    { Name: 20, Type: 16 },
+  ];
+  protected get currentFontSizeConfig(): IFontSizeConfig { return this.fontSizeConfigs[this.FontSizeConfigIndex]; }
 
   public Canvas: fabric.Canvas;
   public StrokeColor = 'black';
@@ -281,6 +296,16 @@ export abstract class CanvasBase {
     this.locStorage.Set(LocStorageKeys.PAGE_MODELING_DIAGRAM_ARROW_NAME, JSON.stringify(arr));
   }
 
+  public get FontSizeConfigIndex(): number {
+    const res = this.locStorage.Get(LocStorageKeys.PAGE_MODELING_DIAGRAM_TEXTSIZE_INDEX);
+    if (res == null) return 3;
+    return Number(res);
+  }
+  public set FontSizeConfigIndex(val: number) {
+    this.locStorage.Set(LocStorageKeys.PAGE_MODELING_DIAGRAM_TEXTSIZE_INDEX, String(val));
+    this.changeFontSize();
+  }
+
   public get ObjectCountToInit(): string {
     if (!this.Diagram.Elements) return '';
     let res = this.Diagram.Elements.GetChildrenFlat().filter(x => !x.UserCheckedElement).length;
@@ -356,6 +381,52 @@ export abstract class CanvasBase {
 
   public Save() {
     this.ToJSONString();
+  }
+
+  public TextIncrease() {
+    const obj = this.getCanvasElementByID(this.SelectedElement.ID);
+    let etype = null, etxt = null, ephy = null;
+    if (obj._objects) {
+      etype = obj._objects.find(x => x[CProps.myType] == CTypes.ElementType);
+      ephy = obj._objects.find(x => x[CProps.myType] == CTypes.ElementPhyElement);
+      etxt = obj._objects.find(x => x[CProps.myType] == CTypes.ElementName);
+    }
+    else if (obj[CProps.myType] == CTypes.DataFlowLine) { etxt = this.getCanvasElementByCanvasID(obj[CProps.textID]); }
+
+    let newConfig: IFontSizeConfig = null;
+    if (etype) newConfig = this.fontSizeConfigs[this.fontSizeConfigs.findIndex(x => x.Type == etype[CProps.fontSize])+1];
+    else if (etxt) newConfig = this.fontSizeConfigs[this.fontSizeConfigs.findIndex(x => x.Name == etxt[CProps.fontSize])+1];
+
+    if (newConfig) {
+      if (etxt) etxt.set(CProps.fontSize, obj[CProps.myType] != CTypes.TrustArea ? newConfig.Name : newConfig.Type);
+      if (etype) etype.set(CProps.fontSize, newConfig.Type);
+      if (ephy) ephy.set(CProps.fontSize, newConfig.Type);
+      this.Canvas.requestRenderAll();
+      this.onCanvasModified();
+    }
+  }
+
+  public TextDecrease() {
+    const obj = this.getCanvasElementByID(this.SelectedElement.ID);
+    let etype = null, etxt = null, ephy = null;
+    if (obj._objects) {
+      etype = obj._objects.find(x => x[CProps.myType] == CTypes.ElementType);
+      ephy = obj._objects.find(x => x[CProps.myType] == CTypes.ElementPhyElement);
+      etxt = obj._objects.find(x => x[CProps.myType] == CTypes.ElementName);
+    }
+    else if (obj[CProps.myType] == CTypes.DataFlowLine) { etxt = this.getCanvasElementByCanvasID(obj[CProps.textID]); }
+
+    let newConfig: IFontSizeConfig = null;
+    if (etype) newConfig = this.fontSizeConfigs[this.fontSizeConfigs.findIndex(x => x.Type == etype[CProps.fontSize])-1];
+    else if (etxt) newConfig = this.fontSizeConfigs[this.fontSizeConfigs.findIndex(x => x.Name == etxt[CProps.fontSize])-1];
+
+    if (newConfig) {
+      if (etxt) etxt.set(CProps.fontSize, obj[CProps.myType] != CTypes.TrustArea ? newConfig.Name : newConfig.Type);
+      if (etype) etype.set(CProps.fontSize, newConfig.Type);
+      if (ephy) ephy.set(CProps.fontSize, newConfig.Type);
+      this.Canvas.requestRenderAll();
+      this.onCanvasModified();
+    }
   }
 
   public SendToBack() {
@@ -736,6 +807,9 @@ export abstract class CanvasBase {
 
     this.Canvas.getObjects().filter(x => x[CProps.myType] == CTypes.GridLine).forEach(x => this.Canvas.sendToBack(x));
 
+    const zoom = this.locStorage.Get(LocStorageKeys.PAGE_MODELING_DIAGRAM_ZOOM);
+    if (zoom != null) { this.SetZoom(Number(zoom)); }
+
     return true;
   }
 
@@ -889,7 +963,7 @@ export abstract class CanvasBase {
       let copyProps = [
         CProps.ID, CProps.elementTypeID, CProps.myType,
         CProps.strokeDashArray, CProps.arrowEID, CProps.arrowSID, CProps.textID, CProps.bendFlow,
-        CProps.p0ID, CProps.p1ID, CProps.p2ID, CProps.fa1, CProps.fe1, CProps.fa2, CProps.fe2
+        CProps.p0ID, CProps.p1ID, CProps.p2ID, CProps.fa1, CProps.fe1, CProps.fa2, CProps.fe2, CProps.fontSize
       ];
       copyProps.forEach(prop => {
         flow.set(prop, df[prop]);
@@ -1553,7 +1627,7 @@ export abstract class CanvasBase {
       left: x + xCorr + xTO, top: y + yCorr + yTO,
       textAlign: 'center', charSpacing: -50,
       path: new fabric.Path(path, { strokeWidth: 1, visible: false }), pathSide: side, pathStartOffset: 0,
-      fontSize: 16, fill: this.StrokeColor, canvasID: uuidv4(), selectable: true, perPixelTargetFind: true, targetFindTolerance: 4,
+      fontSize: this.currentFontSizeConfig.Name, fill: this.StrokeColor, canvasID: uuidv4(), selectable: true, perPixelTargetFind: true, targetFindTolerance: 4,
       hasBorders: false, lockMovementX: true, lockMovementY: true, lockScalingX: true, lockScalingY: true, transparentCorners: true, cornerColor: 'transparent', myType: CTypes.ElementName
     });
 
@@ -1568,6 +1642,7 @@ export abstract class CanvasBase {
     textObj['styles'] = oldText['styles']; 
     textObj[CProps.canvasID] = oldText[CProps.canvasID];
     textObj[CProps.visible] = oldText[CProps.visible];
+    textObj[CProps.fontSize] = oldText[CProps.fontSize];
     this.Canvas.add(textObj);
     //this.canvas.sendToBack(text);
     flowObj[CProps.textID] = textObj[CProps.canvasID];
@@ -1929,7 +2004,7 @@ export abstract class CanvasBase {
       }
       else {
         const ephy = new fabric.Text(phyEle ? phyEle.GetProperty('Name') : '', {
-          fontSize: 12, fill: this.theme.Primary,
+          fontSize: this.currentFontSizeConfig.Type, fill: this.theme.Primary,
           originX: 'center', left: 0, top: obj.height / 2 - 15,
           myType: CTypes.ElementPhyElement
         });
@@ -2034,6 +2109,24 @@ export abstract class CanvasBase {
       border.set('dirty', true);
       this.Canvas.requestRenderAll();
     }
+  }
+
+  protected changeFontSize() {
+    this.Canvas.getObjects().forEach(obj => {
+      let etype = null, etxt = null, ephy = null;
+      if (obj._objects) {
+        etype = obj._objects.find(x => x[CProps.myType] == CTypes.ElementType);
+        ephy = obj._objects.find(x => x[CProps.myType] == CTypes.ElementPhyElement);
+        etxt = obj._objects.find(x => x[CProps.myType] == CTypes.ElementName);
+      }
+      else if (obj[CProps.myType] == CTypes.DataFlowLine) { etxt = this.getCanvasElementByCanvasID(obj[CProps.textID]); }
+
+      if (etxt) etxt.set(CProps.fontSize, obj[CProps.myType] != CTypes.TrustArea ? this.currentFontSizeConfig.Name : this.currentFontSizeConfig.Type);
+      if (etype) etype.set(CProps.fontSize, this.currentFontSizeConfig.Type);
+      if (ephy) ephy.set(CProps.fontSize, this.currentFontSizeConfig.Type);
+    });
+    this.Canvas.requestRenderAll();
+    this.onCanvasModified();
   }
 
   protected renderIcon(ctx: CanvasRenderingContext2D, left, top, styleOverride, fabricObject) {
@@ -2369,17 +2462,17 @@ export class HWDFCanvas extends CanvasBase {
       myType: CTypes.ElementBorder
     });
     const etype = new fabric.Text('«' + element.GetProperty('Type').GetProperty('Name') + '»', {
-      fontSize: 12, fill: this.StrokeColor,
+      fontSize: this.currentFontSizeConfig.Type, fill: this.StrokeColor,
       originX: 'center', left: wid / 2, top: 2,
       myType: CTypes.ElementType
     });
     const ephy = new fabric.Text(element.PhysicalElement ? element.PhysicalElement.GetProperty('Name') : '', {
-      fontSize: 12, fill: this.theme.Primary,
+      fontSize: this.currentFontSizeConfig.Type, fill: this.theme.Primary,
       originX: 'center', left: wid / 2, top: hei-16,
       myType: CTypes.ElementPhyElement
     });
     const etxt = new fabric.Text(element.GetProperty('Name'), {
-      fontSize: 16, fill: this.StrokeColor,
+      fontSize: this.currentFontSizeConfig.Name, fill: this.StrokeColor,
       originX: 'center', left: wid / 2, top: hei / 2 - 8, textAlign: 'center',
       myType: CTypes.ElementName
     });
@@ -2463,17 +2556,17 @@ export class HWDFCanvas extends CanvasBase {
     }
 
     const etype = new fabric.Text('«' + element.GetProperty('Type').GetProperty('Name') + '»', {
-      fontSize: 12, fill: this.StrokeColor,
+      fontSize: this.currentFontSizeConfig.Type, fill: this.StrokeColor,
       originX: 'center', left: wid / 2, top: 5,
       myType: CTypes.ElementType
     });
     const ephy = new fabric.Text(element.PhysicalElement ? element.PhysicalElement.GetProperty('Name') : '', {
-      fontSize: 12, fill: this.theme.Primary,
+      fontSize: this.currentFontSizeConfig.Type, fill: this.theme.Primary,
       originX: 'center', left: wid / 2, top: hei-16,
       myType: CTypes.ElementPhyElement
     });
     const etxt = new fabric.Text(element.GetProperty('Name'), {
-      fontSize: 16, fill: this.StrokeColor,
+      fontSize: this.currentFontSizeConfig.Name, fill: this.StrokeColor,
       originX: 'center', left: wid / 2, top: hei / 2 - 8, textAlign: 'center',
       myType: CTypes.ElementName
     });
@@ -2518,17 +2611,17 @@ export class HWDFCanvas extends CanvasBase {
       width: wid, height: hei, fill: 'transparent', myType: CTypes.ElementBorder
     });
     const etype = new fabric.Text('«' + element.GetProperty('Type').GetProperty('Name') + '»', {
-      fontSize: 12, fill: this.StrokeColor,
+      fontSize: this.currentFontSizeConfig.Type, fill: this.StrokeColor,
       originX: 'center', left: wid / 2, top: 5,
       myType: CTypes.ElementType
     });
     const ephy = new fabric.Text(element.PhysicalElement ? element.PhysicalElement.GetProperty('Name') : '', {
-      fontSize: 12, fill: this.theme.Primary,
+      fontSize: this.currentFontSizeConfig.Type, fill: this.theme.Primary,
       originX: 'center', left: wid / 2, top: hei-16,
       myType: CTypes.ElementPhyElement
     });
     const etxt = new fabric.Text(element.GetProperty('Name'), {
-      fontSize: 16, fill: this.StrokeColor,
+      fontSize: this.currentFontSizeConfig.Name, fill: this.StrokeColor,
       originX: 'center', left: wid / 2, top: hei / 2 - 8, textAlign: 'center',
       myType: CTypes.ElementName
     });
@@ -2576,12 +2669,12 @@ export class HWDFCanvas extends CanvasBase {
       fill: 'transparent', myType: CTypes.ElementBorder
     });
     let etype = new fabric.Text('«' + element.GetProperty('Type').GetProperty('Name') + '»', {
-      fontSize: 12, fill: this.StrokeColor,
+      fontSize: this.currentFontSizeConfig.Type, fill: this.StrokeColor,
       originX: 'center', left: wid / 2 + 5, top: 5,
       myType: CTypes.ElementType
     });
     let etxt = new fabric.Text(element.GetProperty('Name'), {
-      fontSize: 16,
+      fontSize: this.currentFontSizeConfig.Name,
       fill: this.StrokeColor,
       originX: 'center',
       left: wid / 2 - 3, top: hei / 2 - 8, textAlign: 'center',
@@ -2642,12 +2735,12 @@ export class HWDFCanvas extends CanvasBase {
       stroke: this.StrokeColor, strokeWidth: this.StrokeWidth, fill: 'transparent', myType: CTypes.ElementBorder
     });
     let etype = new fabric.Text('«' + element.GetProperty('Type').GetProperty('Name') + '»', {
-      fontSize: 12, fill: this.StrokeColor,
+      fontSize: this.currentFontSizeConfig.Type, fill: this.StrokeColor,
       originX: 'center', left: wid / 2 + 5, top: 5,
       myType: CTypes.ElementType
     });
     let etxt = new fabric.Text(element.GetProperty('Name'), {
-      fontSize: 16, fill: this.StrokeColor,
+      fontSize: this.currentFontSizeConfig.Name, fill: this.StrokeColor,
       originX: 'center', left: wid / 2 + 5, top: hei / 2 - 8, textAlign: 'center',
       myType: CTypes.ElementName
     });
@@ -2699,17 +2792,17 @@ export class HWDFCanvas extends CanvasBase {
       myType: CTypes.ElementBorder
     });
     const etype = new fabric.Text('«' + element.GetProperty('Type').GetProperty('Name') + '»', {
-      fontSize: 12, fill: this.StrokeColor,
+      fontSize: this.currentFontSizeConfig.Type, fill: this.StrokeColor,
       originX: 'left', originY: 'top', left: 5, top: 20,
       myType: CTypes.ElementType
     });
     const ephy = new fabric.Text(element.PhysicalElement ? element.PhysicalElement.GetProperty('Name') : '', {
-      fontSize: 12, fill: this.theme.Primary,
+      fontSize: this.currentFontSizeConfig.Type, fill: this.theme.Primary,
       originX: 'left', originY: 'top', left: 5, top: 35,
       myType: CTypes.ElementPhyElement
     });
     const etxt = new fabric.Text(element.GetProperty('Name'), {
-      fontSize: 12, fill: this.StrokeColor,
+      fontSize: this.currentFontSizeConfig.Type, fill: this.StrokeColor,
       originX: 'left', originY: 'top',
       left: 5, top: 5,
       myType: CTypes.ElementName
@@ -2982,12 +3075,12 @@ export class CtxCanvas extends CanvasBase {
     });
 
     const etype = new fabric.Text('«Device»', {
-      fontSize: 12, fill: this.StrokeColor,
+      fontSize: this.currentFontSizeConfig.Type, fill: this.StrokeColor,
       originX: 'center', left: wid / 2, top: 25,
       myType: CTypes.ElementType
     });
     const etxt = new fabric.Text(element.GetProperty('Name'), {
-      fontSize: 16, fill: this.StrokeColor,
+      fontSize: this.currentFontSizeConfig.Name, fill: this.StrokeColor,
       originX: 'center', left: wid / 2, top: isReference ? (5) : (hei / 2 - 8), textAlign: 'center',
       myType: CTypes.ElementName
     });
@@ -2995,7 +3088,7 @@ export class CtxCanvas extends CanvasBase {
     const parts = [e, etype, etxt];
     // detailed interfaces
     const elbl1 = new fabric.Text('', {
-      fontSize: 12, fill: this.StrokeColor, angle: 90,
+      fontSize: this.currentFontSizeConfig.Type, fill: this.StrokeColor, angle: 90,
       originX: 'center', left: 20, top: hei / 2,
       myType: CTypes.DeviceLabel1
     });
@@ -3004,7 +3097,7 @@ export class CtxCanvas extends CanvasBase {
     });
 
     const elbl2 = new fabric.Text('', {
-      fontSize: 12, fill: this.StrokeColor,
+      fontSize: this.currentFontSizeConfig.Type, fill: this.StrokeColor,
       originX: 'center', left: wid / 2, top: hei - 16,
       myType: CTypes.DeviceLabel2
     });
@@ -3013,7 +3106,7 @@ export class CtxCanvas extends CanvasBase {
     });
 
     const elbl3 = new fabric.Text('', {
-      fontSize: 12, fill: this.StrokeColor, angle: 90,
+      fontSize: this.currentFontSizeConfig.Type, fill: this.StrokeColor, angle: 90,
       originX: 'center', left: wid, top: hei / 2,
       myType: CTypes.DeviceLabel3
     });
@@ -3022,7 +3115,7 @@ export class CtxCanvas extends CanvasBase {
     });
 
     const elbl4 = new fabric.Text('', {
-      fontSize: 12, fill: this.StrokeColor,
+      fontSize: this.currentFontSizeConfig.Type, fill: this.StrokeColor,
       originX: 'center', left: wid / 2, top: 5,
       myType: CTypes.DeviceLabel4
     });
@@ -3170,12 +3263,12 @@ export class CtxCanvas extends CanvasBase {
     });
 
     let etype = new fabric.Text('«App»', {
-      fontSize: 12, fill: this.StrokeColor,
+      fontSize: this.currentFontSizeConfig.Type, fill: this.StrokeColor,
       originX: 'center', left: wid / 2, top: 25,
       myType: CTypes.ElementType
     });
     let etxt = new fabric.Text(element.GetProperty('Name'), {
-      fontSize: 16, fill: this.StrokeColor,
+      fontSize: this.currentFontSizeConfig.Name, fill: this.StrokeColor,
       originX: 'center', left: wid / 2, top: hei / 2 - 8, textAlign: 'center',
       myType: CTypes.ElementName
     });
@@ -3183,7 +3276,7 @@ export class CtxCanvas extends CanvasBase {
     let parts = [e, etype, etxt];
     // detailed interfaces
     let elbl1 = new fabric.Text('', {
-      fontSize: 12, fill: this.StrokeColor, angle: 90,
+      fontSize: this.currentFontSizeConfig.Type, fill: this.StrokeColor, angle: 90,
       originX: 'center', left: 20, top: hei / 2,
       myType: CTypes.AppLabel1
     });
@@ -3192,7 +3285,7 @@ export class CtxCanvas extends CanvasBase {
     });
 
     let elbl2 = new fabric.Text('', {
-      fontSize: 12, fill: this.StrokeColor,
+      fontSize: this.currentFontSizeConfig.Type, fill: this.StrokeColor,
       originX: 'center', left: wid / 2, top: hei - 16,
       myType: CTypes.AppLabel2
     });
@@ -3201,7 +3294,7 @@ export class CtxCanvas extends CanvasBase {
     });
 
     let elbl3 = new fabric.Text('', {
-      fontSize: 12, fill: this.StrokeColor, angle: 90,
+      fontSize: this.currentFontSizeConfig.Type, fill: this.StrokeColor, angle: 90,
       originX: 'center', left: wid, top: hei / 2,
       myType: CTypes.AppLabel3
     });
@@ -3210,7 +3303,7 @@ export class CtxCanvas extends CanvasBase {
     });
 
     let elbl4 = new fabric.Text('', {
-      fontSize: 12, fill: this.StrokeColor,
+      fontSize: this.currentFontSizeConfig.Type, fill: this.StrokeColor,
       originX: 'center', left: wid / 2, top: 5,
       myType: CTypes.AppLabel4
     });
@@ -3370,7 +3463,7 @@ export class CtxCanvas extends CanvasBase {
     });
 
     let etxt = new fabric.Text(element.GetProperty('Name'), {
-      fontSize: 16, fill: this.StrokeColor,
+      fontSize: this.currentFontSizeConfig.Name, fill: this.StrokeColor,
       originX: 'center', left: wid / 2, top: hei, textAlign: 'center',
       myType: CTypes.ElementName
     });
@@ -3435,7 +3528,7 @@ export class CtxCanvas extends CanvasBase {
     let etxt = null;
     if (option == 'Interface1') {
       etxt = new fabric.Text(element.GetProperty('Name'), {
-        fontSize: 16, fill: this.StrokeColor,
+        fontSize: this.currentFontSizeConfig.Name, fill: this.StrokeColor,
         originX: 'center', left: wid / 2, top: -5, textAlign: 'center',
         myType: CTypes.ElementName
       });
@@ -3531,7 +3624,7 @@ export class CtxCanvas extends CanvasBase {
     });
 
     let etxt = new fabric.Text(element.GetProperty('Name'), {
-      fontSize: 16, fill: this.StrokeColor,
+      fontSize: this.currentFontSizeConfig.Name, fill: this.StrokeColor,
       originX: 'center', left: wid / 2, top: hei / 2 - 8, textAlign: 'center',
       myType: CTypes.ElementName
     });
@@ -3576,12 +3669,12 @@ export class CtxCanvas extends CanvasBase {
       width: wid, height: hei, fill: 'transparent', myType: CTypes.ElementBorder
     });
     let etype = new fabric.Text('«External Entity»', {
-      fontSize: 12, fill: this.StrokeColor,
+      fontSize: this.currentFontSizeConfig.Type, fill: this.StrokeColor,
       originX: 'center', left: wid / 2, top: 5,
       myType: CTypes.ElementType
     });
     let etxt = new fabric.Text(element.GetProperty('Name'), {
-      fontSize: 16, fill: this.StrokeColor,
+      fontSize: this.currentFontSizeConfig.Name, fill: this.StrokeColor,
       originX: 'center', left: wid / 2, top: hei / 2 - 8, textAlign: 'center',
       myType: CTypes.ElementName
     });
@@ -3623,7 +3716,7 @@ export class CtxCanvas extends CanvasBase {
       myType: CTypes.ElementBorder
     });
     let etxt = new fabric.Text(element.GetProperty('Name'), {
-      fontSize: 12, fill: this.StrokeColor,
+      fontSize: this.currentFontSizeConfig.Type, fill: this.StrokeColor,
       originX: 'left', originY: 'top',
       left: 5, top: 5,
       myType: CTypes.ElementName
@@ -3690,8 +3783,9 @@ export class DiagramComponent implements OnInit {
     }
     return null;
   }
-  public set Zoom(event) {
-    this.Dia.SetZoom(Number(event['target']['value']));
+  public set Zoom(zoom: number) {
+    this.Dia.SetZoom(zoom);
+    this.locStorage.Set(LocStorageKeys.PAGE_MODELING_DIAGRAM_ZOOM, zoom.toString());
   }
 
   @Input() public selectedNode: INavigationNode;
@@ -3776,7 +3870,7 @@ export class DiagramComponent implements OnInit {
   }
 
   public SetZoom(event) {
-    this.Zoom = event;
+    this.Zoom = Number(event['target']['value']);
   }
 
   public OpenContextMenu(event) {

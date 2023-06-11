@@ -1,6 +1,6 @@
 {
   "name": "ttmodeler",
-  "version": "0.4.13",
+  "version": "0.4.14",
   "description": "Thing Threat Modeler for Internet of Things Devices",
   "homepage": "https://www.simon-liebl.de/TTM",
   "author": {
@@ -71,6 +71,7 @@
     "cvss-calculator": "1.0.0",
     "cwe-sdk": "1.1.6",
     "docx": "7.5.0",
+    "electron-store": "8.1.0",
     "fabric": "5.2.4",
     "file-saver": "2.0.5",
     "html2canvas": "1.4.1",
@@ -82,6 +83,7 @@
     "stream-browserify": "3.0.0",
     "tslib": "2.5.0",
     "uuid": "9.0.0",
+    "write-excel-file": "1.4.27",
     "zone.js": "0.11.8"
   },
   "devDependencies": {

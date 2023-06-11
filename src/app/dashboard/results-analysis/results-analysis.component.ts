@@ -70,9 +70,9 @@ export class ResultsAnalysisComponent implements AfterViewInit {
 
   public diagrams: IDiagramData[] = [];
 
-  public displayedThreatColumns = ['number', 'name', 'elements', 'view', 'severity', 'risk', 'status'];
+  public displayedThreatColumns = ['number', 'name', 'elements', 'view', 'severity', 'risk', 'status', 'more'];
   public dataSourceThreats: MatTableDataSource<AttackScenario>;
-  public displayedCountermeasureColumns = ['number', 'name', 'targets', 'view', 'progress', 'status'];
+  public displayedCountermeasureColumns = ['number', 'name', 'targets', 'view', 'progress', 'status', 'more'];
   public dataSourceCountermeasures: MatTableDataSource<Countermeasure>;
 
   public get AttackScenarios(): AttackScenario[] { return this._attackScenarios; }

@@ -162,8 +162,9 @@ export class CvssEntryComponent implements OnInit {
     if (entry) {
       let vec = 'CVSS:' + (entry.Version ? entry.Version : '3.1');
       if (entry.Vector) return entry.Vector.includes('CVSS') ? entry.Vector : (vec + '/' + entry.Vector);
-      Object.keys(entry).forEach(k => {
-        if (entry[k] && typeof entry[k] === 'string' && k.length <= 4) vec += '/' + k + ':' + entry[k];
+      const order = ['AV', 'AC', 'PR', 'UI', 'S', 'C', 'I', 'A'];
+      order.forEach(key => {
+        if (entry[key] && entry[key].length > 0) vec += '/' + key + ':' + entry[key];
       });
       return vec;
     }
