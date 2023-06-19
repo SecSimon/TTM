@@ -1,7 +1,7 @@
 # <img src="https://github.com/SecSimon/TTM/blob/main/src/assets/icons/favicon.192x192.png?raw=true" alt="logo" style="width:50px;"/> TTModeler - Thing Threat Modeler
 ![maintained - yes](https://img.shields.io/badge/maintained-yes-4ac41c)
 [![GitHub release](https://img.shields.io/github/release/SecSimon/TTM?include_prereleases=&sort=semver&color=blue)](https://github.com/SecSimon/TTM/releases/)
-[![license](https://img.shields.io/badge/license-MIT-blue)](#license)
+[![license](https://img.shields.io/badge/license-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![build](https://github.com/SecSimon/TTM/actions/workflows/ubuntu.yml/badge.svg)](https://github.com/SecSimon/TTM/actions/workflows/ubuntu.yml)
 
 [![Web - https://www.simon-liebl.de/TTM](https://img.shields.io/badge/Web-simon--liebl.de/TTM-blue?logo=github-pages&logoColor=white)](https://www.simon-liebl.de/TTM)
