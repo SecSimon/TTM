@@ -133,7 +133,13 @@ export class ReportingComponent implements OnInit {
       }
       // Executive Summary
       this.createHeading(this.translate.instant('report.ExecutiveSummary'));
-      this.createParagraph(StringExtension.Format(this.translate.instant('report.SUC'), this.Project.GetDevices().map(x => x.Name).join(', '), this.Project.GetMobileApps().map(x => x.Name).join(', ')));
+      if (this.Project.GetMobileApps().length > 0) {
+        this.createParagraph(StringExtension.Format(this.translate.instant('report.SUCinContext'), this.Project.GetDevices().map(x => x.Name).join(', '), this.Project.GetMobileApps().map(x => x.Name).join(', ')));
+      }
+      else {
+        this.createParagraph(StringExtension.Format(this.translate.instant('report.SUC'), this.Project.GetDevices().map(x => x.Name).join(', '), this.Project.GetMobileApps().map(x => x.Name).join(', ')));
+      }
+      
       this.createParagraph(StringExtension.Format(this.translate.instant('report.UseCaseUC'), this.Project.GetDFDiagrams().map(x => x.Name).join(', ')));
       this.createParagraph('');
       if (this.Project.Image) {

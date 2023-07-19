@@ -91,20 +91,20 @@ export class MitigationOverviewComponent extends SideNavBase implements OnInit {
   public createNodes() {
     const prevNodes = this.nodes;
     this.nodes = [];
-    let pf = this.dataService.Project;
+    const pf = this.dataService.Project;
 
-    let createMapping = (map: Countermeasure, groupNode: INavigationNode): INavigationNode => {
+    const createCountermeasure = (cm: Countermeasure, groupNode: INavigationNode): INavigationNode => {
       let node: INavigationNode = {
-        name: () => map.Name,
+        name: () => 'CM' + cm.Number + ') ' + cm.Name,
         canSelect: true,
-        data: map,
+        data: cm,
         canRename: true,
-        onRename: (val: string) => { map.Name = val; },
+        onRename: (val: string) => { cm.Name = val; },
         canDelete: true,
         onDelete: () => { 
-          this.dialog.OpenDeleteObjectDialog(map).subscribe(res => {
+          this.dialog.OpenDeleteObjectDialog(cm).subscribe(res => {
             if (res) {
-              pf.DeleteCountermeasure(map);
+              pf.DeleteCountermeasure(cm);
               if (this.selectedNode == node) this.selectedNode = null;
               this.createNodes();
             }
@@ -114,20 +114,20 @@ export class MitigationOverviewComponent extends SideNavBase implements OnInit {
         onMoveUp: () => {
           let arr = pf.GetCountermeasures();
           let arrProcess = groupNode.children?.map(x => x.data);
-          let idxProcess = arrProcess.findIndex(x => x.ID == map.ID);
+          let idxProcess = arrProcess.findIndex(x => x.ID == cm.ID);
           if (idxProcess != 0) {
             let newIndex = arr.findIndex(x => x.ID == arrProcess[idxProcess-1].ID);
-            pf.MoveItemCountermeasures(arr.findIndex(x => x.ID == map.ID), newIndex);
+            pf.MoveItemCountermeasures(arr.findIndex(x => x.ID == cm.ID), newIndex);
             groupNode.children.splice(idxProcess, 0, groupNode.children.splice(idxProcess-1, 1)[0]);
           }
         },
         onMoveDown: () => {
           let arr = pf.GetCountermeasures();
           let arrProcess = groupNode.children?.map(x => x.data);
-          let idxProcess = arrProcess.findIndex(x => x.ID == map.ID);
+          let idxProcess = arrProcess.findIndex(x => x.ID == cm.ID);
           if (idxProcess != arrProcess.length-1) {
             let newIndex = arr.findIndex(x => x.ID == arrProcess[idxProcess+1].ID);
-            pf.MoveItemCountermeasures(arr.findIndex(x => x.ID == map.ID), newIndex);
+            pf.MoveItemCountermeasures(arr.findIndex(x => x.ID == cm.ID), newIndex);
             groupNode.children.splice(idxProcess, 0, groupNode.children.splice(idxProcess+1, 1)[0]);
           }
         }
@@ -135,9 +135,9 @@ export class MitigationOverviewComponent extends SideNavBase implements OnInit {
       return node;
     };
 
-    let createProcess = (proc: MitigationProcess, groupNode: INavigationNode): INavigationNode => {
+    const createProcess = (proc: MitigationProcess, groupNode: INavigationNode): INavigationNode => {
       let node: INavigationNode = {
-        name: () => proc.Name,
+        name: () => 'MP' + proc.Number + ') ' + proc.Name,
         canSelect: true,
         data: proc,
         canRename: true,
@@ -174,12 +174,12 @@ export class MitigationOverviewComponent extends SideNavBase implements OnInit {
         children: []
       };
 
-      pf.GetCountermeasures().filter(x => x.MitigationProcess == proc).forEach(x => node.children.push(createMapping(x, node)));
+      pf.GetCountermeasures().filter(x => x.MitigationProcess == proc).forEach(x => node.children.push(createCountermeasure(x, node)));
 
       return node;
     };
 
-    let root: INavigationNode = {
+    const root: INavigationNode = {
       name: () => this.translate.instant('pages.modeling.mitigationoverview.MitigationProcesses'),
       icon:'security',
       canSelect: true,
@@ -194,21 +194,21 @@ export class MitigationOverviewComponent extends SideNavBase implements OnInit {
       children: []
     };
 
-    let na: INavigationNode = {
+    const na: INavigationNode = {
       name: () => this.translate.instant('pages.modeling.mitigationoverview.NotAssignedCountermeasures'),
       canSelect: false,
       children: []
     };
-    pf.GetCountermeasuresApplicable().filter(x => x.MitigationProcess == null).forEach(x => na.children.push(createMapping(x, na)));
+    pf.GetCountermeasuresApplicable().filter(x => x.MitigationProcess == null).forEach(x => na.children.push(createCountermeasure(x, na)));
     if (na.children.length > 0) root.children.push(na);
 
-    let rej: INavigationNode = {
+    const rej: INavigationNode = {
       name: () => this.translate.instant('pages.modeling.mitigationoverview.RejectedCountermeasures'),
       canSelect: false,
       children: [],
       isExpanded: false
     };
-    pf.GetCountermeasuresNotApplicable().filter(x => x.MitigationProcess == null).forEach(x => rej.children.push(createMapping(x, rej)));
+    pf.GetCountermeasuresNotApplicable().filter(x => x.MitigationProcess == null).forEach(x => rej.children.push(createCountermeasure(x, rej)));
     if (rej.children.length > 0) root.children.push(rej);
 
     pf.GetMitigationProcesses().forEach(x => root.children.push(createProcess(x, root)));

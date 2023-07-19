@@ -1,3 +1,9 @@
+## 0.4.15
+
+* Report improvements
+* Mitigation process: Adopt tasks from assigned countermeasures
+* Fix: Numbering in Excel export
+
 ## 0.4.14
 
 * Added risk overview page

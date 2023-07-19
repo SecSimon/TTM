@@ -30,6 +30,14 @@ export class MitigationProcessComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  public AdoptFromMeasures() {
+    this.mitigationProcess.Countermeasures.forEach(cm => {
+      if (!this.mitigationProcess.Tasks.some(x => x.Note == cm.Name)) {
+        this.mitigationProcess.Tasks.push({ Note: cm.Name + ' (CM' + cm.Number.toString() + ')', IsChecked: false, Date: Date.now().toString(), Author: this.dataService.UserDisplayName, HasCheckbox: true, ShowTimestamp: false });
+      }
+    });
+  }
+
   public OnStateChange(val: MitigationProcessStates) {
     if (val == MitigationProcessStates.WorkInProgress) {
       if (this.mitigationProcess.Progress == 0) this.mitigationProcess.Progress = 5;

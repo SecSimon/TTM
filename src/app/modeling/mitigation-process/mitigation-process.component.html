@@ -33,7 +33,17 @@
     <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="2" cdkAutosizeMaxRows="5" [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="mitigationProcess.Description"></textarea>
   </mat-form-field>
   <div>
-    <h4>{{'general.Tasks' | translate}}</h4>
+    <h4>
+      {{'general.Tasks' | translate}}
+      <button mat-icon-button [matMenuTriggerFor]="moreMenu">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+    </h4>
+    <mat-menu #moreMenu="matMenu">
+      <button mat-menu-item (click)="AdoptFromMeasures()">
+        <span>{{'pages.modeling.mitigationprocess.adoptMeasures' | translate}}</span>
+      </button>
+    </mat-menu>
     <app-notes [showTimestamp]="false" [hasCheckbox]="true" [canToggleTimestamp]="true" [notes]="mitigationProcess.Tasks"></app-notes>
   </div>
   <div>

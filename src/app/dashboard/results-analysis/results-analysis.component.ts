@@ -742,7 +742,7 @@ export class ResultsAnalysisComponent implements AfterViewInit {
       }
       asNotApp.sort((a, b) => mySort(a, b));
       for (let i = 0; i < asNotApp.length; i++) {
-        this.dataService.Project.MoveItemAttackScenario(asOrig.indexOf(asNotApp[i]), i);
+        this.dataService.Project.MoveItemAttackScenario(asOrig.indexOf(asNotApp[i]), asApp.length+i);
         asNotApp[i].Number = (asApp.length+i+1).toString();
       }
 

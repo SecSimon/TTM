@@ -587,6 +587,7 @@ export class ExportTemplate extends DatabaseBase {
     else if (this.ExportType == ExportTypes.SystemThreats) src = this.project.GetSystemThreats();
     else if (this.ExportType == ExportTypes.ThreatSources) src = this.project.GetThreatSources().Sources;
     else if (this.ExportType == ExportTypes.TestCases) src = this.project.GetTesting().TestCases;
+    src.sort((a, b) => { return Number(a.Number) - Number(b.Number); })
     src.forEach(entry => {
       let row = [];
       const rowBuffer = [];
