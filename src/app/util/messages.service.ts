@@ -61,7 +61,7 @@ export class MessagesService {
   constructor(private snackBar: MatSnackBar, private translateService: TranslateService, 
     private locStorage: LocalStorageService, public dialog: MatDialog) {
     window.onerror = (msg, source, line, col, err) => {
-      if (!msg.toString().startsWith('ResizeObserver loop limit')) this.Error(msg.toString(), [source, line, col, err]);
+      if (!msg.toString().startsWith('ResizeObserver loop')) this.Error(msg.toString(), [source, line, col, err]);
       return false;
     };
   }
