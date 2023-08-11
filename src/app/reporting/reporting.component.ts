@@ -276,6 +276,7 @@ export class ReportingComponent implements OnInit {
             this.createParagraph(this.translate.instant('properties.Status') + ': ' + this.translate.instant(ThreatStateUtil.ToString(scenario.ThreatState)));
             if (scenario.Description?.length > 0) this.createParagraph(this.translate.instant('properties.Description') + ': ' + scenario.Description);
             if (scenario.SystemThreats?.length > 0) this.createParagraph(this.translate.instant('general.SystemThreats') + ': ' + scenario.SystemThreats.map(x => x.Name).join(', '));
+            if (this.Project.Settings.ThreatActorToAttackScenario && scenario.ThreatSources?.length > 0) this.createParagraph(this.translate.instant('general.ThreatSources') + ': ' + scenario.ThreatSources.map(x => x.Name).join(', '));
             if (scenario.AttackVector?.AttackTechnique?.CAPECID) this.createLink(this.translate.instant('properties.CAPECID') + ': ' + scenario.AttackVector.AttackTechnique.CAPECID.toString(), CapecEntryComponent.GetURL(scenario.AttackVector.AttackTechnique.CAPECID));
             if (scenario.AttackVector?.Weakness?.CWEID) this.createLink(this.translate.instant('properties.CWEID') + ': ' + scenario.AttackVector.Weakness.CWEID.toString(), CweEntryComponent.GetURL(scenario.AttackVector.Weakness.CWEID));
             if (scenario.GetAffectedAssetObjects().length > 0) this.createParagraph(this.translate.instant('report.AffectedAssets') + ': ' + scenario.GetAffectedAssetObjects().map(x => x.GetLongName()).join(', '));

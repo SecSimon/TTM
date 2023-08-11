@@ -59,15 +59,24 @@
       </mat-optgroup>
     </mat-select>
   </mat-form-field>
-  <mat-form-field appearance="fill" style="width: 100%;">
+  <mat-form-field appearance="fill" style="width: calc(100% - {{GetSystemThreatsWidth()}});" >
     <mat-label>{{'general.SystemThreats' | translate}}</mat-label>
-      <mat-select [(value)]="attackScenario.SystemThreats" multiple>
-        <mat-optgroup *ngFor="let group of GetSystemThreatGroups()" label="{{group.name | translate}}">
-          <mat-option *ngFor="let threat of group.SystemThreats" [value]="threat" matTooltip="{{threat.Description}}" matTooltipShowDelay="1000">
-            {{threat.Name}}
-          </mat-option>
-        </mat-optgroup>
-      </mat-select>
+    <mat-select [(value)]="attackScenario.SystemThreats" multiple>
+      <mat-optgroup *ngFor="let group of GetSystemThreatGroups()" label="{{group.name | translate}}">
+        <mat-option *ngFor="let threat of group.SystemThreats" [value]="threat" matTooltip="{{threat.Description}}" matTooltipShowDelay="1000">
+          {{threat.Name}}
+        </mat-option>
+      </mat-optgroup>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field *ngIf="dataService.Project.Settings.ThreatActorToAttackScenario" appearance="fill" style="margin-left: 10px; width: 300px;">
+    <mat-label>{{'general.ThreatSources' | translate}}</mat-label>
+    <mat-select [(value)]="attackScenario.ThreatSources" multiple>
+      <mat-checkbox class="mat-option" color="primary" [checked]="ThreatSourcesAll()" [indeterminate]="ThreatSourcesSome()" (change)="ThreatSourcesUpdate($event.checked)">{{ThreatSourcesLabel() | translate}}</mat-checkbox>
+      <mat-option *ngFor="let actor of dataService.Project.GetThreatSources().Sources" [value]="actor" matTooltip="{{'general.Likelihood' | translate}}: {{GetLMHName(actor.Likelihood) | translate}}" matTooltipShowDelay="1000">
+        {{actor.Name}}
+      </mat-option>
+    </mat-select>
   </mat-form-field>
   <mat-form-field appearance="fill" style="width: 100%;">
     <mat-label>{{ 'properties.Description' | translate }}</mat-label>

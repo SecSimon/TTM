@@ -71,6 +71,8 @@
           <h4>{{'general.Settings' | translate}}</h4>
           <div style="margin-left: 20px; margin-bottom: 15px;">
             <mat-slide-toggle color="primary" [checked]="Project.HasTesting" (change)="OnTestingChanged($event)">{{'general.TestCases' | translate}}</mat-slide-toggle>
+            <br/>
+            <mat-slide-toggle color="primary" [(ngModel)]="Project.Settings.ThreatActorToAttackScenario">{{'dialog.modelinfo.ThreatSourceToAttackScenario' | translate}}</mat-slide-toggle>
           </div>
         </div>
         <div>

@@ -150,6 +150,24 @@ export class AttackScenarioComponent implements OnInit {
     return LowMediumHighNumberUtil.ToString(type);
   }
 
+  public ThreatSourcesAll(): boolean {
+    return this.attackScenario.ThreatSources.length == this.dataService.Project.GetThreatSources().Sources.length;
+  }
+
+  public ThreatSourcesSome(): boolean {
+    return this.attackScenario.ThreatSources.length > 0 && !this.ThreatSourcesAll();
+  }
+
+  public ThreatSourcesLabel(): string {
+    if (this.ThreatSourcesAll()) return 'pages.modeling.attackscenario.threatSourcesNone';
+    return 'pages.modeling.attackscenario.threatSourcesAll';
+  }
+
+  public ThreatSourcesUpdate(checked: boolean) {
+    if (checked) this.attackScenario.ThreatSources = this.dataService.Project.GetThreatSources().Sources;
+    else this.attackScenario.ThreatSources = [];
+  }
+
   public GetFilteredAttackScenarios() {
     return this.dataService.Project.GetAttackScenariosApplicable().filter(x => x.Name.toLowerCase().includes(this.searchASString.toLowerCase()) &&  x != this.attackScenario);
   }
@@ -282,6 +300,10 @@ export class AttackScenarioComponent implements OnInit {
   public OnUnlinkTestCase(tc: TestCase) {
     tc.RemoveLinkedAttackScenario(this.attackScenario.ID);
     if (this.selectedTestCase == tc) this.selectedTestCase = null;
+  }
+
+  public GetSystemThreatsWidth() {
+    return this.dataService.Project.Settings.ThreatActorToAttackScenario ? '315px' : '0px';
   }
 
   public NumberAlreadyExists() {

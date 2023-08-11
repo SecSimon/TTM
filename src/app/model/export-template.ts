@@ -106,6 +106,7 @@ export enum ExportAttackScenarioProperties {
   Targets = 'Targets',
   ThreatCategories = 'ThreatCategories',
   SystemThreats = 'SystemThreats',
+  ThreatSources = 'ThreatSources',
   Diagram = 'Diagram',
   VectorCVSS = 'VectorCVSS',
   ScoreCVSS = 'ScoreCVSS',
@@ -127,7 +128,8 @@ export class ExportAttackScenarioPropertyUtil {
   public static GetKeys() {
     return [ExportAttackScenarioProperties.Number, ExportAttackScenarioProperties.ThreatState, ExportAttackScenarioProperties.AttackVector, ExportAttackScenarioProperties.Targets, 
       ExportAttackScenarioProperties.Diagram, ExportAttackScenarioProperties.ThreatCategories,
-      ExportAttackScenarioProperties.SystemThreats, ExportAttackScenarioProperties.VectorCVSS, ExportAttackScenarioProperties.ScoreCVSS, ExportAttackScenarioProperties.VectorOwaspRR, ExportAttackScenarioProperties.ScoreOwaspRR, ExportAttackScenarioProperties.Severity,
+      ExportAttackScenarioProperties.SystemThreats, ExportAttackScenarioProperties.ThreatSources, ExportAttackScenarioProperties.VectorCVSS, ExportAttackScenarioProperties.ScoreCVSS, 
+      ExportAttackScenarioProperties.VectorOwaspRR, ExportAttackScenarioProperties.ScoreOwaspRR, ExportAttackScenarioProperties.Severity,
       ExportAttackScenarioProperties.SeverityReason, ExportAttackScenarioProperties.Likelihood, ExportAttackScenarioProperties.LikelihoodReason, ExportAttackScenarioProperties.Risk, 
       ExportAttackScenarioProperties.RiskReason, ExportAttackScenarioProperties.RiskStrategy, ExportAttackScenarioProperties.RiskStrategyReason, ExportAttackScenarioProperties.Countermeasures,
       ExportAttackScenarioProperties.MyTags];
@@ -141,7 +143,7 @@ export class ExportAttackScenarioPropertyUtil {
       return [''];
     };
     if (this.GetKeys().includes(key as ExportAttackScenarioProperties)) {
-      if ([ExportAttackScenarioProperties.Targets, ExportAttackScenarioProperties.ThreatCategories, ExportAttackScenarioProperties.SystemThreats, ExportAttackScenarioProperties.MyTags].includes(key as ExportAttackScenarioProperties)) {
+      if ([ExportAttackScenarioProperties.Targets, ExportAttackScenarioProperties.ThreatCategories, ExportAttackScenarioProperties.SystemThreats, ExportAttackScenarioProperties.ThreatSources, ExportAttackScenarioProperties.MyTags].includes(key as ExportAttackScenarioProperties)) {
         return ExportUtil.wrap(translate, entry[key]?.map(x => ExportCommonPropertyUtil.GetValue('Name', x)).join('; '));
       }
       else if ([ExportAttackScenarioProperties.AttackVector].includes(key as ExportAttackScenarioProperties)) {
@@ -183,6 +185,7 @@ export class ExportAttackScenarioPropertyUtil {
       case ExportAttackScenarioProperties.Targets: return "general.Targets";
       case ExportAttackScenarioProperties.ThreatCategories: return "general.ThreatCategories";
       case ExportAttackScenarioProperties.SystemThreats: return "general.SystemThreats";
+      case ExportAttackScenarioProperties.ThreatSources: return "general.ThreatSources";
       case ExportAttackScenarioProperties.Diagram: return "general.Diagram";
       case ExportAttackScenarioProperties.VectorCVSS: return "report.CvssVector";
       case ExportAttackScenarioProperties.ScoreCVSS: return "report.CvssScore";

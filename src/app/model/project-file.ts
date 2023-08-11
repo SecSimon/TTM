@@ -64,6 +64,10 @@ interface IChangeLogEntry {
   Name?: string;
 }
 
+interface IProjectSettings {
+  ThreatActorToAttackScenario: boolean;
+}
+
 export class ProjectFile extends DatabaseBase {
   private config: ConfigFile;
   private fileChanged = false;
@@ -129,6 +133,7 @@ export class ProjectFile extends DatabaseBase {
   public set Notes(val: INote[]) { this.Data['Notes'] = val; }
   public get Image(): string { return this.Data['Image']; }
   public set Image(val: string) { this.Data['Image'] = val; }
+  public get Settings(): IProjectSettings { return this.Data['Settings']; }
 
   public GetProjectName(): string { return StringExtension.FromCamelCase(this.Name.replace('.ttmp', '')); }
 
@@ -197,6 +202,10 @@ export class ProjectFile extends DatabaseBase {
     if (!this.Data['Participants']) this.Data['Participants'] = [];
     if (!this.Data['Tasks']) this.Data['Tasks'] = [];
     if (!this.Data['Notes']) this.Data['Notes'] = [];
+    if (!this.Data['Settings']) {
+      const settings: IProjectSettings = { ThreatActorToAttackScenario: false };
+      this.Data['Settings'] = settings;
+    }
     this.config = cf;
 
     if (!this.projectAssetGroupId) {
@@ -984,8 +993,8 @@ export class ProjectFile extends DatabaseBase {
   }
 
   public static FromJSON(val: IProjectFile): ProjectFile {
-    let cf = ConfigFile.FromJSON(val.config);
-    let res = new ProjectFile(val.Data, cf);
+    const cf = ConfigFile.FromJSON(val.config);
+    const res = new ProjectFile(val.Data, cf);
 
     if (val.charSope) res.charScope = CharScope.FromJSON(val.charSope, res, cf);
     if (val.objImpact) res.objImpact = ObjImpact.FromJSON(val.objImpact, res, cf);

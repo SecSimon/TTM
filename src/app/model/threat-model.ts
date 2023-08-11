@@ -11,6 +11,7 @@ import { ProjectFile } from "./project-file";
 import { ITagable, MyTag } from "./my-tags";
 import { ICVEEntry } from "../shared/components/cve-entry/cve-entry.component";
 import { TestCase } from "./test-case";
+import { ThreatActor } from "./threat-source";
 
 
 export enum ImpactCategories {
@@ -1263,19 +1264,19 @@ export class AttackScenario extends DatabaseBase implements ITagable, ICustomNum
   public get ScoreOwaspRR(): IOwaspRREntry { return this.Data['ScoreOwaspRR']; }
   public set ScoreOwaspRR(val: IOwaspRREntry) { this.Data['ScoreOwaspRR'] = val; }
   public get Severity(): ThreatSeverities { return this.Data['Severity']; }
-  public set Severity(val: ThreatSeverities) { this.Data['Severity'] = val; }
+  public set Severity(val: ThreatSeverities) { this.Data['Severity'] = +val; }
   public get SeverityReason(): string { return this.Data['SeverityReason']; }
   public set SeverityReason(val: string) { this.Data['SeverityReason'] = val; }
   public get Likelihood(): LowMediumHighNumber { return this.Data['Likelihood']; }
-  public set Likelihood(val: LowMediumHighNumber) { this.Data['Likelihood'] = val; }
+  public set Likelihood(val: LowMediumHighNumber) { this.Data['Likelihood'] = +val; }
   public get LikelihoodReason(): string { return this.Data['LikelihoodReason']; }
   public set LikelihoodReason(val: string) { this.Data['LikelihoodReason'] = val; }
   public get Risk(): ThreatSeverities { return this.Data['Risk']; }
-  public set Risk(val: ThreatSeverities) { this.Data['Risk'] = val; }
+  public set Risk(val: ThreatSeverities) { this.Data['Risk'] = +val; }
   public get RiskReason(): string { return this.Data['RiskReason']; }
   public set RiskReason(val: string) { this.Data['RiskReason'] = val; }
   public get RiskStrategy(): RiskStrategies { return this.Data['RiskStrategy']; }
-  public set RiskStrategy(val: RiskStrategies) { this.Data['RiskStrategy'] = val; }
+  public set RiskStrategy(val: RiskStrategies) { this.Data['RiskStrategy'] = +val; }
   public get RiskStrategyReason(): string { return this.Data['RiskStrategyReason']; }
   public set RiskStrategyReason(val: string) { this.Data['RiskStrategyReason'] = val; }
   public get Target(): ViewElementBase {
@@ -1330,6 +1331,12 @@ export class AttackScenario extends DatabaseBase implements ITagable, ICustomNum
     return res;
   } 
   public set SystemThreats(val: SystemThreat[]) { this.Data['systemThreatIDs'] = val?.map(x => x.ID); }
+  public get ThreatSources(): ThreatActor[] { 
+    let res: ThreatActor[] = [];
+    this.Data['threatActorIDs'].forEach(x => res.push(this.project.GetThreatActor(x)));
+    return res;
+  } 
+  public set ThreatSources(val: ThreatActor[]) { this.Data['threatActorIDs'] = val?.map(x => x.ID); }
 
   public get LinkedScenarios(): AttackScenario[] {
     let res = [];
@@ -1354,6 +1361,7 @@ export class AttackScenario extends DatabaseBase implements ITagable, ICustomNum
     if (!this.Data['targetIDs']) this.Data['targetIDs'] = [];
     if (!this.Data['ThreatState']) this.ThreatState = ThreatStates.NotSet;
     if (!this.Data['systemThreatIDs']) this.Data['systemThreatIDs'] = [];
+    if (!this.Data['threatActorIDs']) this.Data['threatActorIDs'] = [];
     if (!this.Data['linkedScenarioIDs']) this.Data['linkedScenarioIDs'] = [];
     if (!this.Data['myTagIDs']) this.Data['myTagIDs'] = [];
   }

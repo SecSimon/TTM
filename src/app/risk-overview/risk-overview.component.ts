@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { INavigationNode } from '../shared/components/nav-tree/nav-tree.component';
 import { ThemeService } from '../util/theme.service';
 import { DataService } from '../util/data.service';
@@ -22,11 +22,12 @@ import { MatMenuTrigger } from '@angular/material/menu';
   templateUrl: './risk-overview.component.html',
   styleUrls: ['./risk-overview.component.scss']
 })
-export class RiskOverviewComponent extends SideNavBase implements OnInit {
+export class RiskOverviewComponent extends SideNavBase implements AfterViewInit {
   private nodes: INavigationNode[];
   private _selectedNode: INavigationNode;
   private _attackScenarios: AttackScenario[] = [];
   private _selectedScenarios: AttackScenario[] = [];
+  private _sortScenarios: MatSort;
 
   public get selectedNode(): INavigationNode { return this._selectedNode; }
   public set selectedNode(val: INavigationNode) {
@@ -43,7 +44,11 @@ export class RiskOverviewComponent extends SideNavBase implements OnInit {
     }
   }
 
-  @ViewChild('scenariotable') sortScenarios: MatSort;
+  public get sortScenarios(): MatSort { return this._sortScenarios; }
+  @ViewChild('scenariotable') set sortScenarios(val: MatSort) { 
+    this._sortScenarios = val;
+    if (this.dataSourceScenarios) this.dataSourceScenarios.sort = val;
+  }
   @ViewChild(MatMenuTrigger) public matMenuTrigger: MatMenuTrigger; 
   public menuTopLeftPosition =  {x: '0', y: '0'};
 
@@ -105,11 +110,11 @@ export class RiskOverviewComponent extends SideNavBase implements OnInit {
       }
     }
 
-  ngOnInit(): void {
+  ngAfterViewInit(): void {
     setTimeout(() => {
       this.createNodes();
       this.selectedNode = this.nodes[0];
-    }, 100);
+    });
   }
 
   public ApplyScenarioFilter(event: Event) {

@@ -1,3 +1,10 @@
+## 0.4.16
+
+* New option in settings (located in Project Information): mapping threat sources to attack scenarios
+* Fix: basic select returns string value instead of number
+* Fix: Sorting in risk overview not initialized
+* Fix: ResizeObserver error
+
 ## 0.4.15
 
 * Report improvements

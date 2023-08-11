@@ -1075,6 +1075,14 @@
       "templateDFDID": "ffd00d05-c506-4bf9-af35-0b0f56234515"
     },
     {
+      "ID": "e1fea26b-dbcf-4c9f-af27-d7453687cded",
+      "Name": "UART",
+      "Description": "",
+      "IsDefault": false,
+      "Properties": [],
+      "ElementTypeID": 61
+    },
+    {
       "Name": "SPI",
       "Description": "",
       "ElementTypeID": 61,
@@ -1221,15 +1229,6 @@
       ],
       "ID": "2460a6c9-40e5-44c7-b133-10c6654efd18",
       "templateDFDID": "f6abd33c-f527-4621-9a09-1ee5466aee01"
-    },
-    {
-      "Name": "PROFIBUS",
-      "Description": "",
-      "ElementTypeID": 61,
-      "IsDefault": false,
-      "Properties": [],
-      "ID": "b7057a19-76b2-4cf5-9d7a-e3335079fa5f",
-      "templateDFDID": "0d96e10f-fddd-4855-9efa-e2480847866a"
     },
     {
       "Name": "Internet Area",
@@ -1577,6 +1576,31 @@
       "Properties": [],
       "ElementTypeID": 61,
       "templateDFDID": "0981c2a9-a7a2-4497-b60e-076a7bfa8860"
+    },
+    {
+      "ID": "7edf2806-e7a8-4a26-b1cf-2a3de3d41b53",
+      "Name": "Modbus",
+      "Description": "",
+      "IsDefault": false,
+      "Properties": [],
+      "ElementTypeID": 61
+    },
+    {
+      "Name": "Profibus",
+      "Description": "",
+      "ElementTypeID": 61,
+      "IsDefault": false,
+      "Properties": [],
+      "ID": "b7057a19-76b2-4cf5-9d7a-e3335079fa5f",
+      "templateDFDID": "0d96e10f-fddd-4855-9efa-e2480847866a"
+    },
+    {
+      "ID": "60eaa240-6b5f-4c62-b33f-77c772c9375a",
+      "Name": "Profinet",
+      "Description": "",
+      "IsDefault": false,
+      "Properties": [],
+      "ElementTypeID": 61
     }
   ],
   "stencilTypeTemplates": [
