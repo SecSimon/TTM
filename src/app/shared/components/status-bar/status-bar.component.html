@@ -25,13 +25,13 @@
     <button mat-icon-button class="msgBtn" matTooltip="{{'pages.home.menu.downloadProject' | translate}}" matTooltipShowDelay="1000" (click)="dataService.ExportFile(true)">
       <mat-icon class="iconBtn">file_download</mat-icon> 
     </button>
-    <button mat-icon-button class="msgBtn" [disabled]="!dataService.SelectedGHProject" matTooltip="{{'general.ReloadProject' | translate}}" matTooltipShowDelay="1000" (click)="dataService.ReloadProject()">
+    <button mat-icon-button class="msgBtn" matTooltip="{{'general.ReloadProject' | translate}}" matTooltipShowDelay="1000" (click)="dataService.ReloadProject()">
       <mat-icon class="iconBtn">refresh</mat-icon> 
     </button>
   </ng-container>
   <ng-container *ngIf="!dataService.Project && dataService.Config">
     <button mat-icon-button class="msgBtn" style="margin-left: 20px;" (click)="dialogService.OpenModelChangesDialog()">
-      <mat-icon class="iconBtn">source</mat-icon>  <span [style.color]="dataService.Config?.FileChanged ? 'yellow' : 'white'">{{dataService.SelectedGHConfig ? dataService.SelectedGHConfig.name : dataService.Config?.Name}}</span>
+      <mat-icon class="iconBtn">source</mat-icon>  <span [style.color]="dataService.Config?.FileChanged ? 'yellow' : 'white'">{{dataService.Config?.Name}}</span>
     </button>
     <button mat-icon-button class="msgBtn" [disabled]="true" style="margin-left: 5px;" matTooltip="{{'status-bar.TasksAndNotes' | translate}}" matTooltipShowDelay="1000" (click)="dialogService.OpenModelTasksNotesDialog()">
       <mat-icon class="iconBtn">edit_note</mat-icon> 

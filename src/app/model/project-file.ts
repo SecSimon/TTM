@@ -356,7 +356,7 @@ export class ProjectFile extends DatabaseBase {
     res.Name = StringExtension.FindUniqueName('Asset Group', this.assetGroups.map(x => x.Name));
     if (parentGroup != null) parentGroup.AddAssetGroup(res);
     if (this.GetNewAssets().length == 0) res.Number = '1';
-    else res.Number = (Math.max(...this.GetNewAssets().map(x => Number(x.Number)))+1).toString();
+    else res.Number = (Math.max(...this.GetNewAssets().map(x => Number(x.Number)).filter(x => !isNaN(x)))+1).toString();
     res.IsNewAsset = true;
     this.AssetsChanged.emit({ ID: res.ID, Type: DataChangedTypes.Added });
     return res;
@@ -412,7 +412,7 @@ export class ProjectFile extends DatabaseBase {
     this.myData.push(res);
     res.Name = StringExtension.FindUniqueName('Data', this.GetMyDatas().map(x => x.Name));
     if (this.GetNewAssets().length == 0) res.Number = '1';
-    else res.Number = (Math.max(...this.GetNewAssets().map(x => Number(x.Number)))+1).toString();
+    else res.Number = (Math.max(...this.GetNewAssets().map(x => Number(x.Number)).filter(x => !isNaN(x)))+1).toString();
     res.IsNewAsset = true;
     this.MyDatasChanged.emit({ ID: res.ID, Type: DataChangedTypes.Added });
     return res;
@@ -437,7 +437,7 @@ export class ProjectFile extends DatabaseBase {
   }
 
   public CreateThreatActor() {
-    let res = new ThreatActor({}, this.Config);
+    const res = new ThreatActor({}, this, this.Config);
     res.Name = StringExtension.FindUniqueName('Threat Actor', this.threatActors.map(x => x.Name));
     res.Likelihood = LowMediumHighNumber.Medium;
     if (this.GetThreatActors().length == 0) res.Number = '1';
@@ -849,6 +849,7 @@ export class ProjectFile extends DatabaseBase {
     checkList(this.GetThreatActors(), 'TS');
     checkList(this.GetSystemThreats(), 'ST');
     checkList(this.GetTestCases(), 'TC');
+    checkList(this.GetNewAssets(), 'A');
 
     return res;
   }
@@ -1006,7 +1007,7 @@ export class ProjectFile extends DatabaseBase {
     val.diagrams.forEach(x => res.diagrams.push(Diagram.FromJSON(x, res, cf)));
     if (val.sysContext) res.sysContext = SystemContext.FromJSON(val.sysContext, res, cf);
 
-    val.threatActors?.forEach(x => res.threatActors.push(ThreatActor.FromJSON(x, cf)));
+    val.threatActors?.forEach(x => res.threatActors.push(ThreatActor.FromJSON(x, res, cf)));
     if (val.threatSources) res.threatSources = ThreatSources.FromJSON(val.threatSources, res, cf);
     val.systemThreats?.forEach(x => res.systemThreats.push(SystemThreat.FromJSON(x, res, cf)));
 

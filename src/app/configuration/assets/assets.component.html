@@ -10,7 +10,7 @@
     <mat-form-field *ngIf="selectedAssetGroup.IsNewAsset" appearance="fill" style="width: 70px; float: right; margin-left: 10px;">
       <mat-label>{{ 'general.Number' | translate }}</mat-label>
       <input matInput type="number" min="0" [(ngModel)]="selectedAssetGroup.Number" required matTooltip="{{selectedAssetGroup.Number}}" matTooltipShowDelay="1000"/>
-      <mat-hint *ngIf="NumberAlreadyExists()" style="color: red;" class="alert alert-danger">
+      <mat-hint *ngIf="selectedAssetGroup.CheckUniqueNumber()" style="color: red;" class="alert alert-danger">
         {{'messages.error.numberAlreadyExists' | translate}}
       </mat-hint>
     </mat-form-field>

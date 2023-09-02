@@ -11,6 +11,8 @@
         <select *ngIf="prop.Type == 'Arrow Position'" style="width: 100%;" [class.disable]="!prop.Editable" [ngModel]="GetValue(prop)" (change)="SetValue(prop, $event['target']['value'])">
           <option *ngFor="let pos of GetArrowPositions()" [value]="pos">{{GetArrowPositionName(pos) | translate}}</option>
         </select>
+        <!--Assign Number To Asset-->
+        <button mat-raised-button *ngIf="prop.Type == 'Assign Number To Asset'" (click)="AssignNumberToAsset()">{{'properties.AssignNumber' | translate}}</button>
         <!--Check Box-->
         <mat-checkbox *ngIf="prop.Type == 'Check Box'" color="primary" [checked]="GetValue(prop)" (change)="SetValue(prop, $event['checked'])" [disabled]="!prop.Editable"></mat-checkbox>
         <!--Device Interface Name-->
@@ -82,6 +84,8 @@
         <textarea *ngIf="prop.Type == 'Text Area'" type="text" [spellcheck]="dataService.HasSpellCheck" style="width: 100%; font-size: inherit;" [value]="GetValue(prop)" (input)="SetValue(prop, $event['target']['value'])" [disabled]="!prop.Editable"></textarea>
         <!--Text Box-->
         <input *ngIf="prop.Type == 'Text Box'" type="text" [spellcheck]="dataService.HasSpellCheck" style="width: 100%;" [value]="GetValue(prop)" (input)="SetValue(prop, $event['target']['value'])" [disabled]="!prop.Editable">
+        <!--Text Box Validator-->
+        <input *ngIf="prop.Type == 'Text Box Validator'" type="text" [spellcheck]="dataService.HasSpellCheck" style="width: 100%;" [class.invalid]="GetValidator(prop)" [value]="GetValue(prop)" (input)="SetValue(prop, $event['target']['value'])" [disabled]="!prop.Editable">
       </td>
     </tr>
     <ng-container *ngIf="IsDFDElement()">

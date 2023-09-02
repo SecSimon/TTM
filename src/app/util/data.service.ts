@@ -84,6 +84,7 @@ export class DataService {
   private selectedGHProject: IGHFile;
   private selectedGHConfig: IGHFile;
   private availableFSProjects: string[] = [];
+  private availableFSConfigs: string[] = [];
   private selectedFSProject: string;
   private selectedFSConfig: string;
 
@@ -198,6 +199,7 @@ export class DataService {
   public get AvailableGHProjects(): IGHFile[] { return this.availableGHProjects; }
   public get AvailableGHConfigs(): IGHFile[] { return this.availableGHConfigs; }
   public get AvailableFSProjects(): string[] { return this.availableFSProjects; }
+  public get AvailableFSConfigs(): string[] { return this.availableFSConfigs; }
   public get SelectedGHProject(): IGHFile { return this.selectedGHProject; }
   public get SelectedGHConfig(): IGHFile { return this.selectedGHConfig; }
   public get SelectedFSProject(): string { return this.selectedFSProject; }
@@ -554,6 +556,7 @@ export class DataService {
               this.zone.run(() => {
                 if (newPath) {
                   this.selectedFSConfig = newPath;
+                  this.availableFSConfigs.push(newPath);
                   this.Config.Name = newPath.split('/')[newPath.split('/').length-1];
                   onSuccess();
                 }
@@ -625,32 +628,42 @@ export class DataService {
       this.isLoading.add();
 
       if (this.electron.ipcRenderer.listenerCount('OnReadFile') == 0) {
-        this.electron.ipcRenderer.on('OnReadFile', (event, file) => {
+        this.electron.ipcRenderer.on('OnReadFile', (event, file, filePath) => {
           this.zone.run(() => {
             try {
               const content = JSON.parse(file);
               this.locStorage.Remove(LocStorageKeys.LAST_PROJECT);
-              this.selectedFSProject = path;
-              this.importFile(content, path, null);
-              if (this.availableFSProjects.indexOf(path) < 0) {
-                this.availableFSProjects.push(path);
+              this.selectedFSProject = filePath;
+              this.importFile(content, filePath, null);
+              if (this.availableFSProjects.indexOf(filePath) < 0) {
+                this.availableFSProjects.push(filePath);
               }
             } catch (error) {
               console.log(error);
+            } finally {
+              this.electron.ipcRenderer.removeAllListeners('OnReadFile');
             }
             this.isLoading.remove();
           });
         });
-      }      
+      }
       this.electron.ipcRenderer.send('ReadFile', path);
     });
   }
 
   public ReloadProject() {
-    const curr = this.SelectedGHProject;
-    this.OnCloseProject().then(() => {
-      this.LoadProject(curr);
-    });
+    if (this.SelectedGHProject) {
+      const curr = this.SelectedGHProject;
+      this.OnCloseProject().then(() => {
+        this.LoadProject(curr);
+      });
+    }
+    else if (this.SelectedFSProject) {
+      const curr = this.SelectedFSProject;
+      this.OnCloseProject().then(() => {
+        this.LoadProjectFS(curr);
+      });
+    }
   }
 
   public RestoreCommit(commit: IGHCommitInfo) {
@@ -810,11 +823,46 @@ export class DataService {
     });
   }
 
-  public ReloadConfig() {
-    const curr = this.SelectedGHConfig;
-    this.OnCloseConfig().then(() => {
-      if (curr) this.LoadConfig(curr);
+  public LoadConfigFS(path: string) {
+    this.OnCloseProject().then(() => {
+      this.isLoading.add();
+
+      if (this.electron.ipcRenderer.listenerCount('OnReadFile') == 0) {
+        this.electron.ipcRenderer.on('OnReadFile', (event, file, filePath) => {
+          this.zone.run(() => {
+            try {
+              const content = JSON.parse(file);
+              this.selectedFSConfig = filePath;
+              this.importFile(content, filePath, null);
+              if (this.availableFSConfigs.indexOf(filePath) < 0) {
+                this.availableFSConfigs.push(filePath);
+              }
+            } catch (error) {
+              console.log(error);
+            } finally {
+              this.electron.ipcRenderer.removeAllListeners('OnReadFile');
+            }
+            this.isLoading.remove();
+          });
+        });
+      }      
+      this.electron.ipcRenderer.send('ReadFile', path);
     });
+  }
+
+  public ReloadConfig() {
+    if (this.SelectedGHConfig) {
+      const curr = this.SelectedGHConfig;
+      this.OnCloseConfig().then(() => {
+        this.LoadConfig(curr);
+      });
+    }
+    else if (this.SelectedFSConfig) {
+      const curr = this.SelectedFSConfig;
+      this.OnCloseConfig().then(() => {
+        this.LoadConfigFS(curr);
+      });
+    }
   }
 
   private loadConfigFile(name: string, json: any) {
@@ -904,10 +952,16 @@ export class DataService {
   }
 
   public RemoveFSFile(path: string) {
-    const index = this.AvailableFSProjects.indexOf(path);
+    let index = this.AvailableFSProjects.indexOf(path);
     if (index >= 0) {
       this.AvailableFSProjects.splice(index, 1);
       this.removeFSProjectToHistory(path);
+    }
+    else {
+      index = this.AvailableFSConfigs.indexOf(path);
+      if (index >= 0) {
+        this.AvailableFSConfigs.splice(index, 1);
+      }
     }
   }
 
@@ -999,8 +1053,13 @@ export class DataService {
         this.loadProjectFile(filePath, json);
       }
       else {
+        if (this.electron.isElectron) {
+          this.selectedFSConfig = filePath;
+          if (this.availableFSConfigs.indexOf(filePath) < 0) {
+            this.availableFSConfigs.splice(0, 0, filePath);
+          }
+        }
         this.loadConfigFile(filePath, json);
-        this.Config.FileChanged = true;
       }
     }
     else {
@@ -1112,7 +1171,7 @@ export class DataService {
   public ReadFSFile(path: string) {
     return new Promise<ProjectFile>((resolve, reject) => {
       if (this.electron.ipcRenderer.listenerCount('OnReadFile') == 0) {
-        this.electron.ipcRenderer.on('OnReadFile', (event, file) => {
+        this.electron.ipcRenderer.on('OnReadFile', (event, file, filePath) => {
           this.zone.run(() => {
             try {
               const fileBlob = JSON.parse(file);
@@ -1129,6 +1188,8 @@ export class DataService {
             } catch (error) {
               console.log(error);
               reject();
+            } finally {
+              this.electron.ipcRenderer.removeAllListeners('OnReadFile');
             }
           });
         });
@@ -1200,6 +1261,9 @@ export class DataService {
             resolve();
           }
         });
+      }
+      else if (this.Config?.FileChanged) {
+        this.OnCloseConfig().then(x => resolve());
       }
       else {
         this.closeProject();

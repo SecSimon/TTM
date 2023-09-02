@@ -1,6 +1,6 @@
 import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
-import { LowMediumHighNumber, LowMediumHighNumberUtil } from '../../model/assets';
+import { AssetGroup, LowMediumHighNumber, LowMediumHighNumberUtil, MyData } from '../../model/assets';
 import { MyComponent } from '../../model/component';
 import { DatabaseBase, IProperty, ViewElementBase } from '../../model/database';
 import { DataFlowEntity, DFDElement, ElementTypeIDs, IElementTypeThreat, StencilType, TrustArea } from '../../model/dfd-model';
@@ -73,6 +73,10 @@ export class PropertiesComponent implements OnInit {
       return this.selectedObject.NameRaw;
     }
     return this.selectedObject.GetProperty(prop.ID);
+  }
+
+  public GetValidator(prop: IProperty) {
+    return this.selectedObject[prop.Callback]();
   }
 
   public SetValue(prop: IProperty, value) {
@@ -253,6 +257,13 @@ export class PropertiesComponent implements OnInit {
 
   public AddMnemonicThreat(letter: IElementTypeThreat) {
     this.threatEngine.AddMnemonicThreat(this.selectedElement, letter);
+  }
+
+  public AssignNumberToAsset() {
+    const val = this.selectedObject as AssetGroup|MyData; 
+    val.IsNewAsset = true;
+    if (this.dataService.Project.GetNewAssets().length == 0) val.Number = '1';
+    else val.Number = (Math.max(...this.dataService.Project.GetNewAssets().map(x => Number(x.Number)).filter(x => !isNaN(x)))+1).toString();
   }
 
   public OpenNotes() {

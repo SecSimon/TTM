@@ -1,7 +1,7 @@
 <div *ngIf="countermeasure" [class.disable]="!canEdit">
   <mat-form-field appearance="fill" style="width: calc(100% - 85px);">
     <mat-label>{{ 'properties.Name' | translate }}</mat-label>
-    <input matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="countermeasure.Name" matTooltip="{{countermeasure.Name}}" matTooltipShowDelay="1000"/>
+    <input matInput #nameBox [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="countermeasure.Name" matTooltip="{{countermeasure.Name}}" matTooltipShowDelay="1000"/>
     <button *ngIf="countermeasure.Name" matSuffix mat-icon-button (click)="countermeasure.Name=''" matTooltip="{{'general.Clear' | translate}}" matTooltipShowDelay="1000">
       <mat-icon>close</mat-icon>
     </button>
@@ -9,7 +9,7 @@
   <mat-form-field appearance="fill" style="width: 70px; float: right;">
     <mat-label>{{ 'general.Number' | translate }}</mat-label>
     <input matInput type="number" min="0" [(ngModel)]="countermeasure.Number" required matTooltip="{{countermeasure.Number}}" matTooltipShowDelay="1000"/>
-    <mat-hint *ngIf="NumberAlreadyExists()" style="color: red;" class="alert alert-danger">
+    <mat-hint *ngIf="countermeasure.CheckUniqueNumber()" style="color: red;" class="alert alert-danger">
       {{'messages.error.numberAlreadyExists' | translate}}
     </mat-hint>
   </mat-form-field>

@@ -84,8 +84,8 @@ function createWindow(): BrowserWindow {
     label: 'File',
     submenu: [
       { label: 'New', accelerator: 'Ctrl+N', click: () => { win.webContents.send('OnNew'); } },
-      { label: 'Open / Import Project', accelerator: 'Ctrl+O', click: () => { 
-          dialog.showOpenDialog(win, { filters: [ { extensions: ['ttmp'], name: 'TTModeler Project' }], properties: [ 'openFile' ] }).then(result => {
+      { label: 'Open / Import', accelerator: 'Ctrl+O', click: () => { 
+          dialog.showOpenDialog(win, { filters: [ { extensions: ['ttmp','ttmc'], name: 'TTModeler Project/Configuration' }, { extensions: ['ttmp'], name: 'TTModeler Project' }, { extensions: ['ttmc'], name: 'TTModeler Configuration' }], properties: [ 'openFile' ] }).then(result => {
             if (result.filePaths.length >= 1) {
               let data = fs.readFileSync(result.filePaths[0], 'utf-8');
               win.webContents.send('OnImportFile', data, result.filePaths[0]);
@@ -135,7 +135,7 @@ function createWindow(): BrowserWindow {
   });
   ipcMain.on('ReadFile', (event, path) => {
     const data = fs.readFileSync(path, 'utf-8');
-    win.webContents.send('OnReadFile', data);
+    win.webContents.send('OnReadFile', data, path);
   });
   ipcMain.on('SaveFile', (event, path, content) => {
     fs.writeFileSync(path, content);

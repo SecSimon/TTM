@@ -23,6 +23,9 @@ export class TestingComponent implements OnInit {
     const tc = this.dataService.Project.CreateTestCase();
     this.testing.AddTestCase(tc);
     this.selectedTestCase = tc;
+    setTimeout(() => {
+      document.dispatchEvent(new KeyboardEvent('keydown', {'key': 'F2'}));
+    }, 250);
     return tc;
   }
 

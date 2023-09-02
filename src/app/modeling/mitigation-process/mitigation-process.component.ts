@@ -87,8 +87,4 @@ export class MitigationProcessComponent implements OnInit {
   public GetMitigationProcessStateName(ms: MitigationProcessStates) {
     return MitigationProcessStateUtil.ToString(ms);
   }
-
-  public NumberAlreadyExists() {
-    return this.dataService.Project.GetMitigationProcesses().some(x => x.Number == this.mitigationProcess.Number && x.ID != this.mitigationProcess.ID);
-  }
 }

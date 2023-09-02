@@ -1,3 +1,13 @@
+## 0.4.17
+
+* Usability improvement: select name after adding new element
+* Characterization & Scope Definition: added accessories and production process
+* Updated splash image
+* Fix: visualization of third-party components in report
+* Fix: consistency check for assets
+* Fix: reset number of all assets
+* Fix: desktop file handling
+
 ## 0.4.16
 
 * New option in settings (located in Project Information): mapping threat sources to attack scenarios

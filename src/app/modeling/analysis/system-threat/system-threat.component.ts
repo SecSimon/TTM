@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, Input, OnInit, ViewChild } from '@angular/core';
 import { LowMediumHighNumberUtil, LowMediumHighNumber } from '../../../model/assets';
 import { SystemThreat } from '../../../model/system-threat';
 import { ImpactCategories, ImpactCategoryUtil } from '../../../model/threat-model';
@@ -13,9 +13,21 @@ export class SystemThreatComponent implements OnInit {
   @Input() public systemThreat: SystemThreat;
   @Input() public showThreatCat = false;
 
+  @ViewChild('nameBox') public nameBox: ElementRef;
+
   constructor(public dataService: DataService) { }
 
   ngOnInit(): void {
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  public onKeyDown(event: KeyboardEvent) {
+    if (event.key == 'F2') {
+      event.preventDefault();
+      if (this.nameBox) {
+        (this.nameBox.nativeElement as HTMLInputElement).select();
+      }
+    }
   }
 
   public GetThreatCategories() {
@@ -42,9 +54,5 @@ export class SystemThreatComponent implements OnInit {
 
   public GetImpactCategoryName(cat: ImpactCategories) {
     return ImpactCategoryUtil.ToString(cat);
-  }
-
-  public NumberAlreadyExists() {
-    return this.dataService.Project.GetSystemThreats().some(x => x.Number == this.systemThreat.Number && x.ID != this.systemThreat.ID);
   }
 }

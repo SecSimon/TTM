@@ -132,6 +132,10 @@ export class TestCase extends DatabaseBase implements ICustomNumber {
     return res;
   }
 
+  public CheckUniqueNumber(): boolean {
+    return this.project.GetTestCases().some(x => x.Number == this.Number && x.ID != this.ID);
+  }
+
   public GetLongName(): string {
     return 'TC' + this.Number + ') ' + this.Name;
   }

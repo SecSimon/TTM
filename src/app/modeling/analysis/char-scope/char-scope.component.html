@@ -26,21 +26,7 @@
                 </mat-panel-description>
               </mat-expansion-panel-header>
 
-              <div *ngIf="selectedArray === charScope.Application" innerHTML="{{'pages.modeling.charscope.Application.d' | translate}}"></div>
-              <div *ngIf="selectedArray === charScope.Sector" innerHTML="{{'pages.modeling.charscope.Sector.d' | translate}}"></div>
-              <div *ngIf="selectedArray === charScope.Function" innerHTML="{{'pages.modeling.charscope.Function.d' | translate}}"></div>
-              <div *ngIf="selectedArray === charScope.Features" innerHTML="{{'pages.modeling.charscope.Features.d' | translate}}"></div>
-              <div *ngIf="selectedArray === charScope.Requirements" innerHTML="{{'pages.modeling.charscope.Requirements.d' | translate}}"></div>
-              <div *ngIf="selectedArray === charScope.Criticality" innerHTML="{{'pages.modeling.charscope.Criticality.d' | translate}}"></div>
-              <div *ngIf="selectedArray === charScope.LocEnv" innerHTML="{{'pages.modeling.charscope.LocEnv.d' | translate}}"></div>
-              <div *ngIf="selectedArray === charScope.Connectivity" innerHTML="{{'pages.modeling.charscope.Connectivity.d' | translate}}"></div>
-              <div *ngIf="selectedArray === charScope.TargetMarket" innerHTML="{{'pages.modeling.charscope.TargetMarket.d' | translate}}"></div>
-              <div *ngIf="selectedArray === charScope.Standards" innerHTML="{{'pages.modeling.charscope.Standards.d' | translate}}"></div>
-              <div *ngIf="selectedArray === charScope.InvolvedPeople" innerHTML="{{'pages.modeling.charscope.InvolvedPeople.d' | translate}}"></div>
-              <div *ngIf="selectedArray === charScope.Budget" innerHTML="{{'pages.modeling.charscope.Budget.d' | translate}}"></div>
-              <div *ngIf="selectedArray === charScope.Timeframe" innerHTML="{{'pages.modeling.charscope.Timeframe.d' | translate}}"></div>
-              <div *ngIf="selectedArray === charScope.ExpectedOutput" innerHTML="{{'pages.modeling.charscope.ExpectedOutput.d' | translate}}"></div>
-              <div *ngIf="selectedArray === charScope.Assumptions" innerHTML="{{'pages.modeling.charscope.Assumptions.d' | translate}}"></div>
+              <div *ngIf="selectedArray" innerHTML="{{GetArrayName(selectedArray) + '.d' | translate}}"></div>
             </mat-expansion-panel>
           </mat-accordion>
           <app-notes [showTimestamp]="false" [hasCheckbox]="false" [strings]="selectedArray"></app-notes>

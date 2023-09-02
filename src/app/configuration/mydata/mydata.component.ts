@@ -76,10 +76,6 @@ export class MyDataComponent implements OnInit {
     return LowMediumHighNumberUtil.GetKeys();
   }
 
-  public NumberAlreadyExists() {
-    return this.dataService.Project.GetNewAssets().some(x => x.Number == this.myData.Number && x.ID != this.myData.ID);
-  }
-
   public ImpactCatChanged(data: MyData, impact: ImpactCategories) {
     const index = data.ImpactCats.indexOf(impact);
     if (index >= 0) data.ImpactCats.splice(index, 1);

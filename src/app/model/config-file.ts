@@ -372,7 +372,7 @@ export class ConfigFile extends DatabaseBase {
   }
 
   public CreateThreatActor() {
-    let res = new ThreatActor({}, this);
+    let res = new ThreatActor({}, null, this);
     res.Name = StringExtension.FindUniqueName('Threat Actor', this.threatActors.map(x => x.Name));
     res.Likelihood = LowMediumHighNumber.Medium;
     this.threatActors.push(res);
@@ -735,7 +735,7 @@ export class ConfigFile extends DatabaseBase {
     val.myComponentSWTypeGroups.forEach(x => res.myComponentSWTypeGroups.push(MyComponentTypeGroup.FromJSON(x, res)));
     val.myComponentPTypes.forEach(x => res.myComponentPTypeMap.set(x['ID'], MyComponentType.FromJSON(x, res)));
     val.myComponentPTypeGroups.forEach(x => res.myComponentPTypeGroups.push(MyComponentTypeGroup.FromJSON(x, res)));
-    val.threatActors?.forEach(x => res.threatActors.push(ThreatActor.FromJSON(x, res)));
+    val.threatActors?.forEach(x => res.threatActors.push(ThreatActor.FromJSON(x, null, res)));
     val.threatCategories.forEach(x => res.threatCategoryMap.set(x['ID'], ThreatCategory.FromJSON(x, res)));
     val.threatCategoryGroups.forEach(x => res.threatCategoryGroups.push(ThreatCategoryGroup.FromJSON(x, res)));
     val.attackVectorGroups.forEach(x => res.attackVectorGroups.push(AttackVectorGroup.FromJSON(x, res)));

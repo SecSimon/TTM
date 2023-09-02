@@ -92,6 +92,9 @@ export class ThreatIdentificationComponent implements OnInit {
   public AddThreat() {
     let dt = this.dataService.Project.CreateSystemThreat(this.selectedCategory);
     this.selectedThreat = dt;
+    setTimeout(() => {
+      document.dispatchEvent(new KeyboardEvent('keydown', {'key': 'F2'}));
+    }, 250);
   }
 
   public ResetNumbers() {

@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Input, OnInit, Optional, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Optional, ViewChild } from '@angular/core';
 import { LowMediumHighNumber, LowMediumHighNumberUtil } from '../../model/assets';
 import { Countermeasure } from '../../model/mitigations';
 import { RiskStrategies, RiskStrategyUtil, ThreatCategoryGroup, AttackScenario, AttackVectorGroup, ThreatSeverities, ThreatSeverityUtil, ThreatStates, ThreatStateUtil, ICVSSEntry, IOwaspRREntry } from '../../model/threat-model';
@@ -33,6 +33,8 @@ export class AttackScenarioComponent implements OnInit {
 
   @Input() canEdit: boolean = true;
 
+  @ViewChild('nameBox') public nameBox: ElementRef;
+
   @ViewChild('searchASBox', { static: false }) public searchASBox: any;
   public searchASString: string = '';
   @ViewChild('searchLinkedASBox', { static: false }) public searchLinkedASBox: any;
@@ -50,6 +52,16 @@ export class AttackScenarioComponent implements OnInit {
   }
 
   ngOnInit(): void {
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  public onKeyDown(event: KeyboardEvent) {
+    if (event.key == 'F2') {
+      event.preventDefault();
+      if (this.nameBox) {
+        (this.nameBox.nativeElement as HTMLInputElement).select();
+      }
+    }
   }
 
   public GetAttackVectorGroups(): AttackVectorGroup[] {
@@ -250,6 +262,9 @@ export class AttackScenarioComponent implements OnInit {
     cm.SetMapping(null, this.attackScenario.Targets, [this.attackScenario])
     this.selectedCountermeasure = cm;
     this.countermeasures = this.dataService.Project.GetCountermeasures().filter(x => x.AttackScenarios.includes(this.attackScenario));
+    setTimeout(() => {
+      document.dispatchEvent(new KeyboardEvent('keydown', {'key': 'F2'}));
+    }, 250);
   }
 
   public RemoveCountermeasure(cm: Countermeasure) {
@@ -304,10 +319,6 @@ export class AttackScenarioComponent implements OnInit {
 
   public GetSystemThreatsWidth() {
     return this.dataService.Project.Settings.ThreatActorToAttackScenario ? '315px' : '0px';
-  }
-
-  public NumberAlreadyExists() {
-    return this.dataService.Project.GetAttackScenarios().some(x => x.Number == this.attackScenario.Number && x.ID != this.attackScenario.ID);
   }
 
   public OnSearchASBoxClick() {

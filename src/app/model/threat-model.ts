@@ -1476,6 +1476,10 @@ export class AttackScenario extends DatabaseBase implements ITagable, ICustomNum
     return this.project.GetView(this.ViewID);
   }
 
+  public CheckUniqueNumber(): boolean {
+    return this.project.GetAttackScenarios().some(x => x.Number == this.Number && x.ID != this.ID);
+  }
+
   public GetLongName(): string {
     return 'AS' + this.Number + ') ' + this.Name + ' (' + (this.Target ? this.Target.GetProperty('Name') : this.Targets?.map(x => x.GetProperty('Name')).join(', ')) + ')';
   }

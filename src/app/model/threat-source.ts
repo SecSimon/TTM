@@ -4,6 +4,7 @@ import { DatabaseBase, ICustomNumber, IDataReferences } from "./database";
 import { ProjectFile } from "./project-file";
 
 export class ThreatActor extends DatabaseBase implements ICustomNumber {
+  private project: ProjectFile;
 
   public get Number(): string { return this.Data['Number']; }
   public set Number(val: string) { this.Data['Number'] = val ? String(val) : val; }
@@ -15,11 +16,15 @@ export class ThreatActor extends DatabaseBase implements ICustomNumber {
   public get Likelihood(): LowMediumHighNumber { return this.Data['Likelihood']; }
   public set Likelihood(val: LowMediumHighNumber) { this.Data['Likelihood'] = val; }
 
-  constructor(data, cf: ConfigFile) {
+  constructor(data, pf: ProjectFile, cf: ConfigFile) {
     super(data);
 
     if (!this.Motive) this.Motive = [];
     if (!this.Capabilities) this.Capabilities = [];
+  }
+
+  public CheckUniqueNumber(): boolean {
+    return this.project.GetThreatActors().some(x => x.Number == this.Number && x.ID != this.ID);
   }
 
   public GetLongName(): string {
@@ -34,8 +39,8 @@ export class ThreatActor extends DatabaseBase implements ICustomNumber {
     pf.GetThreatSources().RemoveThreatActor(this);
   }
 
-  public static FromJSON(data, cf: ConfigFile): ThreatActor {
-    let res = new ThreatActor(data, cf);
+  public static FromJSON(data, pf: ProjectFile, cf: ConfigFile): ThreatActor {
+    let res = new ThreatActor(data, pf, cf);
     return res;
   }
 }

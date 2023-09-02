@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, Optional, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, Input, OnInit, Optional, ViewChild } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import imageCompression from 'browser-image-compression';
 import { MyComponentStack } from '../../model/component';
@@ -29,6 +29,8 @@ export class TestCaseComponent implements OnInit {
   public linkLists: IKeyValue[] = [];
   public selectedLinks: IKeyValue = null;
 
+  @ViewChild('nameBox') public nameBox: ElementRef;
+
   @ViewChild('searchBox', { static: false }) public searchBox: any;
   public searchString: string = '';
 
@@ -40,6 +42,16 @@ export class TestCaseComponent implements OnInit {
 
   ngOnInit(): void {
     this.RefreshLinks();
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  public onKeyDown(event: KeyboardEvent) {
+    if (event.key == 'F2') {
+      event.preventDefault();
+      if (this.nameBox) {
+        (this.nameBox.nativeElement as HTMLInputElement).select();
+      }
+    }
   }
 
   public RefreshLinks(current: string = null) {
@@ -185,10 +197,6 @@ export class TestCaseComponent implements OnInit {
 
   public GetTestCaseStateName(tcs: TestCaseStates) {
     return TestCaseStateUtil.ToString(tcs);
-  }
-
-  public NumberAlreadyExists() {
-    return this.dataService.Project.GetTestCases().some(x => x.Number == this.testCase.Number && x.ID != this.testCase.ID);
   }
 
   public GetFilteredList(groups: IKeyValue[]) {

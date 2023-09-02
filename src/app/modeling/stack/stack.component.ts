@@ -79,6 +79,11 @@ export class StackComponent implements OnInit {
     c.IsActive = true;
     c.IsThirdParty = false;
     this.stack.AddChild(c);
+    this.OnComponentClick(c);
+    setTimeout(() => {
+      document.dispatchEvent(new KeyboardEvent('keydown', {'key': 'F2'}));
+    }, 250);
+
   }
 
   public AllowDrop(ev) {

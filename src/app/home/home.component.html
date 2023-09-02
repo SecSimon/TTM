@@ -156,6 +156,28 @@
               </ng-container>
               <mat-paginator class="paginator" *ngIf="dataService.AvailableGHConfigs.length > 0" [length]="dataService.AvailableGHConfigs.length" [pageSize]="pageConfigSize" [hidePageSize]="true" (page)="pageGHConfigIndex = $event.pageIndex"> </mat-paginator>
 
+              <ng-container *ngFor="let conf of GetAvailableFSConfigs()">
+                <div id="config">
+                  <mat-icon class="iconBtn" style="vertical-align: top; font-size: 20px; margin-right: 5px;" matTooltip="{{'pages.home.storedOffline' | translate}}" matTooltipShowDelay="1000">file_present</mat-icon>
+                  <button class="color-primary astext" (click)="dataService.LoadConfigFS(conf)">{{GetFileName(conf)}}</button>
+                  <span style="font-size: small; margin-left: 5px;" matTooltip="{{GetFilePath(conf)}}" matTooltipShowDelay="1000">in {{CutName(GetFilePath(conf))}}</span>
+                  <button mat-icon-button class="show-on-hover iconBtn" style="margin-right: 5px;" [matMenuTriggerFor]="moreFSConfig" matTooltip="{{'general.More' | translate}}" matTooltipShowDelay="1000">
+                    <mat-icon>more_vert</mat-icon>
+                  </button>
+                  <mat-menu #moreFSConfig="matMenu">
+                    <button mat-menu-item (click)="dataService.RemoveFSFile(conf)">
+                      <mat-icon>remove</mat-icon>
+                      <span>{{'general.Remove' | translate}}</span>
+                    </button>
+                    <button mat-menu-item (click)="dataService.DeleteFSFile(conf)">
+                      <mat-icon>delete</mat-icon>
+                      <span>{{'general.Delete' | translate}}</span>
+                    </button>
+                  </mat-menu>
+                </div>
+              </ng-container>
+              <mat-paginator class="paginator" *ngIf="dataService.AvailableFSConfigs.length > 0" [length]="dataService.AvailableFSConfigs.length" [pageSize]="pageConfigSize" [hidePageSize]="true" (page)="pageFSConfigIndex = $event.pageIndex"> </mat-paginator>
+
               <div style="margin-top: 50px;">
                 <mat-icon class="iconBtn" style="vertical-align: top; font-size: 20px; margin-right: 5px;">waving_hand</mat-icon>
                 <button class="color-primary astext" (click)="tourService.start()">{{'pages.home.welcomeTour' | translate}}</button>

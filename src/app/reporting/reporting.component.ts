@@ -445,6 +445,18 @@ export class ReportingComponent implements OnInit {
         printSenariosAndMeasures(x.HardwareDiagram.ID);
       });
 
+      const adjustClasses = (ele: HTMLElement) => {
+        if (ele.classList.contains('component-dark')) {
+          ele.style.borderColor = 'black';
+          ele.classList.remove('component-dark');
+        }
+        if (ele.classList.contains('component-third-party')) {
+          //background-color: rgba(255, 255, 255, 0.1);
+          ele.style.backgroundColor = '#e6e6e6';
+        }
+        Array.from(ele.children).forEach(x => adjustClasses(x as HTMLElement));
+      };
+
       // software
       const stacks = [...this.Project.GetDevices(), ...this.Project.GetMobileApps()];
       let stackCount = stacks.map(x => x.SoftwareStack).filter(x => x != null && x.GetChildrenFlat().length > 0).length;
@@ -456,14 +468,7 @@ export class ReportingComponent implements OnInit {
           stackComp.instance.stack = stacks[i].SoftwareStack;
           stackComp.instance.elRef.nativeElement.style.color = 'black';
           await new Promise<void>(resolve => setTimeout(() => {
-            let removeRec = (ele: HTMLElement) => {
-              if (ele.classList.contains('component-dark')) {
-                ele.style.borderColor = 'black';
-                ele.classList.remove('component-dark');
-              }
-              Array.from(ele.children).forEach(x => removeRec(x as HTMLElement));
-            };
-            removeRec(stackComp.instance.elRef.nativeElement as HTMLElement);
+            adjustClasses(stackComp.instance.elRef.nativeElement as HTMLElement);
             resolve();
           }, 10));
           
@@ -493,14 +498,7 @@ export class ReportingComponent implements OnInit {
           stackComp.instance.stack = stacks[i].ProcessStack;
           stackComp.instance.elRef.nativeElement.style.color = 'black';
           await new Promise<void>(resolve => setTimeout(() => {
-            let removeRec = (ele: HTMLElement) => {
-              if (ele.classList.contains('component-dark')) {
-                ele.style.borderColor = 'black';
-                ele.classList.remove('component-dark');
-              }
-              Array.from(ele.children).forEach(x => removeRec(x as HTMLElement));
-            };
-            removeRec(stackComp.instance.elRef.nativeElement as HTMLElement);
+            adjustClasses(stackComp.instance.elRef.nativeElement as HTMLElement);
             resolve();
           }, 10));
           

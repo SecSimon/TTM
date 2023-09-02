@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Optional, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Optional, Output, ViewChild } from '@angular/core';
 import { ViewElementBase } from '../../model/database';
 import { ControlGroup, Countermeasure, MitigationStates, MitigationStateUtil } from '../../model/mitigations';
 import { DataService } from '../../util/data.service';
@@ -24,6 +24,8 @@ export class CountermeasureComponent implements OnInit {
 
   @Output() public mitigationProcessChange = new EventEmitter();
 
+  @ViewChild('nameBox') public nameBox: ElementRef;
+
   constructor(@Optional() mapping: Countermeasure, @Optional() isNew: MyBoolean, @Optional() elements: Array<ViewElementBase>, @Optional() onChange: EventEmitter<Countermeasure>, 
   public theme: ThemeService, public dataService: DataService, private dialog: DialogService) {
     this.countermeasure = mapping;
@@ -35,6 +37,16 @@ export class CountermeasureComponent implements OnInit {
   }
 
   ngOnInit(): void {
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  public onKeyDown(event: KeyboardEvent) {
+    if (event.key == 'F2') {
+      event.preventDefault();
+      if (this.nameBox) {
+        (this.nameBox.nativeElement as HTMLInputElement).select();
+      }
+    }
   }
 
   public GetControlGroups(): ControlGroup[] {
@@ -82,9 +94,5 @@ export class CountermeasureComponent implements OnInit {
 
   public GetMitigationStateName(ms: MitigationStates) {
     return MitigationStateUtil.ToString(ms);
-  }
-
-  public NumberAlreadyExists() {
-    return this.dataService.Project.GetCountermeasures().some(x => x.Number == this.countermeasure.Number && x.ID != this.countermeasure.ID);
   }
 }

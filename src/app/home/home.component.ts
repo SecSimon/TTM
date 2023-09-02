@@ -135,6 +135,10 @@ export class HomeComponent implements OnInit {
     return this.dataService.AvailableFSProjects.slice(this.pageFSProjectIndex*this.pageProjectSize, (this.pageFSProjectIndex+1)*this.pageProjectSize);
   }
 
+  public GetAvailableFSConfigs() {
+    return this.dataService.AvailableFSConfigs.slice(this.pageFSConfigIndex*this.pageConfigSize, (this.pageFSConfigIndex+1)*this.pageConfigSize);
+  }
+
   public SetProcessStep(index: number) {
     this.processStep = index;
   }

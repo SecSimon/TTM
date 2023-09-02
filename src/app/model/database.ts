@@ -7,7 +7,7 @@ import { ConfigFile } from './config-file';
 import { Countermeasure } from './mitigations';
 import { ProjectFile } from './project-file';
 import { TestCase } from './test-case';
-import { AttackScenario, RuleGenerationTypes } from './threat-model';
+import { AttackScenario } from './threat-model';
 
 export interface IKeyValue {
   Key: string|any;
@@ -36,6 +36,7 @@ export enum DataChangedTypes {
 
 export enum PropertyEditTypes {
   ArrowPosition = 'Arrow Position',
+  AssignNumberToAsset = 'Assign Number To Asset',
   CheckBox = 'Check Box',
   DevInterfaceName = 'Device Interface Name',
   DataFlowDiagramReference = 'Data Flow Diagram Reference',
@@ -55,6 +56,7 @@ export enum PropertyEditTypes {
   StencilType = 'Stencil Type',
   TextArea = 'Text Area',
   TextBox = 'Text Box',
+  TextBoxValidator = 'Text Box Validator',
 }
 
 export class PropertyEditTypesUtil {
@@ -78,6 +80,7 @@ export interface IProperty {
   Type: PropertyEditTypes;
   Editable: boolean;
   DefaultValue?: any;
+  Callback?: any;
 }
 
 export enum DataReferenceTypes {
@@ -193,6 +196,28 @@ export interface IDatabaseBase {
   Data: {};
 }
 
+export interface IContainer extends IDatabaseBase {
+  Root: IContainer;
+  AddChild(child);
+  RemoveChild(child): boolean;
+  DeleteChild(child): boolean;
+  GetChildren(): ViewElementBase[];
+  GetChildrenFlat(): ViewElementBase[];
+  ChildrenChanged: EventEmitter<boolean>;
+}
+
+export interface IElementType {
+  Parent: IContainer;
+  Type: any;
+  TypeChanged: EventEmitter<any>;
+}
+
+export interface ICustomNumber extends IDatabaseBase {
+  Number: string;
+  CheckUniqueNumber(): boolean;
+  GetLongName(): string;
+}
+
 export abstract class DatabaseBase implements IDatabaseBase {
   private properties: IProperty[] = [];
   public Data: {};
@@ -227,7 +252,7 @@ export abstract class DatabaseBase implements IDatabaseBase {
 
   public GetProperties(): IProperty[] { return this.properties; }
 
-  public AddProperty(displayName: string, id: string, tooltip: string, hasGetter: boolean, type: PropertyEditTypes, editable: boolean, defaultValue?: any): IProperty {
+  public AddProperty(displayName: string, id: string, tooltip: string, hasGetter: boolean, type: PropertyEditTypes, editable: boolean, defaultValue?: any, callback?: any): IProperty {
     let existing = this.properties.find(x => x.ID == id && x.Type == type && x.Editable == editable); 
     if (existing) return existing;
     let res: IProperty = {
@@ -236,7 +261,8 @@ export abstract class DatabaseBase implements IDatabaseBase {
       Tooltip: tooltip,
       HasGetter: hasGetter,
       Type: type,
-      Editable: editable
+      Editable: editable,
+      Callback: callback
     };
     if (defaultValue) res.DefaultValue = defaultValue;
     this.properties.push(res);
@@ -339,25 +365,4 @@ export abstract class ViewElementBase extends DatabaseBase {
       else if (x.Type == DataReferenceTypes.RemoveCountermeasureFromTestCase) (x.Param as TestCase).RemoveLinkedElement(this.ID);
     });
   }
-}
-
-export interface IContainer extends IDatabaseBase {
-  Root: IContainer;
-  AddChild(child);
-  RemoveChild(child): boolean;
-  DeleteChild(child): boolean;
-  GetChildren(): ViewElementBase[];
-  GetChildrenFlat(): ViewElementBase[];
-  ChildrenChanged: EventEmitter<boolean>;
-}
-
-export interface IElementType {
-  Parent: IContainer;
-  Type: any;
-  TypeChanged: EventEmitter<any>;
-}
-
-export interface ICustomNumber extends IDatabaseBase {
-  Number: string;
-  GetLongName(): string;
 }

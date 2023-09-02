@@ -347,6 +347,10 @@ export class Countermeasure extends DatabaseBase implements ICustomNumber {
     return this.project.GetView(this.ViewID);
   }
 
+  public CheckUniqueNumber(): boolean {
+    return this.project.GetCountermeasures().some(x => x.Number == this.Number && x.ID != this.ID);
+  }
+
   public GetLongName(): string {
     return 'CM' + this.Number + ') ' + this.Name + ' (' + (this.Targets?.map(x => x.Name).join(', ')) + ')';
   }
@@ -447,6 +451,10 @@ export class MitigationProcess extends DatabaseBase implements ICustomNumber {
     if (this.Progress == null) this.Progress = 0;
     if (!this.Data['Tasks']) this.Data['Tasks'] = [];
     if (!this.Data['Notes']) this.Data['Notes'] = [];
+  }
+
+  public CheckUniqueNumber(): boolean {
+    return this.project.GetMitigationProcesses().some(x => x.Number == this.Number && x.ID != this.ID);
   }
 
   public GetLongName(): string {

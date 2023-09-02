@@ -85,10 +85,6 @@ export class AssetsComponent extends NavTreeBase implements OnInit {
     return ImpactCategoryUtil.ToString(cat);
   }
 
-  public NumberAlreadyExists() {
-    return this.dataService.Project.GetNewAssets().some(x => x.Number == this.selectedAssetGroup.Number && x.ID != this.selectedAssetGroup.ID);
-  }
-
   private createNodes() {
     const prevNodes = this.Nodes;
     this.Nodes = [];

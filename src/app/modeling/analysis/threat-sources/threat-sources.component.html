@@ -45,7 +45,7 @@
         <div style="margin-left: 10px;">
           <mat-form-field appearance="fill" class="property-form-field">
             <mat-label>{{ 'properties.Name' | translate }}</mat-label>
-            <input matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="selectedSource.Name"/>
+            <input matInput #nameBox [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="selectedSource.Name"/>
             <button *ngIf="selectedSource.Name" matSuffix mat-icon-button (click)="selectedSource.Name=''" matTooltip="{{'general.Clear' | translate}}" matTooltipShowDelay="1000">
               <mat-icon>close</mat-icon>
             </button>
@@ -53,7 +53,7 @@
           <mat-form-field appearance="fill" style="width: 70px; float: right; margin-left: 10px;">
             <mat-label>{{ 'general.Number' | translate }}</mat-label>
             <input matInput type="number" min="0" [(ngModel)]="selectedSource.Number" required matTooltip="{{selectedSource.Number}}" matTooltipShowDelay="1000"/>
-            <mat-hint *ngIf="NumberAlreadyExists()" style="color: red;" class="alert alert-danger">
+            <mat-hint *ngIf="selectedSource.CheckUniqueNumber()" style="color: red;" class="alert alert-danger">
               {{'messages.error.numberAlreadyExists' | translate}}
             </mat-hint>
           </mat-form-field>

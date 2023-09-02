@@ -85,11 +85,13 @@ export class ContainerTreeComponent implements OnInit {
   public GetNodeInfo(node: ViewElementBase) {
     if (this.infoMap.has(node.ID)) return this.infoMap.get(node.ID);
 
-    if (node instanceof DataFlow && node.Sender && node.Receiver && !node.ShowName) {
-      let arrow = '→';
-      if (node.ArrowPos == FlowArrowPositions.Both) arrow = '↔';
-      else if (node.ArrowPos == FlowArrowPositions.Start) arrow = '←';
-      return '(' + node.Sender?.GetProperty('Name') + arrow + node.Receiver?.GetProperty('Name') + ')';
+    if (node instanceof DataFlow && node.Sender && node.Receiver) {
+      if (!node.ShowName) {
+        let arrow = '→';
+        if (node.ArrowPos == FlowArrowPositions.Both) arrow = '↔';
+        else if (node.ArrowPos == FlowArrowPositions.Start) arrow = '←';
+        return '(' + node.Sender?.GetProperty('Name') + arrow + node.Receiver?.GetProperty('Name') + ')';
+      }
     }
     else {
       this.infoMap.set(node.ID, '');

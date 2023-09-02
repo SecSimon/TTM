@@ -47,6 +47,10 @@ export class SystemThreat extends DatabaseBase implements ICustomNumber {
     if (!this.ImpactCats) this.Data['ImpactCats'] = [];
   }
 
+  public CheckUniqueNumber(): boolean {
+    return this.project.GetSystemThreats().some(x => x.Number == this.Number && x.ID != this.ID);
+  }
+
   public GetLongName(): string {
     return 'ST' + this.Number + ') ' + this.Name;
   }

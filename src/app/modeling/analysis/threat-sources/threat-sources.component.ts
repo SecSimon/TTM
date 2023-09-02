@@ -1,5 +1,5 @@
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { LowMediumHighNumberUtil, LowMediumHighNumber } from '../../../model/assets';
 import { ThreatActor, ThreatSources } from '../../../model/threat-source';
 import { DataService } from '../../../util/data.service';
@@ -14,6 +14,8 @@ export class ThreatSourcesComponent implements OnInit {
 
   @Input() public threatSources: ThreatSources;
 
+  @ViewChild('nameBox') public nameBox: ElementRef;
+
   public selectedSource: ThreatActor;
 
   public isEdtingArray: boolean[] = [];
@@ -27,6 +29,11 @@ export class ThreatSourcesComponent implements OnInit {
     let actor = this.dataService.Project.CreateThreatActor();
     this.threatSources.AddThreatActor(actor);
     this.selectedSource = actor;
+    setTimeout(() => {
+      if (this.nameBox) {
+        (this.nameBox.nativeElement as HTMLInputElement).select();
+      }
+    }, 250);
     return actor;
   }
 
@@ -64,9 +71,5 @@ export class ThreatSourcesComponent implements OnInit {
 
   public GetLMHName(type: LowMediumHighNumber) {
     return LowMediumHighNumberUtil.ToString(type);
-  }
-
-  public NumberAlreadyExists() {
-    return this.dataService.Project.GetThreatActors().some(x => x.Number == this.selectedSource.Number && x.ID != this.selectedSource.ID);
   }
 }

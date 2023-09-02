@@ -78,6 +78,9 @@ export class DeviceAssetsComponent implements OnInit {
     else group = this.dataService.Config.CreateAssetGroup(parent);
     parent.ImpactCats?.forEach(x => group.ImpactCats.push(x));
     this.SelectObject(event, group);
+    setTimeout(() => {
+      document.dispatchEvent(new KeyboardEvent('keydown', {'key': 'F2'}));
+    }, 250);
   }
 
   public DeleteGroup(obj: AssetGroup) {
@@ -135,13 +138,31 @@ export class DeviceAssetsComponent implements OnInit {
     group.ImpactCats?.forEach(x => data.ImpactCats.push(x));
     this.selectedMyData = data;
     this.SelectObject(event, data);
+    setTimeout(() => {
+      document.dispatchEvent(new KeyboardEvent('keydown', {'key': 'F2'}));
+    }, 250);
   }
 
   public ResetNumbers() {
-    const arr = this.assetGroup.GetMyDataFlat();
-    for (let i = 0; i < arr.length; i++) {
-      arr[i].Number = (i+1).toString();
-    }
+    // const dataArr = this.assetGroup.GetMyDataFlat();
+    // for (let i = 0; i < dataArr.length; i++) {
+    //   dataArr[i].Number = (i+1).toString();
+    // }
+    // const groupArr = this.assetGroup.GetGroupsFlat().filter(x => x.IsNewAsset);
+    // for (let i = 0; i < groupArr.length; i++) {
+    //   groupArr[i].Number = (dataArr.length+i+1).toString();
+    // }
+
+    let num = 1;
+    const checkRec = (asset: AssetGroup) => {
+      if (asset.IsNewAsset) asset.Number = (num++).toString();
+      asset.AssociatedData.forEach(data => {
+        if (data.IsNewAsset) data.Number = (num++).toString();
+      });
+      asset.SubGroups.forEach(x => checkRec(x));
+    };
+
+    checkRec(this.assetGroup);
   }
 
   public GetSensitivity(val: LowMediumHighNumber): string {

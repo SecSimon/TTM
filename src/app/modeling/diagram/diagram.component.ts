@@ -1342,6 +1342,9 @@ export abstract class CanvasBase {
     if (data) {
       let vpt = this.Canvas.viewportTransform;
       this.createElement(JSON.parse(data), (opt.e.offsetX - vpt[4]) / vpt[0], (opt.e.offsetY - vpt[5]) / vpt[0]);
+      setTimeout(() => {
+        document.dispatchEvent(new KeyboardEvent('keydown', {'key': 'F2'}));
+      }, 250);
     }
   }
 

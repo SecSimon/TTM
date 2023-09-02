@@ -32,7 +32,14 @@ export class MyData extends DatabaseBase implements ICustomNumber {
   public get Number(): string { return this.Data['Number']; }
   public set Number(val: string) { this.Data['Number'] = val ? String(val) : val; }
   public get IsNewAsset(): boolean { return this.Data['IsNewAsset']; }
-  public set IsNewAsset(val: boolean) { this.Data['IsNewAsset'] = val; }
+  public set IsNewAsset(val: boolean) { 
+    this.Data['IsNewAsset'] = val; 
+    if (val) {
+      this.AddProperty('general.Number', 'Number', '', true, PropertyEditTypes.TextBoxValidator, true, null, 'CheckUniqueNumber');
+      this['properties'].splice(2,0, this['properties'].splice(this.GetProperties().length-1,1)[0]);
+      this['properties'].splice(this.GetProperties().findIndex(x => x.Type == PropertyEditTypes.AssignNumberToAsset), 1);
+    }
+  }
 
   public get Sensitivity(): LowMediumHighNumber { return this.Data['Sensitivity']; }
   public set Sensitivity(val: LowMediumHighNumber) { this.Data['Sensitivity'] = val ? Number(val) : val; }
@@ -53,6 +60,10 @@ export class MyData extends DatabaseBase implements ICustomNumber {
     else return this.config.GetAssetGroups().find(x => x.AssociatedData.includes(this));
   }
 
+  public CheckUniqueNumber(): boolean {
+    return this.project.GetMyDatas().some(x => x.Number == this.Number && x.ID != this.ID);
+  }
+
   public GetLongName(): string {
     return 'A' + this.Number + ') ' + this.Name;
   }
@@ -71,6 +82,9 @@ export class MyData extends DatabaseBase implements ICustomNumber {
 
   protected initProperties() {
     super.initProperties();
+
+    if (this.IsNewAsset) this.AddProperty('general.Number', 'Number', '', true, PropertyEditTypes.TextBoxValidator, true, null, 'CheckUniqueNumber');
+    else this.AddProperty('general.Number', '', '', false, PropertyEditTypes.AssignNumberToAsset, true);
 
     this.AddProperty('properties.Sensitivity', 'Sensitivity', '', true, PropertyEditTypes.LowMediumHighSelect, true);
     ImpactCategoryUtil.GetKeys().forEach(x => this.AddProperty(ImpactCategoryUtil.ToString(x), 'ImpactCats-'+x.toString(), '', false, PropertyEditTypes.ImpactCategory, true, false));
@@ -102,7 +116,14 @@ export class AssetGroup extends DatabaseBase implements ICustomNumber {
   public get Number(): string { return this.Data['Number']; }
   public set Number(val: string) { this.Data['Number'] = val ? String(val) : val; }
   public get IsNewAsset(): boolean { return this.Data['IsNewAsset']; }
-  public set IsNewAsset(val: boolean) { this.Data['IsNewAsset'] = val; }
+  public set IsNewAsset(val: boolean) { 
+    this.Data['IsNewAsset'] = val; 
+    if (val) {
+      this.AddProperty('general.Number', 'Number', '', true, PropertyEditTypes.TextBoxValidator, true, null, 'CheckUniqueNumber');
+      this['properties'].splice(2,0, this['properties'].splice(this.GetProperties().length-1,1)[0]);
+      this['properties'].splice(this.GetProperties().findIndex(x => x.Type == PropertyEditTypes.AssignNumberToAsset), 1);
+    }
+  }
 
   public get SubGroups(): AssetGroup[] { 
     let res = [];
@@ -175,6 +196,10 @@ export class AssetGroup extends DatabaseBase implements ICustomNumber {
     return res;
   }
 
+  public CheckUniqueNumber(): boolean {
+    return this.project.GetAssetGroups().some(x => x.Number == this.Number && x.ID != this.ID);
+  }
+
   public GetLongName(): string {
     return 'A' + this.Number + ') ' + this.Name;
   }
@@ -206,6 +231,9 @@ export class AssetGroup extends DatabaseBase implements ICustomNumber {
 
   protected initProperties() {
     super.initProperties();
+
+    if (this.IsNewAsset) this.AddProperty('general.Number', 'Number', '', true, PropertyEditTypes.TextBoxValidator, true, null, 'CheckUniqueNumber');
+    else this.AddProperty('general.Number', '', '', false, PropertyEditTypes.AssignNumberToAsset, true);
 
     this.AddProperty('properties.IsActive', 'IsActive', '', true, PropertyEditTypes.CheckBox, true);
 
