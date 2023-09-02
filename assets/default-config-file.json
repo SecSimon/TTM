@@ -15759,7 +15759,7 @@
     },
     {
       "ID": "ee25afa7-0267-4f20-96bb-9912494a383e",
-      "Name": "Insufficient auditiing",
+      "Name": "Insufficient auditing",
       "Description": "Does the log capture enough data to understand what happened in the past? Do your logs capture enough data to understand an incident after the fact? Is such capture lightweight enough to be left on all the time? Do you have enough data to deal with repudiation claims? Make sure you log sufficient and appropriate data to handle a repudiation claims. You might want to talk to an audit expert as well as a privacy expert about your choice of data.",
       "IsActive": true,
       "RuleGenerationType": 2,
