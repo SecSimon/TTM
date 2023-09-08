@@ -4,6 +4,7 @@ import { ControlGroup, Countermeasure, MitigationStates, MitigationStateUtil } f
 import { DataService } from '../../util/data.service';
 import { DialogService, MyBoolean } from '../../util/dialog.service';
 import { ThemeService } from '../../util/theme.service';
+import { TestCase } from '../../model/test-case';
 
 @Component({
   selector: 'app-countermeasure',
@@ -25,6 +26,9 @@ export class CountermeasureComponent implements OnInit {
   @Output() public mitigationProcessChange = new EventEmitter();
 
   @ViewChild('nameBox') public nameBox: ElementRef;
+  @ViewChild('searchTCBox', { static: false }) public searchTCBox: any;
+  public searchTCString: string = '';
+  public selectedTestCase: TestCase;
 
   constructor(@Optional() mapping: Countermeasure, @Optional() isNew: MyBoolean, @Optional() elements: Array<ViewElementBase>, @Optional() onChange: EventEmitter<Countermeasure>, 
   public theme: ThemeService, public dataService: DataService, private dialog: DialogService) {
@@ -77,11 +81,36 @@ export class CountermeasureComponent implements OnInit {
         this.dataService.Project.DeleteMitigationProcess(proc);
       }
     });
+    setTimeout(() => {
+      document.dispatchEvent(new KeyboardEvent('keydown', {'key': 'F2'}));
+    }, 500);
   }
 
   public EditMitigationProcess() {
     this.dialog.OpenMitigationProcessDialog(this.countermeasure.MitigationProcess, false).subscribe(res => {
     });
+  }
+
+  public GetTestCases() {
+    return this.dataService.Project.GetTesting().TestCases.filter(x => !this.countermeasure.GetTestCases().includes(x));
+  }
+
+  public GetFilteredTestCases() {
+    return this.GetTestCases().filter(x => x.Name.toLowerCase().includes(this.searchTCString.toLowerCase()));
+  }
+
+  public OnLinkTestCase(tc: TestCase) {
+    tc.AddLinkedCountermeasure(this.countermeasure);
+    this.selectedTestCase = tc;
+  }
+
+  public OnUnlinkTestCase(tc: TestCase) {
+    tc.RemoveLinkedCountermeasure(this.countermeasure.ID);
+    if (this.selectedTestCase == tc) this.selectedTestCase = null;
+  }
+
+  public OnSearchTCBoxClick() {
+    this.searchTCBox?._elementRef?.nativeElement?.focus();
   }
 
   public GetMitigationProcesses() {

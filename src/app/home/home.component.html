@@ -47,7 +47,7 @@
                     <button mat-menu-item (click)="dataService.ExchangeConfigWithDefault()">Default Configuration</button>
                     <button mat-menu-item *ngFor="let conf of dataService.AvailableGHConfigs" (click)="dataService.ExchangeConfig(conf)">{{conf.name}}</button>
                   </mat-menu>
-                  <button mat-menu-item [disabled]="!dataService.SelectedGHProject" (click)="dataService.OnTransferProjectDetails()" matTooltip="{{'pages.home.menu.transferProjectDetails.tt' | translate}}" matTooltipShowDelay="1000">
+                  <button mat-menu-item [disabled]="!dataService.SelectedGHProject && !dataService.SelectedFSProject" (click)="dataService.OnTransferProjectDetails()" matTooltip="{{'pages.home.menu.transferProjectDetails.tt' | translate}}" matTooltipShowDelay="1000">
                     <mat-icon>exit_to_app</mat-icon>
                     <span>{{'pages.home.menu.transferProjectDetails' | translate}}</span>
                   </button>
@@ -100,8 +100,8 @@
               <ng-container *ngFor="let proj of GetAvailableFSProjects()">
                 <div id="project">
                   <mat-icon class="iconBtn" style="vertical-align: top; font-size: 20px; margin-right: 5px;" matTooltip="{{'pages.home.storedOffline' | translate}}" matTooltipShowDelay="1000">file_present</mat-icon>
-                  <button class="color-primary astext" (click)="dataService.LoadProjectFS(proj)">{{GetFileName(proj)}}</button>
-                  <span style="font-size: small; margin-left: 5px;" matTooltip="{{GetFilePath(proj)}}" matTooltipShowDelay="1000">in {{CutName(GetFilePath(proj))}}</span>
+                  <button class="color-primary astext" (click)="dataService.LoadProjectFS(proj)">{{dataService.GetFileName(proj.path)}}</button>
+                  <span style="font-size: small; margin-left: 5px;" matTooltip="{{dataService.GetFilePath(proj.path)}}" matTooltipShowDelay="1000">in {{CutName(dataService.GetFilePath(proj.path))}}</span>
                   <button mat-icon-button class="show-on-hover iconBtn" style="margin-right: 5px;" [matMenuTriggerFor]="moreFSProject" matTooltip="{{'general.More' | translate}}" matTooltipShowDelay="1000">
                     <mat-icon>more_vert</mat-icon>
                   </button>
@@ -159,8 +159,8 @@
               <ng-container *ngFor="let conf of GetAvailableFSConfigs()">
                 <div id="config">
                   <mat-icon class="iconBtn" style="vertical-align: top; font-size: 20px; margin-right: 5px;" matTooltip="{{'pages.home.storedOffline' | translate}}" matTooltipShowDelay="1000">file_present</mat-icon>
-                  <button class="color-primary astext" (click)="dataService.LoadConfigFS(conf)">{{GetFileName(conf)}}</button>
-                  <span style="font-size: small; margin-left: 5px;" matTooltip="{{GetFilePath(conf)}}" matTooltipShowDelay="1000">in {{CutName(GetFilePath(conf))}}</span>
+                  <button class="color-primary astext" (click)="dataService.LoadConfigFS(conf)">{{dataService.GetFileName(conf.path)}}</button>
+                  <span style="font-size: small; margin-left: 5px;" matTooltip="{{dataService.GetFilePath(conf.path)}}" matTooltipShowDelay="1000">in {{CutName(dataService.GetFilePath(conf.path))}}</span>
                   <button mat-icon-button class="show-on-hover iconBtn" style="margin-right: 5px;" [matMenuTriggerFor]="moreFSConfig" matTooltip="{{'general.More' | translate}}" matTooltipShowDelay="1000">
                     <mat-icon>more_vert</mat-icon>
                   </button>

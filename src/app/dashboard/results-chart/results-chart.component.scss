@@ -1,3 +1,8 @@
+@import 'stylesTheme.scss';
+
 .chartDark {
   ::ng-deep .ngx-charts { text { fill: #fff !important; } }
+  ::ng-deep .chart-legend .legend-label .active .legend-label-text {
+    @extend .primary-color;
+  }
 }

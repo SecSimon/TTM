@@ -156,14 +156,6 @@ export class HomeComponent implements OnInit {
     this.dialogService.OpenProgresstrackerDialog();
   }
 
-  public GetFileName(path: string) {
-    return path.substring(path.lastIndexOf('/')+1);
-  }
-
-  public GetFilePath(path: string) {
-    return path.substring(0, path.lastIndexOf('/'));
-  }
-
   public CutName(val: string): string {
     if (val && val.length > 35) {
       return '[...]' + val.substring(val.length-30);

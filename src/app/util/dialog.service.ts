@@ -66,8 +66,8 @@ export class DialogService {
 
   constructor(private dialog: MatDialog, private translate: TranslateService, public dataService: DataService, private locStorage: LocalStorageService) { }
 
-  public OpenTwoOptionsDialog(data: ITwoOptionDialogData, hasBackdrop = false, width = null): Observable<any> {
-    const dialogRef = this.dialog.open(TwoOptionsDialogComponent, { hasBackdrop: hasBackdrop, data: data, width: width });
+  public OpenTwoOptionsDialog(data: ITwoOptionDialogData, hasBackdrop = false, width = null, minWidth = null): Observable<any> {
+    const dialogRef = this.dialog.open(TwoOptionsDialogComponent, { hasBackdrop: hasBackdrop, data: data, width: width, minWidth: minWidth });
     return dialogRef.afterClosed();
   }
 
@@ -297,7 +297,7 @@ export class DialogService {
         onChange.emit(curr);
       };
     }
-    return this.OpenTwoOptionsDialog(data, false, '800px');
+    return this.OpenTwoOptionsDialog(data, false, null, '800px');
   }
 
   public OpenTestCaseDialog(tc: TestCase, isNew: boolean) {
@@ -313,7 +313,7 @@ export class DialogService {
         { Key: TestCase, Value: tc }
       ]
     };
-    return this.OpenTwoOptionsDialog(data, false, '800px');
+    return this.OpenTwoOptionsDialog(data, false, null, '800px');
   }
 
   public OpenAddControlDialog(mit: Control) {

@@ -4,7 +4,7 @@
       <mat-list class="prop-list" [class.prop-list-light]="!theme.IsDarkMode" [class.prop-list-dark]="theme.IsDarkMode">
         <mat-list-item *ngFor="let arr of arrays" (click)="selectedArray = arr"
         [class.highlight-light]="selectedArray === arr && !theme.IsDarkMode" [class.highlight-dark]="selectedArray === arr && theme.IsDarkMode">
-          <mat-icon mat-list-icon>chevron_right</mat-icon>
+          <mat-icon mat-list-icon>arrow_right</mat-icon>
           <div mat-line>{{GetArrayName(arr) | translate}}</div>
           <div mat-line *ngIf="arr?.length == 0">{{'pages.modeling.objimpact.notDefined' | translate}}</div>
           <div mat-line *ngIf="arr?.length > 0">{{'general.Notes' | translate}}: {{arr.length}}</div>

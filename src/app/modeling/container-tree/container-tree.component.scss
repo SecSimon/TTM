@@ -78,3 +78,17 @@
 
 .highlight-light { background-color: rgba(0,0,0,0.1); }
 .highlight-dark { background-color: rgba(255,255,255,0.1); }
+
+.scenarioBadge {
+  ::ng-deep .mat-badge-content {
+    right: -3px !important;
+    bottom: -3px !important;
+  }
+}
+
+.measureBadge {
+  ::ng-deep .mat-badge-content {
+    right: -6px !important;
+    bottom: -3px !important;
+  }
+}

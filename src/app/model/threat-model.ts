@@ -12,6 +12,7 @@ import { ITagable, MyTag } from "./my-tags";
 import { ICVEEntry } from "../shared/components/cve-entry/cve-entry.component";
 import { TestCase } from "./test-case";
 import { ThreatActor } from "./threat-source";
+import { StringExtension } from "../util/string-extension";
 
 
 export enum ImpactCategories {
@@ -1481,7 +1482,7 @@ export class AttackScenario extends DatabaseBase implements ITagable, ICustomNum
   }
 
   public GetLongName(): string {
-    return 'AS' + this.Number + ') ' + this.Name + ' (' + (this.Target ? this.Target.GetProperty('Name') : this.Targets?.map(x => x.GetProperty('Name')).join(', ')) + ')';
+    return 'AS' + StringExtension.EmptyIfNull(this.Number) + ') ' + this.Name + ' (' + (this.Target ? this.Target.GetProperty('Name') : this.Targets?.map(x => x.GetProperty('Name')).join(', ')) + ')';
   }
 
   public FindReferences(pf: ProjectFile, cf: ConfigFile): IDataReferences[] {

@@ -7,7 +7,6 @@
         </button>
         {{dataService.Project?.Name}}
         <mat-progress-spinner *ngIf="isUpdatingDiagrams" style="display: inline; margin-left: 5px;" [diameter]="25" mode="indeterminate"></mat-progress-spinner>
-        <mat-slide-toggle style="float: right; margin-right: 5px;" color="primary" [(ngModel)]="isBlueColorScheme" (change)="UpdateDiagrams()"></mat-slide-toggle>
       </h2>
       <div style="font-size: small; display: flex; position: relative; overflow: auto;">
         <div *ngFor="let dia of diagrams; first as isFirst" [style.marginLeft]="isFirst ? '0' : '10px'">

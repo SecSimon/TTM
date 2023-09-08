@@ -117,4 +117,32 @@
     </mat-expansion-panel>
   </mat-accordion>
   <br/>
+  <div class="row" style="margin-bottom: 10px;" *ngIf="dataService.Project.HasTesting">
+    <div class="column1">
+      <mat-list class="prop-list reorder-list" [class.prop-list-light]="!theme.IsDarkMode" [class.prop-list-dark]="theme.IsDarkMode">
+        <div mat-subheader>{{ 'properties.LinkedTestCases' | translate }} 
+          <button mat-icon-button style="margin-left: 15px;" [matMenuTriggerFor]="addLinkedTCMenu" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000"><mat-icon>add</mat-icon></button>
+          <mat-menu #addLinkedTCMenu="matMenu">
+            <input mat-menu-item #searchTCBox [(ngModel)]="searchTCString" [matMenuTriggerFor]="filteredTCList" (click)="OnSearchTCBoxClick()" placeholder="{{ 'general.Search' | translate }}"/>
+            <button mat-menu-item *ngFor="let tc of GetTestCases()" matTooltip="{{tc.Name}}" matTooltipShowDelay="1000" (click)="OnLinkTestCase(tc)">{{tc.Name}}</button>
+          </mat-menu>
+          <mat-menu #filteredTCList="matMenu">
+            <button mat-menu-item *ngFor="let tc of GetFilteredTestCases()" matTooltip="{{tc.Name}}" matTooltipShowDelay="1000" (click)="OnLinkTestCase(tc)">{{tc.Name}}</button>
+          </mat-menu>
+        </div>
+        <mat-list-item *ngFor="let tc of countermeasure.GetTestCases()" (click)="selectedTestCase = tc"
+          [class.highlight-light]="selectedTestCase === tc && !theme.IsDarkMode" [class.highlight-dark]="selectedTestCase === tc && theme.IsDarkMode"
+          matTooltip="{{tc.Name}}" matTooltipShowDelay="1000">
+          <mat-icon mat-list-icon>arrow_right</mat-icon>
+          <div mat-line style="pointer-events: initial;">{{tc.Name}}</div>
+          <button mat-icon-button style="margin-left: auto;" (click)="OnUnlinkTestCase(tc)" matTooltip="{{'general.Remove' | translate}}" matTooltipShowDelay="1000"><mat-icon>remove</mat-icon></button>
+        </mat-list-item>
+      </mat-list>
+    </div>
+    <div class="column2">
+      <div style="margin: 10px 0 10px 10px;" *ngIf="selectedTestCase">
+        <app-test-case [testCase]="selectedTestCase"></app-test-case>
+      </div>
+    </div>
+  </div>
 </div>

@@ -58,7 +58,7 @@
         <mat-list class="prop-list" [class.prop-list-light]="!theme.IsDarkMode" [class.prop-list-dark]="theme.IsDarkMode">
           <mat-list-item *ngFor="let links of linkLists" (click)="selectedLinks = links"
           [class.highlight-light]="selectedLinks === links && !theme.IsDarkMode" [class.highlight-dark]="selectedLinks === links && theme.IsDarkMode">
-            <mat-icon mat-list-icon>chevron_right</mat-icon>
+            <mat-icon mat-list-icon>arrow_right</mat-icon>
             <div mat-line>{{links.Key | translate}} <ng-container *ngIf="links.Value.length>0">({{links.Value.length}})</ng-container></div>
             <button mat-icon-button style="margin-left: auto;" [matMenuTriggerFor]="addMenu" [matMenuTriggerData]="{groups: GetMenuGroups(links)}" matTooltip="{{'general.Add' | translate}}" matTooltipShowDelay="1000"><mat-icon>add</mat-icon></button>
           </mat-list-item>

@@ -29,7 +29,7 @@
                 <mat-list-item *ngFor="let dt of systemThreats" (click)="selectedThreat = dt" cdkDrag
                 [class.highlight-light]="selectedThreat === dt && !theme.IsDarkMode" [class.highlight-dark]="selectedThreat === dt && theme.IsDarkMode"
                 matTooltip="{{dt.Name}}" matTooltipShowDelay="1000">
-                  <mat-icon mat-list-icon>chevron_right</mat-icon>
+                  <mat-icon mat-list-icon>arrow_right</mat-icon>
                   <div mat-line>{{dt.GetLongName()}}</div>
                   <div mat-line>{{'properties.Impact' | translate}}: {{GetLMHName(dt.Impact) | translate}}</div>
                   <button mat-icon-button style="margin-left: auto;" (click)="DeleteThreat(dt)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000"><mat-icon>delete</mat-icon></button>

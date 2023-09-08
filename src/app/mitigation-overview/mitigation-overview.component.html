@@ -18,7 +18,7 @@
               <table>
                 <ng-container *ngFor="let procNode of selectedNode.children">
                   <tr>
-                    <td><mat-icon>chevron_right</mat-icon></td>
+                    <td><mat-icon>arrow_right</mat-icon></td>
                     <td>{{procNode.name()}}</td>
                     <td style="padding: 0 10px;">
                       <select *ngIf="procNode.data" [(ngModel)]="procNode.data.MitigationProcessState" style="width: 130px;">

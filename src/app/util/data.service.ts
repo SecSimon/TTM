@@ -48,6 +48,11 @@ export interface IGHFile {
   isEncrypted: boolean;
 }
 
+export interface IFSFile {
+  path: string;
+  isEncrypted: boolean;
+}
+
 export interface IGHFileContent {
   content: string;
   encrypted?: string;
@@ -83,10 +88,10 @@ export class DataService {
   private availableGHConfigs: IGHFile[] = [];
   private selectedGHProject: IGHFile;
   private selectedGHConfig: IGHFile;
-  private availableFSProjects: string[] = [];
-  private availableFSConfigs: string[] = [];
-  private selectedFSProject: string;
-  private selectedFSConfig: string;
+  private availableFSProjects: IFSFile[] = [];
+  private availableFSConfigs: IFSFile[] = [];
+  private selectedFSProject: IFSFile;
+  private selectedFSConfig: IFSFile;
 
   private projectContentCrypto: MyCrypto;
 
@@ -142,13 +147,13 @@ export class DataService {
         this.zone.run(() => this.OnCloseProject());
       });
 
-      this.electron.ipcRenderer.on('OnImportFile', (event, data, filePath) => {
+      this.electron.ipcRenderer.on('OnImportFile', (event, data, filePath: string) => {
         this.zone.run(() => {
           if (!this.IsLoggedIn) this.GuestLogin();
           this.OnCloseProject().then(() => {
             const content = JSON.parse(data);
             this.locStorage.Remove(LocStorageKeys.LAST_PROJECT);
-            this.importFile(content, filePath, null);
+            this.importFile(content, { path: filePath, isEncrypted: null }, null);
           });
         });
       });
@@ -158,16 +163,16 @@ export class DataService {
       const lastFiles = this.getLastProjectHistory().filter(x => x.startsWith('FS:')).map(x => x.substring(3));
       if (lastFiles.length > 0) this.electron.ipcRenderer.send('ExistFiles', lastFiles);
 
-      this.electron.ipcRenderer.on('OnExistingFiles', (event, files) => {
+      this.electron.ipcRenderer.on('OnExistingFiles', (event, files: string[]) => {
         this.zone.run(() => {
-          this.availableFSProjects = files;
+          files.forEach(x => this.availableFSProjects.push({ path: x, isEncrypted: null }));
 
           const lastProject = this.locStorage.Get(LocStorageKeys.LAST_PROJECT);
           if (lastProject) {
             const parsed = JSON.parse(lastProject);
-            if (this.availableFSProjects.includes(parsed['path'])) {
+            if (this.availableFSProjects.some(x => x.path == parsed['path'])) {
               if (!this.IsLoggedIn) this.GuestLogin();
-              this.LoadProjectFS(parsed['path']);
+              this.LoadProjectFS({ path: parsed['path'], isEncrypted: null });
             }
           }
         });
@@ -193,17 +198,17 @@ export class DataService {
   public get UserAccount(): string { return this.userAccount; }
   public get UserURL(): string { return this.userURL; }
   public get UserEmail(): string { return this.userEmail; }
-  public get UserDisplayName(): string { return this.UserName ? this.UserName : this.UserAccount }
+  public get UserDisplayName(): string { return !StringExtension.NullOrEmpty(this.UserName) ? this.UserName : this.UserAccount }
 
   public get Repos(): IGHRepository[] { return this.repos; }
   public get AvailableGHProjects(): IGHFile[] { return this.availableGHProjects; }
   public get AvailableGHConfigs(): IGHFile[] { return this.availableGHConfigs; }
-  public get AvailableFSProjects(): string[] { return this.availableFSProjects; }
-  public get AvailableFSConfigs(): string[] { return this.availableFSConfigs; }
+  public get AvailableFSProjects(): IFSFile[] { return this.availableFSProjects; }
+  public get AvailableFSConfigs(): IFSFile[] { return this.availableFSConfigs; }
   public get SelectedGHProject(): IGHFile { return this.selectedGHProject; }
   public get SelectedGHConfig(): IGHFile { return this.selectedGHConfig; }
-  public get SelectedFSProject(): string { return this.selectedFSProject; }
-  public get SelectedFSConfig(): string { return this.selectedFSConfig; }
+  public get SelectedFSProject(): IFSFile { return this.selectedFSProject; }
+  public get SelectedFSConfig(): IFSFile { return this.selectedFSConfig; }
 
   public get HasProject(): boolean { return this.Project != null; }
   public get Project(): ProjectFile {
@@ -476,7 +481,7 @@ export class DataService {
           if (!saveAs) saveAs = this.SelectedFSProject == null;
           const onSuccess = () => {
             this.messagesService.Success('messages.success.saveProject', this.Project.Name);
-            this.locStorage.Set(LocStorageKeys.LAST_PROJECT, JSON.stringify({ path: this.SelectedFSProject }));
+            this.locStorage.Set(LocStorageKeys.LAST_PROJECT, JSON.stringify({ path: this.SelectedFSProject.path }));
             this.ProjectSaved.emit(this.Project);
             setTimeout(() => {
               if (this.Project) this.Project.FileChanged = false;
@@ -486,25 +491,30 @@ export class DataService {
             resolve();
           };
 
-          const content = this.getFileContent(this.Project.ToJSON(), true, false);
+          const content = this.getFileContent(this.Project.ToJSON(), false, this.SelectedFSProject?.isEncrypted ? true : false);
           if (saveAs) {
             if (this.electron.ipcRenderer.listenerCount('OnSaveFileAs') == 0) {
-              this.electron.ipcRenderer.on('OnSaveFileAs', (event, newPath) => {
+              this.electron.ipcRenderer.on('OnSaveFileAs', (event, newPath: string) => {
                 this.zone.run(() => {
                   if (newPath) {
-                    this.selectedFSProject = newPath;
-                    this.addFSProjectToHistory(newPath);
-                    this.availableFSProjects.push(newPath);
-                    this.Project.Name = newPath.split('/')[newPath.split('/').length-1];
+                    this.selectedFSProject = this.AvailableFSProjects.find(x => x.path == newPath);
+                    if (!this.selectedFSProject) this.selectedFSProject = { path: newPath, isEncrypted: null };
+                    this.addFSProjectToHistory(this.selectedFSProject);
+                    if (this.availableFSProjects.indexOf(this.selectedFSProject) < 0) {
+                      this.availableFSProjects.push(this.selectedFSProject);
+                    }
+                    this.Project.Name = this.GetFileName(newPath);
                     onSuccess();
                   }
                   else {
                     reject();
                   }
                 });
+
+                this.electron.ipcRenderer.removeAllListeners('OnSaveFileAs');
               });
             }
-            this.electron.ipcRenderer.send('SaveFileAs', this.SelectedFSProject ? this.SelectedFSProject : 'Project.ttmp', content);
+            this.electron.ipcRenderer.send('SaveFileAs', this.SelectedFSProject ? this.GetFileName(this.SelectedFSProject.path) : 'Project.ttmp', content);
           }
           else {
             if (this.electron.ipcRenderer.listenerCount('OnSaveFile') == 0) {
@@ -515,9 +525,11 @@ export class DataService {
                   }
                   else reject();
                 });
+                
+                this.electron.ipcRenderer.removeAllListeners('OnSaveFile');
               });
             }
-            this.electron.ipcRenderer.send('SaveFile', this.SelectedFSProject, content);
+            this.electron.ipcRenderer.send('SaveFile', this.SelectedFSProject.path, content);
           }
         }
       });
@@ -549,24 +561,29 @@ export class DataService {
           resolve();
         };
 
-        const content = this.getFileContent(this.Config.ToJSON(), true, false);
+        const content = this.getFileContent(this.Config.ToJSON(), false, this.SelectedFSConfig?.isEncrypted ? true : false);
         if (saveAs) {
           if (this.electron.ipcRenderer.listenerCount('OnSaveFileAs') == 0) {
-            this.electron.ipcRenderer.on('OnSaveFileAs', (event, newPath) => {
+            this.electron.ipcRenderer.on('OnSaveFileAs', (event, newPath: string) => {
               this.zone.run(() => {
                 if (newPath) {
-                  this.selectedFSConfig = newPath;
-                  this.availableFSConfigs.push(newPath);
-                  this.Config.Name = newPath.split('/')[newPath.split('/').length-1];
+                  this.selectedFSConfig = this.AvailableFSConfigs.find(x => x.path == newPath);
+                  if (!this.selectedFSConfig) this.selectedFSConfig = { path: newPath, isEncrypted: null };
+                  if (this.availableFSConfigs.indexOf(this.selectedFSConfig) < 0) {
+                    this.availableFSConfigs.push(this.selectedFSConfig);
+                  }
+                  this.Config.Name = this.GetFileName(newPath);
                   onSuccess();
                 }
                 else {
                   reject();
                 }
               });
+
+              this.electron.ipcRenderer.removeAllListeners('OnSaveFileAs');
             });
           }
-          this.electron.ipcRenderer.send('SaveFileAs', this.SelectedFSConfig, content);
+          this.electron.ipcRenderer.send('SaveFileAs', this.SelectedFSConfig.path, content);
         }
         else {
           if (this.electron.ipcRenderer.listenerCount('OnSaveFile') == 0) {
@@ -577,9 +594,11 @@ export class DataService {
                 }
                 else reject();
               });
+
+              this.electron.ipcRenderer.removeAllListeners('OnSaveFile');
             });
           }
-          this.electron.ipcRenderer.send('SaveFile', this.SelectedFSConfig, content);
+          this.electron.ipcRenderer.send('SaveFile', this.SelectedFSConfig.path, content);
         }
       }
     });
@@ -623,31 +642,33 @@ export class DataService {
     });
   }
 
-  public LoadProjectFS(path: string) {
+  public LoadProjectFS(file: IFSFile) {
     this.OnCloseProject().then(() => {
       this.isLoading.add();
 
       if (this.electron.ipcRenderer.listenerCount('OnReadFile') == 0) {
-        this.electron.ipcRenderer.on('OnReadFile', (event, file, filePath) => {
+        this.electron.ipcRenderer.on('OnReadFile', (event, file, filePath: string) => {
           this.zone.run(() => {
             try {
               const content = JSON.parse(file);
               this.locStorage.Remove(LocStorageKeys.LAST_PROJECT);
-              this.selectedFSProject = filePath;
-              this.importFile(content, filePath, null);
-              if (this.availableFSProjects.indexOf(filePath) < 0) {
-                this.availableFSProjects.push(filePath);
+              this.selectedFSProject = this.AvailableFSProjects.find(x => x.path == filePath);
+              if (!this.selectedFSProject) this.selectedFSProject = { path: filePath, isEncrypted: null };
+              this.importFile(content, this.selectedFSProject, true);
+              if (this.availableFSProjects.indexOf(this.selectedFSProject) < 0) {
+                this.availableFSProjects.push(this.selectedFSProject);
               }
             } catch (error) {
               console.log(error);
             } finally {
-              this.electron.ipcRenderer.removeAllListeners('OnReadFile');
+              this.isLoading.remove();
             }
-            this.isLoading.remove();
           });
+          
+          this.electron.ipcRenderer.removeAllListeners('OnReadFile');
         });
       }
-      this.electron.ipcRenderer.send('ReadFile', path);
+      this.electron.ipcRenderer.send('ReadFile', file.path);
     });
   }
 
@@ -721,7 +742,7 @@ export class DataService {
   private loadProjectFile(filePath: string, json: any) {
     try {
       let updated = this.fileUpdate.UpdateProjectFile(json);
-      const fileName = filePath.split('/')[filePath.split('/').length-1];
+      const fileName = filePath.substring(filePath.lastIndexOf('/')+1);
       json['Data']['Name'] = fileName;
       this.Project = ProjectFile.FromJSON(json);
       if (this.Project) {
@@ -729,7 +750,7 @@ export class DataService {
         this.Config = this.Project.Config;
         this.selectedGHConfig = null;
         if (this.KeepUserSignedIn && this.selectedGHProject) this.locStorage.Set(LocStorageKeys.LAST_PROJECT, JSON.stringify({ owner: this.GetRepoOfFile(this.SelectedGHProject).owner, repoId: this.SelectedGHProject.repoId, path: this.SelectedGHProject.path, sha: this.SelectedGHProject.sha }));
-        else if (this.SelectedFSProject) this.locStorage.Set(LocStorageKeys.LAST_PROJECT, JSON.stringify({ path: this.SelectedFSProject }));
+        else if (this.SelectedFSProject) this.locStorage.Set(LocStorageKeys.LAST_PROJECT, JSON.stringify({ path: this.SelectedFSProject.path }));
         this.addGHProjectToHistory(this.SelectedGHProject);
         this.addFSProjectToHistory(this.SelectedFSProject);
         this.messagesService.Success('messages.success.loadProject', fileName);
@@ -743,6 +764,7 @@ export class DataService {
   private getFileContent(json, beautify: boolean, encrypt: boolean, password: string = null): string {
     this.isLoading.add();
     if (this.selectedGHProject) this.selectedGHProject.isEncrypted = encrypt;
+    if (this.selectedFSProject) this.selectedFSProject.isEncrypted = encrypt;
 
     let file: IGHFileContent = {
       content: beautify ? JSON.stringify(json, null, 2) : JSON.stringify(json)
@@ -784,7 +806,7 @@ export class DataService {
       this.messagesService.Success('messages.success.saveProject', this.SelectedGHProject.name);
       if (ghProject) this.availableGHProjects.push(ghProject);
       if (this.KeepUserSignedIn && this.selectedGHProject) this.locStorage.Set(LocStorageKeys.LAST_PROJECT, JSON.stringify({ owner: this.GetRepoOfFile(this.SelectedGHProject).owner, repoId: this.SelectedGHProject.repoId, path: this.SelectedGHProject.path, sha: this.SelectedGHProject.sha }));
-      else if (this.SelectedFSProject) this.locStorage.Set(LocStorageKeys.LAST_PROJECT, JSON.stringify({ path: this.SelectedFSProject }));
+      else if (this.SelectedFSProject) this.locStorage.Set(LocStorageKeys.LAST_PROJECT, JSON.stringify({ path: this.SelectedFSProject.path }));
       this.ProjectSaved.emit(this.Project);
       setTimeout(() => {
         if (this.Project) this.Project.FileChanged = false;
@@ -823,30 +845,32 @@ export class DataService {
     });
   }
 
-  public LoadConfigFS(path: string) {
+  public LoadConfigFS(file: IFSFile) {
     this.OnCloseProject().then(() => {
       this.isLoading.add();
 
       if (this.electron.ipcRenderer.listenerCount('OnReadFile') == 0) {
-        this.electron.ipcRenderer.on('OnReadFile', (event, file, filePath) => {
+        this.electron.ipcRenderer.on('OnReadFile', (event, file, filePath: string) => {
           this.zone.run(() => {
             try {
               const content = JSON.parse(file);
-              this.selectedFSConfig = filePath;
-              this.importFile(content, filePath, null);
-              if (this.availableFSConfigs.indexOf(filePath) < 0) {
-                this.availableFSConfigs.push(filePath);
+              this.selectedFSConfig = this.AvailableFSConfigs.find(x => x.path == filePath);
+              if (!this.selectedFSConfig) this.selectedFSConfig = { path: filePath, isEncrypted: null };
+              this.importFile(content, this.selectedFSConfig, null);
+              if (this.availableFSConfigs.indexOf(this.selectedFSConfig) < 0) {
+                this.availableFSConfigs.push(this.selectedFSConfig);
               }
             } catch (error) {
               console.log(error);
             } finally {
-              this.electron.ipcRenderer.removeAllListeners('OnReadFile');
+              this.isLoading.remove();
             }
-            this.isLoading.remove();
           });
+
+          this.electron.ipcRenderer.removeAllListeners('OnReadFile');
         });
       }      
-      this.electron.ipcRenderer.send('ReadFile', path);
+      this.electron.ipcRenderer.send('ReadFile', file.path);
     });
   }
 
@@ -951,21 +975,21 @@ export class DataService {
     }).finally(() => this.isLoading.remove());
   }
 
-  public RemoveFSFile(path: string) {
-    let index = this.AvailableFSProjects.indexOf(path);
+  public RemoveFSFile(file: IFSFile) {
+    let index = this.AvailableFSProjects.indexOf(file);
     if (index >= 0) {
       this.AvailableFSProjects.splice(index, 1);
-      this.removeFSProjectToHistory(path);
+      this.removeFSProjectToHistory(file);
     }
     else {
-      index = this.AvailableFSConfigs.indexOf(path);
+      index = this.AvailableFSConfigs.indexOf(file);
       if (index >= 0) {
         this.AvailableFSConfigs.splice(index, 1);
       }
     }
   }
 
-  public DeleteFSFile(path: string) {
+  public DeleteFSFile(file: IFSFile) {
     const data: ITwoOptionDialogData = {
       title: this.translate.instant('dialog.delete.deleteItem') + ' ' + name,
       textContent: this.translate.instant('dialog.delete.sure'),
@@ -978,8 +1002,8 @@ export class DataService {
     const dialogRef = this.dialog.open(TwoOptionsDialogComponent, { hasBackdrop: true, data: data });
     dialogRef.afterClosed().subscribe(res => {
       if (res) {
-        this.RemoveFSFile(path);
-        if (this.electron.isElectron) this.electron.ipcRenderer.send('DeleteFile', path);
+        this.RemoveFSFile(file);
+        if (this.electron.isElectron) this.electron.ipcRenderer.send('DeleteFile', file.path);
       }
     });
   }
@@ -988,14 +1012,18 @@ export class DataService {
     let content = '';
     let name = '';
     if (isProject && this.Project) {
-      content = this.getFileContent(this.Project.ToJSON(), true, this.SelectedGHProject ? this.SelectedGHProject.isEncrypted : false);
+      const isEncrypted = (this.SelectedGHProject?.isEncrypted || this.SelectedFSProject?.isEncrypted) ? true : false;
+      content = this.getFileContent(this.Project.ToJSON(), false, isEncrypted);
       if (this.SelectedGHProject) name = this.SelectedGHProject.name;
+      else if (this.SelectedFSProject) name = this.GetFileName(this.SelectedFSProject.path);
       else name = 'Project.ttmp';
     }
     else if (this.Config) {
-      content = this.getFileContent(this.Config.ToJSON(), true, false);
+      const isEncrypted = (this.SelectedGHConfig?.isEncrypted || this.SelectedFSConfig?.isEncrypted) ? true : false;
+      content = this.getFileContent(this.Config.ToJSON(), false, isEncrypted);
       if (this.SelectedGHConfig) name = this.SelectedGHConfig.name;
       else if (this.SelectedGHProject) name = this.selectedGHProject.name.replace('.ttmp', '.ttmc');
+      else if (this.SelectedFSProject) name = this.GetFileName(this.SelectedFSProject.path);
       else name = 'Config.ttmc';
     }
     
@@ -1018,7 +1046,7 @@ export class DataService {
   public ImportFile(isProject: boolean, fileInput: any) {
     if (fileInput.target.files && fileInput.target.files[0]) {
       const reader = new FileReader();
-      const filePath = this.electron.isElectron ? fileInput.target.files[0].path : fileInput.target.files[0].name;
+      const filePath: string = this.electron.isElectron ? fileInput.target.files[0].path : fileInput.target.files[0].name;
       reader.onload = (e) => {
         const fileRes = reader.result;
         let file = JSON.parse(fileRes.toString());
@@ -1026,7 +1054,7 @@ export class DataService {
           file = {'content': JSON.stringify(file) };
         } 
         if ('content' in file) {
-          this.importFile(file, filePath, isProject);
+          this.importFile(file, { path: filePath, isEncrypted: null }, isProject);
         }
         else {
           this.messagesService.Error('Unsupported file');
@@ -1037,33 +1065,70 @@ export class DataService {
     }
   }
 
-  private importFile(fileBlob, filePath: string, isProject: boolean) {
-    if ('content' in fileBlob) {
-      const content = fileBlob['content'];
-      const json = JSON.parse(content);
-      this.selectedGHConfig = this.selectedGHProject = null;
-      if (isProject == null) isProject = json['config'] != null;
-      if (isProject) {
-        if (this.electron.isElectron) {
-          this.selectedFSProject = filePath;
-          if (this.availableFSProjects.indexOf(filePath) < 0) {
-            this.availableFSProjects.splice(0, 0, filePath);
+  private importFile(fileBlob, file: IFSFile, isProject: boolean) {
+    const impFile = (blob, path: IFSFile, isProj: boolean) => {
+      if ('content' in blob) {
+        const content = blob['content'];
+        const json = JSON.parse(content);
+        this.selectedGHConfig = this.selectedGHProject = null;
+        if (isProj == null) isProj = json['config'] != null;
+        if (isProj) {
+          if (this.electron.isElectron) {
+            this.selectedFSProject = path;
+            if (this.availableFSProjects.indexOf(path) < 0) {
+              this.availableFSProjects.splice(0, 0, path);
+            }
           }
+          this.loadProjectFile(path.path, json);
         }
-        this.loadProjectFile(filePath, json);
+        else {
+          if (this.electron.isElectron) {
+            this.selectedFSConfig = path;
+            if (this.availableFSConfigs.indexOf(path) < 0) {
+              this.availableFSConfigs.splice(0, 0, path);
+            }
+          }
+          this.loadConfigFile(path.path, json);
+        }
       }
       else {
-        if (this.electron.isElectron) {
-          this.selectedFSConfig = filePath;
-          if (this.availableFSConfigs.indexOf(filePath) < 0) {
-            this.availableFSConfigs.splice(0, 0, filePath);
-          }
-        }
-        this.loadConfigFile(filePath, json);
+        this.messagesService.Error('Unsupported file');
       }
+    };
+
+    if ('encrypted' in fileBlob) {
+      const decrypt = (blob, path: IFSFile) => {
+        const data = { 'pw': '', 'file': file.path.substring(file.path.lastIndexOf('/')+1) };
+        this.isLoading.add();
+        const dialogRef = this.dialog.open(PasswordDialogComponent, { hasBackdrop: false, data: data });
+        dialogRef.afterClosed().subscribe((res) => {
+          if (res) {
+            try {
+              this.projectContentCrypto = new MyCrypto(data.pw);
+              const keycheck = this.projectContentCrypto.Decrypt(blob.encrypted);
+              blob.content = JSON.parse(this.projectContentCrypto.Decrypt(blob.content));
+              delete blob['encrypted'];
+              impFile(blob, path, null);
+            } 
+            catch (error) {
+              this.messagesService.Warning('messages.warning.wrongPassword');
+              decrypt(blob, path);
+            }
+            finally {
+              this.isLoading.remove();
+            }
+          }
+          else {
+            this.isLoading.remove();
+          }
+        });
+      };
+
+      file.isEncrypted = true;
+      decrypt(fileBlob, file);
     }
     else {
-      this.messagesService.Error('Unsupported file');
+      impFile(fileBlob, file, isProject);
     }
   }
 
@@ -1168,12 +1233,13 @@ export class DataService {
     });
   }
 
-  public ReadFSFile(path: string) {
+  public ReadFSFile(file: IFSFile) {
     return new Promise<ProjectFile>((resolve, reject) => {
       if (this.electron.ipcRenderer.listenerCount('OnReadFile') == 0) {
         this.electron.ipcRenderer.on('OnReadFile', (event, file, filePath) => {
           this.zone.run(() => {
             try {
+              // todo encrypted
               const fileBlob = JSON.parse(file);
               if ('content' in fileBlob) {
                 const content = fileBlob['content'];
@@ -1188,13 +1254,13 @@ export class DataService {
             } catch (error) {
               console.log(error);
               reject();
-            } finally {
-              this.electron.ipcRenderer.removeAllListeners('OnReadFile');
             }
           });
+
+          this.electron.ipcRenderer.removeAllListeners('OnReadFile');
         });
       }
-      this.electron.ipcRenderer.send('ReadFile', path);
+      this.electron.ipcRenderer.send('ReadFile', file.path);
     });
   }
 
@@ -1377,6 +1443,14 @@ export class DataService {
     return this.Repos.find(x => x.id == file.repoId);
   }
 
+  public GetFileName(path: string) {
+    return path.substring(path.lastIndexOf('/')+1);
+  }
+
+  public GetFilePath(path: string) {
+    return path.substring(0, path.lastIndexOf('/'));
+  }
+
   public Debug() {
     console.log(this.Project);
     console.log(this.Config);
@@ -1434,30 +1508,30 @@ export class DataService {
     return res;
   }
 
-  private addGHProjectToHistory(proj: IGHFile) {
-    if (this.KeepUserSignedIn && proj) {
+  private addGHProjectToHistory(file: IGHFile) {
+    if (this.KeepUserSignedIn && file) {
       const history = this.getLastProjectHistory();
-      const name = proj.repoId + ':' + proj.path;
+      const name = file.repoId + ':' + file.path;
       if (history.indexOf(name) >= 0) history.splice(history.indexOf(name), 1);
       history.splice(0, 0, name);
       this.locStorage.Set(LocStorageKeys.PROJECT_HISTORY, JSON.stringify(history));
     }
   }
 
-  private addFSProjectToHistory(path: string) {
-    if (path) {
+  private addFSProjectToHistory(file: IFSFile) {
+    if (file && file.path) {
       const history = this.getLastProjectHistory();
-      const name = 'FS:' + path;
+      const name = 'FS:' + file.path;
       if (history.indexOf(name) >= 0) history.splice(history.indexOf(name), 1);
       history.splice(0, 0, name);
       this.locStorage.Set(LocStorageKeys.PROJECT_HISTORY, JSON.stringify(history));
     }
   }
 
-  private removeFSProjectToHistory(path: string) {
-    if (path) {
+  private removeFSProjectToHistory(file: IFSFile) {
+    if (file && file.path) {
       const history = this.getLastProjectHistory();
-      const name = 'FS:' + path;
+      const name = 'FS:' + file.path;
       if (history.indexOf(name) >= 0) history.splice(history.indexOf(name), 1);
       this.locStorage.Set(LocStorageKeys.PROJECT_HISTORY, JSON.stringify(history));
     }
@@ -1651,7 +1725,7 @@ export class DataService {
     this.userEmail = this.locStorage.Get(LocStorageKeys.GH_USER_EMAIL);
     if (this.UserMode == UserModes.LoggedIn) {
       setTimeout(() => {
-        this.messagesService.Success('messages.success.welcomeBack', this.UserDisplayName ? this.UserDisplayName : '');
+        this.messagesService.Success('messages.success.welcomeBack', StringExtension.EmptyIfNull(this.UserDisplayName));
       }, 500);
     }
   }

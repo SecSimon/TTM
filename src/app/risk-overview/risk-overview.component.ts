@@ -64,6 +64,11 @@ export class RiskOverviewComponent extends SideNavBase implements AfterViewInit 
       if (sortHeaderId == 'elements') return this.GetTargets(data);
       if (sortHeaderId == 'view') return this.dataService.Project.GetView(data.ViewID).Name;
       if (sortHeaderId == 'severity') return data.Severity;
+      if (sortHeaderId == 'cvssVector') return data.ScoreCVSS?.Vector;
+      if (sortHeaderId == 'cvssScore') return data.ScoreCVSS?.Score;
+      if (sortHeaderId == 'owaspVector') return this.GetOwaspRRVector(data);
+      if (sortHeaderId == 'owaspScore') return data.ScoreOwaspRR?.Score;
+      if (sortHeaderId == 'likelihood') return data.Likelihood;
       if (sortHeaderId == 'risk') return data.Risk;
       if (sortHeaderId == 'status') return data.ThreatState; 
       console.error('Missing sorting header', sortHeaderId); 

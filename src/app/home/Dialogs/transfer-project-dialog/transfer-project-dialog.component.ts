@@ -39,8 +39,8 @@ export class TransferProjectDialogComponent implements OnInit {
     this.dataService.AvailableGHProjects.filter(x => x != this.dataService.SelectedGHProject).forEach(x => {
       this.AvailableProjects.push({ key: x, name: x.name, tooltip: this.dataService.GetRepoOfFile(x)?.name + '/' + x.path });
     });
-    this.dataService.AvailableFSProjects.filter(x => x != this.dataService.SelectedFSProject).forEach(x => {
-      this.AvailableProjects.push({ key: x, name: x.substring(x.lastIndexOf('/')+1), tooltip: x });
+    this.dataService.AvailableFSProjects.filter(x => x.path != this.dataService.SelectedFSProject?.path).forEach(x => {
+      this.AvailableProjects.push({ key: x, name: this.dataService.GetFileName(x.path), tooltip: x.path });
     });
 
     this.Details.push({ Key: false, Value: 'dialog.transferproject.d.Participants' });
@@ -62,7 +62,7 @@ export class TransferProjectDialogComponent implements OnInit {
     };
 
     this.Details.forEach(x => x.Key = false);
-    if (typeof this.SelectedProject.key === 'string') {
+    if (this.SelectedProject.key['repoId'] == null) {
       this.dataService.ReadFSFile(this.SelectedProject.key).then((file) => {
         this.SourceProject = file;
         setDetails(file);
@@ -222,6 +222,6 @@ export class TransferProjectDialogComponent implements OnInit {
   }
 
   public GetIcon(proj: IFileDetails): string {
-    return typeof proj.key === "string" ? 'file_present' : 'cloud_queue';
+    return proj.key['repoId'] == null ? 'file_present' : 'cloud_queue';
   }
 }

@@ -33,7 +33,7 @@
         </div>
         <mat-list-item *ngFor="let src of threatSources.Sources" (click)="selectedSource = src" cdkDrag
         [class.highlight-light]="selectedSource === src && !theme.IsDarkMode" [class.highlight-dark]="selectedSource === src && theme.IsDarkMode">
-          <mat-icon mat-list-icon>chevron_right</mat-icon>
+          <mat-icon mat-list-icon>arrow_right</mat-icon>
           <div mat-line>{{src.GetLongName()}}</div>
           <div mat-line *ngIf="src.Likelihood">{{'general.Likelihood' | translate}}: {{GetLMHName(src.Likelihood) | translate}}</div>
           <button mat-icon-button style="margin-left: auto;" (click)="DeleteSource(src)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000"><mat-icon>delete</mat-icon></button>

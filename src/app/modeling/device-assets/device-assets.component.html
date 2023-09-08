@@ -112,7 +112,7 @@
               <mat-list-item *ngFor="let data of assetGroup.GetMyDataFlat()" (click)="selectedMyData = data"
               [class.highlight-light]="selectedMyData === data && !theme.IsDarkMode" [class.highlight-dark]="selectedMyData === data && theme.IsDarkMode"
               matTooltip="{{data.Name}}" matTooltipShowDelay="1000">
-                <mat-icon mat-list-icon>chevron_right</mat-icon>
+                <mat-icon mat-list-icon>arrow_right</mat-icon>
                 <div mat-line>{{data.GetLongName()}}</div>
                 <div mat-line>{{'properties.Sensitivity' | translate}}: {{GetSensitivity(data.Sensitivity) | translate}}</div>
                 <button mat-icon-button style="margin-left: auto;" (click)="DeleteMyData(data)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000"><mat-icon>delete</mat-icon></button>

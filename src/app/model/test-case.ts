@@ -1,3 +1,4 @@
+import { StringExtension } from "../util/string-extension";
 import { MyComponentStack } from "./component";
 import { ConfigFile } from "./config-file";
 import { DatabaseBase, DataReferenceTypes, ICustomNumber, IDataReferences, INote, ViewElementBase } from "./database";
@@ -137,7 +138,7 @@ export class TestCase extends DatabaseBase implements ICustomNumber {
   }
 
   public GetLongName(): string {
-    return 'TC' + this.Number + ') ' + this.Name;
+    return 'TC' + StringExtension.EmptyIfNull(this.Number) + ') ' + this.Name;
   }
 
   public FindReferences(pf: ProjectFile, cf: ConfigFile): IDataReferences[] {

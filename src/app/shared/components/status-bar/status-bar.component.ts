@@ -47,18 +47,11 @@ export class StatusBarComponent implements OnInit {
     }
   }
 
-  private changelogBlocker = false;
   public ShowDebugBtns() {
-    this.changelogBlocker = true;
     this.showDebug = !this.showDebug
   }
 
-  public OpenChangelog(event) {
-    if (event.detail != 2) {
-      setTimeout(() => {
-        if (!this.changelogBlocker) this.dialogService.OpenChangelogDialog();
-        this.changelogBlocker = false;
-      }, 300);
-    }
+  public OpenChangelog() {
+    this.dialogService.OpenChangelogDialog();
   }
 }

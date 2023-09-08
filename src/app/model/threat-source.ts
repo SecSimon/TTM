@@ -1,3 +1,4 @@
+import { StringExtension } from "../util/string-extension";
 import { LowMediumHighNumber } from "./assets";
 import { ConfigFile } from "./config-file";
 import { DatabaseBase, ICustomNumber, IDataReferences } from "./database";
@@ -18,6 +19,7 @@ export class ThreatActor extends DatabaseBase implements ICustomNumber {
 
   constructor(data, pf: ProjectFile, cf: ConfigFile) {
     super(data);
+    this.project = pf;
 
     if (!this.Motive) this.Motive = [];
     if (!this.Capabilities) this.Capabilities = [];
@@ -28,7 +30,7 @@ export class ThreatActor extends DatabaseBase implements ICustomNumber {
   }
 
   public GetLongName(): string {
-    return 'TS' + this.Number + ') ' + this.Name;
+    return 'TS' + StringExtension.EmptyIfNull(this.Number) + ') ' + this.Name;
   }
 
   public FindReferences(pf: ProjectFile, cf: ConfigFile): IDataReferences[] {

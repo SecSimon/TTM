@@ -1,3 +1,4 @@
+import { StringExtension } from "../util/string-extension";
 import { ConfigFile } from "./config-file";
 import { DatabaseBase, DataReferenceTypes, ICustomNumber, IDataReferences, PropertyEditTypes } from "./database";
 import { ProjectFile } from "./project-file";
@@ -65,7 +66,7 @@ export class MyData extends DatabaseBase implements ICustomNumber {
   }
 
   public GetLongName(): string {
-    return 'A' + this.Number + ') ' + this.Name;
+    return 'A' + StringExtension.EmptyIfNull(this.Number) + ') ' + this.Name;
   }
 
   public FindReferences(pf: ProjectFile, cf: ConfigFile): IDataReferences[] {
@@ -201,7 +202,7 @@ export class AssetGroup extends DatabaseBase implements ICustomNumber {
   }
 
   public GetLongName(): string {
-    return 'A' + this.Number + ') ' + this.Name;
+    return 'A' + StringExtension.EmptyIfNull(this.Number) + ') ' + this.Name;
   }
 
   public FindReferences(pf: ProjectFile, cf: ConfigFile): IDataReferences[] {

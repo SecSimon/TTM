@@ -22,7 +22,7 @@
                 <mat-list-item *ngFor="let prop of selectedType.Properties" (click)="selectedProperty = prop" cdkDrag (contextmenu)="OpenContextMenu($event, prop)"
                 [class.highlight-light]="selectedProperty === prop && !theme.IsDarkMode" [class.highlight-dark]="selectedProperty === prop && theme.IsDarkMode"
                 matTooltip="{{prop.DisplayName | translate}}" matTooltipShowDelay="1000">
-                  <mat-icon mat-list-icon>chevron_right</mat-icon>
+                  <mat-icon mat-list-icon>arrow_right</mat-icon>
                   <div mat-line>{{prop.DisplayName | translate}}</div>
                   <div mat-line>{{prop.Type}}: {{GetElementPropertyValue(prop) | translate}}</div>
                   <button mat-icon-button style="margin-left: auto;" (click)="DeleteProperty(prop)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000"><mat-icon>delete</mat-icon></button>
@@ -101,7 +101,7 @@
                 <mat-list-item *ngFor="let threat of typeThreats" (click)="selectedThreatRule = threat" cdkDrag
                 [class.highlight-light]="selectedThreatRule === threat && !theme.IsDarkMode" [class.highlight-dark]="selectedThreatRule === threat && theme.IsDarkMode"
                 matTooltip="{{threat.Name}}" matTooltipShowDelay="1000">
-                  <mat-icon mat-list-icon>chevron_right</mat-icon>
+                  <mat-icon mat-list-icon>arrow_right</mat-icon>
                   <div mat-line>{{threat.Name}}</div>
                   <div mat-line *ngIf="GetStencilRestrictionsCount(threat) == 0">{{'properties.Restrictions' | translate}}: {{'pages.config.noRestrictions' | translate}}</div>
                   <div mat-line *ngIf="GetStencilRestrictionsCount(threat) > 0">{{'properties.Restrictions' | translate}}: {{GetStencilRestrictionsCount(threat)}}</div>
@@ -136,7 +136,7 @@
                 <mat-list-item *ngIf="selectedType.TemplateDFD"
                 [class.highlight-light]="!theme.IsDarkMode" [class.highlight-dark]="theme.IsDarkMode"
                 matTooltip="{{selectedType.TemplateDFD.Name}}" matTooltipShowDelay="1000">
-                  <mat-icon mat-list-icon>chevron_right</mat-icon>
+                  <mat-icon mat-list-icon>arrow_right</mat-icon>
                   <div mat-line>{{selectedType.TemplateDFD.Name}}</div>
                   <button mat-icon-button style="margin-left: auto;" (click)="DeleteTemplate(selectedType.TemplateDFD)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000"><mat-icon>delete</mat-icon></button>
                 </mat-list-item>
@@ -170,7 +170,7 @@
                 <mat-list-item *ngFor="let prop of selectedProtocol.Properties" (click)="selectedProperty = prop" cdkDrag (contextmenu)="OpenContextMenu($event, prop)"
                 [class.highlight-light]="selectedProperty === prop && !theme.IsDarkMode" [class.highlight-dark]="selectedProperty === prop && theme.IsDarkMode"
                 matTooltip="{{prop.DisplayName | translate}}" matTooltipShowDelay="1000">
-                  <mat-icon mat-list-icon>chevron_right</mat-icon>
+                  <mat-icon mat-list-icon>arrow_right</mat-icon>
                   <div mat-line>{{prop.DisplayName | translate}}</div>
                   <div mat-line>{{prop.Type}}: {{GetElementPropertyValue(prop) | translate}}</div>
                   <button mat-icon-button style="margin-left: auto;" (click)="DeleteProperty(prop)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000"><mat-icon>delete</mat-icon></button>
@@ -238,7 +238,7 @@
                 <mat-list-item *ngFor="let threat of typeThreats" (click)="selectedThreatRule = threat" cdkDrag
                 [class.highlight-light]="selectedThreatRule === threat && !theme.IsDarkMode" [class.highlight-dark]="selectedThreatRule === threat && theme.IsDarkMode"
                 matTooltip="{{threat.Name}}" matTooltipShowDelay="1000">
-                  <mat-icon mat-list-icon>chevron_right</mat-icon>
+                  <mat-icon mat-list-icon>arrow_right</mat-icon>
                   <div mat-line>{{threat.Name}}</div>
                   <div mat-line *ngIf="GetStencilRestrictionsCount(threat) == 0">{{'properties.Restrictions' | translate}}: {{'pages.config.noRestrictions' | translate}}</div>
                   <div mat-line *ngIf="GetStencilRestrictionsCount(threat) > 0">{{'properties.Restrictions' | translate}}: {{GetStencilRestrictionsCount(threat)}}</div>
@@ -273,7 +273,7 @@
           <mat-list-item *ngFor="let letter of selectedThreatMnemonic.Letters" (click)="selectedMnemonicLetter = letter" cdkDrag
           [class.highlight-light]="selectedMnemonicLetter === letter && !theme.IsDarkMode" [class.highlight-dark]="selectedMnemonicLetter === letter && theme.IsDarkMode"
           matTooltip="{{letter.Name}}" matTooltipShowDelay="1000">
-            <mat-icon mat-list-icon>chevron_right</mat-icon>
+            <mat-icon mat-list-icon>arrow_right</mat-icon>
             <div mat-line *ngIf="letter.Letter">{{letter.Letter}}</div>
             <div mat-line>{{letter.Name}}</div>
             <button mat-icon-button style="margin-left: auto;" (click)="DeleteMnemonicLetter(letter)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000"><mat-icon>delete</mat-icon></button>

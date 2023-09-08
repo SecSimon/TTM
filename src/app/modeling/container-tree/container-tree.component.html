@@ -17,7 +17,8 @@
       This padding value depends on the mat-icon-button width. -->
     <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle (click)="OnNodeClicked(node)" class="onHover" [style.display]="searchString && hideLeafNode(node) ? 'none' : 'flex'" [class.highlight-light]="isSelected(node) && !theme.IsDarkMode" [class.highlight-dark]="isSelected(node) && theme.IsDarkMode">
       <span style="font-size: small;">{{node.GetProperty('Name')}}</span>&nbsp;<span style="font-size: x-small;">{{GetNodeInfo(node)}}</span> 
-      <mat-icon *ngIf="GetNodeThreats(node) > 0" [matBadge]="GetNodeThreats(node)" matBadgeColor="warn" matBadgeSize="small" matBadgePosition="below">bolt</mat-icon>
+      <mat-icon *ngIf="ShowScenarios && GetNodeScenarios(node) > 0" class="scenarioBadge" [matBadge]="GetNodeScenarios(node)" matBadgeColor="warn" matBadgeSize="small" matBadgePosition="below">flash_on</mat-icon>
+      <mat-icon *ngIf="ShowMeasures && GetNodeMeasures(node) > 0" class="measureBadge" [matBadge]="GetNodeMeasures(node)" matBadgeColor="primary" matBadgeSize="small" matBadgePosition="below">security</mat-icon>
       <button mat-icon-button *ngIf="node !== filteredElement" class="hoverIcon" (click)="filteredElement = node" matTooltip="{{'pages.modeling.containertree.filter' | translate}}" matTooltipShowDelay="1000">
         <mat-icon>filter_alt</mat-icon>
       </button>
@@ -34,7 +35,8 @@
           </mat-icon>
         </button>
         <span style="font-size: small;">{{node.GetProperty('Name')}}</span>
-        <mat-icon *ngIf="GetNodeThreats(node) > 0" [matBadge]="GetNodeThreats(node)" matBadgeColor="warn" matBadgeSize="small" matBadgePosition="below">bolt</mat-icon>
+        <mat-icon *ngIf="ShowScenarios && GetNodeScenarios(node) > 0" class="scenarioBadge" [matBadge]="GetNodeScenarios(node)" matBadgeColor="warn" matBadgeSize="small" matBadgePosition="below">flash_on</mat-icon>
+        <mat-icon *ngIf="ShowMeasures && GetNodeMeasures(node) > 0" class="measureBadge" [matBadge]="GetNodeMeasures(node)" matBadgeColor="primary" matBadgeSize="small" matBadgePosition="below">security</mat-icon>
         <button mat-icon-button *ngIf="node !== filteredElement" class="hoverIcon" (click)="filteredElement = node" matTooltip="{{'pages.modeling.containertree.filter' | translate}}" matTooltipShowDelay="1000">
           <mat-icon>filter_alt</mat-icon>
         </button>
@@ -59,6 +61,18 @@
     <button mat-menu-item [disabled]="filteredElement == null" (click)="filteredElement = null">
       <mat-icon>filter_alt_off</mat-icon>
       <span>{{'pages.modeling.containertree.filterReset' | translate}}</span>
+    </button>
+    <button mat-menu-item>
+      <mat-icon>info</mat-icon>
+      <mat-slide-toggle color="primary" [(ngModel)]="ShowScenarios" (click)="$event.stopPropagation()">
+        {{'general.AttackScenarios' | translate}}
+      </mat-slide-toggle>
+    </button>
+    <button mat-menu-item>
+      <mat-icon>info</mat-icon>
+      <mat-slide-toggle color="primary" [(ngModel)]="ShowMeasures" (click)="$event.stopPropagation()">
+        {{'general.Countermeasures' | translate}}
+      </mat-slide-toggle>
     </button>
   </ng-template> 
 </mat-menu>

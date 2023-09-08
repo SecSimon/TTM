@@ -1,7 +1,7 @@
 <div *ngIf="mitigationProcess" [class.disable]="!canEdit">
   <mat-form-field appearance="fill" style="width: calc(100% - 85px);">
     <mat-label>{{ 'properties.Name' | translate }}</mat-label>
-    <input matInput [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="mitigationProcess.Name" matTooltip="{{mitigationProcess.Name}}" matTooltipShowDelay="1000"/>
+    <input matInput #nameBox [spellcheck]="dataService.HasSpellCheck" [(ngModel)]="mitigationProcess.Name" matTooltip="{{mitigationProcess.Name}}" matTooltipShowDelay="1000"/>
     <button *ngIf="mitigationProcess.Name" matSuffix mat-icon-button (click)="mitigationProcess.Name=''" matTooltip="{{'general.Clear' | translate}}" matTooltipShowDelay="1000">
       <mat-icon>close</mat-icon>
     </button>

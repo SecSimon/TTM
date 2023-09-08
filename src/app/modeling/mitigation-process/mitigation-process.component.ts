@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Optional, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Optional, Output, ViewChild } from '@angular/core';
 import { Countermeasure, MitigationProcess, MitigationProcessStates, MitigationProcessStateUtil, MitigationStates } from '../../model/mitigations';
 import { DataService } from '../../util/data.service';
 import { DialogService } from '../../util/dialog.service';
@@ -23,11 +23,23 @@ export class MitigationProcessComponent implements OnInit {
 
   @Output() public countermeasuresChange = new EventEmitter();
 
+  @ViewChild('nameBox') public nameBox: ElementRef;
+
   constructor(@Optional() mapping: MitigationProcess, public theme: ThemeService, public dataService: DataService, private dialog: DialogService) {
     this.mitigationProcess = mapping;
   }
 
   ngOnInit(): void {
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  public onKeyDown(event: KeyboardEvent) {
+    if (event.key == 'F2') {
+      event.preventDefault();
+      if (this.nameBox) {
+        (this.nameBox.nativeElement as HTMLInputElement).select();
+      }
+    }
   }
 
   public AdoptFromMeasures() {

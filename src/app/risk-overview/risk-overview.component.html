@@ -93,7 +93,7 @@
                   (click)="SelectScenario(row)" (dblclick)="OnScenarioDblClick(row)" (contextmenu)="OpenContextMenu($event, row)">
                 </tr>
                 <tr class="mat-row" *matNoDataRow>
-                  <td class="mat-cell" colspan="9" (contextmenu)="OpenContextMenu($event, null)">{{'pages.modeling.threattable.noThreats' | translate}}</td>
+                  <td class="mat-cell" colspan="12" (contextmenu)="OpenContextMenu($event, null)">{{'pages.modeling.threattable.noThreats' | translate}}</td>
                 </tr>
               </table>
               <div style="visibility: hidden; position: fixed;" [style.left]="menuTopLeftPosition.x" [style.top]="menuTopLeftPosition.y" [matMenuTriggerFor]="rightMenu"></div> 

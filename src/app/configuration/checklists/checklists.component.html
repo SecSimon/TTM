@@ -16,7 +16,7 @@
                   <mat-list-item *ngFor="let level of selectedChecklistType.Levels" (click)="selectedLevel = level" cdkDrag
                   [class.highlight-light]="selectedLevel === level && !theme.IsDarkMode" [class.highlight-dark]="selectedLevel === level && theme.IsDarkMode"
                   matTooltip="{{level.Name}}" matTooltipShowDelay="1000">
-                    <mat-icon mat-list-icon>chevron_right</mat-icon>
+                    <mat-icon mat-list-icon>arrow_right</mat-icon>
                     <div mat-line *ngIf="level.Abbr">{{level.Abbr}}</div>
                     <div mat-line>{{level.Name}}</div>
                     <button mat-icon-button style="margin-left: auto;" (click)="DeleteLevel(level)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000"><mat-icon>delete</mat-icon></button>

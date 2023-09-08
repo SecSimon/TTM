@@ -34,7 +34,7 @@
         <mat-list-item *ngFor="let data of selectedAssetGroup.AssociatedData" (click)="selectedMyData = data" cdkDrag
         [class.highlight-light]="selectedMyData === data && !theme.IsDarkMode" [class.highlight-dark]="selectedMyData === data && theme.IsDarkMode"
         matTooltip="{{data?.Name}}" matTooltipShowDelay="1000">
-          <mat-icon mat-list-icon>chevron_right</mat-icon>
+          <mat-icon mat-list-icon>arrow_right</mat-icon>
           <div mat-line>{{data.Name}}</div>
           <div mat-line>{{'properties.Sensitivity' | translate}}: {{GetSensitivity(data.Sensitivity) | translate}}</div>
           <button mat-icon-button style="margin-left: auto; margin-right: 0px;" [matMenuTriggerFor]="moveMenu" [matMenuTriggerData]="{ groups: GetMoveToGroups(data), item: data }" matTooltip="{{'nav-tree.moveToGroup' | translate}}" matTooltipShowDelay="1000"><mat-icon>low_priority</mat-icon></button>

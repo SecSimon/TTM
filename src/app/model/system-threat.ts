@@ -1,3 +1,4 @@
+import { StringExtension } from "../util/string-extension";
 import { AssetGroup, LowMediumHighNumber, MyData } from "./assets";
 import { ConfigFile } from "./config-file";
 import { DatabaseBase, DataReferenceTypes, ICustomNumber, IDataReferences } from "./database";
@@ -52,7 +53,7 @@ export class SystemThreat extends DatabaseBase implements ICustomNumber {
   }
 
   public GetLongName(): string {
-    return 'ST' + this.Number + ') ' + this.Name;
+    return 'ST' + StringExtension.EmptyIfNull(this.Number) + ') ' + this.Name;
   }
 
   public FindReferences(pf: ProjectFile, cf: ConfigFile): IDataReferences[] {

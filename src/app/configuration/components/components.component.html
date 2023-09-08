@@ -18,7 +18,7 @@
                   <mat-list-item *ngFor="let prop of selectedComponentType.Properties" (click)="selectedProperty = prop" cdkDrag (contextmenu)="OpenContextMenu($event, prop)"
                   [class.highlight-light]="selectedProperty === prop && !theme.IsDarkMode" [class.highlight-dark]="selectedProperty === prop && theme.IsDarkMode"
                   matTooltip="{{prop.DisplayName | translate}}" matTooltipShowDelay="1000">
-                    <mat-icon mat-list-icon>chevron_right</mat-icon>
+                    <mat-icon mat-list-icon>arrow_right</mat-icon>
                     <div mat-line>{{prop.DisplayName | translate}}</div>
                     <div mat-line>{{prop.Type}}</div>
                     <button mat-icon-button style="margin-left: auto;" (click)="DeleteProperty(prop)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000"><mat-icon>delete</mat-icon></button>
@@ -68,7 +68,7 @@
                 <mat-list-item *ngFor="let threat of typeThreats" (click)="selectedThreatRule = threat" cdkDrag (contextmenu)="OpenContextMenu($event, threat)"
                 [class.highlight-light]="selectedThreatRule === threat && !theme.IsDarkMode" [class.highlight-dark]="selectedThreatRule === threat && theme.IsDarkMode"
                 matTooltip="{{threat.Name}}" matTooltipShowDelay="1000">
-                  <mat-icon mat-list-icon>chevron_right</mat-icon>
+                  <mat-icon mat-list-icon>arrow_right</mat-icon>
                   <div mat-line>{{threat.Name}}</div>
                   <div mat-line *ngIf="GetComponentRestrictionsCount(threat) == 0">{{'properties.Restrictions' | translate}}: {{'pages.config.noRestrictions' | translate}}</div>
                   <div mat-line *ngIf="GetComponentRestrictionsCount(threat) > 0">{{'properties.Restrictions' | translate}}: {{GetComponentRestrictionsCount(threat)}}</div>
@@ -91,7 +91,7 @@
                   <mat-list-item *ngFor="let quest of GetQuestions()" (click)="selectedQuestion = quest" cdkDrag (contextmenu)="OpenContextMenu($event, quest)"
                   [class.highlight-light]="selectedQuestion === quest && !theme.IsDarkMode" [class.highlight-dark]="selectedQuestion === quest && theme.IsDarkMode"
                   matTooltip="{{quest?.Name}}" matTooltipShowDelay="1000">
-                    <mat-icon mat-list-icon>chevron_right</mat-icon>
+                    <mat-icon mat-list-icon>arrow_right</mat-icon>
                     <div mat-line>{{quest.Name}}</div>
                     <div mat-line>{{GetOptionTypeName(quest.OptionType) | translate}}</div>
                     <button mat-icon-button style="margin-left: auto; margin-right: 0px;" (click)="DuplicateQuestion(quest)" matTooltip="{{'general.Duplicate' | translate}}" matTooltipShowDelay="1000"><mat-icon>content_copy</mat-icon></button>

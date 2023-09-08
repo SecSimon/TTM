@@ -1,3 +1,7 @@
+## 0.4.18
+
+* Several fixes and UI improvements
+
 ## 0.4.17
 
 * Usability improvement: select name after adding new element

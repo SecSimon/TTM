@@ -19,10 +19,37 @@ export class ContainerTreeComponent implements OnInit {
   private subscription: Subscription;
   private _elements: IContainer;
   private infoMap = new Map<string, string>();
-  private threatMap = new Map<string, number>();
+  private scenarioMap = new Map<string, number>();
+  private measureMap = new Map<string, number>();
+  private showScenarios: boolean = null;
+  private showMeasures: boolean = null;
 
   private isContainer(arg: any): arg is IContainer {
     return arg && arg.GetChildren && typeof(arg.GetChildren) == 'function';
+  }
+
+  public get ShowScenarios(): boolean {
+    if (this.showScenarios == null) {
+      const res = this.locStorage.Get(LocStorageKeys.PAGE_MODELING_CONTAINERTREE_SHOW_SCEN);
+      this.showScenarios = res == 'true' || res == null;
+    }
+    return this.showScenarios;
+  };
+  public set ShowScenarios(val: boolean) {
+    this.locStorage.Set(LocStorageKeys.PAGE_MODELING_CONTAINERTREE_SHOW_SCEN, String(val));
+    this.showScenarios = val;
+  }
+
+  public get ShowMeasures(): boolean {
+    if (this.showMeasures == null) {
+      const res = this.locStorage.Get(LocStorageKeys.PAGE_MODELING_CONTAINERTREE_SHOW_MEAS);
+      this.showMeasures = res == 'true' || res == null;
+    }
+    return this.showMeasures;
+  };
+  public set ShowMeasures(val: boolean) {
+    this.locStorage.Set(LocStorageKeys.PAGE_MODELING_CONTAINERTREE_SHOW_MEAS, String(val));
+    this.showMeasures = val;
   }
 
   public treeControl = new NestedTreeControl<ViewElementBase>(node => {
@@ -78,7 +105,8 @@ export class ContainerTreeComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.dataService.Project.AttackScenariosChanged.subscribe(x => this.threatMap = new Map<string, number>());
+    this.dataService.Project.AttackScenariosChanged.subscribe(x => this.scenarioMap = new Map<string, number>());
+    this.dataService.Project.CountermeasuresChanged.subscribe(x => this.measureMap = new Map<string, number>());
     this.RefreshTree();
   }
 
@@ -100,11 +128,19 @@ export class ContainerTreeComponent implements OnInit {
     return '';
   }
 
-  public GetNodeThreats(node: ViewElementBase): number {
-    if (this.threatMap.has(node.ID)) return this.threatMap.get(node.ID);
+  public GetNodeScenarios(node: ViewElementBase): number {
+    if (this.scenarioMap.has(node.ID)) return this.scenarioMap.get(node.ID);
 
     const count = this.dataService.Project.GetAttackScenariosApplicable().filter(x => x.Target == node || (x.Targets?.includes(node))).length;
-    this.threatMap.set(node.ID, count);
+    this.scenarioMap.set(node.ID, count);
+    return count;
+  }
+
+  public GetNodeMeasures(node: ViewElementBase): number {
+    if (this.measureMap.has(node.ID)) return this.measureMap.get(node.ID);
+
+    const count = this.dataService.Project.GetCountermeasuresApplicable().filter(x => x.Targets.includes(node)).length;
+    this.measureMap.set(node.ID, count);
     return count;
   }
 

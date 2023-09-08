@@ -466,7 +466,7 @@
           <mat-list-item *ngFor="let mit of GetControls()" (click)="selectedControl = mit" cdkDrag
             [class.highlight-light]="selectedControl === mit && !theme.IsDarkMode" [class.highlight-dark]="selectedControl === mit && theme.IsDarkMode"
             matTooltip="{{mit.Name}}" matTooltipShowDelay="1000">
-            <mat-icon mat-list-icon>chevron_right</mat-icon>
+            <mat-icon mat-list-icon>arrow_right</mat-icon>
             <div mat-line style="pointer-events: initial;">{{mit.Name | translate}}</div>
             <button mat-icon-button style="margin-left: auto; margin-right: 0px;" (click)="RemoveControl(mit)" matTooltip="{{'general.Remove' | translate}}" matTooltipShowDelay="1000"><mat-icon>remove</mat-icon></button>
             <button mat-icon-button style="margin-left: auto;" (click)="DeleteControl(mit)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000"><mat-icon>delete</mat-icon></button>

@@ -7,7 +7,7 @@
       <mat-list-item *ngFor="let chart of charts" (click)="selectedChart = chart" cdkDrag
         [class.highlight-light]="selectedChart === chart && !theme.IsDarkMode" [class.highlight-dark]="selectedChart === chart && theme.IsDarkMode"
         matTooltip="{{chart.Name}}" matTooltipShowDelay="1000">
-        <mat-icon mat-list-icon>chevron_right</mat-icon>
+        <mat-icon mat-list-icon>arrow_right</mat-icon>
         <div mat-line style="pointer-events: initial;">{{chart.Name | translate}}</div>
         <button mat-icon-button style="margin-left: auto;" (click)="DeleteChart(chart)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000"><mat-icon>delete</mat-icon></button>
       </mat-list-item>
@@ -33,7 +33,7 @@
         </div>
         <mat-list-item *ngFor="let tag of selectedChart.MyTags" cdkDrag
           matTooltip="{{tag.Name}}" matTooltipShowDelay="1000">
-          <mat-icon mat-list-icon>chevron_right</mat-icon>
+          <mat-icon mat-list-icon>arrow_right</mat-icon>
           <div mat-line style="pointer-events: initial;">{{tag.Name | translate}}</div>
           <button mat-icon-button style="margin-left: auto;" (click)="RemoveTag(tag)" matTooltip="{{'general.Remove' | translate}}" matTooltipShowDelay="1000"><mat-icon>remove</mat-icon></button>
         </mat-list-item>

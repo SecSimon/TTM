@@ -55,8 +55,10 @@
   <button mat-icon-button tourAnchor="set-progress" class="msgBtn" style="margin-left: 20px;" (click)="dialogService.OpenProgresstrackerDialog()">
     <mat-icon class="iconBtn">trending_up</mat-icon>{{'status-bar.progress' | translate}}: <span *ngIf="dataService.Project">{{GetProgress()}}</span><span *ngIf="!dataService.Project">-</span>
   </button>
-  <button class="buttonAsText" style="float: right; margin-right: 5px; padding-top: 2px;" (click)="OpenChangelog($event)" (dblclick)="ShowDebugBtns()">
+  <button class="buttonAsText" style="float: right; margin-right: 5px; padding-top: 2px;" (click)="OpenChangelog()">
     v{{version}}
+  </button>
+  <button class="buttonAsText" style="float: right; margin-right: 5px; padding-top: 2px; width: 30px; height: 18px;" (click)="ShowDebugBtns()">
   </button>
   <ng-container *ngIf="showDebug">
     <button mat-icon-button class="msgBtn" style="float: right; margin-right: 40px;" (click)="dataService.Debug3()">

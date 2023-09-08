@@ -71,7 +71,7 @@ export class AttackScenarioComponent implements OnInit {
     return this.dataService.Config.GetThreatCategoryGroups().filter(x => x.ThreatCategories.length > 0);
   }
 
-  private sysThreatGroups: any[];
+  public sysThreatGroups: any[];
   public GetSystemThreatGroups() {
     if (this.sysThreatGroups == null) {
       this.sysThreatGroups = [];

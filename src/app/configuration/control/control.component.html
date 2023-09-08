@@ -45,7 +45,7 @@
         <mat-list-item *ngFor="let tip of control.MitigationTips" (click)="selectedMitigationTip = tip" cdkDrag
         [class.highlight-light]="selectedMitigationTip === tip && !theme.IsDarkMode" [class.highlight-dark]="selectedMitigationTip === tip && theme.IsDarkMode"
         matTooltip="{{tip.Name}}" matTooltipShowDelay="1000">
-          <mat-icon mat-list-icon>chevron_right</mat-icon>
+          <mat-icon mat-list-icon>arrow_right</mat-icon>
           <div mat-line style="pointer-events: initial;">{{tip.Name | translate}}</div>
           <div mat-line style="pointer-events: initial;">{{'properties.LifeCycles' | translate}}: {{GetLifeCycleNames(tip)}}</div>
           <button mat-icon-button style="margin-left: auto;" (click)="DeleteTip(tip)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000"><mat-icon>delete</mat-icon></button>

@@ -70,7 +70,7 @@
                     <mat-list-item *ngFor="let template of exportTemplates" (click)="selectedExportTemplate = template"
                       [class.highlight-light]="selectedExportTemplate === template && !theme.IsDarkMode" [class.highlight-dark]="selectedExportTemplate === template && theme.IsDarkMode"
                       matTooltip="{{template.Name}}" matTooltipShowDelay="1000">
-                      <mat-icon mat-list-icon>chevron_right</mat-icon>
+                      <mat-icon mat-list-icon>arrow_right</mat-icon>
                       <div mat-line style="pointer-events: initial;">{{template.Name}}</div>
                       <button mat-icon-button style="margin-left: auto;" (click)="DeleteTemplate(template)" matTooltip="{{'general.Delete' | translate}}" matTooltipShowDelay="1000"><mat-icon>delete</mat-icon></button>
                     </mat-list-item>

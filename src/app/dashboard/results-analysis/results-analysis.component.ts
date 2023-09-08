@@ -57,13 +57,6 @@ export class ResultsAnalysisComponent implements AfterViewInit {
   private _selectedCountermeasures: Countermeasure[] = [];
 
   public menuTopLeftPosition =  {x: '0', y: '0'};
-  public get isBlueColorScheme(): boolean {
-    let res = this.locStorage.Get(LocStorageKeys.PAGE_DASHBOARD_COLOR_SCHEME);
-    return res == 'true';
-  };
-  public set isBlueColorScheme(val: boolean) {
-    this.locStorage.Set(LocStorageKeys.PAGE_DASHBOARD_COLOR_SCHEME, String(val));
-  }
   @ViewChild(MatMenuTrigger) public matMenuTrigger: MatMenuTrigger; 
   @ViewChild('threattable') sortThreats: MatSort;
   @ViewChild('countermeasuretable') sortCountermeasures: MatSort;
@@ -180,16 +173,16 @@ export class ResultsAnalysisComponent implements AfterViewInit {
     hei = hei - 36 - 17 - 20 - 33 - 60; // h2, h4, margin?, legend, margin
     let wid = (document.getElementById('diagramContainer').clientWidth - 20 - 3*10) / 4;
 
-    let dia1 = ResultsAnalysisComponent.CreateSeveritySummaryDiagram(this.dataService.Project, this.translate, this.theme.IsDarkMode, this.isBlueColorScheme, wid, hei);
-    let dia3 = ResultsAnalysisComponent.CreateCountermeasureSummaryDiagram(this.dataService.Project, this.translate, this.theme.IsDarkMode, this.isBlueColorScheme, wid, hei);
-    let dia5 = ResultsAnalysisComponent.CreateSeverityPerLifecycleDiagram(this.dataService.Project, this.translate, this.theme.IsDarkMode, this.isBlueColorScheme, wid, hei);
-    let dia4 = ResultsAnalysisComponent.CreateSeverityPerTypeDiagram(this.dataService.Project, this.translate, this.theme.IsDarkMode, this.isBlueColorScheme, wid, hei);
-    let dia2 = ResultsAnalysisComponent.CreateRiskSummaryDiagram(this.dataService.Project, this.translate, this.theme.IsDarkMode, this.isBlueColorScheme, wid, hei);
-    let dia6 = ResultsAnalysisComponent.CreateSeverityPerImpactCatDiagram(this.dataService.Project, this.translate, this.theme.IsDarkMode, this.isBlueColorScheme, wid, hei);
+    let dia1 = ResultsAnalysisComponent.CreateSeveritySummaryDiagram(this.dataService.Project, this.translate, this.theme.IsDarkMode, wid, hei);
+    let dia3 = ResultsAnalysisComponent.CreateCountermeasureSummaryDiagram(this.dataService.Project, this.translate, this.theme.IsDarkMode, wid, hei);
+    let dia5 = ResultsAnalysisComponent.CreateSeverityPerLifecycleDiagram(this.dataService.Project, this.translate, this.theme.IsDarkMode, wid, hei);
+    let dia4 = ResultsAnalysisComponent.CreateSeverityPerTypeDiagram(this.dataService.Project, this.translate, this.theme.IsDarkMode, wid, hei);
+    let dia2 = ResultsAnalysisComponent.CreateRiskSummaryDiagram(this.dataService.Project, this.translate, this.theme.IsDarkMode, wid, hei);
+    let dia6 = ResultsAnalysisComponent.CreateSeverityPerImpactCatDiagram(this.dataService.Project, this.translate, this.theme.IsDarkMode, wid, hei);
 
     let res = [];
     this.dataService.Project.GetMyTagCharts().forEach(x => {
-      res.push(ResultsAnalysisComponent.CreateTagDiagram(this.dataService.Project, this.translate, this.theme.IsDarkMode, this.isBlueColorScheme, wid, hei, x));
+      res.push(ResultsAnalysisComponent.CreateTagDiagram(this.dataService.Project, this.translate, this.theme.IsDarkMode,  wid, hei, x));
     });
     this.diagrams = [...res, dia1, dia2, dia3, dia4, dia5, dia6];
   }
@@ -202,7 +195,7 @@ export class ResultsAnalysisComponent implements AfterViewInit {
     }, 3000);
   }
 
-  public static CreateTagDiagram(pf: ProjectFile, translate: TranslateService, isDarkmode: boolean, isBlueColorScheme: boolean, wid, hei, chart: MyTagChart): IDiagramData {
+  public static CreateTagDiagram(pf: ProjectFile, translate: TranslateService, isDarkmode: boolean, wid, hei, chart: MyTagChart): IDiagramData {
     let diagramValues: IStackedSeries[] = [];
 
     let getServeritySeries = (scenarios: AttackScenario[]): ISerie[] => {
@@ -249,14 +242,14 @@ export class ResultsAnalysisComponent implements AfterViewInit {
     let dia: IDiagramData = {
       results: diagramValues,
       view: [wid, hei],
-      scheme: isBlueColorScheme ? 'air' : { domain: schema },
+      scheme: { domain: schema },
       xAxisLabel: chart.Name,
       yAxisLabel: translate.instant('pages.dashboard.NumberOfThreats')
     };
     return dia;
   }
 
-  public static CreateSeveritySummaryDiagram(pf: ProjectFile, translate: TranslateService, isDarkmode: boolean, isBlueColorScheme: boolean, wid, hei): IDiagramData {
+  public static CreateSeveritySummaryDiagram(pf: ProjectFile, translate: TranslateService, isDarkmode: boolean, wid, hei): IDiagramData {
     let diagramValues: IStackedSeries[] = [];
     let allAttackScenarios = pf.GetAttackScenariosApplicable();
     let getSeries = (mappings: AttackScenario[]): ISerie[] => {
@@ -304,14 +297,14 @@ export class ResultsAnalysisComponent implements AfterViewInit {
     let dia: IDiagramData = {
       results: diagramValues,
       view: [wid, hei],
-      scheme: isBlueColorScheme ? 'air' : { domain: [ResultsAnalysisComponent.getNeutral(isDarkmode), DiaColors.Green, DiaColors.Yellow, DiaColors.Red, DiaColors.DarkRed] },
+      scheme: { domain: [ResultsAnalysisComponent.getNeutral(isDarkmode), DiaColors.Green, DiaColors.Yellow, DiaColors.Red, DiaColors.DarkRed] },
       xAxisLabel: translate.instant('pages.dashboard.SeverityOverview'),
       yAxisLabel: translate.instant('pages.dashboard.NumberOfThreats')
     };
     return dia;
   }
 
-  public static CreateRiskSummaryDiagram(pf: ProjectFile, translate: TranslateService, isDarkmode: boolean, isBlueColorScheme: boolean, wid, hei): IDiagramData {
+  public static CreateRiskSummaryDiagram(pf: ProjectFile, translate: TranslateService, isDarkmode: boolean, wid, hei): IDiagramData {
     let diagramValues: IStackedSeries[] = [];
     let allAttackScenarios = pf.GetAttackScenariosApplicable();
     let getSeries = (scenarios: AttackScenario[]): ISerie[] => {
@@ -359,14 +352,14 @@ export class ResultsAnalysisComponent implements AfterViewInit {
     let dia: IDiagramData = {
       results: diagramValues,
       view: [wid, hei],
-      scheme: isBlueColorScheme ? 'air' : { domain: [ResultsAnalysisComponent.getNeutral(isDarkmode), DiaColors.Green, DiaColors.Yellow, DiaColors.Red, DiaColors.DarkRed] },
+      scheme: { domain: [ResultsAnalysisComponent.getNeutral(isDarkmode), DiaColors.Green, DiaColors.Yellow, DiaColors.Red, DiaColors.DarkRed] },
       xAxisLabel: translate.instant('pages.dashboard.RiskOverview'),
       yAxisLabel: translate.instant('pages.dashboard.NumberOfThreats')
     };
     return dia;
   }
 
-  public static CreateCountermeasureSummaryDiagram(pf: ProjectFile, translate: TranslateService, isDarkmode: boolean, isBlueColorScheme: boolean, wid, hei): IDiagramData {
+  public static CreateCountermeasureSummaryDiagram(pf: ProjectFile, translate: TranslateService, isDarkmode: boolean, wid, hei): IDiagramData {
     let diagramValues: IStackedSeries[] = [];
     let allCountermeasures = pf.GetCountermeasuresApplicable();
     let getSeries = (mappings: Countermeasure[]): ISerie[] => {
@@ -413,14 +406,14 @@ export class ResultsAnalysisComponent implements AfterViewInit {
     let dia: IDiagramData = {
       results: diagramValues,
       view: [wid, hei],
-      scheme: isBlueColorScheme ? 'air' : { domain: [DiaColors.DarkRed, DiaColors.Red, DiaColors.Yellow, DiaColors.Green] },
+      scheme: { domain: [DiaColors.DarkRed, DiaColors.Red, DiaColors.Yellow, DiaColors.Green] },
       xAxisLabel: translate.instant('pages.dashboard.MeasureOverview'),
       yAxisLabel: translate.instant('pages.dashboard.NumberOfCountermeasures')
     };
     return dia;
   }
 
-  public static CreateSeverityPerLifecycleDiagram(pf: ProjectFile, translate: TranslateService, isDarkmode: boolean, isBlueColorScheme: boolean, wid, hei): IDiagramData {
+  public static CreateSeverityPerLifecycleDiagram(pf: ProjectFile, translate: TranslateService, isDarkmode: boolean, wid, hei): IDiagramData {
     let diagramValues: IStackedSeries[] = [];
     let allAttackScenarios = pf.GetAttackScenariosApplicable();
     let getSeries = (mappings: AttackScenario[]): ISerie[] => {
@@ -454,14 +447,14 @@ export class ResultsAnalysisComponent implements AfterViewInit {
     let dia: IDiagramData = {
       results: diagramValues,
       view: [wid, hei],
-      scheme: isBlueColorScheme ? 'air' : { domain: [ResultsAnalysisComponent.getNeutral(isDarkmode), DiaColors.Green, DiaColors.Yellow, DiaColors.Red, DiaColors.DarkRed] },
+      scheme: { domain: [ResultsAnalysisComponent.getNeutral(isDarkmode), DiaColors.Green, DiaColors.Yellow, DiaColors.Red, DiaColors.DarkRed] },
       xAxisLabel: translate.instant('pages.dashboard.SevertiyPerLifecycle'),
       yAxisLabel: translate.instant('pages.dashboard.NumberOfThreats')
     };
     return dia;
   }
 
-  public static CreateSeverityPerTypeDiagram(pf: ProjectFile, translate: TranslateService, isDarkmode: boolean, isBlueColorScheme: boolean, wid, hei): IDiagramData {
+  public static CreateSeverityPerTypeDiagram(pf: ProjectFile, translate: TranslateService, isDarkmode: boolean, wid, hei): IDiagramData {
     let diagramValues: IStackedSeries[] = [];
     let allAttackScenarios = pf.GetAttackScenariosApplicable();
     let getSeries = (mappings: AttackScenario[]): ISerie[] => {
@@ -513,14 +506,14 @@ export class ResultsAnalysisComponent implements AfterViewInit {
     let dia: IDiagramData = {
       results: diagramValues,
       view: [wid, hei],
-      scheme: isBlueColorScheme ? 'air' : { domain: [ResultsAnalysisComponent.getNeutral(isDarkmode), DiaColors.Green, DiaColors.Yellow, DiaColors.Red, DiaColors.DarkRed] },
+      scheme: { domain: [ResultsAnalysisComponent.getNeutral(isDarkmode), DiaColors.Green, DiaColors.Yellow, DiaColors.Red, DiaColors.DarkRed] },
       xAxisLabel: translate.instant('pages.dashboard.SeverityPerType'),
       yAxisLabel: translate.instant('pages.dashboard.NumberOfThreats')
     };
     return dia;
   }
 
-  public static CreateSeverityPerImpactCatDiagram(pf: ProjectFile, translate: TranslateService, isDarkmode: boolean, isBlueColorScheme: boolean, wid, hei): IDiagramData {
+  public static CreateSeverityPerImpactCatDiagram(pf: ProjectFile, translate: TranslateService, isDarkmode: boolean, wid, hei): IDiagramData {
     let diagramValues: IStackedSeries[] = [];
     let allAttackScenarios = pf.GetAttackScenariosApplicable();
     let getSeries = (scenarios: AttackScenario[]): ISerie[] => {
@@ -546,7 +539,7 @@ export class ResultsAnalysisComponent implements AfterViewInit {
     let dia: IDiagramData = {
       results: diagramValues,
       view: [wid, hei],
-      scheme: isBlueColorScheme ? 'air' : { domain: [ResultsAnalysisComponent.getNeutral(isDarkmode), DiaColors.Green, DiaColors.Yellow, DiaColors.Red, DiaColors.DarkRed] },
+      scheme: { domain: [ResultsAnalysisComponent.getNeutral(isDarkmode), DiaColors.Green, DiaColors.Yellow, DiaColors.Red, DiaColors.DarkRed] },
       xAxisLabel: translate.instant('pages.dashboard.SeverityPerImpactCategory'),
       yAxisLabel: translate.instant('pages.dashboard.NumberOfThreats')
     };

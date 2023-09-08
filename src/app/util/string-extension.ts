@@ -45,6 +45,11 @@ export class StringExtension {
     });
   }
 
+  public static EmptyIfNull(val: string) {
+    if (val == null) return '';
+    return val;
+  }
+
   public static NullOrEmpty(val: string) {
     return val == null || val == '';
   }

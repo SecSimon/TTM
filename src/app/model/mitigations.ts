@@ -1,3 +1,4 @@
+import { StringExtension } from "../util/string-extension";
 import { ConfigFile } from "./config-file";
 import { DatabaseBase, DataReferenceTypes, ICustomNumber, IDataReferences, INote, ViewElementBase } from "./database";
 import { MyTag } from "./my-tags";
@@ -347,12 +348,16 @@ export class Countermeasure extends DatabaseBase implements ICustomNumber {
     return this.project.GetView(this.ViewID);
   }
 
+  public GetTestCases() {
+    return this.project.GetTestCases().filter(x => x.LinkedMeasures.includes(this));
+  }
+
   public CheckUniqueNumber(): boolean {
     return this.project.GetCountermeasures().some(x => x.Number == this.Number && x.ID != this.ID);
   }
 
   public GetLongName(): string {
-    return 'CM' + this.Number + ') ' + this.Name + ' (' + (this.Targets?.map(x => x.Name).join(', ')) + ')';
+    return 'CM' + StringExtension.EmptyIfNull(this.Number) + ') ' + this.Name + ' (' + (this.Targets?.map(x => x.Name).join(', ')) + ')';
   }
 
   public CleanUpReferences() {
@@ -458,7 +463,7 @@ export class MitigationProcess extends DatabaseBase implements ICustomNumber {
   }
 
   public GetLongName(): string {
-    return 'MP' + this.Number + ') ' + this.Name;
+    return 'MP' + StringExtension.EmptyIfNull(this.Number) + ') ' + this.Name;
   }
 
   public FindReferences(pf: ProjectFile, cf: ConfigFile): IDataReferences[] {
