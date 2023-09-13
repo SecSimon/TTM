@@ -52,6 +52,8 @@ export class RulesComponent extends NavTreeBase implements OnInit {
     const prevNodes = this.Nodes;
     this.Nodes = [];
 
+    if (!this.dataService.Config) return;
+
     let createRule = (rule: ThreatRule, group: ThreatRuleGroup, groupNode: INavigationNode, groupNodes: INavigationNode[]): INavigationNode => {
       let node: INavigationNode = {
         name: () => rule.Name,

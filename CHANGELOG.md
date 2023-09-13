@@ -1,3 +1,9 @@
+## 0.4.19
+
+* Refactoring file handling with password protection dialog
+* Fix: error in reporting
+* UI improvements and fixes
+
 ## 0.4.18
 
 * Several fixes and UI improvements

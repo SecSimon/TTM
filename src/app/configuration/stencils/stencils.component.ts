@@ -67,7 +67,9 @@ export class StencilsComponent extends NavTreeBase implements OnInit {
 
   constructor(public theme: ThemeService, public dataService: DataService, private dialog: DialogService, private locStorageService: LocalStorageService) { 
     super();
-    dataService.ConfigChanged.subscribe(x => this.createNodes());
+    dataService.ConfigChanged.subscribe(x => {
+      if (x) this.createNodes()
+    });
   }
 
   ngOnInit(): void {

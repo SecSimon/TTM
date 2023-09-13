@@ -19,7 +19,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { DiagramTypes } from '../model/diagram';
 
 import { v4 as uuidv4 } from 'uuid';
-import { saveAs } from 'file-saver';
+import { saveAs as saveAsDialog } from 'file-saver';
 import { StringExtension } from './string-extension';
 
 
@@ -30,6 +30,33 @@ import versionFile from '../../assets/version.json';
 import { ElectronService } from '../core/services';
 import { TransferProjectDialogComponent } from '../home/Dialogs/transfer-project-dialog/transfer-project-dialog.component';
 
+export enum FileTypes {
+  Project = 1,
+  Config = 2
+}
+
+export enum FileSources {
+  Import = 1,
+  FileSystem = 2,
+  GitHub = 3
+}
+
+export interface IFile {
+  type: FileTypes;
+  source: FileSources;
+  name: string;
+  path: string;
+  isEncrypted: boolean;  
+  repoId?: number;
+  sha?: string;
+  importData?: any;
+}
+
+export interface IFileContent {
+  content: string;
+  encrypted?: string;
+}
+
 export interface IGHRepository {
   id: number;
   name: string;
@@ -38,24 +65,6 @@ export interface IGHRepository {
   updated: Date;
   private: boolean;
   isWritable: boolean;
-}
-
-export interface IGHFile {
-  repoId: number;
-  name: string;
-  path: string;
-  sha: string;
-  isEncrypted: boolean;
-}
-
-export interface IFSFile {
-  path: string;
-  isEncrypted: boolean;
-}
-
-export interface IGHFileContent {
-  content: string;
-  encrypted?: string;
 }
 
 export interface IGHCommitInfo {
@@ -75,6 +84,7 @@ export enum UserModes {
   providedIn: 'root'
 })
 export class DataService {
+  private _selectedFile: IFile;
   private hasSpellCheck: boolean = null;
 
   private userMode: UserModes = UserModes.None;
@@ -84,16 +94,15 @@ export class DataService {
   private userEmail: string;
   private accessToken: string;
   private repos: IGHRepository[] = [];
-  private availableGHProjects: IGHFile[] = [];
-  private availableGHConfigs: IGHFile[] = [];
-  private selectedGHProject: IGHFile;
-  private selectedGHConfig: IGHFile;
-  private availableFSProjects: IFSFile[] = [];
-  private availableFSConfigs: IFSFile[] = [];
-  private selectedFSProject: IFSFile;
-  private selectedFSConfig: IFSFile;
+  private availableFiles: IFile[] = [];
 
-  private projectContentCrypto: MyCrypto;
+  private get selectedFile(): IFile { return this._selectedFile; }
+  private set selectedFile(val: IFile) {
+    this._selectedFile = val;
+    if (val) this.addFileToHistory(val);
+  }
+
+  private fileContentCrypto: MyCrypto;
 
   private unsavedChangesTimer: NodeJS.Timer;
   private unsavedChangesMinutes: number;
@@ -104,6 +113,7 @@ export class DataService {
   constructor(private locStorage: LocalStorageService, private isLoading: IsLoadingService, private http: HttpClient, private router: Router, private clipboard: Clipboard,
     private dialog: MatDialog, private messagesService: MessagesService, private translate: TranslateService, private fileUpdate: FileUpdateService, private zone: NgZone, 
     public electron: ElectronService) {
+    this.checkAppVersionUpdate();
     this.restoreUserAccount();
     if (this.UserMode == UserModes.None) {
       if (this.locStorage.Get(LocStorageKeys.AUTH_GUEST) == 'true') this.userMode = UserModes.Guest;
@@ -117,7 +127,7 @@ export class DataService {
     setTimeout(() => {
       const octokit = new Octokit();
       octokit.repos.listReleases({ owner: 'SecSimon', repo: 'TTM' }).then(({data}) => {
-        const newerVersion = data.find(x => this.isNewVersion(x.tag_name));
+        const newerVersion = data.find(x => this.isNewVersion(x.tag_name, versionFile.version));
         if (newerVersion) {
           this.messagesService.Info(StringExtension.Format(this.translate.instant('messages.info.newVersion'), newerVersion.tag_name));
           setTimeout(() => {
@@ -128,51 +138,55 @@ export class DataService {
     }, 12000);
     
     if (this.electron.isElectron && this.electron.ipcRenderer) {
+      this.electron.ipcRenderer.on('oncode', (e, args) => {
+        this.zone.run(() => this.LogIn(args));
+      });
       this.electron.ipcRenderer.on('OnNew', () => {
-        this.zone.run(() => this.NewProject());
+        this.zone.run(() => this.OnNewProject());
       });
       this.electron.ipcRenderer.on('OnSave', () => {
         this.zone.run(() => this.OnSave());
       });
       this.electron.ipcRenderer.on('OnSaveAs', () => {
-        this.zone.run(() => this.OnSaveAs());
+        this.zone.run(() => this.OnSave(true));
       });
-      this.electron.ipcRenderer.on('OnDownloadProject', () => {
-        this.zone.run(() => {
-          if (this.Project) this.ExportFile(true);
-          else if (this.Config) this.ExportFile(false);
-        });
+      this.electron.ipcRenderer.on('OnLocalDownload', () => {
+        this.zone.run(() => this.OnSave(null, true));
       });
-      this.electron.ipcRenderer.on('OnCloseProject', () => {
-        this.zone.run(() => this.OnCloseProject());
+      this.electron.ipcRenderer.on('OnCloseFile', () => {
+        this.zone.run(() => this.OnCloseFile());
       });
 
-      this.electron.ipcRenderer.on('OnImportFile', (event, data, filePath: string) => {
+      this.electron.ipcRenderer.on('OnOpenFile', (event, data, filePath: string) => {
         this.zone.run(() => {
           if (!this.IsLoggedIn) this.GuestLogin();
-          this.OnCloseProject().then(() => {
+          this.OnCloseFile().then(() => {
             const content = JSON.parse(data);
-            this.locStorage.Remove(LocStorageKeys.LAST_PROJECT);
-            this.importFile(content, { path: filePath, isEncrypted: null }, null);
+            this.locStorage.Remove(LocStorageKeys.LAST_FILE);
+            this.OnLoadFile({ source: FileSources.FileSystem, importData: content, path: filePath, name: this.GetFileName(filePath), isEncrypted: null, type: null})
           });
         });
       });
 
-      this.electron.ipcRenderer.send('OnMyReady');
+      this.electron.ipcRenderer.send('RendererReady');
 
-      const lastFiles = this.getLastProjectHistory().filter(x => x.startsWith('FS:')).map(x => x.substring(3));
-      if (lastFiles.length > 0) this.electron.ipcRenderer.send('ExistFiles', lastFiles);
+      const lastFiles = this.getLastFileHistory().filter(x => x.source == FileSources.FileSystem);
+      if (lastFiles.length > 0) this.electron.ipcRenderer.send('ExistFiles', lastFiles.map(x => x.path));
 
-      this.electron.ipcRenderer.on('OnExistingFiles', (event, files: string[]) => {
+      this.electron.ipcRenderer.on('ExistFilesCallback', (event, files: string[]) => {
         this.zone.run(() => {
-          files.forEach(x => this.availableFSProjects.push({ path: x, isEncrypted: null }));
+          files.forEach(x => this.addFileToAvailableFiles(lastFiles.find(y => y.path == x && y.source == FileSources.FileSystem)));
 
-          const lastProject = this.locStorage.Get(LocStorageKeys.LAST_PROJECT);
-          if (lastProject) {
-            const parsed = JSON.parse(lastProject);
-            if (this.availableFSProjects.some(x => x.path == parsed['path'])) {
-              if (!this.IsLoggedIn) this.GuestLogin();
-              this.LoadProjectFS({ path: parsed['path'], isEncrypted: null });
+          const lastFile = this.locStorage.Get(LocStorageKeys.LAST_FILE);
+          if (lastFile) {
+            const parsed = JSON.parse(lastFile) as IFile;
+            if (parsed.source == FileSources.FileSystem) {
+              const f = this.AvailableFiles.find(x => x.source == FileSources.FileSystem && x.path == parsed.path);
+              if (f) {
+                if (!this.IsLoggedIn) this.GuestLogin();
+                this.messagesService.Info(StringExtension.Format(this.translate.instant('messages.info.loadFile'), f.name));
+                this.OnLoadFile(f);
+              }
             }
           }
         });
@@ -201,14 +215,16 @@ export class DataService {
   public get UserDisplayName(): string { return !StringExtension.NullOrEmpty(this.UserName) ? this.UserName : this.UserAccount }
 
   public get Repos(): IGHRepository[] { return this.repos; }
-  public get AvailableGHProjects(): IGHFile[] { return this.availableGHProjects; }
-  public get AvailableGHConfigs(): IGHFile[] { return this.availableGHConfigs; }
-  public get AvailableFSProjects(): IFSFile[] { return this.availableFSProjects; }
-  public get AvailableFSConfigs(): IFSFile[] { return this.availableFSConfigs; }
-  public get SelectedGHProject(): IGHFile { return this.selectedGHProject; }
-  public get SelectedGHConfig(): IGHFile { return this.selectedGHConfig; }
-  public get SelectedFSProject(): IFSFile { return this.selectedFSProject; }
-  public get SelectedFSConfig(): IFSFile { return this.selectedFSConfig; }
+  public get SelectedFile(): IFile { return this.selectedFile; }
+  public get SelectedGHFile(): IFile { return this.selectedFile?.source == FileSources.GitHub ? this.SelectedFile : null; }
+  public get SelectedFSFile(): IFile { return this.selectedFile?.source == FileSources.GitHub ? this.SelectedFile : null; }
+  public get AvailableFiles(): IFile[] { return this.availableFiles; }
+  public get AvailableProjects(): IFile[] { return this.availableFiles.filter(x => x.type == FileTypes.Project); }
+  public get AvailableConfigs(): IFile[] { return this.availableFiles.filter(x => x.type == FileTypes.Config); }
+  public get AvailableFSProjects(): IFile[] { return this.availableFiles.filter(x => x.source == FileSources.FileSystem && x.type == FileTypes.Project); }
+  public get AvailableFSConfigs(): IFile[] { return this.availableFiles.filter(x => x.source == FileSources.FileSystem && x.type == FileTypes.Config); }
+  public get AvailableGHProjects(): IFile[] { return this.availableFiles.filter(x => x.source == FileSources.GitHub && x.type == FileTypes.Project); }
+  public get AvailableGHConfigs(): IFile[] { return this.availableFiles.filter(x => x.source == FileSources.GitHub && x.type == FileTypes.Config); }
 
   public get HasProject(): boolean { return this.Project != null; }
   public get Project(): ProjectFile {
@@ -216,7 +232,7 @@ export class DataService {
   }
   public set Project(val: ProjectFile) {
     if (this.project != val) {
-      if (val && val.TTModelerVersion && this.isNewVersion(val.TTModelerVersion)) {
+      if (val && val.TTModelerVersion && this.isNewVersion(val.TTModelerVersion, versionFile.version)) {
         this.messagesService.Error(StringExtension.Format(this.translate.instant('messages.error.newerFileVersion'), val.TTModelerVersion));
         val = null;
       }
@@ -242,40 +258,13 @@ export class DataService {
     this.ConfigChanged.emit(val);
   }
 
-  public get CanSaveGHProject(): boolean {
-    return this.SelectedGHProject != null && this.GetRepoOfFile(this.SelectedGHProject)?.isWritable;
+  public get CanSaveFile(): boolean {
+    if (this.SelectedFile?.source == FileSources.GitHub) return this.GetRepoOfFile(this.SelectedFile).isWritable;
+    return true;
   }
 
-  public get CanSaveFSProject(): boolean {
-    return this.SelectedFSProject != null;
-  }
-
-  public get CanSaveConfig(): boolean {
-    return (this.SelectedGHConfig == null && this.Config != null) || (this.SelectedGHConfig != null && this.GetRepoOfFile(this.SelectedGHConfig).isWritable);
-  }
-
-  public get CanSaveProjectBtn(): boolean {
-    return this.CanSaveGHProject || this.CanSaveFSProject;
-  }
-
-  public get CanSaveAsProjectBtn(): boolean {
-    return this.UserMode == UserModes.LoggedIn || this.SelectedFSProject != null;
-  }
-
-  public get CanSaveGHConfig(): boolean {
-    return this.SelectedGHConfig != null && this.GetRepoOfFile(this.SelectedGHConfig)?.isWritable;
-  }
-
-  public get CanSaveFSConfig(): boolean {
-    return this.SelectedFSConfig != null;
-  }
-
-  public get CanSaveConfigBtn(): boolean {
-    return this.CanSaveGHConfig || this.CanSaveFSConfig;
-  }
-
-  public get CanSaveAsConfigBtn(): boolean {
-    return this.UserMode == UserModes.LoggedIn || this.SelectedFSConfig != null;
+  public get CanSaveProject(): boolean {
+    return this.CanSaveFile && this.Project != null;
   }
 
   public get HasUnsavedChanges(): boolean {
@@ -353,357 +342,455 @@ export class DataService {
   }
 
   public LogOut() {
-    this.OnCloseProject().then(() => {
+    this.OnCloseFile().then(() => {
       this.clearLoginData();
+      this.AvailableFiles.forEach(file => {
+        if (file.source == FileSources.GitHub && this.GetRepoOfFile(file).owner != 'SecSimon') this.removeFileFromAvailableFiles(file);
+      });
       this.messagesService.Info('messages.info.logout');
       this.router.navigate(['/']);
     });
   }
 
-  private clearLoginData() {
-    this.locStorage.Remove(LocStorageKeys.AUTH_ACCESS_TOKEN);
-    this.locStorage.Remove(LocStorageKeys.AUTH_LAST_CODE);
-    this.locStorage.Remove(LocStorageKeys.GH_ACCOUNT_NAME);
-    this.locStorage.Remove(LocStorageKeys.GH_USER_NAME);
-    this.locStorage.Remove(LocStorageKeys.GH_USER_URL);
-    this.userMode = UserModes.None;
-    this.userAccount = this.userName = this.accessToken = this.userURL = '';
-  }
+  public OnNewProject(config: IFile = null) {
+    this.isLoading.add();
+    this.OnCloseFile().then(() => {
+      this.selectedFile = null;
 
-  public NewProject() {
-    this.OnCloseProject().then(() => {
-      this.selectedGHProject = null;
-
-      if (this.UserMode == UserModes.LoggedIn) {
-        let data = { 'msg': 'Created new project' };
-        if (!this.SelectedGHProject) {
-          data['newProject'] = { name: '', configFile: null, path: '', repoId: null, isEncrypted: false, sha: null } as IGHFile;
-        }
-        else if (this.SelectedGHProject?.isEncrypted) data['removePW'] = false;
-        const dialogRef = this.dialog.open(SaveDialogComponent, { hasBackdrop: false, data: data });
-        dialogRef.afterClosed().subscribe(res => {
-          if (res) {
-            let createProject = (cfg: ConfigFile) => {
-              cfg.Data['ID'] == uuidv4();
-              let proj = new ProjectFile({}, cfg);
-              proj.InitializeNewProject();
-              //let dev = proj.CreateDevice();
-              proj.CreateDiagram(DiagramTypes.DataFlow);
-    
-              this.Project = proj;
-    
-              if (!APP_CONFIG.production) {
-                setTimeout(() => {
-                  let pStr = JSON.stringify(this.Project.ToJSON());
-                  let cObj = ProjectFile.FromJSON(JSON.parse(pStr));
-                  let cStr = JSON.stringify(cObj.ToJSON());
-                  if (pStr !== cStr) {
-                    console.error('Database serialization failed');
-                    console.log(this.Project.ToJSON());
-                    console.log(cObj.ToJSON());
-                  }
-                }, 100);
-              }
-              this.SaveProject(data.msg, data['removePW'] != null ? data['removePW'] : false, data['pw'] != null ? data['pw'] : null, data['newProject'] ? data['newProject'] : null);
-            };
-    
-            let cfg: ConfigFile = this.config;
-            if (data['newProject']['configFile'] == null) createProject(ConfigFile.DefaultFile());
-            else {
-              let conf = data['newProject']['configFile'] as IGHFile;
-              this.isLoading.add();
-              const octokit = new Octokit({ auth: this.accessToken });
-              octokit.repos.getContent(
-              {
-                owner: this.GetRepoOfFile(conf).owner,
-                repo: this.GetRepoOfFile(conf).name,
-                path: conf.path
-              }).then(({ data }) => {
-                let confContent = JSON.parse(Buffer.from(data['content'], 'base64').toString()) as IGHFileContent;
-                cfg = ConfigFile.FromJSON(JSON.parse(confContent.content));
-                createProject(cfg);
-              }).catch((err) => {
-                this.messagesService.Error('messages.error.githubfetch', err);
-              }).finally(() => {
-                this.isLoading.remove();
-              });
-            }
-          }
-        });
-      }
-      else {
-        const cfg = ConfigFile.DefaultFile();
+      const createProject = (cfg: ConfigFile) => {
         cfg.Data['ID'] = uuidv4();
-        let proj = new ProjectFile({}, cfg);
+        const proj = new ProjectFile({}, cfg);
         proj.InitializeNewProject();
-        //let dev = proj.CreateDevice();
         proj.CreateDiagram(DiagramTypes.DataFlow);
   
+        proj.Name = 'Project.ttmp';
+        this.selectedFile = { source: FileSources.Import, type: FileTypes.Project, name: proj.Name, isEncrypted: null, path: null}
         this.Project = proj;
-        this.locStorage.Remove(LocStorageKeys.LAST_PROJECT);
+        this.locStorage.Remove(LocStorageKeys.LAST_FILE);
+  
+        // DEBUG CHECK if serialization is working
+        if (!APP_CONFIG.production) {
+          setTimeout(() => {
+            let pStr = JSON.stringify(this.Project.ToJSON());
+            let cObj = ProjectFile.FromJSON(JSON.parse(pStr));
+            let cStr = JSON.stringify(cObj.ToJSON());
+            if (pStr !== cStr) {
+              console.error('Database serialization failed');
+              console.log(this.Project.ToJSON());
+              console.log(cObj.ToJSON());
+            }
+          }, 100);
+        }
+        
+        this.isLoading.remove();
+      };
+
+      if (config) {
+        this.GetFile(config).then(file => createProject(file as ConfigFile)).catch(err => this.messagesService.Error(err));
+      }
+      else {
+        createProject(ConfigFile.DefaultFile());
       }
     });
   }
 
-  public OnSave(): Promise<void> {
-    if (this.Project) return this.openSaveProjectDialog();
-    else return this.openSaveConfigDialog();
-  }
-
-  public OnSaveAs(): Promise<void> {
-    if (this.Project) return this.openSaveProjectDialog(true);
-    else return this.openSaveConfigDialog(true);
-  }
-
-  public OnExportConfig() {
-    return this.openSaveConfigDialog(true);
-  }
-
-  private openSaveProjectDialog(saveAs: boolean = false) {
-    return new Promise<void>((resolve, reject) => {
-      this.ConsistencyCheck().then(x => {
-        if (this.CanSaveGHProject || (this.UserMode == UserModes.LoggedIn && saveAs)) {
-          let data = { 'msg': '' };
-          if (!this.SelectedGHProject || saveAs) {
-            data['newProject'] = { name: '', configFile: null, path: '', repoId: null, isEncrypted: this.SelectedGHProject?.isEncrypted ? true : false, sha: null } as IGHFile;
+  public OnLoadFile(file: IFile) {
+    const lastFile = this.locStorage.Get(LocStorageKeys.LAST_FILE);
+    this.OnCloseFile().then(() => {
+      if (file.source == FileSources.GitHub) {
+        // check for outdated file
+        if (lastFile) {
+          const parsedLastFile = JSON.parse(lastFile);
+          if (this.compareFiles(file, parsedLastFile)) {
+            // same as last project
+            if (file.sha != parsedLastFile['sha']) {
+              this.isLoading.remove();
+              this.messagesService.Error('messages.error.githuboutdatedfile');
+              return;
+            }
           }
-          if (this.SelectedGHProject?.isEncrypted) { data['removePW'] = false; }
-  
-          const dialogRef = this.dialog.open(SaveDialogComponent, { hasBackdrop: false, data: data });
-          dialogRef.afterClosed().subscribe(res => {
-            if (res) {
-              this.SaveProject(data.msg, data['removePW'] != null ? data['removePW'] : false, data['pw'] != null ? data['pw'] : null, data['newProject'] ? data['newProject'] : null).then(() => resolve()).catch(() => reject());
-            }
-            else resolve();
-          });
         }
-        else if (this.electron.isElectron) {
-          if (!saveAs) saveAs = this.SelectedFSProject == null;
-          const onSuccess = () => {
-            this.messagesService.Success('messages.success.saveProject', this.Project.Name);
-            this.locStorage.Set(LocStorageKeys.LAST_PROJECT, JSON.stringify({ path: this.SelectedFSProject.path }));
-            this.ProjectSaved.emit(this.Project);
-            setTimeout(() => {
-              if (this.Project) this.Project.FileChanged = false;
-              if (this.Config) this.Config.FileChanged = false;
-            }, 100);
-            this.stopUnsavedChangesTimer();
-            resolve();
-          };
+      }
 
-          const content = this.getFileContent(this.Project.ToJSON(), false, this.SelectedFSProject?.isEncrypted ? true : false);
-          if (saveAs) {
-            if (this.electron.ipcRenderer.listenerCount('OnSaveFileAs') == 0) {
-              this.electron.ipcRenderer.on('OnSaveFileAs', (event, newPath: string) => {
-                this.zone.run(() => {
-                  if (newPath) {
-                    this.selectedFSProject = this.AvailableFSProjects.find(x => x.path == newPath);
-                    if (!this.selectedFSProject) this.selectedFSProject = { path: newPath, isEncrypted: null };
-                    this.addFSProjectToHistory(this.selectedFSProject);
-                    if (this.availableFSProjects.indexOf(this.selectedFSProject) < 0) {
-                      this.availableFSProjects.push(this.selectedFSProject);
-                    }
-                    this.Project.Name = this.GetFileName(newPath);
-                    onSuccess();
-                  }
-                  else {
-                    reject();
-                  }
-                });
+      this.selectedFile = file;
 
-                this.electron.ipcRenderer.removeAllListeners('OnSaveFileAs');
-              });
+      this.GetFile(file).then((f) => {
+        if (f instanceof ProjectFile) {
+          this.Project = f;
+          this.messagesService.Success('messages.success.loadProject', file.name);
+        }
+        else if (f) {
+          this.Config = f;
+          this.Project = null
+          this.messagesService.Success('messages.success.loadConfig', file.name);
+        }
+      }).catch(err => {
+        this.messagesService.Error(err);
+      });
+    });
+  }
+
+  public ImportFile(fileInput: any) {
+    if (fileInput.target.files && fileInput.target.files[0]) {
+      const reader = new FileReader();
+      const filePath: string = this.electron.isElectron ? fileInput.target.files[0].path : fileInput.target.files[0].name;
+      reader.onload = (e) => {
+        const fileRes = reader.result;
+        const file = JSON.parse(fileRes.toString());
+        this.OnLoadFile({ path: filePath, name: this.GetFileName(filePath), source: FileSources.Import, type: null, isEncrypted: null, importData: file });
+      };
+
+      reader.readAsText(fileInput.target.files[0]);
+    }
+  }
+
+  public GetFile(file: IFile): Promise<ProjectFile|ConfigFile> {
+    return new Promise<ProjectFile|ConfigFile>((resolve, reject) => {
+      this.isLoading.add();
+
+      const parseFile = (fileBlob: any, file: IFile) => {
+        const parseF = (blob, path: IFile) => {
+          if ('content' in blob) {
+            const content = blob['content'];
+            const json = JSON.parse(content);
+            file.type = json['config'] != null ? FileTypes.Project : FileTypes.Config;
+
+            if (file.type == FileTypes.Project) {
+              const updated = this.fileUpdate.UpdateProjectFile(json);
+              json['Data']['Name'] = file.name;
+              resolve(ProjectFile.FromJSON(json));
             }
-            this.electron.ipcRenderer.send('SaveFileAs', this.SelectedFSProject ? this.GetFileName(this.SelectedFSProject.path) : 'Project.ttmp', content);
+            else {
+              const updated = this.fileUpdate.UpdateConfigFile(json);
+              json['Data']['Name'] = file.name;
+              resolve(ConfigFile.FromJSON(json));
+            }
           }
           else {
-            if (this.electron.ipcRenderer.listenerCount('OnSaveFile') == 0) {
-              this.electron.ipcRenderer.on('OnSaveFile', (event, res) => {
-                this.zone.run(() => {
-                  if (res) {
-                    onSuccess();
-                  }
-                  else reject();
-                });
-                
-                this.electron.ipcRenderer.removeAllListeners('OnSaveFile');
-              });
-            }
-            this.electron.ipcRenderer.send('SaveFile', this.SelectedFSProject.path, content);
+            reject('Unsupported file');
           }
-        }
-      });
-    });
-  }
-
-  private openSaveConfigDialog(saveAs: boolean = false) {
-    return new Promise<void>((resolve, reject) => {
-      if (this.CanSaveGHConfig || (this.UserMode == UserModes.LoggedIn && saveAs)) {
-        let data = { 'msg': '' };
-        if (!this.SelectedGHConfig || saveAs) {
-          data['newConfig'] = { name: '', path: '', repoId: null, isEncrypted: false, sha: null } as IGHFile;
-        }
-        const dialogRef = this.dialog.open(SaveDialogComponent, { hasBackdrop: false, data: data });
-        dialogRef.afterClosed().subscribe(res => {
-          if (res) {
-            this.SaveConfig(data.msg, data['newConfig'] ? data['newConfig'] : null).then(() => resolve()).catch(() => reject());
-          }
-          else resolve();
-        });
-      }
-      else if (this.electron.isElectron && this.SelectedFSConfig) {
-        const onSuccess = () => {
-          this.messagesService.Success('messages.success.saveConfig', this.Config.Name);
-          setTimeout(() => {
-            if (this.Config) this.Config.FileChanged = false;
-          }, 100);
-          this.stopUnsavedChangesTimer();
-          resolve();
         };
-
-        const content = this.getFileContent(this.Config.ToJSON(), false, this.SelectedFSConfig?.isEncrypted ? true : false);
-        if (saveAs) {
-          if (this.electron.ipcRenderer.listenerCount('OnSaveFileAs') == 0) {
-            this.electron.ipcRenderer.on('OnSaveFileAs', (event, newPath: string) => {
-              this.zone.run(() => {
-                if (newPath) {
-                  this.selectedFSConfig = this.AvailableFSConfigs.find(x => x.path == newPath);
-                  if (!this.selectedFSConfig) this.selectedFSConfig = { path: newPath, isEncrypted: null };
-                  if (this.availableFSConfigs.indexOf(this.selectedFSConfig) < 0) {
-                    this.availableFSConfigs.push(this.selectedFSConfig);
-                  }
-                  this.Config.Name = this.GetFileName(newPath);
-                  onSuccess();
+    
+        if ('encrypted' in fileBlob) {
+          const decrypt = (blob: any, path: IFile) => {
+            const data = { 'pw': '', 'file': file.name };
+            this.isLoading.add();
+            const dialogRef = this.dialog.open(PasswordDialogComponent, { hasBackdrop: false, data: data });
+            dialogRef.afterClosed().subscribe((res) => {
+              if (res) {
+                try {
+                  this.fileContentCrypto = new MyCrypto(data.pw);
+                  const keycheck = this.fileContentCrypto.Decrypt(blob.encrypted);
+                  blob.content = JSON.parse(this.fileContentCrypto.Decrypt(blob.content));
+                  delete blob['encrypted'];
+                  parseF(blob, path);
+                } 
+                catch (error) {
+                  this.messagesService.Warning('messages.warning.wrongPassword');
+                  decrypt(blob, path);
                 }
-                else {
-                  reject();
+                finally {
+                  this.isLoading.remove();
                 }
-              });
-
-              this.electron.ipcRenderer.removeAllListeners('OnSaveFileAs');
-            });
-          }
-          this.electron.ipcRenderer.send('SaveFileAs', this.SelectedFSConfig.path, content);
-        }
-        else {
-          if (this.electron.ipcRenderer.listenerCount('OnSaveFile') == 0) {
-            this.electron.ipcRenderer.on('OnSaveFile', (event, res) => {
-              this.zone.run(() => {
-                if (res) {
-                  onSuccess();
-                }
-                else reject();
-              });
-
-              this.electron.ipcRenderer.removeAllListeners('OnSaveFile');
-            });
-          }
-          this.electron.ipcRenderer.send('SaveFile', this.SelectedFSConfig.path, content);
-        }
-      }
-    });
-  }
-
-  public LoadProject(proj: IGHFile) {
-    this.OnCloseProject().then(() => {
-
-      // check for outdated file
-      const lastProject = this.locStorage.Get(LocStorageKeys.LAST_PROJECT);
-      if (lastProject) {
-        const parsedLastProject = JSON.parse(lastProject);
-        const repo = this.GetRepoOfFile(proj);
-        if (repo.owner == parsedLastProject['owner'] && proj.repoId == parsedLastProject['repoId'] && proj.path == parsedLastProject['path']) {
-          // same as last project
-          if (proj.sha != parsedLastProject['sha']) {
-            this.messagesService.Error('messages.error.githuboutdatedfile');
-            return;
-          }
-        }
-      }
-
-      this.isLoading.add();
-      this.selectedGHProject = proj;
-      const octokit = this.UserMode == UserModes.LoggedIn ? new Octokit({ auth: this.accessToken }) : new Octokit();
-      octokit.git.getBlob({ owner: this.GetRepoOfFile(proj).owner, repo: this.GetRepoOfFile(proj).name, file_sha: proj.sha }).then(({ data }) => {
-        let projContent = JSON.parse(Buffer.from(data['content'], 'base64').toString()) as IGHFileContent;
-        
-        if ('encrypted' in projContent) {
-          proj.isEncrypted = true;
-          this.loadEncryptedProject(proj, projContent);
-        }
-        else {
-          this.loadProjectFile(proj.name, JSON.parse(projContent.content));
-        }
-      }).catch((err) => {
-        this.messagesService.Error('messages.error.githubfetch', err);
-      }).finally(() => {
-        this.isLoading.remove();
-      });
-    });
-  }
-
-  public LoadProjectFS(file: IFSFile) {
-    this.OnCloseProject().then(() => {
-      this.isLoading.add();
-
-      if (this.electron.ipcRenderer.listenerCount('OnReadFile') == 0) {
-        this.electron.ipcRenderer.on('OnReadFile', (event, file, filePath: string) => {
-          this.zone.run(() => {
-            try {
-              const content = JSON.parse(file);
-              this.locStorage.Remove(LocStorageKeys.LAST_PROJECT);
-              this.selectedFSProject = this.AvailableFSProjects.find(x => x.path == filePath);
-              if (!this.selectedFSProject) this.selectedFSProject = { path: filePath, isEncrypted: null };
-              this.importFile(content, this.selectedFSProject, true);
-              if (this.availableFSProjects.indexOf(this.selectedFSProject) < 0) {
-                this.availableFSProjects.push(this.selectedFSProject);
               }
-            } catch (error) {
-              console.log(error);
-            } finally {
-              this.isLoading.remove();
-            }
-          });
-          
-          this.electron.ipcRenderer.removeAllListeners('OnReadFile');
+              else {
+                this.isLoading.remove();
+              }
+            });
+          };
+    
+          file.isEncrypted = true;
+          decrypt(fileBlob, file);
+        }
+        else {
+          parseF(fileBlob, file);
+        }
+      };
+
+      if (file.importData) {
+        const data = file.importData;
+        file.importData = null;
+        parseFile(data, file);
+        this.isLoading.remove();
+      }
+      else if (file.source == FileSources.GitHub) {
+        const octokit = this.UserMode == UserModes.LoggedIn ? new Octokit({ auth: this.accessToken }) : new Octokit();
+        octokit.git.getBlob({ owner: this.GetRepoOfFile(file).owner, repo: this.GetRepoOfFile(file).name, file_sha: file.sha }).then(({ data }) => {
+          const fileContent = JSON.parse(Buffer.from(data['content'], 'base64').toString()) as IFileContent;
+          parseFile(fileContent, file);
+        }).catch((err) => {
+          this.messagesService.Error('messages.error.githubfetch', err);
+        }).finally(() => {
+          this.isLoading.remove();
         });
       }
-      this.electron.ipcRenderer.send('ReadFile', file.path);
+      else if (file.source == FileSources.FileSystem) {
+        if (this.electron.ipcRenderer.listenerCount('ReadFileCallback') == 0) {
+          this.electron.ipcRenderer.on('ReadFileCallback', (event, data, filePath: string) => {
+            this.zone.run(() => {
+              try {
+                const fileContent = JSON.parse(data);
+                parseFile(fileContent, file);
+              } catch (error) {
+                console.log(error);
+              } finally {
+                this.isLoading.remove();
+              }
+            });
+            
+            this.electron.ipcRenderer.removeAllListeners('ReadFileCallback');
+          });
+        }
+        this.electron.ipcRenderer.send('ReadFile', file.path);
+      }
     });
   }
 
-  public ReloadProject() {
-    if (this.SelectedGHProject) {
-      const curr = this.SelectedGHProject;
-      this.OnCloseProject().then(() => {
-        this.LoadProject(curr);
-      });
-    }
-    else if (this.SelectedFSProject) {
-      const curr = this.SelectedFSProject;
-      this.OnCloseProject().then(() => {
-        this.LoadProjectFS(curr);
+  public ReloadFile() {
+    if (this.SelectedFile) {
+      const curr = this.SelectedFile;
+      this.OnCloseFile().then(() => {
+        this.OnLoadFile(curr);
       });
     }
   }
 
   public RestoreCommit(commit: IGHCommitInfo) {
     const octokit = this.UserMode == UserModes.LoggedIn ? new Octokit({ auth: this.accessToken }) : new Octokit();
-    const proj = this.SelectedGHProject;
+    const proj = this.SelectedFile;
     
     octokit.repos.getCommit({ owner: this.GetRepoOfFile(proj).owner, repo: this.GetRepoOfFile(proj).name, ref: commit.sha }).then(({ data }) => {
-      if (data.files?.length == 1 && data.files[0].filename == this.SelectedGHProject.path) {
-        const oldFile = JSON.parse(JSON.stringify(this.SelectedGHProject)) as IGHFile;
+      if (data.files?.length == 1 && data.files[0].filename == this.SelectedFile.path) {
+        const oldFile = JSON.parse(JSON.stringify(this.SelectedFile)) as IFile;
         oldFile.sha = data.files[0].sha;
-        this.LoadProject(oldFile);
+        this.OnLoadFile(oldFile);
       }
     });
   }
 
-  public OnClose(event) {
+  public OnSave(saveAs: boolean = false, exportFile: boolean = false, exportConfig: boolean = false): Promise<void> {
+    //console.log('OnSave', saveAs, exportFile, exportConfig, this.SelectedFile);
+    return new Promise<void>((resolve, reject) => {
+      this.ConsistencyCheck().then(x => {
+        //console.log('consistency checked');
+        const startDownload = (name: string, content: string) => {
+          const blob = new Blob([content], {type: 'text/plain;charset=utf-8'});
+          const now = new Date();
+          const names = name.split('.');
+          const date = [now.getFullYear(), now.getMonth()+1, now.getDate()];
+          const time = [now.getHours(), now.getMinutes(), now.getSeconds()];
+          const leading0 = (num: number, length: number = 2): string => {
+            let val = num.toString();
+            while(val.length < length) val = '0' + val;
+            return val;
+          };
+          names.splice(1, 0, ...['_', ...date.map(x => leading0(x)), '_', ...time.map(x => leading0(x)), '.']);
+          //console.log('saveAsDialog');
+          saveAsDialog(blob, names.join(''));
+          resolve();
+        };
+
+        const startUpload = (callback, owner: string, repo: string, path: string, msg: string, sha: string, json, enc: boolean, pw: string = null) => {
+          this.isLoading.add();
+          const content = this.getFileContent(json, enc, pw);
+          const octokit = new Octokit({ auth: this.accessToken });
+          //console.log('githubUpload');
+          return octokit.rest.repos.createOrUpdateFileContents({
+            owner: owner,
+            repo: repo,
+            path: path,
+            message: msg.length == 0 ? 'Update' : msg,
+            content: Buffer.from(content).toString('base64'),
+            sha: sha,
+            committer: {
+              name: this.UserAccount,
+              email: this.UserEmail
+            }
+          })
+          .then(({ data: res }) => {
+            callback(res);
+          }).catch((err) => {
+            if (err.status == 409 && err.message.includes('does not match')) {
+              this.messagesService.Error('messages.error.githubSHAmismatch');
+            }
+            else {
+              this.messagesService.Error('messages.error.githubpush', err);
+            }
+          }).finally(() => this.isLoading.remove());
+        };
+
+        const isEncrypted = (this.SelectedFile?.isEncrypted) ? true : false;
+        if (exportConfig && exportFile) {
+          //console.log('Path1');
+          // download config file
+          this.isLoading.add();
+          let name = this.Config.Name;
+          if (this.Project) name = this.Project.Name.replace('.ttmp', '.ttmc');
+          if (!name.endsWith('.ttmc')) name = name + '.ttmc';
+          startDownload(name, this.getFileContent(this.Config.ToJSON(), isEncrypted));
+          this.isLoading.remove();
+        }
+        else {
+          //console.log('Path2');
+          const srcFile: ProjectFile|ConfigFile = (this.SelectedFile?.type == FileTypes.Project && !exportConfig) ? this.Project : this.Config;
+          let name = '';
+          if (exportConfig) name = this.SelectedFile.name.replace('.ttmp', '.ttmc');
+          else if (this.SelectedFile) name = this.SelectedFile.name;
+          else if (this.Project) name = this.Project.Name + (this.Project.Name.endsWith('.ttmp') ? '' : '.ttmp');
+          else if (this.Config) name = this.Config.Name + (this.Config.Name.endsWith('.ttmc') ? '' : '.ttmc');
+          srcFile.Name = name;
+          if (!this.SelectedFile) exportFile = true;
+          else if (this.SelectedFile.source == FileSources.GitHub && !this.GetRepoOfFile(this.SelectedFile).isWritable) {
+            if (this.IsLoggedIn) saveAs = true;
+            else exportFile = true;
+          }
+          else if (this.SelectedFile.source == FileSources.Import && !this.IsLoggedIn) exportFile = true;
+          else if (saveAs && this.SelectedFile.type == FileTypes.Config && this.IsLoggedIn) exportConfig = true; 
+
+          if (exportConfig) {
+            // export config to repo
+            if (this.UserMode == UserModes.LoggedIn) {
+              //console.log('Path3');
+              const data = { 'msg': '' };
+              data['newConfig'] = { source: FileSources.GitHub, type:FileTypes.Config, name: '', path: '', repoId: null, isEncrypted: isEncrypted, sha: null } as IFile;
+              if (isEncrypted) { data['removePW'] = false; }
+              const dialogRef = this.dialog.open(SaveDialogComponent, { hasBackdrop: false, data: data });
+              dialogRef.afterClosed().subscribe(res => {
+                if (res) {
+                  if (data['newConfig'] != null) {
+                    const cfgFile = data['newConfig'] as IFile;
+                    this.selectedFile = cfgFile;
+                    if (!this.Project) this.Config.Name = cfgFile.name;
+                    const callback = (res) => {
+                      cfgFile.sha = res.content.sha;
+                      this.addFileToAvailableFiles(cfgFile);
+                      this.messagesService.Success('messages.success.saveConfig', cfgFile.name);
+                      resolve();
+                    };
+                    startUpload(
+                      callback,
+                      this.GetRepoOfFile(cfgFile).owner,
+                      this.GetRepoOfFile(cfgFile).name,
+                      cfgFile.path,
+                      data.msg,
+                      cfgFile.sha,
+                      this.Config.ToJSON(),
+                      (data['pw'] != null || isEncrypted) && !data['removePW'],
+                      data['pw']
+                    );
+                  }
+                  else {
+                    console.log('Should this happen?')
+                  }
+                }
+                else resolve();
+              });
+            }
+            else {
+              console.error('not logged in');
+            }
+          }
+          else if (exportFile) {
+            //console.log('Path4');
+            this.isLoading.add();
+            const content = this.getFileContent(srcFile.ToJSON(), isEncrypted);
+            startDownload(name, content);
+            this.isLoading.remove();
+          }
+          else {
+            //console.log('Path5');
+            const onSuccess = (f: IFile) => {
+              this.addFileToAvailableFiles(f);
+              if (this.SelectedFile.type == FileTypes.Project) {
+                this.messagesService.Success('messages.success.saveProject', this.Project.Name);
+                this.ProjectSaved.emit(this.Project);
+              }
+              else {
+                this.messagesService.Success('messages.success.saveConfig', this.Config.Name);
+                this.ConfigChanged.emit(this.Config);
+              }
+              setTimeout(() => {
+                if (this.Project) this.Project.FileChanged = false;
+                if (this.Config) this.Config.FileChanged = false;
+              }, 500);
+              this.stopUnsavedChangesTimer();
+              resolve();
+            };
+  
+            if ([FileSources.GitHub, FileSources.Import].includes(this.SelectedFile.source) || (this.UserMode == UserModes.LoggedIn && saveAs)) {
+              //console.log('Path6');
+              const data = { 'msg': '' };
+              if (this.SelectedFile.source == FileSources.Import || saveAs) {
+                data['newProject'] = { name: '', source: FileSources.GitHub, type: this.SelectedFile.type, configFile: null, path: '', repoId: this.SelectedFile.repoId, isEncrypted: isEncrypted, sha: null } as IFile;
+              }
+              if (isEncrypted) { data['removePW'] = false; }
+  
+              const dialogRef = this.dialog.open(SaveDialogComponent, { hasBackdrop: false, data: data });
+              dialogRef.afterClosed().subscribe(res => {
+                if (res) {
+                  if (data['newProject'] != null) {
+                    this.selectedFile = data['newProject'];
+                    this.Project.Name = this.selectedFile.name;
+                  }
+                  
+                  const callback = (res) => {
+                    this.selectedFile.sha = res.content.sha;
+                    const lastFile = this.locStorage.Get(LocStorageKeys.LAST_FILE);
+                    const parsed = JSON.parse(lastFile) as IFile;
+                    if (this.compareFiles(this.SelectedFile, parsed)) {
+                      this.locStorage.Set(LocStorageKeys.LAST_FILE, JSON.stringify(this.SelectedFile));
+                    }
+
+                    onSuccess(this.SelectedFile);
+                  };
+                  startUpload(
+                    callback,
+                    this.GetRepoOfFile(this.SelectedFile).owner,
+                    this.GetRepoOfFile(this.SelectedFile).name,
+                    this.SelectedFile.path,
+                    data.msg,
+                    this.SelectedFile.sha,
+                    srcFile.ToJSON(),
+                    (data['pw'] != null || isEncrypted) && !data['removePW'],
+                    data['pw']
+                  );
+                }
+                else resolve();
+              });
+            }
+            else if (this.SelectedFile.source == FileSources.FileSystem) {
+              //console.log('Path7');
+              if (this.electron.ipcRenderer.listenerCount('SaveFileCallback') == 0) {
+                this.electron.ipcRenderer.on('SaveFileCallback', (event, path) => {
+                  this.zone.run(() => {
+                    if (path) {
+                      if (saveAs) {
+                        this.selectedFile = { source: FileSources.FileSystem, type: this.SelectedFile.type, path: path, name: this.GetFileName(path), isEncrypted: this.SelectedFile.isEncrypted };
+                        this.Project.Name = this.GetFileName(path);
+                      }
+                      onSuccess(this.SelectedFile);
+                    }
+                    else reject();
+                  });
+                  
+                  this.electron.ipcRenderer.removeAllListeners('SaveFileCallback');
+                  this.isLoading.remove();
+                });
+              }
+              this.isLoading.add();
+              const content = this.getFileContent(srcFile.ToJSON(), isEncrypted);
+              this.electron.ipcRenderer.send(saveAs ? 'SaveFileAs' : 'SaveFile', this.SelectedFile.path, content);
+            }
+          }
+        }
+      });
+    });
+  }
+
+  public OnCloseApp(event) {
     if (this.Project?.FileChanged || this.Config?.FileChanged) {
       this.zone.run(() => {
-        this.OnCloseProject().then(() => {
+        this.OnCloseFile().then(() => {
           if (this.electron.isElectron) this.electron.ipcRenderer.send('OnCloseApp');
         });
       });
@@ -712,427 +799,61 @@ export class DataService {
     }
   }
 
-  private loadEncryptedProject(proj: IGHFile, projContent: IGHFileContent) {
-    const data = { 'pw': '', 'file': proj.name };
+  public DeleteFile(file: IFile) {
     this.isLoading.add();
-    const dialogRef = this.dialog.open(PasswordDialogComponent, { hasBackdrop: false, data: data });
-    dialogRef.afterClosed().subscribe((res) => {
-      if (res) {
-        try {
-          this.projectContentCrypto = new MyCrypto(data.pw);
-          const keycheck = this.projectContentCrypto.Decrypt(projContent.encrypted);
-          projContent.content = JSON.parse(this.projectContentCrypto.Decrypt(projContent.content));
-          delete projContent['encrypted'];
-          this.loadProjectFile(proj.name, JSON.parse(projContent.content));
-        } 
-        catch (error) {
-          this.messagesService.Warning('messages.warning.wrongPassword');
-          this.loadEncryptedProject(proj, projContent);
-        }
-        finally {
-          this.isLoading.remove();
-        }
-      }
-      else {
-        this.isLoading.remove();
-      }
-    });
-  }
-
-  private loadProjectFile(filePath: string, json: any) {
-    try {
-      let updated = this.fileUpdate.UpdateProjectFile(json);
-      const fileName = filePath.substring(filePath.lastIndexOf('/')+1);
-      json['Data']['Name'] = fileName;
-      this.Project = ProjectFile.FromJSON(json);
-      if (this.Project) {
-        this.Project.FileChanged = updated;
-        this.Config = this.Project.Config;
-        this.selectedGHConfig = null;
-        if (this.KeepUserSignedIn && this.selectedGHProject) this.locStorage.Set(LocStorageKeys.LAST_PROJECT, JSON.stringify({ owner: this.GetRepoOfFile(this.SelectedGHProject).owner, repoId: this.SelectedGHProject.repoId, path: this.SelectedGHProject.path, sha: this.SelectedGHProject.sha }));
-        else if (this.SelectedFSProject) this.locStorage.Set(LocStorageKeys.LAST_PROJECT, JSON.stringify({ path: this.SelectedFSProject.path }));
-        this.addGHProjectToHistory(this.SelectedGHProject);
-        this.addFSProjectToHistory(this.SelectedFSProject);
-        this.messagesService.Success('messages.success.loadProject', fileName);
-      }
-    } 
-    catch (error) {
-      this.messagesService.Error(error);
-    }
-  }
-
-  private getFileContent(json, beautify: boolean, encrypt: boolean, password: string = null): string {
-    this.isLoading.add();
-    if (this.selectedGHProject) this.selectedGHProject.isEncrypted = encrypt;
-    if (this.selectedFSProject) this.selectedFSProject.isEncrypted = encrypt;
-
-    let file: IGHFileContent = {
-      content: beautify ? JSON.stringify(json, null, 2) : JSON.stringify(json)
-    };
-    if (encrypt) {
-      if (password) this.projectContentCrypto = new MyCrypto(password);
-      let tmpFile: IGHFileContent = JSON.parse(JSON.stringify(file));
-      file.content = this.projectContentCrypto.Encrypt(JSON.stringify(tmpFile.content));
-      file.encrypted = this.projectContentCrypto.Encrypt(this.projectContentCrypto.GetRandom(16).toString('base64'));
-    }
-
-    const res = JSON.stringify(file);
-    this.isLoading.remove();
-    return res;
-  }
-
-  public SaveProject(commitMsg: string, removePassword = false, password: string = null, ghProject: IGHFile = null) {
-    this.isLoading.add();
-    if (ghProject != null) this.selectedGHProject = ghProject;
-    if (commitMsg.length == 0) commitMsg = 'Update';
-    if (this.selectedGHProject) this.Project.Name = this.selectedGHProject.name;
-
-    let content = this.getFileContent(this.Project.ToJSON(), false, (password != null || this.selectedGHProject.isEncrypted) && !removePassword, password);
-    const octokit = new Octokit({ auth: this.accessToken });
-    return octokit.rest.repos.createOrUpdateFileContents({
-      owner: this.GetRepoOfFile(this.SelectedGHProject).owner,
-      repo: this.GetRepoOfFile(this.SelectedGHProject).name,
-      path: this.SelectedGHProject.path,
-      message: commitMsg,
-      content: Buffer.from(content).toString('base64'),
-      sha: this.SelectedGHProject.sha,
-      committer: {
-        name: this.UserAccount,
-        email: this.UserEmail
-      }
-    })
-    .then(({ data: res }) => {
-      this.selectedGHProject.sha = res.content.sha;
-      this.messagesService.Success('messages.success.saveProject', this.SelectedGHProject.name);
-      if (ghProject) this.availableGHProjects.push(ghProject);
-      if (this.KeepUserSignedIn && this.selectedGHProject) this.locStorage.Set(LocStorageKeys.LAST_PROJECT, JSON.stringify({ owner: this.GetRepoOfFile(this.SelectedGHProject).owner, repoId: this.SelectedGHProject.repoId, path: this.SelectedGHProject.path, sha: this.SelectedGHProject.sha }));
-      else if (this.SelectedFSProject) this.locStorage.Set(LocStorageKeys.LAST_PROJECT, JSON.stringify({ path: this.SelectedFSProject.path }));
-      this.ProjectSaved.emit(this.Project);
-      setTimeout(() => {
-        if (this.Project) this.Project.FileChanged = false;
-        if (this.Config) this.Config.FileChanged = false;
-      }, 500);
-      this.stopUnsavedChangesTimer();
-    }).catch((err) => {
-      if (err.status == 409 && err.message.includes('does not match')) {
-        this.messagesService.Error('messages.error.githubSHAmismatch');
-      }
-      else {
-        this.messagesService.Error('messages.error.githubpush', err);
-      }
-    }).finally(() => this.isLoading.remove());
-  }
-
-  public LoadConfig(conf: IGHFile) {
-    this.OnCloseProject().then(() => {
-      this.isLoading.add();
-      this.selectedGHConfig = conf;
+    if (file.source == FileSources.GitHub) {
       const octokit = new Octokit({ auth: this.accessToken });
-      octokit.repos.getContent(
-      {
-        owner: this.GetRepoOfFile(conf).owner,
-        repo: this.GetRepoOfFile(conf).name,
-        path: conf.path
-      }).then(({ data }) => {
-        let confContent = JSON.parse(Buffer.from(data['content'], 'base64').toString()) as IGHFileContent;
-  
-        this.loadConfigFile(conf.name, JSON.parse(confContent.content));
+      octokit.rest.repos.deleteFile({
+        owner: this.GetRepoOfFile(file).owner,
+        repo: this.GetRepoOfFile(file).name,
+        path: file.path,
+        message: 'Delete file ' + file.name,
+        sha: file.sha,
+        committer: {
+          name: this.UserAccount,
+          email: this.UserEmail
+        }
+      })
+      .then(({ data: res }) => {
+        this.messagesService.Success('messages.success.githubdelete', file.name);
+        if (file == this.SelectedFile) {
+          this.selectedFile = null;
+          this.Project = null;
+          this.Config = ConfigFile.DefaultFile();
+        }
+
+        this.removeFileFromAvailableFiles(file);
       }).catch((err) => {
-        this.messagesService.Error('messages.error.githubfetch', err);
-      }).finally(() => {
+        this.messagesService.Error('messages.error.githubdelete', err);
+        console.error(err);
+      }).finally(() => this.isLoading.remove());
+    }
+    else if (file.source == FileSources.FileSystem) {
+      const data: ITwoOptionDialogData = {
+        title: this.translate.instant('dialog.delete.deleteItem') + ' ' + name,
+        textContent: this.translate.instant('dialog.delete.sure'),
+        resultTrueText: this.translate.instant('general.Yes'),
+        hasResultFalse: true,
+        resultFalseText: this.translate.instant('general.No'),
+        resultTrueEnabled: () => { return true; },
+        initalTrue: false
+      };
+      const dialogRef = this.dialog.open(TwoOptionsDialogComponent, { hasBackdrop: true, data: data });
+      dialogRef.afterClosed().subscribe(res => {
+        if (res) {
+          this.removeFileFromAvailableFiles(file);
+          if (this.electron.isElectron) this.electron.ipcRenderer.send('DeleteFile', file.path);
+        }
         this.isLoading.remove();
       });
-    });
-  }
-
-  public LoadConfigFS(file: IFSFile) {
-    this.OnCloseProject().then(() => {
-      this.isLoading.add();
-
-      if (this.electron.ipcRenderer.listenerCount('OnReadFile') == 0) {
-        this.electron.ipcRenderer.on('OnReadFile', (event, file, filePath: string) => {
-          this.zone.run(() => {
-            try {
-              const content = JSON.parse(file);
-              this.selectedFSConfig = this.AvailableFSConfigs.find(x => x.path == filePath);
-              if (!this.selectedFSConfig) this.selectedFSConfig = { path: filePath, isEncrypted: null };
-              this.importFile(content, this.selectedFSConfig, null);
-              if (this.availableFSConfigs.indexOf(this.selectedFSConfig) < 0) {
-                this.availableFSConfigs.push(this.selectedFSConfig);
-              }
-            } catch (error) {
-              console.log(error);
-            } finally {
-              this.isLoading.remove();
-            }
-          });
-
-          this.electron.ipcRenderer.removeAllListeners('OnReadFile');
-        });
-      }      
-      this.electron.ipcRenderer.send('ReadFile', file.path);
-    });
-  }
-
-  public ReloadConfig() {
-    if (this.SelectedGHConfig) {
-      const curr = this.SelectedGHConfig;
-      this.OnCloseConfig().then(() => {
-        this.LoadConfig(curr);
-      });
-    }
-    else if (this.SelectedFSConfig) {
-      const curr = this.SelectedFSConfig;
-      this.OnCloseConfig().then(() => {
-        this.LoadConfigFS(curr);
-      });
     }
   }
 
-  private loadConfigFile(name: string, json: any) {
-    try {
-      json['Data']['Name'] = name;
-      let updated = this.fileUpdate.UpdateConfigFile(json);
-      this.Config = ConfigFile.FromJSON(json);
-      this.Config.FileChanged = updated;
-      this.Project = this.selectedGHProject = null;
-      this.messagesService.Success('messages.success.loadConfig', name);
-    } 
-    catch (error) {
-      this.messagesService.Error(error);
-    }
+  public RemoveFSFile(file: IFile) {
+    this.removeFileFromAvailableFiles(file);
   }
 
-  public SaveConfig(commitMsg: string, ghConfig: IGHFile = null) {
-    this.isLoading.add();
-    if (ghConfig != null) this.selectedGHConfig = ghConfig;
-    if (commitMsg.length == 0) commitMsg = 'Update';
-    if (this.selectedGHConfig) this.Config.Name = this.selectedGHConfig.name;
-
-    let content = this.getFileContent(this.Config.ToJSON(), false, false);
-    this.selectedGHConfig.isEncrypted = false;
-    const octokit = new Octokit({ auth: this.accessToken });
-    return octokit.rest.repos.createOrUpdateFileContents({
-      owner: this.GetRepoOfFile(this.SelectedGHConfig).owner,
-      repo: this.GetRepoOfFile(this.SelectedGHConfig).name,
-      path: this.SelectedGHConfig.path,
-      message: commitMsg,
-      content: Buffer.from(content).toString('base64'),
-      sha: this.SelectedGHConfig.sha,
-      committer: {
-        name: this.UserAccount,
-        email: this.UserEmail
-      }
-    })
-    .then(({ data: res }) => {
-      this.Config.FileChanged = false;
-      this.selectedGHConfig.sha = res.content.sha;
-      this.messagesService.Success('messages.success.saveConfig', this.SelectedGHConfig.name);
-      if (ghConfig) this.availableGHConfigs.push(ghConfig);
-    }).catch((err) => {
-      if (err.status == 409 && err.message.includes('does not match')) {
-        this.messagesService.Error('messages.error.githubSHAmismatch');
-      }
-      else {
-        this.messagesService.Error('messages.error.githubpush', err);
-      }
-    }).finally(() => this.isLoading.remove());
-  }
-
-  public DeleteGHFile(file: IGHFile) {
-    this.isLoading.add();
-    const octokit = new Octokit({ auth: this.accessToken });
-    octokit.rest.repos.deleteFile({
-      owner: this.GetRepoOfFile(file).owner,
-      repo: this.GetRepoOfFile(file).name,
-      path: file.path,
-      message: 'Delete file ' + file.name,
-      sha: file.sha,
-      committer: {
-        name: this.UserAccount,
-        email: this.UserEmail
-      }
-    })
-    .then(({ data: res }) => {
-      this.messagesService.Success('messages.success.githubdelete', file.name);
-      if (file == this.SelectedGHProject) {
-        let lp = JSON.parse(this.locStorage.Get(LocStorageKeys.LAST_PROJECT));
-        if ('owner' in lp && lp['owner'] == this.GetRepoOfFile(this.SelectedGHProject).owner && lp['repoId'] == this.SelectedGHProject.repoId && lp['path'] == this.SelectedGHProject.path) {
-          this.locStorage.Remove(LocStorageKeys.LAST_PROJECT);
-        }
-        this.selectedGHProject = null;
-        this.Project = null;
-      }
-      else if (file == this.selectedGHConfig) {
-        this.selectedGHConfig = null;
-        this.Config = ConfigFile.DefaultFile();
-      }
-      if (this.availableGHProjects.includes(file)) this.availableGHProjects.splice(this.availableGHProjects.indexOf(file), 1);
-      else if (this.availableGHConfigs.includes(file)) this.availableGHConfigs.splice(this.availableGHConfigs.indexOf(file), 1);
-    }).catch((err) => {
-      this.messagesService.Error('messages.error.githubdelete', err);
-      console.error(err);
-    }).finally(() => this.isLoading.remove());
-  }
-
-  public RemoveFSFile(file: IFSFile) {
-    let index = this.AvailableFSProjects.indexOf(file);
-    if (index >= 0) {
-      this.AvailableFSProjects.splice(index, 1);
-      this.removeFSProjectToHistory(file);
-    }
-    else {
-      index = this.AvailableFSConfigs.indexOf(file);
-      if (index >= 0) {
-        this.AvailableFSConfigs.splice(index, 1);
-      }
-    }
-  }
-
-  public DeleteFSFile(file: IFSFile) {
-    const data: ITwoOptionDialogData = {
-      title: this.translate.instant('dialog.delete.deleteItem') + ' ' + name,
-      textContent: this.translate.instant('dialog.delete.sure'),
-      resultTrueText: this.translate.instant('general.Yes'),
-      hasResultFalse: true,
-      resultFalseText: this.translate.instant('general.No'),
-      resultTrueEnabled: () => { return true; },
-      initalTrue: false
-    };
-    const dialogRef = this.dialog.open(TwoOptionsDialogComponent, { hasBackdrop: true, data: data });
-    dialogRef.afterClosed().subscribe(res => {
-      if (res) {
-        this.RemoveFSFile(file);
-        if (this.electron.isElectron) this.electron.ipcRenderer.send('DeleteFile', file.path);
-      }
-    });
-  }
-
-  public ExportFile(isProject: boolean) {
-    let content = '';
-    let name = '';
-    if (isProject && this.Project) {
-      const isEncrypted = (this.SelectedGHProject?.isEncrypted || this.SelectedFSProject?.isEncrypted) ? true : false;
-      content = this.getFileContent(this.Project.ToJSON(), false, isEncrypted);
-      if (this.SelectedGHProject) name = this.SelectedGHProject.name;
-      else if (this.SelectedFSProject) name = this.GetFileName(this.SelectedFSProject.path);
-      else name = 'Project.ttmp';
-    }
-    else if (this.Config) {
-      const isEncrypted = (this.SelectedGHConfig?.isEncrypted || this.SelectedFSConfig?.isEncrypted) ? true : false;
-      content = this.getFileContent(this.Config.ToJSON(), false, isEncrypted);
-      if (this.SelectedGHConfig) name = this.SelectedGHConfig.name;
-      else if (this.SelectedGHProject) name = this.selectedGHProject.name.replace('.ttmp', '.ttmc');
-      else if (this.SelectedFSProject) name = this.GetFileName(this.SelectedFSProject.path);
-      else name = 'Config.ttmc';
-    }
-    
-    if (content.length > 0) {
-      const blob = new Blob([content], {type: 'text/plain;charset=utf-8'});
-      let now = new Date();
-      let names = name.split('.');
-      let date = [now.getFullYear(), now.getMonth()+1, now.getDate()];
-      let time = [now.getHours(), now.getMinutes(), now.getSeconds()];
-      let leading0 = (num: number, length: number = 2): string => {
-        let val = num.toString();
-        while(val.length < length) val = '0' + val;
-        return val;
-      };
-      names.splice(1, 0, ...['_', ...date.map(x => leading0(x)), '_', ...time.map(x => leading0(x)), '.']);
-      saveAs(blob, names.join(''));
-    }
-  }
-
-  public ImportFile(isProject: boolean, fileInput: any) {
-    if (fileInput.target.files && fileInput.target.files[0]) {
-      const reader = new FileReader();
-      const filePath: string = this.electron.isElectron ? fileInput.target.files[0].path : fileInput.target.files[0].name;
-      reader.onload = (e) => {
-        const fileRes = reader.result;
-        let file = JSON.parse(fileRes.toString());
-        if (!('content' in file) && !isProject) {
-          file = {'content': JSON.stringify(file) };
-        } 
-        if ('content' in file) {
-          this.importFile(file, { path: filePath, isEncrypted: null }, isProject);
-        }
-        else {
-          this.messagesService.Error('Unsupported file');
-        }
-      };
-
-      reader.readAsText(fileInput.target.files[0]);
-    }
-  }
-
-  private importFile(fileBlob, file: IFSFile, isProject: boolean) {
-    const impFile = (blob, path: IFSFile, isProj: boolean) => {
-      if ('content' in blob) {
-        const content = blob['content'];
-        const json = JSON.parse(content);
-        this.selectedGHConfig = this.selectedGHProject = null;
-        if (isProj == null) isProj = json['config'] != null;
-        if (isProj) {
-          if (this.electron.isElectron) {
-            this.selectedFSProject = path;
-            if (this.availableFSProjects.indexOf(path) < 0) {
-              this.availableFSProjects.splice(0, 0, path);
-            }
-          }
-          this.loadProjectFile(path.path, json);
-        }
-        else {
-          if (this.electron.isElectron) {
-            this.selectedFSConfig = path;
-            if (this.availableFSConfigs.indexOf(path) < 0) {
-              this.availableFSConfigs.splice(0, 0, path);
-            }
-          }
-          this.loadConfigFile(path.path, json);
-        }
-      }
-      else {
-        this.messagesService.Error('Unsupported file');
-      }
-    };
-
-    if ('encrypted' in fileBlob) {
-      const decrypt = (blob, path: IFSFile) => {
-        const data = { 'pw': '', 'file': file.path.substring(file.path.lastIndexOf('/')+1) };
-        this.isLoading.add();
-        const dialogRef = this.dialog.open(PasswordDialogComponent, { hasBackdrop: false, data: data });
-        dialogRef.afterClosed().subscribe((res) => {
-          if (res) {
-            try {
-              this.projectContentCrypto = new MyCrypto(data.pw);
-              const keycheck = this.projectContentCrypto.Decrypt(blob.encrypted);
-              blob.content = JSON.parse(this.projectContentCrypto.Decrypt(blob.content));
-              delete blob['encrypted'];
-              impFile(blob, path, null);
-            } 
-            catch (error) {
-              this.messagesService.Warning('messages.warning.wrongPassword');
-              decrypt(blob, path);
-            }
-            finally {
-              this.isLoading.remove();
-            }
-          }
-          else {
-            this.isLoading.remove();
-          }
-        });
-      };
-
-      file.isEncrypted = true;
-      decrypt(fileBlob, file);
-    }
-    else {
-      impFile(fileBlob, file, isProject);
-    }
-  }
-
-  public ExchangeConfig(conf: IGHFile) {
+  public ExchangeConfig(conf: IFile) {
     this.exchangeConfigDialog().subscribe(res => {
       if (res) {
         const octokit = new Octokit({ auth: this.accessToken });
@@ -1142,7 +863,7 @@ export class DataService {
           repo: this.GetRepoOfFile(conf).name,
           path: conf.path
         }).then(({ data }) => {
-          let confContent = JSON.parse(Buffer.from(data['content'], 'base64').toString()) as IGHFileContent;
+          let confContent = JSON.parse(Buffer.from(data['content'], 'base64').toString()) as IFileContent;
 
           let configJSON = JSON.parse(confContent.content);
           this.fileUpdate.UpdateConfigFile(configJSON);
@@ -1152,7 +873,7 @@ export class DataService {
 
           this.messagesService.Info('messages.info.exchangeConfig');
         }).catch((err) => {
-          this.closeProject();
+          this.closeFile();
           this.messagesService.Error('messages.error.githubfetch', err);
         }).finally(() => {
           this.isLoading.remove();
@@ -1178,111 +899,12 @@ export class DataService {
     this.dialog.open(TransferProjectDialogComponent);
   }
 
-  public ReadGHFile(proj: IGHFile) {
-    return new Promise<ProjectFile>((resolve, reject) => {
-      const octokit = this.UserMode == UserModes.LoggedIn ? new Octokit({ auth: this.accessToken }) : new Octokit();
-      octokit.git.getBlob({ owner: this.GetRepoOfFile(proj).owner, repo: this.GetRepoOfFile(proj).name, file_sha: proj.sha }).then(({ data }) => {
-        const projContent = JSON.parse(Buffer.from(data['content'], 'base64').toString()) as IGHFileContent;
-
-        const loadFile = (content) => {
-          try {
-            const json = JSON.parse(content);
-            this.fileUpdate.UpdateProjectFile(json);
-            const res = ProjectFile.FromJSON(json);
-            resolve(res);
-          } 
-          catch (error) {
-            this.messagesService.Error(error);
-            reject();
-          }
-        };
-        
-        if ('encrypted' in projContent) {
-          proj.isEncrypted = true;
-
-          const getPassword = () => {
-            let pw = { 'pw': '' };
-            const dialogRef = this.dialog.open(PasswordDialogComponent, { hasBackdrop: false, data: pw });
-            dialogRef.afterClosed().subscribe((res) => {
-              if (res) {
-                try {
-                  this.projectContentCrypto = new MyCrypto(pw.pw);
-                  const keycheck = this.projectContentCrypto.Decrypt(projContent.encrypted);
-                  projContent.content = JSON.parse(this.projectContentCrypto.Decrypt(projContent.content));
-                  delete projContent['encrypted'];
-    
-                  loadFile(projContent.content);
-                } 
-                catch (error) {
-                  this.messagesService.Warning('messages.warning.wrongPassword');
-                  getPassword();
-                }
-              }
-              else reject();
-            });
-          };
-          getPassword();
-        }
-        else {
-          loadFile(projContent.content);
-        }
-      }).catch((err) => {
-        this.messagesService.Error('messages.error.githubfetch', err);
-        reject();
-      });
-    });
-  }
-
-  public ReadFSFile(file: IFSFile) {
-    return new Promise<ProjectFile>((resolve, reject) => {
-      if (this.electron.ipcRenderer.listenerCount('OnReadFile') == 0) {
-        this.electron.ipcRenderer.on('OnReadFile', (event, file, filePath) => {
-          this.zone.run(() => {
-            try {
-              // todo encrypted
-              const fileBlob = JSON.parse(file);
-              if ('content' in fileBlob) {
-                const content = fileBlob['content'];
-                const json = JSON.parse(content);
-                const res = ProjectFile.FromJSON(json);
-                resolve(res);
-              }
-              else {
-                this.messagesService.Error('Unsupported file');
-                reject();
-              }
-            } catch (error) {
-              console.log(error);
-              reject();
-            }
-          });
-
-          this.electron.ipcRenderer.removeAllListeners('OnReadFile');
-        });
-      }
-      this.electron.ipcRenderer.send('ReadFile', file.path);
-    });
-  }
-
-  private exchangeConfigDialog() {
-    let data: ITwoOptionDialogData = {
-      title: this.translate.instant('dialog.configexchange.title'),
-      textContent: this.translate.instant('dialog.configexchange.desc'),
-      resultTrueText: this.translate.instant('general.Yes'),
-      hasResultFalse: true,
-      resultFalseText: this.translate.instant('general.No'),
-      resultTrueEnabled: () => { return true; },
-      initalTrue: false
-    };
-    return this.dialog.open(TwoOptionsDialogComponent, { hasBackdrop: false, data: data }).afterClosed();
-  }
-
   public GetGHProjectHistory() {
     return new Promise<IGHCommitInfo[]>((resolve, reject) => {
       let res: IGHCommitInfo[] = [];
-      if (this.SelectedGHProject) {
+      if (this.SelectedFile) {
         const octokit = this.UserMode == UserModes.LoggedIn ? new Octokit({ auth: this.accessToken }) : new Octokit();
-        const proj = this.SelectedGHProject;
+        const proj = this.SelectedFile;
         octokit.repos.listCommits({owner: this.GetRepoOfFile(proj).owner, repo: this.GetRepoOfFile(proj).name, path: proj.path }).then(({ data }) => {
           data.forEach(x => {
             res.push({ commiter: x.commit.committer.name, message: x.commit.message, date: x.commit.committer.date, sha: x.sha });
@@ -1294,12 +916,12 @@ export class DataService {
     });
   }
 
-  public OnCloseProject() {
+  public OnCloseFile(): Promise<void> {
     return new Promise<void>((resolve, reject) => {
-      if (this.Project?.FileChanged) {
+      if (this.Project?.FileChanged || this.Config?.FileChanged) {
         let data: ITwoOptionDialogData = {
           title: this.translate.instant('dialog.unsaved.title'),
-          textContent: this.translate.instant('dialog.unsaved.saveProject'),
+          textContent: this.translate.instant(this.Project?.FileChanged ? 'dialog.unsaved.saveProject' : 'dialog.unsaved.saveConfig'),
           resultTrueText: this.translate.instant('general.Yes'),
           hasResultFalse: true,
           resultFalseText: this.translate.instant('general.No'),
@@ -1309,71 +931,19 @@ export class DataService {
         const dialogRef = this.dialog.open(TwoOptionsDialogComponent, { hasBackdrop: false, data: data });
         dialogRef.afterClosed().subscribe(res => {
           if (res) {
-            if (this.CanSaveGHProject || this.CanSaveFSProject) {
-              this.openSaveProjectDialog().then(() => {
-                this.closeProject();
-                resolve();
-              })
-              .catch(() => reject());
-            }
-            else {
-              this.ExportFile(true);
-              this.closeProject();
+            this.OnSave().then(() => {
+              this.closeFile();
               resolve();
-            }
+            }).catch(() => reject());
           }
           else {
-            this.closeProject();
-            resolve();
-          }
-        });
-      }
-      else if (this.Config?.FileChanged) {
-        this.OnCloseConfig().then(x => resolve());
-      }
-      else {
-        this.closeProject();
-        resolve();
-      }
-    });
-  }
-
-  public OnCloseConfig() {
-    return new Promise<void>((resolve, reject) => {
-      if (this.Config?.FileChanged) {
-        let data: ITwoOptionDialogData = {
-          title: this.translate.instant('dialog.unsaved.title'),
-          textContent: this.translate.instant('dialog.unsaved.saveConfig'),
-          resultTrueText: this.translate.instant('general.Yes'),
-          hasResultFalse: true,
-          resultFalseText: this.translate.instant('general.No'),
-          resultTrueEnabled: () => { return true; },
-          initalTrue: true
-        };
-        const dialogRef = this.dialog.open(TwoOptionsDialogComponent, { hasBackdrop: false, data: data });
-        dialogRef.afterClosed().subscribe(res => {
-          if (res) {
-            if (this.UserMode == UserModes.LoggedIn) {
-              this.openSaveConfigDialog().then(() => {
-                this.closeConfig();
-                resolve();
-              })
-              .catch(() => reject());
-            }
-            else if (this.UserMode == UserModes.Guest) {
-              this.ExportFile(false);
-              this.closeConfig();
-              resolve();
-            }
-          }
-          else {
-            this.closeConfig();
+            this.closeFile();
             resolve();
           }
         });
       }
       else {
-        this.closeConfig();
+        this.closeFile();
         resolve();
       }
     });
@@ -1415,31 +985,24 @@ export class DataService {
     });
   }
 
-  private closeProject() {
-    this.Project = null;
-    this.selectedGHProject = null;
-    this.selectedGHConfig = null;
-    this.selectedFSProject = null;
-    this.selectedFSConfig = null;
-    this.locStorage.Remove(LocStorageKeys.LAST_PROJECT);
-    this.Config = ConfigFile.DefaultFile();
-    this.Config.FileChanged = false;
-    this.router.navigate(['/']);
+  public SetPassword(pw: string) {
+    if (this.SelectedFile) {
+      this.SelectedFile.isEncrypted = true;
+      this.fileContentCrypto = new MyCrypto(pw);
+    }
   }
 
-  private closeConfig() {
-    this.Config = null;
-    this.selectedGHConfig = null;
-    this.Config = ConfigFile.DefaultFile();
-    this.Config.FileChanged = false;
-    this.router.navigate(['/']);
+  public RemovePassword() {
+    if (this.SelectedFile) {
+      this.SelectedFile.isEncrypted = false;
+    }
   }
 
   public OpenRepo(proj) {
     window.open(this.GetRepoOfFile(proj).url, '_blank');
   }
 
-  public GetRepoOfFile(file): IGHRepository {
+  public GetRepoOfFile(file: IFile): IGHRepository {
     return this.Repos.find(x => x.id == file.repoId);
   }
 
@@ -1508,39 +1071,150 @@ export class DataService {
     return res;
   }
 
-  private addGHProjectToHistory(file: IGHFile) {
-    if (this.KeepUserSignedIn && file) {
-      const history = this.getLastProjectHistory();
-      const name = file.repoId + ':' + file.path;
-      if (history.indexOf(name) >= 0) history.splice(history.indexOf(name), 1);
-      history.splice(0, 0, name);
-      this.locStorage.Set(LocStorageKeys.PROJECT_HISTORY, JSON.stringify(history));
+  private checkAppVersionUpdate() {
+    const lastVersion = this.locStorage.Get(LocStorageKeys.CURRENT_VERSION);
+    if (lastVersion && versionFile.version != lastVersion) {
+      // if new version is higher than 0.4.18 but last version was below 0.4.19
+      if (this.isNewVersion(versionFile.version, '0.4.18') && !this.isNewVersion(lastVersion, '0.4.18')) {
+        this.locStorage.Remove(LocStorageKeys.LAST_FILE);
+        //this.locStorage.Remove(LocStorageKeys.PROJECT_HISTORY);
+        const historyStr = this.locStorage.Get(LocStorageKeys.FILE_HISTORY);
+        if (historyStr) {
+          const history = JSON.parse(historyStr) as string[]; 
+          const newHistory: IFile[] = [];
+          history.forEach(item => {
+            const parts = item.split(':');
+            const src = parts[0] == 'FS' ? FileSources.FileSystem : FileSources.GitHub;
+            const newEntry: IFile = { path: parts[1], name: this.GetFileName(parts[1]), source: src, type: FileTypes.Project, isEncrypted: null };
+            if (src == FileSources.GitHub) newEntry.repoId = Number(parts[0]);
+            newHistory.push(newEntry);
+          });
+          this.locStorage.Set(LocStorageKeys.FILE_HISTORY, JSON.stringify(newHistory));
+        }
+      }
+
+      setTimeout(() => {
+        this.messagesService.Info(StringExtension.Format(this.translate.instant('messages.info.versionUpdate'), versionFile.version));
+      }, 5000);
+    }
+    this.locStorage.Set(LocStorageKeys.CURRENT_VERSION, versionFile.version);
+  }
+
+  private getFileContent(json, encrypt: boolean, password: string = null): string {
+    this.isLoading.add();
+    if (this.SelectedFile) this.SelectedFile.isEncrypted = encrypt;
+
+    const file: IFileContent = {
+      content: JSON.stringify(json)
+    };
+    if (encrypt) {
+      if (password) this.fileContentCrypto = new MyCrypto(password);
+      let tmpFile: IFileContent = JSON.parse(JSON.stringify(file));
+      file.content = this.fileContentCrypto.Encrypt(JSON.stringify(tmpFile.content));
+      file.encrypted = this.fileContentCrypto.Encrypt(this.fileContentCrypto.GetRandom(16).toString('base64'));
+    }
+
+    const res = JSON.stringify(file);
+    this.isLoading.remove();
+    return res;
+  }
+
+  private exchangeConfigDialog() {
+    let data: ITwoOptionDialogData = {
+      title: this.translate.instant('dialog.configexchange.title'),
+      textContent: this.translate.instant('dialog.configexchange.desc'),
+      resultTrueText: this.translate.instant('general.Yes'),
+      hasResultFalse: true,
+      resultFalseText: this.translate.instant('general.No'),
+      resultTrueEnabled: () => { return true; },
+      initalTrue: false
+    };
+    return this.dialog.open(TwoOptionsDialogComponent, { hasBackdrop: false, data: data }).afterClosed();
+  }
+
+  private closeFile() {
+    this.Project = null;
+    this.Config = null;
+    this.selectedFile = null;
+    this.locStorage.Remove(LocStorageKeys.LAST_FILE);
+    this.Config = ConfigFile.DefaultFile();
+    this.Config.FileChanged = false;
+    this.router.navigate(['/']);
+  }
+
+  private addFileToAvailableFiles(file: IFile) {
+    if (file) {
+      if (!this.AvailableFiles.some(x => this.compareFiles(x, file))) {
+        this.availableFiles.splice(0, 0, file);
+      }
+      const history = this.getLastFileHistory();
+      this.availableFiles = this.availableFiles.sort((a, b) => {
+        // put not writable repos to end
+        if (a.source == FileSources.GitHub && !this.GetRepoOfFile(a).isWritable) return 1;
+        if (b.source == FileSources.GitHub && !this.GetRepoOfFile(b).isWritable) return -1;
+        
+        // sort according to history
+        let aIdx = history.findIndex(x => this.compareFiles(x, a));
+        let bIdx = history.findIndex(x => this.compareFiles(x, b));
+        if (aIdx >= 0 || bIdx >= 0) {
+          if (aIdx == -1) aIdx = Number.MAX_VALUE;
+          if (bIdx == -1) bIdx = Number.MAX_VALUE;
+          return aIdx < bIdx ? -1 : 1;
+        }
+      });
     }
   }
 
-  private addFSProjectToHistory(file: IFSFile) {
+  private removeFileFromAvailableFiles(file: IFile) {
+    this.removeFileFromHistory(file);
+    const index = this.AvailableFiles.findIndex(x => this.compareFiles(x, file));
+    if (index >= 0) {
+      this.availableFiles.splice(index, 1);
+    }
+  }
+
+  private addFileToHistory(file: IFile) {
+    if (file && (this.KeepUserSignedIn || file.source == FileSources.FileSystem)) {
+      const history = this.getLastFileHistory();
+      const index = history.findIndex(x => this.compareFiles(x, file));
+      if (index >= 0) history.splice(index, 1);
+      history.splice(0, 0, file);
+      this.locStorage.Set(LocStorageKeys.FILE_HISTORY, JSON.stringify(history));
+
+      this.locStorage.Set(LocStorageKeys.LAST_FILE, JSON.stringify(file));
+
+      this.addFileToAvailableFiles(file);
+    }
+  }
+
+  private removeFileFromHistory(file: IFile) {
     if (file && file.path) {
-      const history = this.getLastProjectHistory();
-      const name = 'FS:' + file.path;
-      if (history.indexOf(name) >= 0) history.splice(history.indexOf(name), 1);
-      history.splice(0, 0, name);
-      this.locStorage.Set(LocStorageKeys.PROJECT_HISTORY, JSON.stringify(history));
+      const history = this.getLastFileHistory();
+      const index = history.findIndex(x => this.compareFiles(x, file));
+      if (index >= 0) history.splice(index, 1);
+      this.locStorage.Set(LocStorageKeys.FILE_HISTORY, JSON.stringify(history));
+
+      const lastFile = JSON.parse(this.locStorage.Get(LocStorageKeys.LAST_FILE)) as IFile;
+      if (lastFile && this.SelectedFile && lastFile.source == FileSources.GitHub && this.compareFiles(lastFile, this.SelectedFile)) {
+        this.locStorage.Remove(LocStorageKeys.LAST_FILE);
+      }
     }
   }
 
-  private removeFSProjectToHistory(file: IFSFile) {
-    if (file && file.path) {
-      const history = this.getLastProjectHistory();
-      const name = 'FS:' + file.path;
-      if (history.indexOf(name) >= 0) history.splice(history.indexOf(name), 1);
-      this.locStorage.Set(LocStorageKeys.PROJECT_HISTORY, JSON.stringify(history));
-    }
-  }
-
-  private getLastProjectHistory(): string[] {
-    const historyStr = this.locStorage.Get(LocStorageKeys.PROJECT_HISTORY);
+  private getLastFileHistory(): IFile[] {
+    const historyStr = this.locStorage.Get(LocStorageKeys.FILE_HISTORY);
     if (historyStr) return JSON.parse(historyStr); 
     else return [];
+  }
+
+  private clearLoginData() {
+    this.locStorage.Remove(LocStorageKeys.AUTH_ACCESS_TOKEN);
+    this.locStorage.Remove(LocStorageKeys.AUTH_LAST_CODE);
+    this.locStorage.Remove(LocStorageKeys.GH_ACCOUNT_NAME);
+    this.locStorage.Remove(LocStorageKeys.GH_USER_NAME);
+    this.locStorage.Remove(LocStorageKeys.GH_USER_URL);
+    this.userMode = UserModes.None;
+    this.userAccount = this.userName = this.accessToken = this.userURL = '';
   }
 
   private retrieveUser() {
@@ -1582,11 +1256,29 @@ export class DataService {
   private blockLoading = false;
   private retrieveRepositories() {
     this.repos = [];
-    this.availableGHProjects = [];
+
+    const addNewFile = (type: FileTypes, repoId: number, name: string, path: string, sha: string) => {
+      const newFile = { repoId: repoId, name: name, path: path, sha: sha, isEncrypted: false, source: FileSources.GitHub, type: type };
+      this.addFileToAvailableFiles(newFile);
+
+      const lastFile = this.locStorage.Get(LocStorageKeys.LAST_FILE);
+      if (!this.blockLoading && this.KeepUserSignedIn && lastFile) {
+        const parsed = JSON.parse(lastFile);
+        const file = this.AvailableFiles.find(x => x.source == FileSources.GitHub && this.compareFiles(x, parsed));
+        if (file) {
+          this.blockLoading = true;
+          this.messagesService.Info(StringExtension.Format(this.translate.instant('messages.info.loadFile'), file.name));
+          this.OnLoadFile(file);
+          setTimeout(() => {
+            this.blockLoading = false;
+          }, 5000);
+        }
+      }
+    };
 
     const req = this.getExampleRepository();
     req.finally(() => {
-      let getFiles = (octokit: Octokit) => {
+      const getFiles = (octokit: Octokit) => {
         this.repos.forEach(rep => {
           this.isLoading.add();
           octokit.repos.getContent({
@@ -1604,34 +1296,7 @@ export class DataService {
               })
               .then(({ data: fileArray }) => {
                 (fileArray as []).filter(x => (x['name'] as string).endsWith('.ttmp')).forEach(x => {
-                  const newProj = { repoId: rep.id, name: x['name'], path: x['path'], sha: x['sha'], isEncrypted: false };
-                  if (!this.availableGHProjects.some(y => y.repoId == newProj.repoId && y.name == newProj.name && y.path && newProj.path)) this.availableGHProjects.push(newProj);
-                  const getName = (file: IGHFile): string => { return file.repoId + ':' + file.path; };
-                  const history = this.getLastProjectHistory();
-                  this.availableGHProjects = this.availableGHProjects.sort((a, b) => {
-                    if (this.GetRepoOfFile(a).isWritable == this.GetRepoOfFile(b).isWritable) {
-                      let aIdx = history.indexOf(getName(a));
-                      let bIdx = history.indexOf(getName(b));
-                      if (aIdx >= 0 || bIdx >= 0) {
-                        if (aIdx == -1) aIdx = Number.MAX_VALUE;
-                        if (bIdx == -1) bIdx = Number.MAX_VALUE;
-                        return aIdx < bIdx ? -1 : 1;
-                      }
-                    }
-                    return this.GetRepoOfFile(a).isWritable ? -1 : (this.GetRepoOfFile(b).isWritable ? 1 : 0);
-                  });
-                  let lastProject = this.locStorage.Get(LocStorageKeys.LAST_PROJECT);
-                  if (!this.blockLoading && this.KeepUserSignedIn && lastProject) {
-                    let parsed = JSON.parse(lastProject);
-                    let proj = this.AvailableGHProjects.find(x => 'owner' in parsed && rep.owner == parsed['owner'] && x.repoId == parsed['repoId'] && x.path == parsed['path']);
-                    if (proj) {
-                      this.blockLoading = true;
-                      this.LoadProject(proj);
-                      setTimeout(() => {
-                        this.blockLoading = false;
-                      }, 5000);
-                    }
-                  }
+                  addNewFile(FileTypes.Project, rep.id, x['name'], x['path'], x['sha']);
                 });
               }).finally(() => {
                 this.isLoading.remove();
@@ -1646,10 +1311,7 @@ export class DataService {
               })
               .then(({ data: fileArray }) => {
                 (fileArray as []).filter(x => (x['name'] as string).endsWith('.ttmc')).forEach(x => {
-                  this.availableGHConfigs.push({ repoId: rep.id, name: x['name'], path: x['path'], sha: x['sha'], isEncrypted: false });
-                  this.availableGHConfigs = this.availableGHConfigs.sort((a, b) => {
-                    return this.GetRepoOfFile(a).isWritable ? -1 : (this.GetRepoOfFile(b).isWritable ? 1 : 0);
-                  });
+                  addNewFile(FileTypes.Config, rep.id, x['name'], x['path'], x['sha']);
                 });
               }).finally(() => {
                 this.isLoading.remove();
@@ -1730,8 +1392,12 @@ export class DataService {
     }
   }
 
-  private isNewVersion(tag: string): boolean {
-    const currArr = versionFile.version.replace('v', '').split('.');
+  private compareFiles(f1: IFile, f2: IFile): boolean {
+    return f1.source == f2.source && f1.name == f2.name && f1.path == f2.path && f1.repoId == f2.repoId;
+  }
+
+  private isNewVersion(tag: string, current: string): boolean {
+    const currArr = current.replace('v', '').split('.');
     const tagArr = tag.replace('v', '').split('.');
 
     if (currArr.length == tagArr.length) {

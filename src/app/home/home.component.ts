@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ThemeService } from '../util/theme.service';
-import { DataService, UserModes } from '../util/data.service';
+import { DataService, FileSources, IFile, UserModes } from '../util/data.service';
 import { LocalStorageService, LocStorageKeys } from '../util/local-storage.service';
 
 import { TourService } from 'ngx-ui-tour-md-menu';
@@ -96,13 +96,9 @@ export class HomeComponent implements OnInit {
       }
     });
 
-    if (this.electron.isElectron) {
-      this.electron.ipcRenderer.on('oncode', (e, args) => {
-        this.dataService.LogIn(args);
-      });
-    }
-
-    this.dataService.ProjectChanged.subscribe(x => this.router.navigate(['/' + dest]));
+    this.dataService.ProjectChanged.subscribe(x => {
+      if (x != null) this.router.navigate(['/' + dest])
+    });
   }
 
   public CheckTourStart() {
@@ -154,6 +150,10 @@ export class HomeComponent implements OnInit {
   public ProgressTracker() {
     this.NextProcessStep();
     this.dialogService.OpenProgresstrackerDialog();
+  }
+
+  public GetFileIcon(file: IFile) {
+    return file.source == FileSources.FileSystem ? 'file_present' : 'cloud_queue';
   }
 
   public CutName(val: string): string {

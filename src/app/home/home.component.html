@@ -19,19 +19,19 @@
                   <mat-icon>more_vert</mat-icon>
                 </button>
                 <mat-menu #projMenu="matMenu">
-                  <button mat-menu-item [disabled]="!dataService.CanSaveProjectBtn" (click)="dataService.OnSave()">
+                  <button mat-menu-item [disabled]="!dataService.CanSaveProject" (click)="dataService.OnSave()">
                     <mat-icon>save</mat-icon>
                     <span>{{'pages.home.menu.saveProject' | translate}}</span>
                   </button>
-                  <button mat-menu-item [disabled]="!dataService.Project" (click)="dataService.ExportFile(true)" matTooltip="{{'pages.home.menu.downloadProject.tt' | translate}}" matTooltipShowDelay="1000">
+                  <button mat-menu-item [disabled]="!dataService.Project" (click)="dataService.OnSave(false, true)" matTooltip="{{'pages.home.menu.downloadProject.tt' | translate}}" matTooltipShowDelay="1000">
                     <mat-icon>file_download</mat-icon>
                     <span>{{'pages.home.menu.downloadProject' | translate}}</span>
                   </button>
-                  <button mat-menu-item [disabled]="!dataService.Project" class="exportBtn" (click)="dataService.ExportFile(false)" matTooltip="{{'pages.home.menu.downloadConfig.tt' | translate}}" matTooltipShowDelay="1000">
+                  <button mat-menu-item [disabled]="!dataService.Project" class="exportBtn" (click)="dataService.OnSave(false, true, true)" matTooltip="{{'pages.home.menu.downloadConfig.tt' | translate}}" matTooltipShowDelay="1000">
                     <mat-icon>file_download</mat-icon>
                     <span>{{'pages.home.menu.downloadConfig' | translate}}</span>
                   </button>
-                  <button mat-menu-item [disabled]="!dataService.SelectedGHProject" (click)="dataService.OnExportConfig()" matTooltip="{{'pages.home.menu.exportConfig.tt' | translate}}" matTooltipShowDelay="1000">
+                  <button mat-menu-item [disabled]="!dataService.Project || !dataService.IsLoggedIn" (click)="dataService.OnSave(true, false, true)" matTooltip="{{'pages.home.menu.exportConfig.tt' | translate}}" matTooltipShowDelay="1000">
                     <mat-icon>output</mat-icon>
                     <span>{{'pages.home.menu.exportConfig' | translate}}</span>
                   </button>
@@ -44,19 +44,19 @@
                       <mat-icon>file_upload</mat-icon>
                       {{'pages.home.menu.importConfig' | translate}}
                     </button>
-                    <button mat-menu-item (click)="dataService.ExchangeConfigWithDefault()">Default Configuration</button>
+                    <button mat-menu-item (click)="dataService.ExchangeConfigWithDefault()">{{'general.DefaultConfiguration' | translate}}</button>
                     <button mat-menu-item *ngFor="let conf of dataService.AvailableGHConfigs" (click)="dataService.ExchangeConfig(conf)">{{conf.name}}</button>
                   </mat-menu>
-                  <button mat-menu-item [disabled]="!dataService.SelectedGHProject && !dataService.SelectedFSProject" (click)="dataService.OnTransferProjectDetails()" matTooltip="{{'pages.home.menu.transferProjectDetails.tt' | translate}}" matTooltipShowDelay="1000">
+                  <button mat-menu-item [disabled]="!dataService.HasProject" (click)="dataService.OnTransferProjectDetails()" matTooltip="{{'pages.home.menu.transferProjectDetails.tt' | translate}}" matTooltipShowDelay="1000">
                     <mat-icon>exit_to_app</mat-icon>
                     <span>{{'pages.home.menu.transferProjectDetails' | translate}}</span>
                   </button>
-                  <button mat-menu-item [disabled]="!dataService.Project" (click)="dataService.OnCloseProject()">
+                  <button mat-menu-item [disabled]="!dataService.Project" (click)="dataService.OnCloseFile()">
                     <mat-icon>close</mat-icon>
                     <span>{{'pages.home.menu.closeProject' | translate}}</span>
                   </button>
                   <mat-divider></mat-divider>
-                  <input hidden type="file" accept=".ttmp" #projectUploader (change)="dataService.ImportFile(true, $event)"/>
+                  <input hidden type="file" accept=".ttmp" #projectUploader (change)="dataService.ImportFile($event)"/>
                   <button mat-menu-item (click)="projectUploader.click()" matTooltip="{{'pages.home.menu.importProject.tt' | translate}}" matTooltipShowDelay="1000">
                     <mat-icon>file_upload</mat-icon>
                     <span>{{'pages.home.menu.importProject' | translate}}</span>
@@ -64,20 +64,34 @@
                 </mat-menu>
               </h2>
 
-              <div *ngIf="dataService.SelectedGHProject" style="margin-bottom: 10px;">
-                {{'pages.home.CurrentProject' | translate}}: {{dataService.SelectedGHProject.name}}
+              <div *ngIf="dataService.HasProject" style="margin-bottom: 10px;">
+                {{'pages.home.CurrentProject' | translate}}: {{dataService.SelectedFile.name}}
                 <br/>
               </div>
 
-              <button mat-button style="padding-left: 0px; margin-bottom: 20px;" (click)="dataService.NewProject()">
+              <button mat-button *ngIf="dataService.AvailableConfigs.length == 0" style="padding-left: 0px; margin-bottom: 20px;" (click)="dataService.OnNewProject()">
                 <mat-icon color="primary">add_circle</mat-icon>
                 {{'pages.home.createProject' | translate}}
               </button>
+              <button mat-button *ngIf="dataService.AvailableConfigs.length > 0" style="padding-left: 0px; margin-bottom: 20px;" [matMenuTriggerFor]="createProjectWithConfig">
+                <mat-icon color="primary">add_circle</mat-icon>
+                {{'pages.home.createProject' | translate}}
+              </button>
+              <mat-menu #createProjectWithConfig="matMenu">
+                <button mat-menu-item (click)="dataService.OnNewProject()">
+                  <mat-icon>book_2</mat-icon>
+                  <span>{{'general.DefaultConfiguration' | translate}}</span>
+                </button>
+                <button mat-menu-item *ngFor="let conf of dataService.AvailableConfigs" (click)="dataService.OnNewProject(conf)">
+                  <mat-icon>{{ GetFileIcon(conf) }}</mat-icon>
+                  <span>{{conf.name}}</span>
+                </button>
+              </mat-menu>
               <br/>
               <ng-container *ngFor="let proj of GetAvailableGHProjects()">
                 <div id="project">
                   <mat-icon class="iconBtn" style="vertical-align: top; font-size: 20px; margin-right: 5px;" matTooltip="{{'pages.home.storedOnline' | translate}}" matTooltipShowDelay="1000">cloud_queue</mat-icon>
-                  <button class="color-primary astext" (click)="dataService.LoadProject(proj)">{{proj.name}}</button>
+                  <button class="color-primary astext" (click)="dataService.OnLoadFile(proj)">{{proj.name}}</button>
                   <span style="font-size: small; margin-left: 5px;" matTooltip="{{GetRepoName(proj)}}" matTooltipShowDelay="1000">in {{CutName(GetRepoName(proj))}}</span> 
                   <mat-icon *ngIf="IsProtected(proj)" class="iconBtn" style="vertical-align: top; margin-right: 5px;" matTooltip="{{'pages.home.notWritable' | translate}}" matTooltipShowDelay="1000">edit_off</mat-icon>
                   <button mat-icon-button class="show-on-hover iconBtn" style="margin-right: 5px;" [matMenuTriggerFor]="moreGHProject" matTooltip="{{'general.More' | translate}}" matTooltipShowDelay="1000">
@@ -88,7 +102,7 @@
                       <mat-icon>open_in_new</mat-icon>
                       <span>{{'general.openInNew' | translate}}</span>
                     </button>
-                    <button mat-menu-item (click)="dataService.DeleteGHFile(proj)">
+                    <button mat-menu-item (click)="dataService.DeleteFile(proj)">
                       <mat-icon>delete</mat-icon>
                       <span>{{'general.Delete' | translate}}</span>
                     </button>
@@ -100,7 +114,7 @@
               <ng-container *ngFor="let proj of GetAvailableFSProjects()">
                 <div id="project">
                   <mat-icon class="iconBtn" style="vertical-align: top; font-size: 20px; margin-right: 5px;" matTooltip="{{'pages.home.storedOffline' | translate}}" matTooltipShowDelay="1000">file_present</mat-icon>
-                  <button class="color-primary astext" (click)="dataService.LoadProjectFS(proj)">{{dataService.GetFileName(proj.path)}}</button>
+                  <button class="color-primary astext" (click)="dataService.OnLoadFile(proj)">{{dataService.GetFileName(proj.path)}}</button>
                   <span style="font-size: small; margin-left: 5px;" matTooltip="{{dataService.GetFilePath(proj.path)}}" matTooltipShowDelay="1000">in {{CutName(dataService.GetFilePath(proj.path))}}</span>
                   <button mat-icon-button class="show-on-hover iconBtn" style="margin-right: 5px;" [matMenuTriggerFor]="moreFSProject" matTooltip="{{'general.More' | translate}}" matTooltipShowDelay="1000">
                     <mat-icon>more_vert</mat-icon>
@@ -110,7 +124,7 @@
                       <mat-icon>remove</mat-icon>
                       <span>{{'general.Remove' | translate}}</span>
                     </button>
-                    <button mat-menu-item (click)="dataService.DeleteFSFile(proj)">
+                    <button mat-menu-item (click)="dataService.DeleteFile(proj)">
                       <mat-icon>delete</mat-icon>
                       <span>{{'general.Delete' | translate}}</span>
                     </button>
@@ -125,7 +139,7 @@
                   <mat-icon>more_vert</mat-icon>
                 </button>
                 <mat-menu #confMenu="matMenu">
-                  <input hidden type="file" accept=".ttmc" #configUploader (change)="dataService.ImportFile(false, $event)"/>
+                  <input hidden type="file" accept=".ttmc" #configUploader (change)="dataService.ImportFile($event)"/>
                   <button mat-menu-item (click)="configUploader.click()">
                     <mat-icon>file_upload</mat-icon>
                     <span>{{'pages.home.menu.importConfig' | translate}}</span>
@@ -136,7 +150,7 @@
               <ng-container *ngFor="let conf of GetAvailableGHConfigs()">
                 <div id="config">
                   <mat-icon class="iconBtn" style="vertical-align: top; font-size: 20px; margin-right: 5px;" matTooltip="{{'pages.home.storedOnline' | translate}}" matTooltipShowDelay="1000">cloud_queue</mat-icon>
-                  <button class="color-primary astext" (click)="dataService.LoadConfig(conf)">{{conf.name}}</button>
+                  <button class="color-primary astext" (click)="dataService.OnLoadFile(conf)">{{conf.name}}</button>
                   <span style="font-size: small; margin-left: 5px;">in {{GetRepoName(conf)}}</span>
                   <mat-icon *ngIf="IsProtected(conf)" class="iconBtn" style="vertical-align: top; margin-right: 5px;" matTooltip="{{'pages.home.notWritable' | translate}}" matTooltipShowDelay="1000">edit_off</mat-icon>
                   <button mat-icon-button class="show-on-hover iconBtn" style="margin-right: 5px;" [matMenuTriggerFor]="moreGHConfig" matTooltip="{{'general.More' | translate}}" matTooltipShowDelay="1000">
@@ -147,7 +161,7 @@
                       <mat-icon>open_in_new</mat-icon>
                       <span>{{'general.openInNew' | translate}}</span>
                     </button>
-                    <button mat-menu-item (click)="dataService.DeleteGHFile(conf)">
+                    <button mat-menu-item (click)="dataService.DeleteFile(conf)">
                       <mat-icon>delete</mat-icon>
                       <span>{{'general.Delete' | translate}}</span>
                     </button>
@@ -159,7 +173,7 @@
               <ng-container *ngFor="let conf of GetAvailableFSConfigs()">
                 <div id="config">
                   <mat-icon class="iconBtn" style="vertical-align: top; font-size: 20px; margin-right: 5px;" matTooltip="{{'pages.home.storedOffline' | translate}}" matTooltipShowDelay="1000">file_present</mat-icon>
-                  <button class="color-primary astext" (click)="dataService.LoadConfigFS(conf)">{{dataService.GetFileName(conf.path)}}</button>
+                  <button class="color-primary astext" (click)="dataService.OnLoadFile(conf)">{{dataService.GetFileName(conf.path)}}</button>
                   <span style="font-size: small; margin-left: 5px;" matTooltip="{{dataService.GetFilePath(conf.path)}}" matTooltipShowDelay="1000">in {{CutName(dataService.GetFilePath(conf.path))}}</span>
                   <button mat-icon-button class="show-on-hover iconBtn" style="margin-right: 5px;" [matMenuTriggerFor]="moreFSConfig" matTooltip="{{'general.More' | translate}}" matTooltipShowDelay="1000">
                     <mat-icon>more_vert</mat-icon>
@@ -169,7 +183,7 @@
                       <mat-icon>remove</mat-icon>
                       <span>{{'general.Remove' | translate}}</span>
                     </button>
-                    <button mat-menu-item (click)="dataService.DeleteFSFile(conf)">
+                    <button mat-menu-item (click)="dataService.DeleteFile(conf)">
                       <mat-icon>delete</mat-icon>
                       <span>{{'general.Delete' | translate}}</span>
                     </button>

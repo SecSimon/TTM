@@ -5,10 +5,8 @@
     width: 100%; 
     bottom: 0; 
     left: 0; 
-    height: 20px; 
+    height: 22px; 
     font-size: smaller;
-    padding-top: 1px;
-    padding-bottom: 1px;
     color: white; 
     border-top-style: solid; 
     border-color: white; 
@@ -16,20 +14,26 @@
     z-index:99999;
 }
 
-.iconBtn{
-    height: 20px !important;
-    //width: 17px !important;
-    //font-size: 17px !important;
-    line-height: 20px !important;
-    transform: scale(0.68);
+button {
+    height: 22px !important;
+    border-radius: 2px;
+    bottom: 1px;
 }
 
-.msgBtn{
-    height: 18px !important;
-    //width: 17px !important;
+.statusBtn {
     width: auto;
     font-size: 14px !important;
-    line-height: 16px !important;
+    line-height: 22px !important;
+}
+.statusBtn:hover {
+    background-color: rgba($color: #fff, $alpha: 0.15) !important;
+}
+
+.iconBtn {
+    height: 22px !important;
+    //font-size: 17px !important;
+    line-height: 22px !important;
+    transform: scale(0.68);
 }
 
 .buttonAsText {

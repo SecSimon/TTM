@@ -1,6 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { IUserInfo, ProjectFile } from '../../../model/project-file';
-import { DataService, IGHCommitInfo, IGHFile } from '../../../util/data.service';
+import { DataService, IGHCommitInfo, IFile } from '../../../util/data.service';
 import { StringExtension } from '../../../util/string-extension';
 import { ThemeService } from '../../../util/theme.service';
 
@@ -15,7 +15,7 @@ import { LocStorageKeys, LocalStorageService } from '../../../util/local-storage
 })
 export class ModelInfoComponent implements OnInit {
 
-  public GHProject: IGHFile;
+  public GHProject: IFile;
   public Project: ProjectFile;
 
   public selectedUser: IUserInfo;
@@ -27,7 +27,7 @@ export class ModelInfoComponent implements OnInit {
   constructor(public dataService: DataService, public theme: ThemeService, private dialog: DialogService, private locStorage: LocalStorageService) { }
 
   ngOnInit(): void {
-    this.GHProject = this.dataService.SelectedGHProject;
+    this.GHProject = this.dataService.SelectedFile;
     this.Project = this.dataService.Project;
 
     this.dataService.GetGHProjectHistory().then(x => this.commits = x);

@@ -127,7 +127,7 @@ export class TestCaseTableComponent implements OnInit {
   }
 
   public OpenTestCase(tc: TestCase) {
-    this.dialog.OpenTestCaseDialog(tc, false);
+    this.dialog.OpenTestCaseDialog(tc, false, this.dataSource.sortData(this.dataSource.filteredData, this.sort));
   }
 
   public OpenContextMenu(event, entry: TestCase) {

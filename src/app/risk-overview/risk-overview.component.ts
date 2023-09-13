@@ -128,7 +128,7 @@ export class RiskOverviewComponent extends SideNavBase implements AfterViewInit 
   }
 
   public OnScenarioDblClick(as: AttackScenario) {
-    this.dialog.OpenAttackScenarioDialog(as, false, this.dataSourceScenarios.data);
+    this.dialog.OpenAttackScenarioDialog(as, false, this.dataSourceScenarios.sortData(this.dataSourceScenarios.filteredData, this.sortScenarios));
   }
 
   public IsAttackScenario() {

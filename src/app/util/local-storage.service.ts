@@ -15,7 +15,7 @@ export enum LocStorageKeys {
   GH_USER_URL                 = "github_user_url",
   GH_USER_EMAIL               = "github_user_email",
   LANGUAGE                    = "language",
-  LAST_PROJECT                = "last_project",
+  LAST_FILE                = "last_project",
   MSG_SHOW_ERROR              = "msg_show_error",
   MSG_SHOW_WARNING            = "msg_show_warning",
   MSG_SHOW_SUCCESS            = "msg_show_success",
@@ -48,7 +48,7 @@ export enum LocStorageKeys {
   PAGE_REPORTING_SHOW_FIRST_STEPS  = "page_reporting_show_first_steps",
   PAGE_REPORTING_SHOW_TEST_CASES  = "page_reporting_show_test_cases",
   PAGE_RISK_SPLIT_SIZE_X      = "page_risk_split_size_",
-  PROJECT_HISTORY             = "project_history",
+  FILE_HISTORY             = "project_history",
   SPELL_CHECK                 = "spell_check",
   WELCOME_TOUR_STARTED        = "welcome_tour_started"
 }

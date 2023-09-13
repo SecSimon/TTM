@@ -38,7 +38,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     private locStorage: LocalStorageService, private overlay: OverlayContainer, private isLoadingService: IsLoadingService, private kvDiffers: KeyValueDiffers) {
     this.translate.setDefaultLang('en');
 
-    window.onbeforeunload = (event) => { return this.dataService.OnClose(event); };
+    window.onbeforeunload = (event) => { return this.dataService.OnCloseApp(event); };
   }
 
   ngOnInit() {
@@ -76,6 +76,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.theme.Primary = getComputedStyle(this.primary.nativeElement).color;
       this.theme.Accent = getComputedStyle(this.accent.nativeElement).color;
       this.dataService.ProjectChanged.subscribe(() => this.createDiffers());
+      this.dataService.ConfigChanged.subscribe(() => this.createDiffers());
       this.dataService.ProjectSaved.subscribe(() => this.createDiffers());
     }, 10);
   }

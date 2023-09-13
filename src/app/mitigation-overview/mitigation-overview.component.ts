@@ -98,8 +98,7 @@ export class MitigationOverviewComponent extends SideNavBase implements OnInit {
         name: () => 'CM' + cm.Number + ') ' + cm.Name,
         canSelect: true,
         data: cm,
-        canRename: true,
-        onRename: (val: string) => { cm.Name = val; },
+        canRename: false,
         canDelete: true,
         onDelete: () => { 
           this.dialog.OpenDeleteObjectDialog(cm).subscribe(res => {
@@ -140,8 +139,7 @@ export class MitigationOverviewComponent extends SideNavBase implements OnInit {
         name: () => 'MP' + proc.Number + ') ' + proc.Name,
         canSelect: true,
         data: proc,
-        canRename: true,
-        onRename: (val: string) => { proc.Name = val; },
+        canRename: false,
         canDelete: true,
         onDelete: () => { 
           this.dialog.OpenDeleteObjectDialog(proc).subscribe(res => {
@@ -189,7 +187,9 @@ export class MitigationOverviewComponent extends SideNavBase implements OnInit {
         let newObj = pf.CreateMitigationProcess();
         this.createNodes();
         this.selectedNode = NavTreeBase.FindNodeOfObject(newObj, this.nodes);
-        this.selectedNode.isRenaming = true;
+        setTimeout(() => {
+          document.dispatchEvent(new KeyboardEvent('keydown', {'key': 'F2'}));
+        }, 250);
       },
       children: []
     };

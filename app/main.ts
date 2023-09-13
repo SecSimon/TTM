@@ -62,20 +62,24 @@ function createWindow(): BrowserWindow {
 
   win.webContents.session.setSpellCheckerLanguages(['en-US', 'de']);
 
+  let rendererIsReady = false;
+
   win.webContents.on('will-navigate', (event, url) => {
     if (url.indexOf('?code=') >= 0) {
       event.preventDefault();
       win.loadURL(pageURL);
-      setTimeout(() => {
-        win.webContents.send('oncode', url.substring(url.indexOf('?code=')+6));
-      }, 1000);
+      const action = () => { win.webContents.send('oncode', url.substring(url.indexOf('?code=')+6)); };
+      if (rendererIsReady) action();
+      else ipcMain.on('RendererReady', () => action());
     } 
   });
 
   win.webContents.on('will-redirect', (event, url) => {
     if (url.indexOf('?code=') >= 0) {
       event.preventDefault();
-      win.webContents.send('oncode', url.substring(url.indexOf('?code=')+6));
+      const action = () => { win.webContents.send('oncode', url.substring(url.indexOf('?code=')+6)); };
+      if (rendererIsReady) action();
+      else ipcMain.on('RendererReady', () => action());
     } 
   });
 
@@ -84,26 +88,26 @@ function createWindow(): BrowserWindow {
     label: 'File',
     submenu: [
       { label: 'New', accelerator: 'Ctrl+N', click: () => { win.webContents.send('OnNew'); } },
-      { label: 'Open / Import', accelerator: 'Ctrl+O', click: () => { 
+      { label: 'Open', accelerator: 'Ctrl+O', click: () => { 
           dialog.showOpenDialog(win, { filters: [ { extensions: ['ttmp','ttmc'], name: 'TTModeler Project/Configuration' }, { extensions: ['ttmp'], name: 'TTModeler Project' }, { extensions: ['ttmc'], name: 'TTModeler Configuration' }], properties: [ 'openFile' ] }).then(result => {
             if (result.filePaths.length >= 1) {
-              let data = fs.readFileSync(result.filePaths[0], 'utf-8');
-              win.webContents.send('OnImportFile', data, result.filePaths[0]);
+              const data = fs.readFileSync(result.filePaths[0], 'utf-8');
+              win.webContents.send('OnOpenFile', data, result.filePaths[0]);
             }
           });
         } 
       },
       { label: 'Save', accelerator: 'Ctrl+S', click: () => { win.webContents.send('OnSave'); } },
       { label: 'Save As', accelerator: 'Ctrl+Shift+S', click: () => { win.webContents.send('OnSaveAs'); } },
-      { label: 'Download Project', click: () => { win.webContents.send('OnDownloadProject'); } },
-      { label: 'Close Project', click: () => { win.webContents.send('OnCloseProject'); } },
+      { label: 'Local Download', click: () => { win.webContents.send('OnLocalDownload'); } },
+      { label: 'Close File', click: () => { win.webContents.send('OnCloseFile'); } },
       { role: 'quit', label: '&Quit', accelerator: 'Ctrl+Q', click: () => { app.quit(); } }
     ]
   });
   temp.push({
     label: 'View',
     submenu: [
-      { label: 'Reload', accelerator: 'Ctrl+R', click: (item, focusedWindow) => { focusedWindow.reload(); } },
+      //{ label: 'Reload', accelerator: 'Ctrl+R', click: (item, focusedWindow) => { focusedWindow.reload(); } },
       { label: 'Full Screen', accelerator: 'F11', click: (item, focusedWindow) => { focusedWindow.setFullScreen(!focusedWindow.isFullScreen()); } },
       { label: 'Minimize', 'role': 'minimize', accelerator: 'Ctrl+M' },
       { label: 'Toggle Developer Tools', accelerator: 'Ctrl+Shift+I', click: (item, focusedWindow) => { focusedWindow.webContents.toggleDevTools(); } }
@@ -113,12 +117,20 @@ function createWindow(): BrowserWindow {
   const menu = Menu.buildFromTemplate(temp);
   Menu.setApplicationMenu(menu);
 
+  ipcMain.on('RendererReady', () => {
+    rendererIsReady = true;
+  });
+
   if (process.argv.length >= 2) {
-    let openFilePath = process.argv[1];
-    const data = fs.readFileSync(openFilePath, 'utf-8');
-    ipcMain.on('OnMyReady', () => {
-      win.webContents.send('OnImportFile', data, openFilePath);
-    });
+    const openFilePath = process.argv[1];
+    try {
+      const data = fs.readFileSync(openFilePath, 'utf-8');
+      const action = () => { win.webContents.send('OnOpenFile', data, openFilePath); };
+      if (rendererIsReady) action();
+      else ipcMain.on('RendererReady', () => action());
+    } 
+    catch {
+    }
   }
 
   ipcMain.on('ExistFiles', (event, files: string[]) => {
@@ -131,27 +143,26 @@ function createWindow(): BrowserWindow {
       catch {
       }
     });
-    win.webContents.send('OnExistingFiles', existingFiles);
+    win.webContents.send('ExistFilesCallback', existingFiles);
   });
   ipcMain.on('ReadFile', (event, path) => {
     const data = fs.readFileSync(path, 'utf-8');
-    win.webContents.send('OnReadFile', data, path);
+    win.webContents.send('ReadFileCallback', data, path);
   });
   ipcMain.on('SaveFile', (event, path, content) => {
     fs.writeFileSync(path, content);
-    win.webContents.send('OnSaveFile', true);
+    win.webContents.send('SaveFileCallback', path);
   });
   ipcMain.on('SaveFileAs', (event, path, content) => {
     const newPath = dialog.showSaveDialogSync(win, { defaultPath: path });
     if (newPath) fs.writeFileSync(newPath, content);
-    win.webContents.send('OnSaveFileAs', newPath);
+    win.webContents.send('SaveFileCallback', newPath);
   });
   ipcMain.on('DeleteFile', (event, path) => {
     fs.rmSync(path);
   });
 
   ipcMain.on('OnCloseApp', () => {
-    console.log('exit');
     app.exit();
   });
 

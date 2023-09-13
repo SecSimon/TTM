@@ -34,6 +34,7 @@ import { GlossaryComponent } from '../shared/components/glossary/glossary.compon
 import { ChangelogDialogComponent } from '../shared/components/changelog-dialog/changelog-dialog.component';
 import { ModelTasksComponent } from '../shared/components/model-info/model-tasks/model-tasks.component';
 import { ModelChangesComponent } from '../shared/components/model-info/model-changes/model-changes.component';
+import { PasswordProtectionDialogComponent } from '../shared/components/password-protection-dialog/password-protection-dialog.component';
 
 export class MyBoolean {
   public Value: boolean;
@@ -300,7 +301,7 @@ export class DialogService {
     return this.OpenTwoOptionsDialog(data, false, null, '800px');
   }
 
-  public OpenTestCaseDialog(tc: TestCase, isNew: boolean) {
+  public OpenTestCaseDialog(tc: TestCase, isNew: boolean, cases: TestCase[] = null) {
     const data: ITwoOptionDialogData = {
       title: this.translate.instant('general.TestCase'),
       resultTrueText: isNew ? this.translate.instant('general.Add') : this.translate.instant('general.Close'),
@@ -313,6 +314,22 @@ export class DialogService {
         { Key: TestCase, Value: tc }
       ]
     };
+    if (cases) {
+      data.canIterate = true;
+      let curr = tc;
+      const onChange = new EventEmitter<TestCase>();
+      data.componentInputData.push({ Key: EventEmitter<TestCase>, Value: onChange });
+      data.canNext = () => { return cases.indexOf(curr) < cases.length-1; };
+      data.canPrevious = () => { return cases.indexOf(curr) > 0; };
+      data.onNext = () => { 
+        curr = cases[cases.indexOf(curr)+1];
+        onChange.emit(curr);
+      };
+      data.onPrevious = () => {
+        curr = cases[cases.indexOf(curr)-1];
+        onChange.emit(curr);
+      };
+    }
     return this.OpenTwoOptionsDialog(data, false, null, '800px');
   }
 
@@ -462,6 +479,11 @@ export class DialogService {
       component: ModelChangesComponent
     };
     return this.OpenTwoOptionsDialog(data);
+  }
+
+  public OpenPasswordProtectionDialog() {
+    const dialogRef = this.dialog.open(PasswordProtectionDialogComponent, { hasBackdrop: false });
+    return dialogRef;
   }
 
   public OpenCookieConsentDialog() {

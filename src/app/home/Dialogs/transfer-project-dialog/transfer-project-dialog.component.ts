@@ -3,7 +3,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { AssetGroup, MyData } from '../../../model/assets';
 import { IKeyValue } from '../../../model/database';
 import { ProjectFile } from '../../../model/project-file';
-import { DataService } from '../../../util/data.service';
+import { DataService, FileSources } from '../../../util/data.service';
 import { MessagesService } from '../../../util/messages.service';
 
 export interface IFileDetails {
@@ -28,7 +28,7 @@ export class TransferProjectDialogComponent implements OnInit {
   public get SourceProject(): ProjectFile { return this.sourceProject; }
   public set SourceProject(val: ProjectFile) {
     this.sourceProject = val;
-    this.TransferLog = null;
+    if (val) this.TransferLog = null;
   }
 
   public Details: IKeyValue[] = [];
@@ -36,11 +36,8 @@ export class TransferProjectDialogComponent implements OnInit {
   public TransferLog: string = null;
 
   ngOnInit(): void {
-    this.dataService.AvailableGHProjects.filter(x => x != this.dataService.SelectedGHProject).forEach(x => {
-      this.AvailableProjects.push({ key: x, name: x.name, tooltip: this.dataService.GetRepoOfFile(x)?.name + '/' + x.path });
-    });
-    this.dataService.AvailableFSProjects.filter(x => x.path != this.dataService.SelectedFSProject?.path).forEach(x => {
-      this.AvailableProjects.push({ key: x, name: this.dataService.GetFileName(x.path), tooltip: x.path });
+    this.dataService.AvailableProjects.forEach(x => {
+      this.AvailableProjects.push({ key: x, name: x.name, tooltip: (x.source == FileSources.GitHub ? this.dataService.GetRepoOfFile(x)?.name + '/' + x.path : x.path)});
     });
 
     this.Details.push({ Key: false, Value: 'dialog.transferproject.d.Participants' });
@@ -62,22 +59,15 @@ export class TransferProjectDialogComponent implements OnInit {
     };
 
     this.Details.forEach(x => x.Key = false);
-    if (this.SelectedProject.key['repoId'] == null) {
-      this.dataService.ReadFSFile(this.SelectedProject.key).then((file) => {
-        this.SourceProject = file;
-        setDetails(file);
-      }).catch(err => { });
-    }
-    else {
-      this.dataService.ReadGHFile(this.SelectedProject.key).then((file) => {
-        this.SourceProject = file;
-        setDetails(file);
-      }).catch(err => { });
-    }
+    this.dataService.GetFile(this.SelectedProject.key).then(file => {
+      this.SourceProject = file as ProjectFile;
+      setDetails(this.SourceProject);
+    }).catch();
   }
 
   public TransferProject() {
-    this.TransferLog = this.translate.instant('dialog.transferproject.l.start') + '\n';
+    this.TransferLog = this.sourceProject.Name + ':\n';
+    this.TransferLog += this.translate.instant('dialog.transferproject.l.start') + '\n';
     const currProj = this.dataService.Project;
     const srcProj = this.SourceProject;
     this.Details.filter(x => x.Key == true).forEach(key => {
@@ -201,6 +191,8 @@ export class TransferProjectDialogComponent implements OnInit {
 
     this.Details.forEach(x => x.Key = false);
     this.UpdateAllDetails();
+    this.SelectedProject = null;
+    this.SourceProject = null;
     this.TransferLog += this.translate.instant('dialog.transferproject.l.finished') + '\n';
     this.dataService.ConsistencyCheck().then(res => {
       if (res) this.messageService.Success('messages.success.transferedProjectDetails');
@@ -222,6 +214,6 @@ export class TransferProjectDialogComponent implements OnInit {
   }
 
   public GetIcon(proj: IFileDetails): string {
-    return proj.key['repoId'] == null ? 'file_present' : 'cloud_queue';
+    return proj.key.source == FileSources.FileSystem ? 'file_present' : 'cloud_queue';
   }
 }

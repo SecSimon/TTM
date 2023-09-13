@@ -641,6 +641,9 @@ export class ReportingComponent implements OnInit {
           document: {
             run: {
               font: 'Calibri',
+              // language: { // todo docx v8.0.0
+              //   value: 
+              // }
             }
           },
           heading1: {

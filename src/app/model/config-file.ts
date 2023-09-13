@@ -723,7 +723,7 @@ export class ConfigFile extends DatabaseBase {
   }
 
   public static FromJSON(val): ConfigFile {
-    let res = new ConfigFile(val.Data);
+    const res = new ConfigFile(val.Data);
 
     val.assetGroups.forEach(x => res.assetGroups.push(AssetGroup.FromJSON(x, null, res)));
     val.myData.forEach(x => res.myData.push(MyData.FromJSON(x, null, res)));
@@ -747,6 +747,8 @@ export class ConfigFile extends DatabaseBase {
     val.controls?.forEach(x => res.controlMap.set(x['ID'], Control.FromJSON(x, res)));
     val.requirementTypes?.forEach(x => res.requirementTypes.push(RequirementType.FromJSON(x, res)));
     val.checklistTypes?.forEach(x => res.checklistTypes.push(ChecklistType.FromJSON(x, res)));
+
+    res.FileChanged = false;
 
     return res;
   }

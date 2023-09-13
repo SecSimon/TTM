@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, Input, OnInit, Optional, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Optional, ViewChild } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import imageCompression from 'browser-image-compression';
 import { MyComponentStack } from '../../model/component';
@@ -36,8 +36,11 @@ export class TestCaseComponent implements OnInit {
 
   public get canAddAttackScenario(): boolean { return this.testCase.LinkedElements.length > 0; }
 
-  constructor(@Optional() tc: TestCase, public dataService: DataService, public theme: ThemeService, private dialog: DialogService, private router: Router, private activatedRoute: ActivatedRoute) {
+  constructor(@Optional() tc: TestCase, @Optional() onChange: EventEmitter<TestCase>, public dataService: DataService, public theme: ThemeService, private dialog: DialogService, private router: Router, private activatedRoute: ActivatedRoute) {
     if (tc) this.testCase = tc;
+    if (onChange) {
+      onChange.subscribe(x => this.testCase = x);
+    }
   }
 
   ngOnInit(): void {

@@ -1,14 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { DataService, IGHFile } from '../../../util/data.service';
+import { DataService } from '../../../util/data.service';
 import { MessagesService } from '../../../util/messages.service';
 
 import { faCodeBranch } from '@fortawesome/free-solid-svg-icons';
-import { MatDialog } from '@angular/material/dialog';
 
 import versionFile from '../../../../assets/version.json';
 import { DialogService } from '../../../util/dialog.service';
-import { LocalStorageService, LocStorageKeys } from '../../../util/local-storage.service';
-import { StringExtension } from '../../../util/string-extension';
+import { LocalStorageService } from '../../../util/local-storage.service';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
@@ -29,13 +27,6 @@ export class StatusBarComponent implements OnInit {
 
   ngOnInit(): void {
     this.version = versionFile.version;
-    const lastVersion = this.locStorage.Get(LocStorageKeys.CURRENT_VERSION);
-    if (lastVersion && this.version != lastVersion) {
-      setTimeout(() => {
-        this.messagesService.Info(StringExtension.Format(this.translate.instant('messages.info.versionUpdate'), this.version));
-      }, 5000);
-    }
-    this.locStorage.Set(LocStorageKeys.CURRENT_VERSION, this.version);
   }
 
   public GetProgress() {

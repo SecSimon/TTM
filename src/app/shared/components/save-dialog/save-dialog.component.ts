@@ -3,7 +3,7 @@ import { AbstractControl, FormControl, FormGroupDirective, NgForm, ValidationErr
 import { ErrorStateMatcher } from '@angular/material/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { IKeyValue } from '../../../model/database';
-import { DataService, IGHFile } from '../../../util/data.service';
+import { DataService, IFile } from '../../../util/data.service';
 
 export class MyErrorStateMatcher implements ErrorStateMatcher {
   isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
@@ -66,12 +66,12 @@ export class SaveDialogComponent implements OnInit {
 
   public onSave() {
     if ('newProject' in this.data) {
-      (this.data['newProject'] as IGHFile).name = this.nameFormControl.value + '.ttmp';
-      (this.data['newProject'] as IGHFile).path = 'projects/' + this.nameFormControl.value + '.ttmp';
+      (this.data['newProject'] as IFile).name = this.nameFormControl.value + '.ttmp';
+      (this.data['newProject'] as IFile).path = 'projects/' + this.nameFormControl.value + '.ttmp';
     }
     else if ('newConfig' in this.data) {
-      (this.data['newConfig'] as IGHFile).name = this.nameFormControl.value + '.ttmc';
-      (this.data['newConfig'] as IGHFile).path = 'configs/' + this.nameFormControl.value + '.ttmc';
+      (this.data['newConfig'] as IFile).name = this.nameFormControl.value + '.ttmc';
+      (this.data['newConfig'] as IFile).path = 'configs/' + this.nameFormControl.value + '.ttmc';
     }
   }
 }

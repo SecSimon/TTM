@@ -78,6 +78,7 @@ import { GlossaryComponent } from './components/glossary/glossary.component';
 import { ChangelogDialogComponent } from './components/changelog-dialog/changelog-dialog.component';
 import { ModelTasksComponent } from './components/model-info/model-tasks/model-tasks.component';
 import { ModelChangesComponent } from './components/model-info/model-changes/model-changes.component';
+import { PasswordProtectionDialogComponent } from './components/password-protection-dialog/password-protection-dialog.component';
 
 @NgModule({
   declarations: [
@@ -85,7 +86,7 @@ import { ModelChangesComponent } from './components/model-info/model-changes/mod
     StatusBarComponent, SideNavComponent, SaveDialogComponent, PasswordDialogComponent, MessagesDialogComponent, 
     TwoOptionsDialogComponent, CweEntryComponent, CapecEntryComponent, NavTreeComponent, CvssEntryComponent, OwaspRREntryComponent,
     ProgressTrackerComponent, ModelInfoComponent, NotesComponent, 
-    LocalDatePipe, LocalDateTimePipe, RenameDialogComponent, TagsComponent, CveSearchComponent, CveEntryComponent, ImageViewComponent, GlossaryComponent, ChangelogDialogComponent, ModelTasksComponent, ModelChangesComponent
+    LocalDatePipe, LocalDateTimePipe, RenameDialogComponent, TagsComponent, CveSearchComponent, CveEntryComponent, ImageViewComponent, GlossaryComponent, ChangelogDialogComponent, ModelTasksComponent, ModelChangesComponent, PasswordProtectionDialogComponent
   ],
   imports: [
     CommonModule, 
