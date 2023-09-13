@@ -180,7 +180,7 @@ export class ReportingComponent implements OnInit {
       charts.push(...[ResultsAnalysisComponent.CreateSeveritySummaryDiagram, ResultsAnalysisComponent.CreateRiskSummaryDiagram, ResultsAnalysisComponent.CreateSeverityPerTypeDiagram, ResultsAnalysisComponent.CreateSeverityPerLifecycleDiagram, ResultsAnalysisComponent.CreateSeverityPerImpactCatDiagram, ResultsAnalysisComponent.CreateCountermeasureSummaryDiagram]);
       chartsData.push(...[null, null, null, null, null, null]);
       for (let i = 0; i < charts.length; i++) {
-        const diaData = charts[i](this.Project, this.translate, false, false, 600, 400, chartsData[i]);
+        const diaData = charts[i](this.Project, this.translate, false, 600, 400, chartsData[i]);
         if (this.ShowCharts) {
           let resultsComp = this.viewContainerRef.createComponent(ResultsChartComponent);
           resultsComp.instance.elRef.nativeElement.style.color = 'black';
