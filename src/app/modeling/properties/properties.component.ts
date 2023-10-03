@@ -5,7 +5,7 @@ import { MyComponent } from '../../model/component';
 import { DatabaseBase, IProperty, ViewElementBase } from '../../model/database';
 import { DataFlow, DataFlowEntity, DFDElement, ElementTypeIDs, IElementTypeThreat, StencilType, TrustArea } from '../../model/dfd-model';
 import { Diagram, DiagramTypes } from '../../model/diagram';
-import { Device, DeviceInterfaceNameUtil, FlowArrowPositions, FlowArrowPositionUtil, FlowLineTypes, FlowLineTypeUtil, FlowTypes, FlowTypeUtil, SystemUseCase } from '../../model/system-context';
+import { ContextFlow, Device, DeviceInterfaceNameUtil, FlowArrowPositions, FlowArrowPositionUtil, FlowLineTypes, FlowLineTypeUtil, FlowTypes, FlowTypeUtil, SystemUseCase } from '../../model/system-context';
 import { DataService } from '../../util/data.service';
 import { DialogService } from '../../util/dialog.service';
 import { ThemeService } from '../../util/theme.service';
@@ -57,6 +57,8 @@ export class PropertiesComponent implements OnInit {
   };
 
   public get selectedElement(): DFDElement { return this._selectedObject as DFDElement; }
+
+  public get selectedFlow(): DataFlow|ContextFlow { return this._selectedObject as DataFlow|ContextFlow; }
   
   @Output()
   public selectedObjectChanged = new EventEmitter<ViewElementBase>();

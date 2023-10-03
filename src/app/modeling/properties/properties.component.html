@@ -41,7 +41,7 @@
                 <table>
                   <tr>
                     <td>
-                      <button mat-icon-button class="anchorBtn" *ngIf="AnchorCount == 8" (click)="selectedElement.AnchorChanged.emit({o: '1', fa: AnchorDirections.NorthWest})">
+                      <button mat-icon-button class="anchorBtn" *ngIf="AnchorCount == 8" (click)="selectedFlow.AnchorChanged.emit({o: '1', fa: AnchorDirections.NorthWest})">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" version="1.1">
                           <circle fill="#d9d9d9" cx="8" cy="8" r="8"/>
                           <line x1="2.5" y1="2.5" x2="13.5" y2="13.5" style="stroke-width: 2;" [attr.stroke]="GetIconColor(true)"/>
@@ -50,7 +50,7 @@
                       </button>
                     </td>
                     <td style="min-width: 40px; width: 100%; text-align: center;">
-                      <button mat-icon-button class="anchorBtn" (click)="selectedElement.AnchorChanged.emit({o: '1', fa: AnchorDirections.North})">
+                      <button mat-icon-button class="anchorBtn" (click)="selectedFlow.AnchorChanged.emit({o: '1', fa: AnchorDirections.North})">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" version="1.1">
                           <circle fill="#d9d9d9" cx="8" cy="8" r="8"/>
                           <line x1="2.5" y1="2.5" x2="13.5" y2="13.5" style="stroke-width: 2;" [attr.stroke]="GetIconColor(true)"/>
@@ -59,7 +59,7 @@
                       </button>
                     </td>
                     <td>
-                      <button mat-icon-button class="anchorBtn" *ngIf="AnchorCount == 8" (click)="selectedElement.AnchorChanged.emit({o: '1', fa: AnchorDirections.NorthEast})">
+                      <button mat-icon-button class="anchorBtn" *ngIf="AnchorCount == 8" (click)="selectedFlow.AnchorChanged.emit({o: '1', fa: AnchorDirections.NorthEast})">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" version="1.1">
                           <circle fill="#d9d9d9" cx="8" cy="8" r="8"/>
                           <line x1="2.5" y1="2.5" x2="13.5" y2="13.5" style="stroke-width: 2;" [attr.stroke]="GetIconColor(true)"/>
@@ -70,7 +70,7 @@
                   </tr>
                   <tr>
                     <td>
-                      <button mat-icon-button class="anchorBtn" (click)="selectedElement.AnchorChanged.emit({o: '1', fa: AnchorDirections.West})">
+                      <button mat-icon-button class="anchorBtn" (click)="selectedFlow.AnchorChanged.emit({o: '1', fa: AnchorDirections.West})">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" version="1.1">
                           <circle fill="#d9d9d9" cx="8" cy="8" r="8"/>
                           <line x1="2.5" y1="2.5" x2="13.5" y2="13.5" style="stroke-width: 2;" [attr.stroke]="GetIconColor(true)"/>
@@ -82,7 +82,7 @@
                       {{'properties.Sender' | translate}}
                     </td>
                     <td>
-                      <button mat-icon-button class="anchorBtn" (click)="selectedElement.AnchorChanged.emit({o: '1', fa: AnchorDirections.East})">
+                      <button mat-icon-button class="anchorBtn" (click)="selectedFlow.AnchorChanged.emit({o: '1', fa: AnchorDirections.East})">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" version="1.1">
                           <circle fill="#d9d9d9" cx="8" cy="8" r="8"/>
                           <line x1="2.5" y1="2.5" x2="13.5" y2="13.5" style="stroke-width: 2;" [attr.stroke]="GetIconColor(true)"/>
@@ -93,7 +93,7 @@
                   </tr>
                   <tr>
                     <td>
-                      <button mat-icon-button class="anchorBtn" *ngIf="AnchorCount == 8" (click)="selectedElement.AnchorChanged.emit({o: '1', fa: AnchorDirections.SouthWest})">
+                      <button mat-icon-button class="anchorBtn" *ngIf="AnchorCount == 8" (click)="selectedFlow.AnchorChanged.emit({o: '1', fa: AnchorDirections.SouthWest})">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" version="1.1">
                           <circle fill="#d9d9d9" cx="8" cy="8" r="8"/>
                           <line x1="2.5" y1="2.5" x2="13.5" y2="13.5" style="stroke-width: 2;" [attr.stroke]="GetIconColor(true)"/>
@@ -102,7 +102,7 @@
                       </button>
                     </td>
                     <td style="min-width: 40px; width: 100%; text-align: center;">
-                      <button mat-icon-button class="anchorBtn" (click)="selectedElement.AnchorChanged.emit({o: '1', fa: AnchorDirections.South})">
+                      <button mat-icon-button class="anchorBtn" (click)="selectedFlow.AnchorChanged.emit({o: '1', fa: AnchorDirections.South})">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" version="1.1">
                           <circle fill="#d9d9d9" cx="8" cy="8" r="8"/>
                           <line x1="2.5" y1="2.5" x2="13.5" y2="13.5" style="stroke-width: 2;" [attr.stroke]="GetIconColor(true)"/>
@@ -111,7 +111,7 @@
                       </button>
                     </td>
                     <td>
-                      <button mat-icon-button class="anchorBtn" *ngIf="AnchorCount == 8" (click)="selectedElement.AnchorChanged.emit({o: '1', fa: AnchorDirections.SouthEast})">
+                      <button mat-icon-button class="anchorBtn" *ngIf="AnchorCount == 8" (click)="selectedFlow.AnchorChanged.emit({o: '1', fa: AnchorDirections.SouthEast})">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" version="1.1">
                           <circle fill="#d9d9d9" cx="8" cy="8" r="8"/>
                           <line x1="2.5" y1="2.5" x2="13.5" y2="13.5" style="stroke-width: 2;" [attr.stroke]="GetIconColor(true)"/>
@@ -126,7 +126,7 @@
                 <table>
                   <tr>
                     <td>
-                      <button mat-icon-button class="anchorBtn" *ngIf="AnchorCount == 8" (click)="selectedElement.AnchorChanged.emit({o: '2', fa: AnchorDirections.NorthWest})">
+                      <button mat-icon-button class="anchorBtn" *ngIf="AnchorCount == 8" (click)="selectedFlow.AnchorChanged.emit({o: '2', fa: AnchorDirections.NorthWest})">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" version="1.1">
                           <circle fill="#d9d9d9" cx="8" cy="8" r="8"/>
                           <line x1="2.5" y1="2.5" x2="13.5" y2="13.5" style="stroke-width: 2;" [attr.stroke]="GetIconColor(true)"/>
@@ -135,7 +135,7 @@
                       </button>
                     </td>
                     <td style="min-width: 40px; width: 100%; text-align: center;">
-                      <button mat-icon-button class="anchorBtn" (click)="selectedElement.AnchorChanged.emit({o: '2', fa: AnchorDirections.North})">
+                      <button mat-icon-button class="anchorBtn" (click)="selectedFlow.AnchorChanged.emit({o: '2', fa: AnchorDirections.North})">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" version="1.1">
                           <circle fill="#d9d9d9" cx="8" cy="8" r="8"/>
                           <line x1="2.5" y1="2.5" x2="13.5" y2="13.5" style="stroke-width: 2;" [attr.stroke]="GetIconColor(true)"/>
@@ -144,7 +144,7 @@
                       </button>
                     </td>
                     <td>
-                      <button mat-icon-button class="anchorBtn" *ngIf="AnchorCount == 8" (click)="selectedElement.AnchorChanged.emit({o: '2', fa: AnchorDirections.NorthEast})">
+                      <button mat-icon-button class="anchorBtn" *ngIf="AnchorCount == 8" (click)="selectedFlow.AnchorChanged.emit({o: '2', fa: AnchorDirections.NorthEast})">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" version="1.1">
                           <circle fill="#d9d9d9" cx="8" cy="8" r="8"/>
                           <line x1="2.5" y1="2.5" x2="13.5" y2="13.5" style="stroke-width: 2;" [attr.stroke]="GetIconColor(true)"/>
@@ -155,7 +155,7 @@
                   </tr>
                   <tr>
                     <td>
-                      <button mat-icon-button class="anchorBtn" (click)="selectedElement.AnchorChanged.emit({o: '2', fa: AnchorDirections.West})">
+                      <button mat-icon-button class="anchorBtn" (click)="selectedFlow.AnchorChanged.emit({o: '2', fa: AnchorDirections.West})">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" version="1.1">
                           <circle fill="#d9d9d9" cx="8" cy="8" r="8"/>
                           <line x1="2.5" y1="2.5" x2="13.5" y2="13.5" style="stroke-width: 2;" [attr.stroke]="GetIconColor(true)"/>
@@ -167,7 +167,7 @@
                       {{'properties.Receiver' | translate}}
                     </td>
                     <td>
-                      <button mat-icon-button class="anchorBtn" (click)="selectedElement.AnchorChanged.emit({o: '2', fa: AnchorDirections.East})">
+                      <button mat-icon-button class="anchorBtn" (click)="selectedFlow.AnchorChanged.emit({o: '2', fa: AnchorDirections.East})">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" version="1.1">
                           <circle fill="#d9d9d9" cx="8" cy="8" r="8"/>
                           <line x1="2.5" y1="2.5" x2="13.5" y2="13.5" style="stroke-width: 2;" [attr.stroke]="GetIconColor(true)"/>
@@ -178,7 +178,7 @@
                   </tr>
                   <tr>
                     <td>
-                      <button mat-icon-button class="anchorBtn" *ngIf="AnchorCount == 8" (click)="selectedElement.AnchorChanged.emit({o: '2', fa: AnchorDirections.SouthWest})">
+                      <button mat-icon-button class="anchorBtn" *ngIf="AnchorCount == 8" (click)="selectedFlow.AnchorChanged.emit({o: '2', fa: AnchorDirections.SouthWest})">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" version="1.1">
                           <circle fill="#d9d9d9" cx="8" cy="8" r="8"/>
                           <line x1="2.5" y1="2.5" x2="13.5" y2="13.5" style="stroke-width: 2;" [attr.stroke]="GetIconColor(true)"/>
@@ -187,7 +187,7 @@
                       </button>
                     </td>
                     <td style="min-width: 40px; width: 100%; text-align: center;">
-                      <button mat-icon-button class="anchorBtn" (click)="selectedElement.AnchorChanged.emit({o: '2', fa: AnchorDirections.South})">
+                      <button mat-icon-button class="anchorBtn" (click)="selectedFlow.AnchorChanged.emit({o: '2', fa: AnchorDirections.South})">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" version="1.1">
                           <circle fill="#d9d9d9" cx="8" cy="8" r="8"/>
                           <line x1="2.5" y1="2.5" x2="13.5" y2="13.5" style="stroke-width: 2;" [attr.stroke]="GetIconColor(true)"/>
@@ -196,7 +196,7 @@
                       </button>
                     </td>
                     <td>
-                      <button mat-icon-button class="anchorBtn" *ngIf="AnchorCount == 8" (click)="selectedElement.AnchorChanged.emit({o: '2', fa: AnchorDirections.SouthEast})">
+                      <button mat-icon-button class="anchorBtn" *ngIf="AnchorCount == 8" (click)="selectedFlow.AnchorChanged.emit({o: '2', fa: AnchorDirections.SouthEast})">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" version="1.1">
                           <circle fill="#d9d9d9" cx="8" cy="8" r="8"/>
                           <line x1="2.5" y1="2.5" x2="13.5" y2="13.5" style="stroke-width: 2;" [attr.stroke]="GetIconColor(true)"/>
