@@ -561,6 +561,8 @@ export interface ICanvasFlow {
   BendFlowChanged: EventEmitter<boolean>;
   ArrowPos: FlowArrowPositions;
   ArrowPosChanged: EventEmitter<FlowArrowPositions>;
+  DirectionChanged: EventEmitter<void>;
+  AnchorChanged: EventEmitter<any>;
 }
 
 export class ContextFlow extends ContextElement implements ICanvasFlow {
@@ -613,6 +615,8 @@ export class ContextFlow extends ContextElement implements ICanvasFlow {
   public LineTypeChanged = new EventEmitter<FlowLineTypes>();
   public ArrowPosChanged = new EventEmitter<FlowArrowPositions>();
   public BendFlowChanged = new EventEmitter<boolean>();
+  public DirectionChanged = new EventEmitter<void>();
+  public AnchorChanged = new EventEmitter<any>();
 
   constructor(data: {}, pf: ProjectFile, cf: ConfigFile) {
     super(data, ContextElementTypes.Flow, pf, cf);
@@ -623,11 +627,19 @@ export class ContextFlow extends ContextElement implements ICanvasFlow {
     if (this.Data['ShowName'] == null) this.ShowName = false;
   }
 
+  public ChangeDirection() {
+    let tmp = this.Sender;
+    this.Sender = this.Receiver;
+    this.Receiver = tmp;
+    this.DirectionChanged.emit();
+  }
+
   protected initProperties() {
     super.initProperties();
 
     this.AddProperty('properties.Sender', 'Sender', '', true, PropertyEditTypes.ElementName, true);
     this.AddProperty('properties.Receiver', 'Receiver', '', true, PropertyEditTypes.ElementName, true);
+    this.AddProperty('properties.Direction', '', '', false, PropertyEditTypes.DataFlowChangeDirection, true);
     this.AddProperty('properties.FlowType', 'FlowType', '', true, PropertyEditTypes.FlowType, true);
     this.AddProperty('properties.ShowName', 'ShowName', '', true, PropertyEditTypes.CheckBox, true);
     this.AddProperty('properties.BendFlow', 'BendFlow', '', true, PropertyEditTypes.CheckBox, true);

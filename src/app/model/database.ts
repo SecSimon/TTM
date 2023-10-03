@@ -39,6 +39,7 @@ export enum PropertyEditTypes {
   AssignNumberToAsset = 'Assign Number To Asset',
   CheckBox = 'Check Box',
   DevInterfaceName = 'Device Interface Name',
+  DataFlowChangeDirection = 'Data Flow Change Direction',
   DataFlowDiagramReference = 'Data Flow Diagram Reference',
   DiagramReference = 'Diagram Reference',
   ElementName = 'Element Name',

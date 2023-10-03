@@ -214,7 +214,7 @@ export class ProjectFile extends DatabaseBase {
     }
 
     const arrayItemChanged = (event: IDataChanged, array: string, constr, getItem: string, title: string) => {
-      if (this.changeLog.findIndex(x => x.ID == event.ID && x.Type == event.Type) < 0  && !this.changeLog.some(y => y.ID == event.ID && y.Type > event.Type)) {
+      if (this.projectCopy && this.changeLog.findIndex(x => x.ID == event.ID && x.Type == event.Type) < 0  && !this.changeLog.some(y => y.ID == event.ID && y.Type > event.Type)) {
         if (event.Type == DataChangedTypes.Removed) {
           const existingEntry = this.changeLog.find(x => x.ID == event.ID);
           let objName = null;
@@ -232,9 +232,11 @@ export class ProjectFile extends DatabaseBase {
         }
         else {
           const obj = this[getItem](event.ID);
-          let objName = obj['Name'];
-          if (obj['GetLongName']) objName = obj.GetLongName();
-          this.changeLog.push({ Title: title, Name: objName, ID: event.ID, Type: event.Type });
+          if (obj) {
+            let objName = obj['Name'];
+            if (obj['GetLongName']) objName = obj.GetLongName();
+            this.changeLog.push({ Title: title, Name: objName, ID: event.ID, Type: event.Type });
+          }
         }
       }
     };

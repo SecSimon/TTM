@@ -86,7 +86,7 @@
               <app-stencil-palette [selectedNode]="selectedNode"></app-stencil-palette>
             </as-split-area>
             <as-split-area [size]="GetSplitSize(4, 1, 40)" [order]=2>
-              <app-properties [selectedObject]="selectedObject" (selectedObjectChanged)="selectedObject = $event" (openQuestionnaire)="compStack.OnComponentDblClick($event)"></app-properties>
+              <app-properties [dataObject]="selectedNode?.data" [selectedObject]="selectedObject" (selectedObjectChanged)="selectedObject = $event" (openQuestionnaire)="compStack.OnComponentDblClick($event)"></app-properties>
             </as-split-area>
           </as-split>
         </as-split-area>

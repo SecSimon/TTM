@@ -45,6 +45,7 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatPaginatorIntl, MatPaginatorModule } from '@angular/material/paginator';
+import { OverlayModule } from '@angular/cdk/overlay';
 
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { AngularSplitModule } from 'angular-split';
@@ -139,7 +140,8 @@ import { PasswordProtectionDialogComponent } from './components/password-protect
     MatSortModule,
     MatStepperModule,
     MatProgressBarModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    OverlayModule
   ],
   exports: [
     TranslateModule, 
@@ -191,6 +193,7 @@ import { PasswordProtectionDialogComponent } from './components/password-protect
     MatStepperModule,
     MatProgressBarModule,
     MatPaginatorModule,
+    OverlayModule,
 
     StatusBarComponent,
     SideNavComponent,

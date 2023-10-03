@@ -35,6 +35,7 @@ export enum LocStorageKeys {
   PAGE_MODELING_CONTAINERTREE_KEEP_STRUC ="page_modeling_containertree_keep_struc",
   PAGE_MODELING_CONTAINERTREE_SHOW_SCEN ="page_modeling_containertree_show_scen",
   PAGE_MODELING_CONTAINERTREE_SHOW_MEAS ="page_modeling_containertree_show_meas",
+  PAGE_MODELING_DIAGRAM_ANCHOR_COUNT = "page_modeling_diagram_anchor_count",
   PAGE_MODELING_DIAGRAM_ARROW_BEND ="page_modeling_diagram_arrow_bend",
   PAGE_MODELING_DIAGRAM_ARROW_NAME ="page_modeling_diagram_arrow_name",
   PAGE_MODELING_DIAGRAM_ARROW_POS ="page_modeling_diagram_arrow_pos",

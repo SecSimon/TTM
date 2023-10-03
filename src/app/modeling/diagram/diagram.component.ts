@@ -152,6 +152,25 @@ enum CTypes {
   GridLine = 'GL'
 }
 
+export enum AnchorDirections {
+  North = 'n',
+  East = 'e',
+  South = 's',
+  West = 'w',
+  NorthWest = 'n-w',
+  NorthEast = 'n-e',
+  SouthEast = 's-e',
+  SouthWest = 's-w',
+  EasternNorth = 'en',
+  EasternSouth = 'es',
+  WesternNorth = 'wn',
+  WesternSouth = 'ws',
+  NorthernWest = 'nw',
+  NorthernEast = 'ne',
+  SouthernWest = 'sw',
+  SouthernEast = 'se'
+}
+
 export abstract class CanvasBase {
   public static BackgroundColorDark = '#1E1E1E';
   public static BackgroundColorLight = '#FFFFFF';
@@ -277,6 +296,26 @@ export abstract class CanvasBase {
     arr[this.Diagram.DiagramType] = val;
 
     this.locStorage.Set(LocStorageKeys.PAGE_MODELING_DIAGRAM_ARROW_BEND, JSON.stringify(arr));
+  }
+
+  public get AnchorCount(): number {
+    let arr = null;
+    let arrStr = this.locStorage.Get(LocStorageKeys.PAGE_MODELING_DIAGRAM_ANCHOR_COUNT);
+    if (arrStr) arr = JSON.parse(arrStr);
+    if (arr && arr[this.Diagram.DiagramType] != null) return arr[this.Diagram.DiagramType];
+    return 4;
+  }
+  public set AnchorCount(val: number) {
+    let arrStr = this.locStorage.Get(LocStorageKeys.PAGE_MODELING_DIAGRAM_ANCHOR_COUNT);
+    let arr = {};
+    if (arrStr != null) arr = JSON.parse(arrStr);
+    arr[this.Diagram.DiagramType] = val;
+
+    this.locStorage.Set(LocStorageKeys.PAGE_MODELING_DIAGRAM_ANCHOR_COUNT, JSON.stringify(arr));
+  }
+
+  public get CanSetAnchorCount(): boolean {
+    return [DiagramTypes.Context, DiagramTypes.DataFlow].includes(this.Diagram.DiagramType);
   }
 
   public get ShowName(): boolean {
@@ -860,10 +899,10 @@ export abstract class CanvasBase {
             // this is a fix, but I don't know what the problem causes (all points at one position)
             let left = -6.5;
             let top = -19.29;
-            if (fa[CProps.fa] == 'e') left = 19;
-            else if (fa[CProps.fa] == 'w') left = -28.5;
-            else if (fa[CProps.fa] == 'n') top = -38.79;
-            else if (fa[CProps.fa] == 's') top = 3.71;
+            if (fa[CProps.fa] == AnchorDirections.East) left = 19;
+            else if (fa[CProps.fa] == AnchorDirections.West) left = -28.5;
+            else if (fa[CProps.fa] == AnchorDirections.North) top = -38.79;
+            else if (fa[CProps.fa] == AnchorDirections.South) top = 3.71;
             fa['left'] = left;
             fa['top'] = top;
             fa.setCoords();
@@ -895,6 +934,8 @@ export abstract class CanvasBase {
               (element as ICanvasFlow).LineTypeChanged?.subscribe(x => this.flowChangeLineType(element.ID, x));
               (element as ICanvasFlow).ArrowPosChanged?.subscribe(y => this.flowUpdateFlowArrow(element.ID));
               (element as ICanvasFlow).BendFlowChanged?.subscribe(y => this.flowChangeBending(element.ID, y));
+              (element as ICanvasFlow).DirectionChanged?.subscribe(y => this.flowChangeDirection(element.ID));
+              (element as ICanvasFlow).AnchorChanged?.subscribe(y => this.flowChangeAnchor(element.ID, y));
               this.subscriptionsLineType.push(element.ID);
             }
           }
@@ -1384,6 +1425,8 @@ export abstract class CanvasBase {
           flow.LineTypeChanged?.subscribe(x => this.flowChangeLineType(flow.ID, x));
           flow.ArrowPosChanged?.subscribe(y => this.flowUpdateFlowArrow(flow.ID));
           flow.BendFlowChanged?.subscribe(y => this.flowChangeBending(flow.ID, y));
+          flow.DirectionChanged?.subscribe(x => this.flowChangeDirection(flow.ID));
+          flow.AnchorChanged?.subscribe(y => this.flowChangeAnchor(flow.ID, y));
 
           this.Diagram.Elements.AddChild(flow);
           flow.Sender = this.getViewBaseElement(this.tmpFlowLineEndpoint[CProps.ID]);
@@ -1762,6 +1805,63 @@ export abstract class CanvasBase {
     this.Canvas.requestRenderAll();
   }
 
+  protected flowChangeDirection(id: string) {
+    const oldFlowObj = this.getCanvasElementByID(id);
+    const flow = this.getViewBaseElement(id) as DataFlow;
+
+    const fa1 = this.getFlowAnchorPoint(oldFlowObj[CProps.fa2], this.getCanvasElementByCanvasID(oldFlowObj[CProps.fe2]));
+    const fa2 = this.getFlowAnchorPoint(oldFlowObj[CProps.fa1], this.getCanvasElementByCanvasID(oldFlowObj[CProps.fe1]));
+
+    const flowObj = this.createFlow(fa1[0], fa1[1], fa2[0], fa2[1], flow);
+
+    flowObj[CProps.fa1] = oldFlowObj[CProps.fa2]; // position of flow at endpoint
+    flowObj[CProps.fe1] = oldFlowObj[CProps.fe2]; // connect DF -> EP
+
+    flowObj[CProps.fa2] = oldFlowObj[CProps.fa1];
+    flowObj[CProps.fe2] = oldFlowObj[CProps.fe1];
+
+    this.Canvas.remove(this.getCanvasElementByCanvasID(oldFlowObj[CProps.p0ID]));
+    this.Canvas.remove(this.getCanvasElementByCanvasID(oldFlowObj[CProps.p1ID]));
+    this.Canvas.remove(this.getCanvasElementByCanvasID(oldFlowObj[CProps.p2ID]));
+    this.Canvas.remove(this.getCanvasElementByCanvasID(oldFlowObj[CProps.arrowEID]));
+    this.Canvas.remove(this.getCanvasElementByCanvasID(oldFlowObj[CProps.arrowSID]));
+    this.Canvas.remove(this.getCanvasElementByCanvasID(oldFlowObj[CProps.textID]));
+
+    const copyProps = [
+      CProps.ID, CProps.elementTypeID, CProps.myType,
+      CProps.strokeDashArray, CProps.bendFlow,
+      CProps.fontSize
+    ];
+    copyProps.forEach(prop => {
+      flowObj.set(prop, oldFlowObj[prop]);
+    });
+
+    const restoredCanvasID = oldFlowObj[CProps.canvasID];
+    this.getCanvasElementByCanvasID(flowObj[CProps.arrowSID])[CProps.flowID] = restoredCanvasID;
+    this.getCanvasElementByCanvasID(flowObj[CProps.arrowEID])[CProps.flowID] = restoredCanvasID;
+    this.getCanvasElementByCanvasID(flowObj[CProps.p0ID])[CProps.flowID] = restoredCanvasID;
+    this.getCanvasElementByCanvasID(flowObj[CProps.p1ID])[CProps.flowID] = restoredCanvasID;
+    this.getCanvasElementByCanvasID(flowObj[CProps.p2ID])[CProps.flowID] = restoredCanvasID;
+    flowObj[CProps.canvasID] = restoredCanvasID
+
+    this.Canvas.remove(oldFlowObj);
+
+    this.flowChangeBending(flow.ID, flow.BendFlow);
+    this.flowUpdateText(flowObj);
+    this.flowUpdateFlowArrow(flow.ID);
+
+    this.Canvas.requestRenderAll();
+    this.setFlowSelected(flowObj, true);
+    this.SelectionChanged.emit(flow);
+    this.onCanvasModified();
+  }
+
+  protected flowChangeAnchor(id: string, details) {
+    const flowObj = this.getCanvasElementByID(id);
+    flowObj[CProps.fa+details['o']] = details['fa'];
+    this.onMovingObject(this.getCanvasElementByCanvasID(flowObj['fe'+details['o']]));
+  }
+
   protected dfOnPointMoving(p) {
     let flow = this.getCanvasElementByCanvasID(p[CProps.flowID]);
     /*
@@ -1825,31 +1925,31 @@ export abstract class CanvasBase {
       });
     };
     if (horizontal) {
-      res.push(createAnchor(wid - d - o, hei / 2 - r, 'e')); // flow anchor east
-      res.push(createAnchor(r, hei / 2 - r, 'w')); // flow anchor west
+      res.push(createAnchor(wid - d - o, hei / 2 - r, AnchorDirections.East)); // flow anchor east
+      res.push(createAnchor(r, hei / 2 - r, AnchorDirections.West)); // flow anchor west
     }
 
     if (vertical) {
-      res.push(createAnchor( wid / 2 - r, r, 'n')); // flow anchor north
-      res.push(createAnchor(wid / 2 - r, hei - d - o, 's')); // flow anchor south
+      res.push(createAnchor( wid / 2 - r, r, AnchorDirections.North)); // flow anchor north
+      res.push(createAnchor(wid / 2 - r, hei - d - o, AnchorDirections.South)); // flow anchor south
     }
 
     if (halves) {
-      res.push(createAnchor(wid - d - o, hei / 4 - r, 'en')); // flow anchor east north
-      res.push(createAnchor(wid - d - o, hei * 3 / 4 - r, 'es')); // flow anchor east south
-      res.push(createAnchor(r,  hei / 4 - r, 'wn')); // flow anchor west north
-      res.push(createAnchor(r, hei * 3 / 4 - r, 'ws')); // flow anchor west south
-      res.push(createAnchor(wid * 3 / 4 - r, r, 'ne')); // flow anchor north east
-      res.push(createAnchor(wid / 4 - r, r, 'nw')); // flow anchor north west
-      res.push(createAnchor(wid * 3 / 4 - r, hei - d - o, 'se')); // flow anchor south east
-      res.push(createAnchor(wid / 4 - r, hei - d - o, 'sw')); // flow anchor south west
+      res.push(createAnchor(wid - d - o, hei / 4 - r, AnchorDirections.EasternNorth)); // flow anchor east north
+      res.push(createAnchor(wid - d - o, hei * 3 / 4 - r, AnchorDirections.EasternSouth)); // flow anchor east south
+      res.push(createAnchor(r,  hei / 4 - r, AnchorDirections.WesternNorth)); // flow anchor west north
+      res.push(createAnchor(r, hei * 3 / 4 - r, AnchorDirections.WesternSouth)); // flow anchor west south
+      res.push(createAnchor(wid * 3 / 4 - r, r, AnchorDirections.NorthernEast)); // flow anchor north east
+      res.push(createAnchor(wid / 4 - r, r, AnchorDirections.NorthernWest)); // flow anchor north west
+      res.push(createAnchor(wid * 3 / 4 - r, hei - d - o, AnchorDirections.SouthernEast)); // flow anchor south east
+      res.push(createAnchor(wid / 4 - r, hei - d - o, AnchorDirections.SouthernWest)); // flow anchor south west
     }
 
     if (corners) {
-      res.push(createAnchor(wid - d - o, r, 'n-e')); // flow anchor north-east 
-      res.push(createAnchor(r, r, 'n-w')); // flow anchor north-west 
-      res.push(createAnchor(wid - d - o, hei - d - o, 's-e')); // flow anchor south-east 
-      res.push(createAnchor(r, hei - d - o, 's-w')); // flow anchor south-west 
+      res.push(createAnchor(wid - d - o, r, AnchorDirections.NorthEast)); // flow anchor north-east 
+      res.push(createAnchor(r, r, AnchorDirections.NorthWest)); // flow anchor north-west 
+      res.push(createAnchor(wid - d - o, hei - d - o, AnchorDirections.SouthEast)); // flow anchor south-east 
+      res.push(createAnchor(r, hei - d - o, AnchorDirections.SouthWest)); // flow anchor south-west 
     }
 
     res.forEach(x => {
@@ -1862,28 +1962,28 @@ export abstract class CanvasBase {
   }
 
   protected getFlowAnchorPoint(anchor: string, obj) {
-    if (anchor == 'n') return [obj.left + obj.width / 2, obj.top];
-    else if (anchor == 'e') {
+    if (anchor == AnchorDirections.North) return [obj.left + obj.width / 2, obj.top];
+    else if (anchor == AnchorDirections.East) {
       if (obj[CProps.elementTypeID] == ElementTypeIDs.PhysicalLink) return [obj.left + obj.width - obj.width/14, obj.top + obj.height / 2];
       return [obj.left + obj.width, obj.top + obj.height / 2];
     }
-    else if (anchor == 's') return [obj.left + obj.width / 2, obj.top + obj.height];
-    else if (anchor == 'w') {
+    else if (anchor == AnchorDirections.South) return [obj.left + obj.width / 2, obj.top + obj.height];
+    else if (anchor == AnchorDirections.West) {
       if (obj[CProps.elementTypeID] == ElementTypeIDs.PhysicalLink) return [obj.left + obj.width/14, obj.top + obj.height / 2];
       return [obj.left, obj.top + obj.height / 2];
     }
-    else if (anchor == 'ne') return [obj.left + obj.width * 3 / 4, obj.top];
-    else if (anchor == 'nw') return [obj.left + obj.width / 4, obj.top];
-    else if (anchor == 'se') return [obj.left + obj.width * 3 / 4, obj.top + obj.height];
-    else if (anchor == 'sw') return [obj.left + obj.width / 4, obj.top + obj.height];
-    else if (anchor == 'en') return [obj.left + obj.width, obj.top + obj.height / 4];
-    else if (anchor == 'es') return [obj.left + obj.width, obj.top + obj.height * 3 / 4];
-    else if (anchor == 'wn') return [obj.left, obj.top + obj.height / 4];
-    else if (anchor == 'ws') return [obj.left, obj.top + obj.height * 3 / 4];
-    else if (anchor == 'n-e') return [obj.left + obj.width, obj.top];
-    else if (anchor == 'n-w') return [obj.left, obj.top];
-    else if (anchor == 's-e') return [obj.left + obj.width, obj.top + obj.height];
-    else if (anchor == 's-w') return [obj.left, obj.top + obj.height];
+    else if (anchor == AnchorDirections.NorthernEast) return [obj.left + obj.width * 3 / 4, obj.top];
+    else if (anchor == AnchorDirections.NorthernWest) return [obj.left + obj.width / 4, obj.top];
+    else if (anchor == AnchorDirections.SouthernEast) return [obj.left + obj.width * 3 / 4, obj.top + obj.height];
+    else if (anchor == AnchorDirections.SouthernWest) return [obj.left + obj.width / 4, obj.top + obj.height];
+    else if (anchor == AnchorDirections.EasternNorth) return [obj.left + obj.width, obj.top + obj.height / 4];
+    else if (anchor == AnchorDirections.EasternSouth) return [obj.left + obj.width, obj.top + obj.height * 3 / 4];
+    else if (anchor == AnchorDirections.WesternNorth) return [obj.left, obj.top + obj.height / 4];
+    else if (anchor == AnchorDirections.WesternSouth) return [obj.left, obj.top + obj.height * 3 / 4];
+    else if (anchor == AnchorDirections.NorthEast) return [obj.left + obj.width, obj.top];
+    else if (anchor == AnchorDirections.NorthWest) return [obj.left, obj.top];
+    else if (anchor == AnchorDirections.SouthEast) return [obj.left + obj.width, obj.top + obj.height];
+    else if (anchor == AnchorDirections.SouthWest) return [obj.left, obj.top + obj.height];
     else return null;
   }
 
@@ -1940,22 +2040,22 @@ export abstract class CanvasBase {
     let d = 2 * r;
     let o = 6; // offset
     fas.forEach(pt => {
-      if (pt[CProps.fa] == 'e') pt.set({ 'left': wg / 2 - d - o, 'top': -r });
-      else if (pt[CProps.fa] == 'w') pt.set({ 'left': -wg / 2 + r, 'top': -r });
-      else if (pt[CProps.fa] == 'n') pt.set({ 'left': -r, 'top': -hg / 2 + r });
-      else if (pt[CProps.fa] == 's') pt.set({ 'left': -r, 'top': hg / 2 - d - o });
-      else if (pt[CProps.fa] == 'en') pt.set({ 'left': wg / 2 - d - o, 'top': -hg / 4 });
-      else if (pt[CProps.fa] == 'es') pt.set({ 'left': wg / 2 - d - o, 'top': hg / 4 - d });
-      else if (pt[CProps.fa] == 'wn') pt.set({ 'left': -wg / 2 + r, 'top': -hg / 4 });
-      else if (pt[CProps.fa] == 'ws') pt.set({ 'left': -wg / 2 + r, 'top': hg / 4 - d });
-      else if (pt[CProps.fa] == 'ne') pt.set({ 'left': wg / 4 - d, 'top': -hg / 2 + r });
-      else if (pt[CProps.fa] == 'nw') pt.set({ 'left': -wg / 4, 'top': -hg / 2 + r });
-      else if (pt[CProps.fa] == 'se') pt.set({ 'left': wg / 4 - d, 'top': hg / 2 - d - o });
-      else if (pt[CProps.fa] == 'sw') pt.set({ 'left': -wg / 4, 'top': hg / 2 - d - o });
-      else if (pt[CProps.fa] == 'n-e') pt.set({ 'left': wg / 2 - d - o, 'top': -hg / 2 + r });
-      else if (pt[CProps.fa] == 'n-w') pt.set({ 'left': -wg / 2 + o, 'top': -hg / 2 + r });
-      else if (pt[CProps.fa] == 's-e') pt.set({ 'left': wg / 2 - d - o, 'top': hg / 2 - d - o });
-      else if (pt[CProps.fa] == 's-w') pt.set({ 'left': -wg / 2 + o, 'top': hg / 2 - d - o });
+      if (pt[CProps.fa] == AnchorDirections.East) pt.set({ 'left': wg / 2 - d - o, 'top': -r });
+      else if (pt[CProps.fa] == AnchorDirections.West) pt.set({ 'left': -wg / 2 + r, 'top': -r });
+      else if (pt[CProps.fa] == AnchorDirections.North) pt.set({ 'left': -r, 'top': -hg / 2 + r });
+      else if (pt[CProps.fa] == AnchorDirections.South) pt.set({ 'left': -r, 'top': hg / 2 - d - o });
+      else if (pt[CProps.fa] == AnchorDirections.EasternNorth) pt.set({ 'left': wg / 2 - d - o, 'top': -hg / 4 });
+      else if (pt[CProps.fa] == AnchorDirections.EasternSouth) pt.set({ 'left': wg / 2 - d - o, 'top': hg / 4 - d });
+      else if (pt[CProps.fa] == AnchorDirections.WesternNorth) pt.set({ 'left': -wg / 2 + r, 'top': -hg / 4 });
+      else if (pt[CProps.fa] == AnchorDirections.WesternSouth) pt.set({ 'left': -wg / 2 + r, 'top': hg / 4 - d });
+      else if (pt[CProps.fa] == AnchorDirections.NorthernEast) pt.set({ 'left': wg / 4 - d, 'top': -hg / 2 + r });
+      else if (pt[CProps.fa] == AnchorDirections.NorthernWest) pt.set({ 'left': -wg / 4, 'top': -hg / 2 + r });
+      else if (pt[CProps.fa] == AnchorDirections.SouthernEast) pt.set({ 'left': wg / 4 - d, 'top': hg / 2 - d - o });
+      else if (pt[CProps.fa] == AnchorDirections.SouthernWest) pt.set({ 'left': -wg / 4, 'top': hg / 2 - d - o });
+      else if (pt[CProps.fa] == AnchorDirections.NorthEast) pt.set({ 'left': wg / 2 - d - o, 'top': -hg / 2 + r });
+      else if (pt[CProps.fa] == AnchorDirections.NorthWest) pt.set({ 'left': -wg / 2 + o, 'top': -hg / 2 + r });
+      else if (pt[CProps.fa] == AnchorDirections.SouthEast) pt.set({ 'left': wg / 2 - d - o, 'top': hg / 2 - d - o });
+      else if (pt[CProps.fa] == AnchorDirections.SouthWest) pt.set({ 'left': -wg / 2 + o, 'top': hg / 2 - d - o });
       pt.setCoords();
     });
   }
@@ -2425,6 +2525,36 @@ export class HWDFCanvas extends CanvasBase {
     }
   }
 
+  protected getFlowAnchorPoint(anchor: AnchorDirections, obj) {
+    if (obj[CProps.myType] == CTypes.Process) {
+      if ([AnchorDirections.NorthWest, AnchorDirections.NorthEast, AnchorDirections.SouthEast, AnchorDirections.SouthWest].includes(anchor)) {
+        const offset = 5;
+        if (anchor == AnchorDirections.NorthEast) return [obj.left + obj.width - offset, obj.top + offset];
+        else if (anchor == AnchorDirections.NorthWest) return [obj.left + offset, obj.top + offset];
+        else if (anchor == AnchorDirections.SouthEast) return [obj.left + obj.width - offset, obj.top + obj.height - offset];
+        else if (anchor == AnchorDirections.SouthWest) return [obj.left + offset, obj.top + obj.height - offset];
+      }
+    }
+    else if (obj[CProps.myType] == CTypes.DataStore) {
+      if ([AnchorDirections.NorthWest, AnchorDirections.NorthEast, AnchorDirections.SouthEast, AnchorDirections.SouthWest].includes(anchor)) {
+        const offset = 7;
+        if (anchor == AnchorDirections.NorthEast) return [obj.left + obj.width, obj.top + offset];
+        else if (anchor == AnchorDirections.NorthWest) return [obj.left, obj.top + offset];
+        else if (anchor == AnchorDirections.SouthEast) return [obj.left + obj.width, obj.top + obj.height - offset];
+        else if (anchor == AnchorDirections.SouthWest) return [obj.left, obj.top + obj.height - offset];
+      }
+    }
+    else if (obj[CProps.myType] == CTypes.PhysicalLink) {
+      if ([AnchorDirections.NorthWest, AnchorDirections.NorthEast, AnchorDirections.SouthEast, AnchorDirections.SouthWest].includes(anchor)) {
+        const offset = obj.width/7;
+        if (anchor == AnchorDirections.NorthWest) return [obj.left + offset, obj.top];
+        else if (anchor == AnchorDirections.SouthEast) return [obj.left + obj.width - offset, obj.top + obj.height];
+      }
+    }
+
+    return super.getFlowAnchorPoint(anchor, obj);
+  }
+
   protected subscribeScaling(obj) {
     switch (obj[CProps.myType]) {
       case CTypes.DataStore: obj.on('scaling', (e) => this.onScaleDataStore(e));
@@ -2480,7 +2610,12 @@ export class HWDFCanvas extends CanvasBase {
       myType: CTypes.ElementName
     });
 
-    const g = new fabric.Group([e, etype, etxt, ephy, ...this.createFlowAnchors(wid, hei)], {
+    const parts = [e, etype, etxt, ephy, ...this.createFlowAnchors(wid, hei, true, true, false, true)];
+    if (this.AnchorCount == 4) {
+      [AnchorDirections.NorthWest, AnchorDirections.NorthEast, AnchorDirections.SouthEast, AnchorDirections.SouthWest].forEach(fa => parts.find(x => x[CProps.fa] == fa).set(CProps.visible, false));
+    }
+
+    const g = new fabric.Group(parts, {
       left: left, top: top,
       hasControls: true, lockRotation: true, lockScalingX: false, lockScalingY: false,
       hasBorders: false, subTargetCheck: true,
@@ -2576,7 +2711,10 @@ export class HWDFCanvas extends CanvasBase {
 
     const parts = [e];
     if (spl) parts.push(...[spl, spr]);
-    parts.push(...[etype, etxt, ephy, ...this.createFlowAnchors(wid, hei)]);
+    parts.push(...[etype, etxt, ephy, ...this.createFlowAnchors(wid, hei, true, true, false, true)]);
+    if (this.AnchorCount == 4) {
+      [AnchorDirections.NorthWest, AnchorDirections.NorthEast, AnchorDirections.SouthEast, AnchorDirections.SouthWest].forEach(fa => parts.find(x => x[CProps.fa] == fa).set(CProps.visible, false));
+    }
 
     const g = new fabric.Group(parts, {
       left: left, top: top,
@@ -2629,7 +2767,12 @@ export class HWDFCanvas extends CanvasBase {
       myType: CTypes.ElementName
     });
 
-    const g = new fabric.Group([e, etype, etxt, ephy, ...this.createFlowAnchors(wid, hei)], {
+    const parts = [e, etype, etxt, ephy, ...this.createFlowAnchors(wid, hei, true, true, false, true)];
+    if (this.AnchorCount == 4) {
+      [AnchorDirections.NorthWest, AnchorDirections.NorthEast, AnchorDirections.SouthEast, AnchorDirections.SouthWest].forEach(fa => parts.find(x => x[CProps.fa] == fa).set(CProps.visible, false));
+    }
+
+    const g = new fabric.Group(parts, {
       left: left, top: top,
       hasControls: true,
       lockRotation: true, lockScalingX: false, lockScalingY: false,
@@ -2660,9 +2803,9 @@ export class HWDFCanvas extends CanvasBase {
   }
 
   private createPhysicalLink(left: number, top: number, element: DFDElement): fabric.Object {
-    let wid = 140;
-    let hei = 75;
-    let e = new fabric.Polygon([
+    const wid = 140;
+    const hei = 75;
+    const e = new fabric.Polygon([
       { x: wid/7, y: 0 },
       { x: wid, y: 0 },
       { x: wid - wid/7, y: hei },
@@ -2671,12 +2814,12 @@ export class HWDFCanvas extends CanvasBase {
       stroke: element instanceof DFDElementRef ? this.theme.Primary : this.StrokeColor, strokeWidth: this.StrokeWidth,
       fill: 'transparent', myType: CTypes.ElementBorder
     });
-    let etype = new fabric.Text('«' + element.GetProperty('Type').GetProperty('Name') + '»', {
+    const etype = new fabric.Text('«' + element.GetProperty('Type').GetProperty('Name') + '»', {
       fontSize: this.currentFontSizeConfig.Type, fill: this.StrokeColor,
       originX: 'center', left: wid / 2 + 5, top: 5,
       myType: CTypes.ElementType
     });
-    let etxt = new fabric.Text(element.GetProperty('Name'), {
+    const etxt = new fabric.Text(element.GetProperty('Name'), {
       fontSize: this.currentFontSizeConfig.Name,
       fill: this.StrokeColor,
       originX: 'center',
@@ -2684,7 +2827,12 @@ export class HWDFCanvas extends CanvasBase {
       myType: CTypes.ElementName
     });
 
-    let g = new fabric.Group([e, etype, etxt, ...this.createFlowAnchors(wid, hei)], {
+    const parts = [e, etype, etxt, ...this.createFlowAnchors(wid, hei, true, true, false, true)];
+    if (this.AnchorCount == 4) {
+      [AnchorDirections.NorthWest, AnchorDirections.NorthEast, AnchorDirections.SouthEast, AnchorDirections.SouthWest].forEach(fa => parts.find(x => x[CProps.fa] == fa).set(CProps.visible, false));
+    }
+
+    const g = new fabric.Group(parts, {
       left: left,
       top: top,
       hasControls: true,
@@ -2725,9 +2873,9 @@ export class HWDFCanvas extends CanvasBase {
   }
 
   private createInterface(left: number, top: number, element: DFDElement): fabric.Object {
-    let wid = 140;
-    let hei = 75;
-    let e = new fabric.Polygon([
+    const wid = 140;
+    const hei = 75;
+    const e = new fabric.Polygon([
       { x: 0, y: 0 },
       { x: wid - wid/7, y: 0 },
       { x: wid, y: hei / 2 },
@@ -2737,18 +2885,23 @@ export class HWDFCanvas extends CanvasBase {
     ], {
       stroke: this.StrokeColor, strokeWidth: this.StrokeWidth, fill: 'transparent', myType: CTypes.ElementBorder
     });
-    let etype = new fabric.Text('«' + element.GetProperty('Type').GetProperty('Name') + '»', {
+    const etype = new fabric.Text('«' + element.GetProperty('Type').GetProperty('Name') + '»', {
       fontSize: this.currentFontSizeConfig.Type, fill: this.StrokeColor,
       originX: 'center', left: wid / 2 + 5, top: 5,
       myType: CTypes.ElementType
     });
-    let etxt = new fabric.Text(element.GetProperty('Name'), {
+    const etxt = new fabric.Text(element.GetProperty('Name'), {
       fontSize: this.currentFontSizeConfig.Name, fill: this.StrokeColor,
       originX: 'center', left: wid / 2 + 5, top: hei / 2 - 8, textAlign: 'center',
       myType: CTypes.ElementName
     });
 
-    let g = new fabric.Group([e, etype, etxt, ...this.createFlowAnchors(wid, hei)], {
+    const parts = [e, etype, etxt, ...this.createFlowAnchors(wid, hei, true, true, false, true)];
+    if (this.AnchorCount == 4) {
+      [AnchorDirections.NorthWest, AnchorDirections.NorthEast, AnchorDirections.SouthEast, AnchorDirections.SouthWest].forEach(fa => parts.find(x => x[CProps.fa] == fa).set(CProps.visible, false));
+    }
+
+    const g = new fabric.Group(parts, {
       left: left, top: top,
       hasControls: true,
       hasBorders: false, subTargetCheck: true,
@@ -2944,19 +3097,23 @@ export class CtxCanvas extends CanvasBase {
   protected getFlowAnchorPoint(anchor: string, obj) {
     if (obj[CProps.myType] == CTypes.DeviceInterface) {
       let e = obj._objects.find(x => x[CProps.myType] == CTypes.ElementBorder);
-      if (anchor == 'n') return [obj.left + obj.width / 2 + e.left + e.width / 2, obj.top + obj.height / 2 + e.top];
-      else if (anchor == 'e') return [obj.left + obj.width / 2 + e.left + e.width, obj.top + obj.height / 2 + e.top + e.height / 2];
-      else if (anchor == 's') return [obj.left + obj.width / 2 + e.left + e.width / 2, obj.top + obj.height / 2 + e.top + e.height];
-      else if (anchor == 'w') return [obj.left + obj.width / 2 + e.left, obj.top + obj.height / 2 + e.top + e.height / 2];
+      if (anchor == AnchorDirections.North) return [obj.left + obj.width / 2 + e.left + e.width / 2, obj.top + obj.height / 2 + e.top];
+      else if (anchor == AnchorDirections.East) return [obj.left + obj.width / 2 + e.left + e.width, obj.top + obj.height / 2 + e.top + e.height / 2];
+      else if (anchor == AnchorDirections.South) return [obj.left + obj.width / 2 + e.left + e.width / 2, obj.top + obj.height / 2 + e.top + e.height];
+      else if (anchor == AnchorDirections.West) return [obj.left + obj.width / 2 + e.left, obj.top + obj.height / 2 + e.top + e.height / 2];
+      else if (anchor == AnchorDirections.NorthWest) return [obj.left + obj.width / 2 + e.left, obj.top + obj.height / 2 + e.top];
+      else if (anchor == AnchorDirections.NorthEast) return [obj.left + obj.width / 2 + e.left + e.width, obj.top + obj.height / 2 + e.top];
+      else if (anchor == AnchorDirections.SouthEast) return [obj.left + obj.width / 2 + e.left + e.width, obj.top + obj.height / 2 + e.top + e.height];
+      else if (anchor == AnchorDirections.SouthWest) return [obj.left + obj.width / 2 + e.left, obj.top + obj.height / 2 + e.top + e.height];
       else return null;
     }
     else if (obj[CProps.myType] == CTypes.Interactor) {
       let e = obj._objects.find(x => x[CProps.myType] == CTypes.InteractorArms);
       let l = obj._objects.find(x => x[CProps.myType] == CTypes.InteractorLeg1);
-      if (anchor == 'n') return [obj.left + obj.width / 2, obj.top+5];
-      else if (anchor == 'e') return [obj.left + obj.width / 2 + e.left + e.width, obj.top + obj.height / 2 + e.top + e.height / 2];
-      else if (anchor == 's') return [obj.left + obj.width / 2, obj.top + obj.height / 2 + 10];
-      else if (anchor == 'w') return [obj.left + obj.width / 2 + e.left, obj.top + obj.height / 2 + e.top + e.height / 2];
+      if (anchor == AnchorDirections.North) return [obj.left + obj.width / 2, obj.top+5];
+      else if (anchor == AnchorDirections.East) return [obj.left + obj.width / 2 + e.left + e.width, obj.top + obj.height / 2 + e.top + e.height / 2];
+      else if (anchor == AnchorDirections.South) return [obj.left + obj.width / 2, obj.top + obj.height / 2 + 10];
+      else if (anchor == AnchorDirections.West) return [obj.left + obj.width / 2 + e.left, obj.top + obj.height / 2 + e.top + e.height / 2];
       else return null;
     }
 
@@ -3520,9 +3677,9 @@ export class CtxCanvas extends CanvasBase {
   }
 
   private createInterface(left: number, top: number, element: ContextElement, option: string): fabric.Object {
-    let wid = 50;
-    let hei = 50;
-    let e = new fabric.Rect({
+    const wid = 50;
+    const hei = 50;
+    const e = new fabric.Rect({
       stroke: this.StrokeColor, strokeWidth: this.StrokeWidth,
       left: 12.5, top: 12.5, width: 25, height: 25,
       fill: this.isDarkMode ? CanvasBase.BackgroundColorDark : CanvasBase.BackgroundColorLight, myType: CTypes.ElementBorder
@@ -3560,10 +3717,12 @@ export class CtxCanvas extends CanvasBase {
     }
     */
 
-    let parts = [e];
-    parts.push(...[etxt, ...this.createFlowAnchors(wid, hei, true, true)]);
+    const parts = [e, etxt, ...this.createFlowAnchors(wid, hei, true, true, false, true)];
+    if (this.AnchorCount == 4) {
+      [AnchorDirections.NorthWest, AnchorDirections.NorthEast, AnchorDirections.SouthEast, AnchorDirections.SouthWest].forEach(fa => parts.find(x => x[CProps.fa] == fa).set(CProps.visible, false));
+    }
 
-    let g = new fabric.Group(parts, {
+    const g = new fabric.Group(parts, {
       left: left, top: top,
       hasControls: true, lockRotation: true, lockScalingX: true, lockScalingY: true, hasBorders: false,
       ID: element.ID, canvasID: uuidv4(),
@@ -3665,24 +3824,29 @@ export class CtxCanvas extends CanvasBase {
   }
 
   private createExternalEntity(left: number, top: number, element: ContextElement): fabric.Object {
-    let wid = 140;
-    let hei = 75;
-    let e = new fabric.Rect({
+    const wid = 140;
+    const hei = 75;
+    const e = new fabric.Rect({
       stroke: element instanceof DFDElementRef ? this.theme.Primary : this.StrokeColor, strokeWidth: this.StrokeWidth,
       width: wid, height: hei, fill: 'transparent', myType: CTypes.ElementBorder
     });
-    let etype = new fabric.Text('«External Entity»', {
+    const etype = new fabric.Text('«External Entity»', {
       fontSize: this.currentFontSizeConfig.Type, fill: this.StrokeColor,
       originX: 'center', left: wid / 2, top: 5,
       myType: CTypes.ElementType
     });
-    let etxt = new fabric.Text(element.GetProperty('Name'), {
+    const etxt = new fabric.Text(element.GetProperty('Name'), {
       fontSize: this.currentFontSizeConfig.Name, fill: this.StrokeColor,
       originX: 'center', left: wid / 2, top: hei / 2 - 8, textAlign: 'center',
       myType: CTypes.ElementName
     });
 
-    let g = new fabric.Group([e, etype, etxt, ...this.createFlowAnchors(wid, hei)], {
+    const parts = [e, etype, etxt, ...this.createFlowAnchors(wid, hei, true, true, false, true)];
+    if (this.AnchorCount == 4) {
+      [AnchorDirections.NorthWest, AnchorDirections.NorthEast, AnchorDirections.SouthEast, AnchorDirections.SouthWest].forEach(fa => parts.find(x => x[CProps.fa] == fa).set(CProps.visible, false));
+    }
+
+    const g = new fabric.Group(parts, {
       left: left, top: top,
       hasControls: true,
       lockRotation: true, lockScalingX: false, lockScalingY: false,
@@ -3850,6 +4014,14 @@ export class DiagramComponent implements OnInit {
 
   ngOnDestroy() {
     this.Dia.Save();
+  }
+
+  public GetIconColor(isActive: boolean): string {
+    return isActive ? (this.theme.IsDarkMode ? '#FFF' : '#000') : (this.theme.IsDarkMode ? '#676767' : '#B6B6B6')
+  }
+
+  public GetContextIconColor(isActive: boolean): string {
+    return isActive ? (this.theme.IsDarkMode ? '#FFF' : '#707070') : (this.theme.IsDarkMode ? '#676767' : '#B6B6B6')
   }
 
   public ShowSuggestedThreats() {

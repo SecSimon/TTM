@@ -960,6 +960,8 @@ export class DataFlow extends DFDElement implements ICanvasFlow {
   public LineTypeChanged = new EventEmitter<FlowLineTypes>();
   public ArrowPosChanged = new EventEmitter<FlowArrowPositions>();
   public BendFlowChanged = new EventEmitter<boolean>();
+  public DirectionChanged = new EventEmitter<void>();
+  public AnchorChanged = new EventEmitter<any>();
 
   constructor(data: {}, type: StencilType, pf: ProjectFile, cf: ConfigFile) {
     super(data, type, pf, cf);
@@ -984,6 +986,16 @@ export class DataFlow extends DFDElement implements ICanvasFlow {
     });
   }
 
+  public ChangeDirection() {
+    let tmp = this.Sender;
+    this.Sender = this.Receiver;
+    this.Receiver = tmp;
+    tmp = this.SenderInterface;
+    this.SenderInterface = this.ReceiverInterface;
+    this.ReceiverInterface = tmp;
+    this.DirectionChanged.emit();
+  }
+
   public GetProperty(id: string) {
     if (!this.OverwriteProtocolProperties && this.protocolProperties?.includes(id)) {
       return this.ProtocolStack.some(x => x.GetProperty(id));
@@ -1002,6 +1014,7 @@ export class DataFlow extends DFDElement implements ICanvasFlow {
     this.AddProperty('properties.SenderInterface', 'SenderInterface', '', true, PropertyEditTypes.InterfaceElementSelect, true);
     this.AddProperty('properties.Receiver', 'Receiver', '', true, PropertyEditTypes.ElementName, true);
     this.AddProperty('properties.ReceiverInterface', 'ReceiverInterface', '', true, PropertyEditTypes.InterfaceElementSelect, true);
+    this.AddProperty('properties.Direction', '', '', false, PropertyEditTypes.DataFlowChangeDirection, true);
     this.AddProperty('properties.ShowName', 'ShowName', '', true, PropertyEditTypes.CheckBox, true);
     this.AddProperty('properties.ShowProtocolDetails', 'ShowProtocolDetails', '', true, PropertyEditTypes.CheckBox, true);
     this.AddProperty('properties.BendFlow', 'BendFlow', '', true, PropertyEditTypes.CheckBox, true);

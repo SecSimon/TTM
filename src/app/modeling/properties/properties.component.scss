@@ -1,6 +1,12 @@
 @import 'stylesTheme.scss';
 
 
+button {
+  font-size: 11px;
+  line-height: 20px;
+}
+
+
 .buttonAsText {
   background: none;
   border: none;
@@ -53,4 +59,36 @@
 
 ::ng-deep .mat-tooltip  {
   white-space: pre-line !important;
+}
+
+.flowAnchorOverlay {
+  border: solid 1px #ccc;
+  border-radius: 5px;
+  margin: 0;
+}
+
+.flowAnchorOverlay-dark {
+  border-color: #fff;
+  @extend .bg-color-dark1;
+}
+
+.flowAnchorOverlay-light {
+  border-color: #fff;
+  @extend .bg-color-light1;
+}
+
+.iconBtn {
+  height: 24px;
+  width: 25px;
+  min-width: 25px;
+  padding: 0px;
+  line-height: 20px;
+}
+
+.anchorBtn {
+  height: 18px;
+  width: 18px;
+  min-width: 18px;
+  padding: 0px;
+  line-height: 18px;
 }

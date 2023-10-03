@@ -3,13 +3,15 @@ import { Router, ActivatedRoute, Params } from '@angular/router';
 import { AssetGroup, LowMediumHighNumber, LowMediumHighNumberUtil, MyData } from '../../model/assets';
 import { MyComponent } from '../../model/component';
 import { DatabaseBase, IProperty, ViewElementBase } from '../../model/database';
-import { DataFlowEntity, DFDElement, ElementTypeIDs, IElementTypeThreat, StencilType, TrustArea } from '../../model/dfd-model';
-import { DiagramTypes } from '../../model/diagram';
+import { DataFlow, DataFlowEntity, DFDElement, ElementTypeIDs, IElementTypeThreat, StencilType, TrustArea } from '../../model/dfd-model';
+import { Diagram, DiagramTypes } from '../../model/diagram';
 import { Device, DeviceInterfaceNameUtil, FlowArrowPositions, FlowArrowPositionUtil, FlowLineTypes, FlowLineTypeUtil, FlowTypes, FlowTypeUtil, SystemUseCase } from '../../model/system-context';
 import { DataService } from '../../util/data.service';
 import { DialogService } from '../../util/dialog.service';
 import { ThemeService } from '../../util/theme.service';
 import { ThreatEngineService } from '../../util/threat-engine.service';
+import { LocStorageKeys, LocalStorageService } from '../../util/local-storage.service';
+import { AnchorDirections } from '../diagram/diagram.component';
 
 @Component({
   selector: 'app-properties',
@@ -19,17 +21,35 @@ import { ThreatEngineService } from '../../util/threat-engine.service';
 export class PropertiesComponent implements OnInit {
   private _selectedObject: DatabaseBase;
 
+  public get Diagram(): Diagram {
+    return this.dataObject;
+  }
+
+  public get AnchorCount(): number {
+    let arr = null;
+    let arrStr = this.locStorage.Get(LocStorageKeys.PAGE_MODELING_DIAGRAM_ANCHOR_COUNT);
+    if (arrStr) arr = JSON.parse(arrStr);
+    if (arr && arr[this.Diagram.DiagramType] != null) return arr[this.Diagram.DiagramType];
+    return 4;
+  }
+
+  public AnchorDirections = AnchorDirections;
+
+  public flowMenuIsOpen = false;
+
+  @Input() public dataObject: any;
+
   public get selectedObject(): DatabaseBase { return this._selectedObject; }
   @Input()
   public set selectedObject(val: DatabaseBase) { 
     this._selectedObject = val;
+    this.flowMenuIsOpen = false;
     setTimeout(() => {
       Array.from(document.getElementsByTagName('textarea')).forEach(x => {
         x.style.height = 'auto';
         x.style.height = x.scrollHeight.toString() + 'px';
       }); 
     }, 10);
-    
     // focus first element when element was selected
     // setTimeout(() => {
     //   this.FocusFirst();
@@ -45,7 +65,7 @@ export class PropertiesComponent implements OnInit {
   public openQuestionnaire = new EventEmitter<MyComponent>();
 
   constructor(public theme: ThemeService, public dataService: DataService, private dialog: DialogService, private threatEngine: ThreatEngineService,
-    private router: Router, private activatedRoute: ActivatedRoute) { }
+    private locStorage: LocalStorageService, private router: Router, private activatedRoute: ActivatedRoute) { }
 
   ngOnInit(): void {
   }
@@ -266,6 +286,10 @@ export class PropertiesComponent implements OnInit {
     else val.Number = (Math.max(...this.dataService.Project.GetNewAssets().map(x => Number(x.Number)).filter(x => !isNaN(x)))+1).toString();
   }
 
+  public ChangeDataFlowDirection() {
+    (this.selectedElement as DataFlow).ChangeDirection();
+  }
+
   public OpenNotes() {
     this.dialog.OpenNotesDialog((this.selectedObject as MyComponent).Notes, true, false, true, true);
   }
@@ -298,6 +322,11 @@ export class PropertiesComponent implements OnInit {
       const queryParams: Params = { viewID: dia.ID };
       this.router.navigate([], { relativeTo: this.activatedRoute, queryParams: queryParams, replaceUrl: true });
     }, 500);
+  }
+
+  public GetIconColor(isPrimary: boolean = false): string {
+    if (isPrimary) return this.theme.Primary;
+    return this.theme.IsDarkMode ? '#FFF' : '#000';
   }
 
   public IsDFDElement(): boolean {
