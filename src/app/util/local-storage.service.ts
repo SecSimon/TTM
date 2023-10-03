@@ -40,6 +40,7 @@ export enum LocStorageKeys {
   PAGE_MODELING_DIAGRAM_ARROW_NAME ="page_modeling_diagram_arrow_name",
   PAGE_MODELING_DIAGRAM_ARROW_POS ="page_modeling_diagram_arrow_pos",
   PAGE_MODELING_DIAGRAM_SHOW_GRID ="page_modeling_diagram_show_grid",
+  PAGE_MODELING_DIAGRAM_STICK_GRID ="page_modeling_diagram_stick_grid",
   PAGE_MODELING_DIAGRAM_TEXTSIZE_INDEX ="page_modeling_diagram_textsize_index",
   PAGE_MODELING_DIAGRAM_ZOOM  = "page_modeling_diagram_zoom",
   PAGE_MODELING_MODEL_TAB_INDEX   = "page_modeling_model_tab_index",

@@ -36,11 +36,11 @@
   </mat-form-field>
   <br/>
   <mat-form-field appearance="fill" class="disable" style="width: calc(100% - 300px - 15px);" *ngIf="!isManualEntry">
-    <mat-label>{{ 'general.Targets' | translate }}</mat-label>
+    <mat-label>{{ 'general.Targets' | translate }}*</mat-label>
     <input matInput [value]="GetTargetsNames()"/>
   </mat-form-field>
   <mat-form-field appearance="fill" style="width: calc(100% - 300px - 15px);" *ngIf="isManualEntry">
-    <mat-label>{{ 'general.Targets' | translate }}</mat-label>
+    <mat-label>{{ 'general.Targets' | translate }}*</mat-label>
     <mat-select [(value)]="countermeasure.Targets" matTooltip="{{GetTargetsNames()}}" matTooltipShowDelay="1000" multiple>
       <mat-option>{{'properties.selectNone' | translate}}</mat-option>
       <mat-option *ngFor="let ele of elements" [value]="ele">

@@ -9,24 +9,28 @@
     <button mat-button class="toolBtn" [disabled]="true" [class.toolBtn-Selected]="Dia.MouseMode == 'move'" (click)="Dia.SetMove()" matTooltip="{{'pages.modeling.diagram.move' | translate}}" matTooltipShowDelay="1000">
       <mat-icon>highlight_alt</mat-icon>
     </button>
-    <button mat-button class="toolBtn" [class.toolBtn-Selected]="Dia.ShowGrid" (click)="Dia.ShowGrid = !Dia.ShowGrid" matTooltip="{{'pages.modeling.diagram.showGrid' | translate}}" matTooltipShowDelay="1000">
+    <button mat-button class="toolBtn" [matMenuTriggerFor]="gridMenu" matTooltip="{{'pages.modeling.diagram.grid' | translate}}" matTooltipShowDelay="1000">
       <mat-icon>grid_4x4</mat-icon>
     </button>
+    <mat-menu #gridMenu="matMenu">
+      <button mat-menu-item>
+        <mat-slide-toggle color="primary" [(ngModel)]="Dia.ShowGrid" (click)="$event.stopPropagation()">
+          {{'pages.modeling.diagram.showGrid' | translate}}
+        </mat-slide-toggle>
+      </button>
+      <button mat-menu-item>
+        <mat-slide-toggle color="primary" [disabled]="!Dia.ShowGrid" [(ngModel)]="Dia.StickToGrid" (click)="$event.stopPropagation()">
+          {{'pages.modeling.diagram.stickToGrid' | translate}}
+        </mat-slide-toggle>
+      </button>
+    </mat-menu>
 
-    <button mat-button class="toolBtn" [disabled]="!Dia.CanSetAnchorCount" [class.toolBtn-Selected]="Dia.AnchorCount == 4" (click)="Dia.AnchorCount = 4" matTooltip="{{'pages.modeling.diagram.anchorCount4' | translate}}" matTooltipShowDelay="1000">
-      <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" version="1.1">      
-        <circle [attr.fill]="GetIconColor(Dia.CanSetAnchorCount)" cx="11.5" cy="3" r="2"/>
-        <circle [attr.fill]="GetIconColor(Dia.CanSetAnchorCount)" cx="11.5" cy="20" r="2"/>
-        <circle [attr.fill]="GetIconColor(Dia.CanSetAnchorCount)" cx="3" cy="11.5" r="2"/>
-        <circle [attr.fill]="GetIconColor(Dia.CanSetAnchorCount)" cx="20" cy="11.5" r="2"/>
-      </svg>
-    </button>
-    <button mat-button class="toolBtn" [disabled]="!Dia.CanSetAnchorCount" style="margin-left: 0px;" [class.toolBtn-Selected]="Dia.AnchorCount == 8" (click)="Dia.AnchorCount = 8" matTooltip="{{'pages.modeling.diagram.anchorCount8' | translate}}" matTooltipShowDelay="1000">
+    <button mat-button class="toolBtn" [disabled]="!Dia.CanSetAnchorCount" (click)="Dia.AnchorCount = (Dia.AnchorCount == 8 ? 4 : 8)" matTooltip="{{(Dia.AnchorCount == 8 ? 'pages.modeling.diagram.anchorCount8' : 'pages.modeling.diagram.anchorCount4') | translate}}" matTooltipShowDelay="1000">
       <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" version="1.1">
-        <circle [attr.fill]="GetIconColor(Dia.CanSetAnchorCount)" cx="3" cy="3" r="2"/>
-        <circle [attr.fill]="GetIconColor(Dia.CanSetAnchorCount)" cx="3" cy="20" r="2"/>
-        <circle [attr.fill]="GetIconColor(Dia.CanSetAnchorCount)" cx="20" cy="3" r="2"/>
-        <circle [attr.fill]="GetIconColor(Dia.CanSetAnchorCount)" cx="20" cy="20" r="2"/>
+        <circle *ngIf="Dia.AnchorCount == 8" [attr.fill]="GetIconColor(Dia.CanSetAnchorCount)" cx="3" cy="3" r="2"/>
+        <circle *ngIf="Dia.AnchorCount == 8" [attr.fill]="GetIconColor(Dia.CanSetAnchorCount)" cx="3" cy="20" r="2"/>
+        <circle *ngIf="Dia.AnchorCount == 8" [attr.fill]="GetIconColor(Dia.CanSetAnchorCount)" cx="20" cy="3" r="2"/>
+        <circle *ngIf="Dia.AnchorCount == 8" [attr.fill]="GetIconColor(Dia.CanSetAnchorCount)" cx="20" cy="20" r="2"/>
       
         <circle [attr.fill]="GetIconColor(Dia.CanSetAnchorCount)" cx="11.5" cy="3" r="2"/>
         <circle [attr.fill]="GetIconColor(Dia.CanSetAnchorCount)" cx="11.5" cy="20" r="2"/>

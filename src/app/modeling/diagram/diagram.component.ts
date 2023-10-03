@@ -257,6 +257,21 @@ export abstract class CanvasBase {
     this.onCanvasModified();
   }
 
+  public get StickToGrid(): boolean {
+    let arr = null;
+    let arrStr = this.locStorage.Get(LocStorageKeys.PAGE_MODELING_DIAGRAM_STICK_GRID);
+    if (arrStr) arr = JSON.parse(arrStr);
+    if (arr && arr[this.Diagram.DiagramType] != null) return arr[this.Diagram.DiagramType];
+    return true;
+  }
+  public set StickToGrid(val: boolean) {
+    let arrStr = this.locStorage.Get(LocStorageKeys.PAGE_MODELING_DIAGRAM_STICK_GRID);
+    let arr = {};
+    if (arrStr != null) arr = JSON.parse(arrStr);
+    arr[this.Diagram.DiagramType] = val;
+    this.locStorage.Set(LocStorageKeys.PAGE_MODELING_DIAGRAM_STICK_GRID, JSON.stringify(arr));
+  }
+
   private mouseMovingState: MouseMovingStates = MouseMovingStates.None;
 
   public get FlowArrowPosition(): FlowArrowPositions {
@@ -312,6 +327,18 @@ export abstract class CanvasBase {
     arr[this.Diagram.DiagramType] = val;
 
     this.locStorage.Set(LocStorageKeys.PAGE_MODELING_DIAGRAM_ANCHOR_COUNT, JSON.stringify(arr));
+
+    this.Canvas.getObjects().forEach(obj => {
+      if (obj['_objects']) {
+        const fas = obj['_objects'].filter(x => x[CProps.myType] == CTypes.FlowAnchor);
+        fas.forEach(fa => {
+          if (val == 8) fa.set(CProps.visible, true);
+          else if ([AnchorDirections.NorthWest, AnchorDirections.NorthEast, AnchorDirections.SouthEast, AnchorDirections.SouthWest].includes(fa[CProps.fa])) {
+            fa.set(CProps.visible, false);
+          }
+        });
+      }
+    });
   }
 
   public get CanSetAnchorCount(): boolean {
@@ -1247,13 +1274,15 @@ export abstract class CanvasBase {
     else if (movingObj[CProps.myType] == CTypes.TextPosPoint) this.textOnMovingPoint(movingObj);
     else if (movingObj[CProps.t0ID]) this.textOnMovingText(movingObj);
     if (movingObj[CProps.ID]) {
-      let snap = (x) => {
-        return Math.round(x / CanvasBase.GridSize * 4) % 4 == 0;
+      const stick = (x) => {
+        return Math.round(x / CanvasBase.GridSize * 2) % 2 == 0;
       }
 
-      if (snap(movingObj.left)) movingObj.set('left', Math.round(movingObj.left / CanvasBase.GridSize) * CanvasBase.GridSize);
-      if (snap(movingObj.top)) movingObj.set('top', Math.round(movingObj.top / CanvasBase.GridSize) * CanvasBase.GridSize);
-      movingObj.setCoords();
+      if (this.ShowGrid && this.StickToGrid) {
+        if (stick(movingObj.left)) movingObj.set('left', Math.round(movingObj.left / CanvasBase.GridSize) * CanvasBase.GridSize);
+        if (stick(movingObj.top)) movingObj.set('top', Math.round(movingObj.top / CanvasBase.GridSize) * CanvasBase.GridSize);
+        movingObj.setCoords();
+      }
     }
 
     if (movingObj[CProps.dfs]) {
