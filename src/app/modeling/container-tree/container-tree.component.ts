@@ -1,6 +1,6 @@
 import { NestedTreeControl } from '@angular/cdk/tree';
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { MatTreeNestedDataSource } from '@angular/material/tree';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { MatNestedTreeNode, MatTreeNestedDataSource, MatTreeNode } from '@angular/material/tree';
 import { Subscription } from 'rxjs';
 import { IContainer, ViewElementBase } from '../../model/database';
 import { DataFlow } from '../../model/dfd-model';
@@ -15,6 +15,7 @@ import { LocStorageKeys, LocalStorageService } from '../../util/local-storage.se
   styleUrls: ['./container-tree.component.scss']
 })
 export class ContainerTreeComponent implements OnInit {
+  private _selectedElement: ViewElementBase;
   private _filteredElement: ViewElementBase;
   private subscription: Subscription;
   private _elements: IContainer;
@@ -76,8 +77,16 @@ export class ContainerTreeComponent implements OnInit {
     this.RefreshTree();
   };
 
+  public get selectedElement(): ViewElementBase { return this._selectedElement; }
   @Input()
-  public selectedElement: ViewElementBase;
+  public set selectedElement(val: ViewElementBase) {
+    this._selectedElement = val;
+    if (val) {
+      let node = this.leafNodes.find(x => x.nativeElement.id === val.ID);
+      if (!node) node = this.nestedNodes.find(x => x.nativeElement.id === val.ID);
+      node?.nativeElement.scrollIntoView({block: 'center', behavior: 'smooth'});
+    }
+  }
 
   public get filteredElement(): ViewElementBase {
     return this._filteredElement;
@@ -100,6 +109,9 @@ export class ContainerTreeComponent implements OnInit {
       setTimeout(() => { element.nativeElement.focus(); });
     }
   }
+
+  @ViewChildren(MatTreeNode, {read: ElementRef}) leafNodes!: QueryList<ElementRef<HTMLElement>>;
+  @ViewChildren(MatNestedTreeNode, {read: ElementRef}) nestedNodes!: QueryList<ElementRef<HTMLElement>>;
 
   constructor(public dataService: DataService, public theme: ThemeService, private locStorage: LocalStorageService) {
   }

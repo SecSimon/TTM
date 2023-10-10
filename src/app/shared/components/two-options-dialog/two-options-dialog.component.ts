@@ -1,4 +1,4 @@
-import { Component, Inject, Injector, OnInit } from '@angular/core';
+import { Component, HostListener, Inject, Injector, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { IKeyValue } from '../../../model/database';
 
@@ -37,6 +37,22 @@ export class TwoOptionsDialogComponent implements OnInit {
         providers.push({provide: x.Key, useValue: x.Value});
       });
       this.dataInjector = Injector.create({ providers: providers, parent: this.injector });
+    }
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  public onKeyDown(event: KeyboardEvent) {
+    if (this.data.canIterate && document.activeElement?.tagName != 'INPUT') {
+      if (event.key == 'ArrowRight' && this.data.canNext()) {
+        event.preventDefault();
+        event.stopPropagation();
+        this.data.onNext();
+      }
+      else if (event.key == 'ArrowLeft' && this.data.canPrevious()) {
+        event.preventDefault();
+        event.stopPropagation();
+        this.data.onPrevious();
+      }
     }
   }
 }

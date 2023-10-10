@@ -28,7 +28,7 @@
       </ng-container>
       <ng-container matColumnDef="elements">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'general.Elements' | translate}} </th>
-        <td mat-cell *matCellDef="let entry"> {{GetElementNames(entry)}} </td>
+        <td mat-cell *matCellDef="let entry" [class.selected-cell]="IsElementSelected(entry)"> {{GetElementNames(entry)}} </td>
       </ng-container>
       <ng-container matColumnDef="description">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'properties.Description' | translate}} </th>
@@ -40,7 +40,7 @@
       </ng-container>
   
       <tr mat-header-row style="height: 30px;" *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;" [class.selected-item]="IsTestCaseSelected(row)" (click)="SelectTestCase(row)" (dblclick)="OpenTestCase(row)"  (contextmenu)="OpenContextMenu($event, row)">
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" [id]="row.ID" [class.selected-item]="IsTestCaseSelected(row)" (click)="SelectTestCase(row)" (dblclick)="OpenTestCase(row)"  (contextmenu)="OpenContextMenu($event, row)">
       </tr>
       <tr class="mat-row" *matNoDataRow>
         <td class="mat-cell" colspan="5">{{'pages.modeling.testcasetable.noTestCases' | translate}}</td>

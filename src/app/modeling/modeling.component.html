@@ -51,30 +51,30 @@
               </mat-tab-group>
             </as-split-area>
             <as-split-area [size]="GetSplitSize(2, 1, 30)" [order]=2 *ngIf="hasBottomTabGroup">
-              <mat-tab-group class="bottomTabGroup">
+              <mat-tab-group class="bottomTabGroup" (selectedIndexChange)="selectedBottomTabGroupIndex = $event">
                 <mat-tab>
                   <ng-template mat-tab-label>
                     <span [matBadge]="currentThreatCount" [matBadgeHidden]="currentThreatCount == 0" matBadgeSize="small" matBadgePosition="below" matBadgeOverlap="false">{{'general.AttackScenarios' | translate}}</span>
                   </ng-template>
-                  <app-threat-table [selectedNode]="selectedNode" [selectedObject]="selectedObject" (selectedObjectChanged)="selectedObject = $event" [filteredObject]="filteredObject" (threatCountChanged)="currentThreatCount = $event"></app-threat-table>
+                  <app-threat-table [isActive]="selectedBottomTabGroupIndex == 0" [selectedNode]="selectedNode" [selectedObject]="selectedObject" (selectedObjectChanged)="selectedObject = $event" [filteredObject]="filteredObject" (threatCountChanged)="currentThreatCount = $event"></app-threat-table>
                 </mat-tab>
                 <mat-tab>
                   <ng-template mat-tab-label>
                     <span [matBadge]="currentCountermeasureCount" [matBadgeHidden]="currentCountermeasureCount == 0" matBadgeSize="small" matBadgePosition="below" matBadgeOverlap="false">{{'general.Countermeasures' | translate}}</span>
                   </ng-template>
-                  <app-countermeasure-table [selectedNode]="selectedNode" [selectedObject]="selectedObject" (selectedObjectChanged)="selectedObject = $event" [filteredObject]="filteredObject" (countermeasureCountChanged)="currentCountermeasureCount = $event"></app-countermeasure-table>
+                  <app-countermeasure-table [isActive]="selectedBottomTabGroupIndex == 1" [selectedNode]="selectedNode" [selectedObject]="selectedObject" (selectedObjectChanged)="selectedObject = $event" [filteredObject]="filteredObject" (countermeasureCountChanged)="currentCountermeasureCount = $event"></app-countermeasure-table>
                 </mat-tab>
                 <mat-tab *ngIf="dataService.Project.HasTesting">
                   <ng-template mat-tab-label>
                     <span [matBadge]="currentTestCaseCount" [matBadgeHidden]="currentTestCaseCount == 0" matBadgeSize="small" matBadgePosition="below" matBadgeOverlap="false">{{'general.TestCases' | translate}}</span>
                   </ng-template>
-                  <app-test-case-table [selectedNode]="selectedNode" [selectedObject]="selectedObject" (selectedObjectChanged)="selectedObject = $event" [filteredObject]="filteredObject" (testCaseCountChanged)="currentTestCaseCount = $event"></app-test-case-table>
+                  <app-test-case-table [isActive]="selectedBottomTabGroupIndex == 2" [selectedNode]="selectedNode" [selectedObject]="selectedObject" (selectedObjectChanged)="selectedObject = $event" [filteredObject]="filteredObject" (testCaseCountChanged)="currentTestCaseCount = $event"></app-test-case-table>
                 </mat-tab>
                 <mat-tab>
                   <ng-template mat-tab-label>
                     <span [matBadge]="currentIssueCount" [matBadgeHidden]="currentIssueCount == 0" matBadgeSize="small" matBadgePosition="below" matBadgeOverlap="false">{{'general.Issues' | translate}}</span>
                   </ng-template>
-                  <app-issue-table [selectedNode]="selectedNode" [selectedObject]="selectedObject" (selectedObjectChanged)="selectedObject = $event" [filteredObject]="filteredObject" (issueCountChanged)="currentIssueCount = $event"></app-issue-table>
+                  <app-issue-table [isActive]="selectedBottomTabGroupIndex == 3" [selectedNode]="selectedNode" [selectedObject]="selectedObject" (selectedObjectChanged)="selectedObject = $event" [filteredObject]="filteredObject" (issueCountChanged)="currentIssueCount = $event"></app-issue-table>
                 </mat-tab>
               </mat-tab-group>
             </as-split-area>

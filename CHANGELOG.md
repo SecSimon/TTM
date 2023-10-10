@@ -1,3 +1,11 @@
+## 0.4.20
+
+* Diagram: change direction and anchor of data flow
+* Diagram: optional and higher radius of grid sticking
+* Support of arrow keys in tables and dialogs
+* Added search bar in various selects 
+* UI improvements
+
 ## 0.4.19
 
 * Refactoring file handling with password protection dialog

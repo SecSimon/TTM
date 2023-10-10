@@ -37,9 +37,10 @@
   <br/>
   <mat-form-field appearance="fill" class="property-form-field">
     <mat-label>{{'general.AttackVector' | translate}} ({{'general.Informative' | translate}})</mat-label>
-    <mat-select [(value)]="attackScenario.AttackVector" matTooltip="{{attackScenario.AttackVector?.Name}}" matTooltipShowDelay="1000">
+    <mat-select no-space [(value)]="attackScenario.AttackVector" matTooltip="{{attackScenario.AttackVector?.Name}}" matTooltipShowDelay="1000">
+      <input matInput class="searchBox" (keyup)="OnSearchAttackVectors($event)" placeholder="{{ 'general.Search' | translate }}"/>
       <mat-option>{{'properties.selectNone' | translate}}</mat-option>
-      <mat-optgroup *ngFor="let group of GetAttackVectorGroups()" [label]="group.Name">
+      <mat-optgroup *ngFor="let group of GetAttackVectorGroups()" [label]="group.name">
         <mat-option *ngFor="let threat of group.AttackVectors" [value]="threat">
           {{threat.Name}}
         </mat-option>
@@ -51,8 +52,9 @@
   </mat-form-field>
   <mat-form-field appearance="fill" style="margin-left: 10px; width: calc(100% - 300px - 15px);">
     <mat-label>{{'general.ThreatCategories' | translate}}*</mat-label>
-    <mat-select [(value)]="attackScenario.ThreatCategories" multiple (selectionChange)="sysThreatGroups = null">
-      <mat-optgroup *ngFor="let group of GetThreatCategoryGroups()" [label]="group.Name">
+    <mat-select no-space [(value)]="attackScenario.ThreatCategories" multiple (selectionChange)="sysThreatGroups = null">
+      <input matInput class="searchBox" (keyup)="OnSearchThreatCategories($event)" placeholder="{{ 'general.Search' | translate }}"/>
+      <mat-optgroup *ngFor="let group of GetThreatCategoryGroups()" [label]="group.name">
         <mat-option *ngFor="let cat of group.ThreatCategories" [value]="cat" matTooltip="{{cat.Description}}" matTooltipShowDelay="1000">
           {{cat.Name}}
         </mat-option>
@@ -61,7 +63,8 @@
   </mat-form-field>
   <mat-form-field appearance="fill" style="width: calc(100% - {{GetSystemThreatsWidth()}});" >
     <mat-label>{{'general.SystemThreats' | translate}}</mat-label>
-    <mat-select [(value)]="attackScenario.SystemThreats" multiple>
+    <mat-select no-space [(value)]="attackScenario.SystemThreats" multiple>
+      <input matInput class="searchBox" (keyup)="OnSearchSystemThreat($event)" placeholder="{{ 'general.Search' | translate }}"/>
       <mat-optgroup *ngFor="let group of GetSystemThreatGroups()" label="{{group.name | translate}}">
         <mat-option *ngFor="let threat of group.SystemThreats" [value]="threat" matTooltip="{{threat.Description}}" matTooltipShowDelay="1000">
           {{threat.Name}}
@@ -71,9 +74,10 @@
   </mat-form-field>
   <mat-form-field *ngIf="dataService.Project.Settings.ThreatActorToAttackScenario" appearance="fill" style="margin-left: 10px; width: 300px;">
     <mat-label>{{'general.ThreatSources' | translate}}</mat-label>
-    <mat-select [(value)]="attackScenario.ThreatSources" multiple>
-      <mat-checkbox class="mat-option" color="primary" [checked]="ThreatSourcesAll()" [indeterminate]="ThreatSourcesSome()" (change)="ThreatSourcesUpdate($event.checked)">{{ThreatSourcesLabel() | translate}}</mat-checkbox>
-      <mat-option *ngFor="let actor of dataService.Project.GetThreatSources().Sources" [value]="actor" matTooltip="{{'general.Likelihood' | translate}}: {{GetLMHName(actor.Likelihood) | translate}}" matTooltipShowDelay="1000">
+    <mat-select no-space [(value)]="attackScenario.ThreatSources" multiple>
+      <input matInput #srcSearch class="searchBox" (keyup)="OnSearchThreatSources($event)" placeholder="{{ 'general.Search' | translate }}"/>
+      <mat-checkbox *ngIf="srcSearch.value.length == 0" class="mat-option" color="primary" [checked]="ThreatSourcesAll()" [indeterminate]="ThreatSourcesSome()" (change)="ThreatSourcesUpdate($event.checked)">{{ThreatSourcesLabel() | translate}}</mat-checkbox>
+      <mat-option *ngFor="let actor of GetThreatSources()" [value]="actor" matTooltip="{{'general.Likelihood' | translate}}: {{GetLMHName(actor.Likelihood) | translate}}" matTooltipShowDelay="1000">
         {{actor.Name}}
       </mat-option>
     </mat-select>

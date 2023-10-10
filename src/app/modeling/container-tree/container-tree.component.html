@@ -15,7 +15,7 @@
     <!-- This is the tree node template for leaf nodes -->
     <!-- There is inline padding applied to this node using styles.
       This padding value depends on the mat-icon-button width. -->
-    <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle (click)="OnNodeClicked(node)" class="onHover" [style.display]="searchString && hideLeafNode(node) ? 'none' : 'flex'" [class.highlight-light]="isSelected(node) && !theme.IsDarkMode" [class.highlight-dark]="isSelected(node) && theme.IsDarkMode">
+    <mat-tree-node *matTreeNodeDef="let node" [id]="node.ID" matTreeNodeToggle (click)="OnNodeClicked(node)" class="onHover" [style.display]="searchString && hideLeafNode(node) ? 'none' : 'flex'" [class.highlight-light]="isSelected(node) && !theme.IsDarkMode" [class.highlight-dark]="isSelected(node) && theme.IsDarkMode">
       <span style="font-size: small;">{{node.GetProperty('Name')}}</span>&nbsp;<span style="font-size: x-small;">{{GetNodeInfo(node)}}</span> 
       <mat-icon *ngIf="ShowScenarios && GetNodeScenarios(node) > 0" class="scenarioBadge" [matBadge]="GetNodeScenarios(node)" matBadgeColor="warn" matBadgeSize="small" matBadgePosition="below">flash_on</mat-icon>
       <mat-icon *ngIf="ShowMeasures && GetNodeMeasures(node) > 0" class="measureBadge" [matBadge]="GetNodeMeasures(node)" matBadgeColor="primary" matBadgeSize="small" matBadgePosition="below">security</mat-icon>
@@ -27,7 +27,7 @@
       </button>
     </mat-tree-node>
     <!-- This is the tree node template for expandable nodes -->
-    <mat-nested-tree-node *matTreeNodeDef="let node; when: hasChild">
+    <mat-nested-tree-node *matTreeNodeDef="let node; when: hasChild" [id]="node.ID">
       <div class="mat-tree-node onHover" (click)="OnNodeClicked(node)" [style.display]="searchString && hideParentNode(node) ? 'none' : 'flex'" [class.highlight-light]="isSelected(node) && !theme.IsDarkMode" [class.highlight-dark]="isSelected(node) && theme.IsDarkMode">
         <button mat-icon-button matTreeNodeToggle>
           <mat-icon class="mat-icon-rtl-mirror">

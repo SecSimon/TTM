@@ -96,6 +96,7 @@ export class ModelingComponent extends SideNavBase implements OnInit {
   public get selectedComponent(): MyComponent { return this.selectedObject instanceof MyComponent ? this.selectedObject as MyComponent : null; }
 
   public hasBottomTabGroup: boolean = true;
+  public selectedBottomTabGroupIndex: number = 0;
 
   public currentThreatCount: number = 0;
   public currentCountermeasureCount: number = 0;

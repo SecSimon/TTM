@@ -203,7 +203,7 @@ export class ProjectFile extends DatabaseBase {
     if (!this.Data['Tasks']) this.Data['Tasks'] = [];
     if (!this.Data['Notes']) this.Data['Notes'] = [];
     if (!this.Data['Settings']) {
-      const settings: IProjectSettings = { ThreatActorToAttackScenario: false };
+      const settings: IProjectSettings = { ThreatActorToAttackScenario: true };
       this.Data['Settings'] = settings;
     }
     this.config = cf;

@@ -11,11 +11,11 @@
       </ng-container>
       <ng-container matColumnDef="element">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'general.Element' | translate}} </th>
-        <td mat-cell *matCellDef="let entry"> {{entry.Element?.Name}} </td>
+        <td mat-cell *matCellDef="let entry" [class.selected-cell]="IsElementSelected(entry)"> {{entry.Element?.Name}} </td>
       </ng-container>
   
       <tr mat-header-row style="height: 30px;" *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;" [class.selected-item]="IsIssueSelected(row)" (click)="SelectIssue(row)">
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" [id]="row.ID" [class.selected-item]="IsIssueSelected(row)" (click)="SelectIssue(row)">
       </tr>
       <tr class="mat-row" *matNoDataRow>
         <td class="mat-cell" colspan="4">{{'pages.modeling.issuetable.noIssues' | translate}}</td>

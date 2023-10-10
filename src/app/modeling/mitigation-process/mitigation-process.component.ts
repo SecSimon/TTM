@@ -11,6 +11,8 @@ import { ThemeService } from '../../util/theme.service';
 })
 export class MitigationProcessComponent implements OnInit {
   private _mitigationProcess: MitigationProcess;
+  private searchCounter: number = 0;
+  private countermeasures: Countermeasure[];
 
   public isEdtingArray: boolean[][] = [[], []];
 
@@ -19,6 +21,7 @@ export class MitigationProcessComponent implements OnInit {
   public get mitigationProcess(): MitigationProcess { return this._mitigationProcess; }
   @Input() public set mitigationProcess(val: MitigationProcess) { 
     this._mitigationProcess = val;
+    this.countermeasures = null;
   }
 
   @Output() public countermeasuresChange = new EventEmitter();
@@ -81,7 +84,23 @@ export class MitigationProcessComponent implements OnInit {
   }
 
   public GetCountermeasures() {
-    return this.dataService.Project.GetCountermeasures();
+    if (this.countermeasures == null) this.countermeasures = this.dataService.Project.GetCountermeasures();
+
+    return this.countermeasures;
+  }
+
+  public OnSearchCountermeasure(event: KeyboardEvent) {
+    this.searchCounter++;
+    setTimeout(() => {
+      this.searchCounter--;
+      if (this.searchCounter == 0) {
+        this.countermeasures = null;
+        this.GetCountermeasures();
+        const search = (event.target as HTMLInputElement).value.toLowerCase();
+        const curr = this.mitigationProcess.Countermeasures;
+        this.countermeasures = this.countermeasures.filter(x => curr.includes(x) || x.Name.toLowerCase().includes(search));
+      }
+    }, 250);
   }
 
   public GetCountermeasuresName(val: Countermeasure[]) {

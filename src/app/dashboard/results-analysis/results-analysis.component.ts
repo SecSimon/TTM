@@ -1,9 +1,9 @@
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatRow, MatTableDataSource } from '@angular/material/table';
 import { TranslateService } from '@ngx-translate/core';
-import { Diagram, DiagramTypes } from '../../model/diagram';
+import { Diagram } from '../../model/diagram';
 import { Countermeasure, MitigationStates, MitigationStateUtil } from '../../model/mitigations';
 import { AttackScenario, ThreatStates, MappingStates, ThreatSeverityUtil, LifeCycleUtil, ThreatStateUtil, ThreatSeverities, ImpactCategoryUtil } from '../../model/threat-model';
 import { DataService } from '../../util/data.service';
@@ -52,14 +52,15 @@ export class ResultsAnalysisComponent implements AfterViewInit {
   private updateDiagramsDelayCounter = 0;
   public get isUpdatingDiagrams(): boolean { return this.updateDiagramsDelayCounter > 0; }
   private _attackScenarios: AttackScenario[] = [];
-  private _selectedThreats: AttackScenario[] = [];
   private _countermeasures: Countermeasure[] = [];
-  private _selectedCountermeasures: Countermeasure[] = [];
+  private _selectedObject: AttackScenario|Countermeasure;
 
   public menuTopLeftPosition =  {x: '0', y: '0'};
   @ViewChild(MatMenuTrigger) public matMenuTrigger: MatMenuTrigger; 
   @ViewChild('threattable') sortThreats: MatSort;
   @ViewChild('countermeasuretable') sortCountermeasures: MatSort;
+
+  @ViewChildren(MatRow, {read: ElementRef}) rows!: QueryList<ElementRef<HTMLTableRowElement>>;
 
   public diagrams: IDiagramData[] = [];
 
@@ -96,17 +97,6 @@ export class ResultsAnalysisComponent implements AfterViewInit {
 
     if (this.sortThreats) this.sortThreats.sortChange.emit(this.sortThreats);
   }
-  public get selectedThreats(): AttackScenario[] { return this._selectedThreats; }
-  public set selectedThreats(val: AttackScenario[]) {
-    if (val.length == this._selectedThreats.length) {
-      if (val.every(x => this._selectedThreats.some(y => y.ID == x.ID))) return;
-    }
-    this._selectedThreats = val;
-
-    if (val.length == 1) {
-      this.selectedCountermeasures = this.Countermeasures.filter(x => x.AttackScenarios.includes(val[0]));
-    }
-  }
 
   public get Countermeasures(): Countermeasure[] { return this._countermeasures; }
   public set Countermeasures(val: Countermeasure[]) {
@@ -134,17 +124,9 @@ export class ResultsAnalysisComponent implements AfterViewInit {
 
     if (this.sortCountermeasures) this.sortCountermeasures.sortChange.emit(this.sortCountermeasures);
   }
-  public get selectedCountermeasures(): Countermeasure[] { return this._selectedCountermeasures; }
-  public set selectedCountermeasures(val: Countermeasure[]) {
-    if (val.length == this._selectedCountermeasures.length) {
-      if (val.every(x => this._selectedCountermeasures.some(y => y.ID == x.ID))) return;
-    }
-    this._selectedCountermeasures = val;
 
-    if (val.length == 1) {
-      this.selectedThreats = this.AttackScenarios.filter(x => val[0].AttackScenarios.includes(x));
-    }
-  }
+  public get selectedObject(): AttackScenario|Countermeasure { return this._selectedObject; }
+  public set selectedObject(val: AttackScenario|Countermeasure) { this._selectedObject = val; }
 
   constructor(public theme: ThemeService, public dataService: DataService, public dialog: DialogService, private translate: TranslateService, private locStorage: LocalStorageService, public elRef: ElementRef) { }
 
@@ -165,6 +147,41 @@ export class ResultsAnalysisComponent implements AfterViewInit {
         this.UpdateDiagrams();
       }, 100);
     });
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  public onKeyDown(event: KeyboardEvent) {
+    if (this.selectedObject) {
+      const selectObj = (objects, index: number) => {
+        this.selectedObject = objects[index];
+        const r = this.rows.find(row => row.nativeElement.id === objects[index].ID);
+        r?.nativeElement.scrollIntoView({block: 'center', behavior: 'smooth'});
+      };
+
+      if (event.key == 'ArrowDown') {
+        let objects = [];
+        if (this.selectedObject instanceof AttackScenario) { objects = this.dataSourceThreats.sortData(this.dataSourceThreats.filteredData, this.sortThreats); }
+        else { objects = this.dataSourceCountermeasures.sortData(this.dataSourceCountermeasures.filteredData, this.sortThreats); }
+        const currIdx = objects.indexOf(this.selectedObject);
+        if (currIdx < objects.length-1) {
+          selectObj(objects, currIdx+1);
+        }
+      }
+      else if (event.key == 'ArrowUp') {
+        let objects = [];
+        if (this.selectedObject instanceof AttackScenario) { objects = this.dataSourceThreats.sortData(this.dataSourceThreats.filteredData, this.sortThreats); }
+        else { objects = this.dataSourceCountermeasures.sortData(this.dataSourceCountermeasures.filteredData, this.sortThreats); }
+        const currIdx = objects.indexOf(this.selectedObject);
+        if (currIdx > 0) {
+          selectObj(objects, currIdx-1);
+        }
+      }
+    }
+
+    if (['ArrowDown', 'ArrowUp'].includes(event.key)) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+    }
   }
 
   public UpdateDiagrams() {
@@ -591,21 +608,25 @@ export class ResultsAnalysisComponent implements AfterViewInit {
   }
 
   public IsThreatSelected(threat) {
-    return this.selectedThreats.includes(threat);
+    return this.selectedObject == threat;
   }
 
-  public SelectThreat(threat) {
-    this.selectedThreats = [threat];
+  public SelectThreat(as) {
+    this.selectedObject = as;
 
     //if (threat.Target) this.selectedObjectChanged.emit(threat.Target);
   }
 
-  public IsCountermeasureSelected(mit) {
-    return this.selectedCountermeasures.includes(mit);
+  public IsCountermeasureSelected(cm) {
+    return this.selectedObject == cm;
   }
 
-  public SelectCountermeasure(mit) {
-    this.selectedCountermeasures = [mit];
+  public SelectCountermeasure(cm) {
+    this.selectedObject = cm;
+  }
+
+  public IsElementSelected(obj: AttackScenario|Countermeasure) {
+    return obj && this.selectedObject && this.selectedObject.Targets.some(x => obj.Targets.includes(x));
   }
 
   public GetViewName(entry) {

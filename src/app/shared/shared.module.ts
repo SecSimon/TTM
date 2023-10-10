@@ -80,6 +80,7 @@ import { ChangelogDialogComponent } from './components/changelog-dialog/changelo
 import { ModelTasksComponent } from './components/model-info/model-tasks/model-tasks.component';
 import { ModelChangesComponent } from './components/model-info/model-changes/model-changes.component';
 import { PasswordProtectionDialogComponent } from './components/password-protection-dialog/password-protection-dialog.component';
+import { NoSpaceDirective } from './directives/no-space.directive';
 
 @NgModule({
   declarations: [
@@ -87,7 +88,7 @@ import { PasswordProtectionDialogComponent } from './components/password-protect
     StatusBarComponent, SideNavComponent, SaveDialogComponent, PasswordDialogComponent, MessagesDialogComponent, 
     TwoOptionsDialogComponent, CweEntryComponent, CapecEntryComponent, NavTreeComponent, CvssEntryComponent, OwaspRREntryComponent,
     ProgressTrackerComponent, ModelInfoComponent, NotesComponent, 
-    LocalDatePipe, LocalDateTimePipe, RenameDialogComponent, TagsComponent, CveSearchComponent, CveEntryComponent, ImageViewComponent, GlossaryComponent, ChangelogDialogComponent, ModelTasksComponent, ModelChangesComponent, PasswordProtectionDialogComponent
+    LocalDatePipe, LocalDateTimePipe, RenameDialogComponent, TagsComponent, CveSearchComponent, CveEntryComponent, ImageViewComponent, GlossaryComponent, ChangelogDialogComponent, ModelTasksComponent, ModelChangesComponent, PasswordProtectionDialogComponent, NoSpaceDirective
   ],
   imports: [
     CommonModule, 
@@ -207,7 +208,8 @@ import { PasswordProtectionDialogComponent } from './components/password-protect
     CveEntryComponent,
 
     LocalDatePipe,
-    LocalDateTimePipe
+    LocalDateTimePipe,
+    NoSpaceDirective
   ],
   providers: [
     { 

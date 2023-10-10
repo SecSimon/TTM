@@ -23,7 +23,8 @@
   <mat-icon color="warn" *ngIf="!countermeasure.RuleStillApplies" style="margin-left: 5px;" matTooltip="{{'pages.modeling.countermeasure.ruleNotApplyingAnymore' | translate}}">sync_problem</mat-icon>
   <mat-form-field appearance="fill" class="property-form-field" style="margin-left: 10px;">
     <mat-label>{{'properties.MitigationProcess' | translate}}</mat-label>
-    <mat-select [(value)]="countermeasure.MitigationProcess" (selectionChange)="mitigationProcessChange.emit()" matTooltip="{{countermeasure.MitigationProcess?.Name}}" matTooltipShowDelay="1000">
+    <mat-select no-space [(value)]="countermeasure.MitigationProcess" (selectionChange)="mitigationProcessChange.emit()" matTooltip="{{countermeasure.MitigationProcess?.Name}}" matTooltipShowDelay="1000">
+      <input mat-menu-item class="searchBox" (keyup)="OnSearchMitigationProcess($event)" placeholder="{{ 'general.Search' | translate }}"/>
       <mat-option>{{'properties.selectNone' | translate}} </mat-option>
       <mat-option *ngFor="let proc of GetMitigationProcesses()" [value]="proc">{{proc.Name}}</mat-option>
     </mat-select>
@@ -55,9 +56,10 @@
   <br/>
   <mat-form-field appearance="fill" class="property-form-field">
     <mat-label>{{'general.Control' | translate}} ({{'general.Informative' | translate}})</mat-label>
-    <mat-select [(value)]="countermeasure.Control" matTooltip="{{countermeasure.Control?.Name}}" matTooltipShowDelay="1000">
+    <mat-select no-space [(value)]="countermeasure.Control" matTooltip="{{countermeasure.Control?.Name}}" matTooltipShowDelay="1000">
+      <input mat-menu-item class="searchBox" (keyup)="OnSearchControls($event)" placeholder="{{ 'general.Search' | translate }}"/>
       <mat-option>{{'properties.selectNone' | translate}}</mat-option>
-      <mat-optgroup *ngFor="let group of GetControlGroups()" [label]="group.Name">
+      <mat-optgroup *ngFor="let group of GetControlGroups()" [label]="group.name">
         <mat-option *ngFor="let mit of group.Controls" [value]="mit">
           {{mit.Name}}
         </mat-option>

@@ -20,6 +20,8 @@ import { AnchorDirections } from '../diagram/diagram.component';
 })
 export class PropertiesComponent implements OnInit {
   private _selectedObject: DatabaseBase;
+  private searchCounter: number = 0;
+  private myDatas: MyData[];
 
   public get Diagram(): Diagram {
     return this.dataObject;
@@ -29,7 +31,7 @@ export class PropertiesComponent implements OnInit {
     let arr = null;
     let arrStr = this.locStorage.Get(LocStorageKeys.PAGE_MODELING_DIAGRAM_ANCHOR_COUNT);
     if (arrStr) arr = JSON.parse(arrStr);
-    if (arr && arr[this.Diagram.DiagramType] != null) return arr[this.Diagram.DiagramType];
+    if (arr && this.Diagram && arr[this.Diagram.DiagramType] != null) return arr[this.Diagram.DiagramType];
     return 4;
   }
 
@@ -170,12 +172,12 @@ export class PropertiesComponent implements OnInit {
   }
 
   public GetAvailableDataFlowDiagrams() {
-    let dia = this.dataService.Project.FindDiagramOfElement(this.selectedObject.ID);
+    const dia = this.dataService.Project.FindDiagramOfElement(this.selectedObject.ID);
     return this.dataService.Project.GetDiagrams().filter(x => x.ID != dia.ID && x.DiagramType == DiagramTypes.DataFlow);
   }
 
   public GetAvailableDiagrams() {
-    let dia = this.dataService.Project.FindDiagramOfElement(this.selectedObject.ID);
+    const dia = this.dataService.Project.FindDiagramOfElement(this.selectedObject.ID);
     return this.dataService.Project.GetDiagrams().filter(x => x.ID != dia.ID && x.DiagramType == dia.DiagramType);
   }
 
@@ -225,10 +227,22 @@ export class PropertiesComponent implements OnInit {
   }
 
   public GetMyDatas() {
-    return this.dataService.Project.GetMyDatas();
-    // let res = [];
-    // this.dataService.Project.GetDevices().forEach(x => res.push(...x.AssetGroup.GetMyDataFlat()));
-    // return res;
+    if (this.myDatas == null) this.myDatas = this.dataService.Project.GetMyDatas();
+
+    return this.myDatas;
+  }
+
+  public OnSearchMyData(event: KeyboardEvent, curr: MyData[]) {
+    this.searchCounter++;
+    setTimeout(() => {
+      this.searchCounter--;
+      if (this.searchCounter == 0) {
+        this.myDatas = null;
+        this.GetMyDatas();
+        const search = (event.target as HTMLInputElement).value.toLowerCase();
+        this.myDatas = this.myDatas.filter(x => curr.includes(x) || x.Name.toLowerCase().includes(search));
+      }
+    }, 250);
   }
 
   public GetFlowTypes() {

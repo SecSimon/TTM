@@ -24,7 +24,8 @@
   <mat-slider style="width: 276px;" color="primary" thumbLabel [displayWith]="formatLabel" tickInterval="5" step="5" min="0" max="100" [(ngModel)]="mitigationProcess.Progress" (change)="OnProgressChange($event.value)"></mat-slider>
   <mat-form-field appearance="fill" style="width: 100%;">
     <mat-label>{{'general.Countermeasures' | translate}}</mat-label>
-    <mat-select [(value)]="mitigationProcess.Countermeasures" multiple (selectionChange)="countermeasuresChange.emit()" matTooltip="{{GetCountermeasuresName(mitigationProcess.Countermeasures)}}" matTooltipShowDelay="1000">
+    <mat-select no-space [(value)]="mitigationProcess.Countermeasures" multiple (selectionChange)="countermeasuresChange.emit()" matTooltip="{{GetCountermeasuresName(mitigationProcess.Countermeasures)}}" matTooltipShowDelay="1000">
+      <input mat-menu-item class="searchBox" (keyup)="OnSearchCountermeasure($event)" placeholder="{{ 'general.Search' | translate }}"/>
       <mat-option *ngFor="let map of GetCountermeasures()" [value]="map">{{map.Name}}</mat-option>
     </mat-select>
   </mat-form-field>

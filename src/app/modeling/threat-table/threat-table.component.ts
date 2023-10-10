@@ -1,5 +1,5 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { MatTableDataSource } from '@angular/material/table';
+import { Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { MatRow, MatTableDataSource } from '@angular/material/table';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { MatSort } from '@angular/material/sort';
 import { MyComponentStack } from '../../model/component';
@@ -27,8 +27,7 @@ export class ThreatTableComponent implements OnInit {
   private _selectedObject: ViewElementBase;
   private _filteredObject: ViewElementBase;
   private _attackScenarios: AttackScenario[] = [];
-  private _unfilteredAttackScenarios: AttackScenario[] = [];
-  private _selectedThreats: AttackScenario[] = [];
+  private _selectedThreat: AttackScenario;
 
   private countermeasureCounts = {}; 
 
@@ -42,6 +41,8 @@ export class ThreatTableComponent implements OnInit {
 
   public menuTopLeftPosition =  {x: '0', y: '0'};
   @ViewChild(MatMenuTrigger) public matMenuTrigger: MatMenuTrigger; 
+
+  @ViewChildren(MatRow, {read: ElementRef}) rows!: QueryList<ElementRef<HTMLTableRowElement>>;
   
   public get AttackScenarios(): AttackScenario[] { return this._attackScenarios; }
   public set AttackScenarios(val: AttackScenario[]) {
@@ -86,13 +87,10 @@ export class ThreatTableComponent implements OnInit {
 
     if (this.sort) this.sort.sortChange.emit(this.sort);
   }
-  public get selectedThreats(): AttackScenario[] { return this._selectedThreats; }
-  public set selectedThreats(val: AttackScenario[]) {
-    if (val.length == this._selectedThreats.length) {
-      if (val.every(x => this._selectedThreats.some(y => y.ID == x.ID))) return;
-    }
-    this._selectedThreats = val;
-  } 
+  public get selectedThreat(): AttackScenario { return this._selectedThreat; }
+  public set selectedThreat(val: AttackScenario) { this._selectedThreat = val; } 
+
+  @Input() public isActive: boolean;
 
   public get selectedNode(): INavigationNode { return this._selectedNode; }
   @Input() public set selectedNode(val: INavigationNode) {
@@ -104,10 +102,10 @@ export class ThreatTableComponent implements OnInit {
     this.displayedColumns.push(...['countermeasures', 'status', 'more']);
     this.RefreshThreats();
   }
+  public get selectedObject(): ViewElementBase { return this._selectedObject; }
   @Input() public set selectedObject(val: ViewElementBase) {
     if (val && this._selectedObject?.ID == val.ID) return;
     this._selectedObject = val;
-    this.selectedThreats = this._unfilteredAttackScenarios.filter(x => x.Targets.includes(val));
   }
   @Input() public set filteredObject(val: ViewElementBase) {
     this._filteredObject = val;
@@ -158,16 +156,48 @@ export class ThreatTableComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  @HostListener('document:keydown', ['$event'])
+  public onKeyDown(event: KeyboardEvent) {
+    if (!this.isActive) return;
+
+    if (this.selectedThreat) {
+      const selectThreat = (scenarios, index: number) => {
+        this.SelectThreat(scenarios[index]);
+        const r = this.rows.find(row => row.nativeElement.id === scenarios[index].ID);
+        r?.nativeElement.scrollIntoView({block: 'center', behavior: 'smooth'});
+      };
+
+      if (event.key == 'ArrowDown') {
+        const scenarios = this.dataSourceActive.sortData(this.dataSourceActive.filteredData, this.sort);
+        const currIdx = scenarios.indexOf(this.selectedThreat);
+        if (currIdx < scenarios.length-1) {
+          selectThreat(scenarios, currIdx+1);
+        }
+      }
+      else if (event.key == 'ArrowUp') {
+        const scenarios = this.dataSourceActive.sortData(this.dataSourceActive.filteredData, this.sort);
+        const currIdx = scenarios.indexOf(this.selectedThreat);
+        if (currIdx > 0) {
+          selectThreat(scenarios, currIdx-1);
+        }
+      }
+    }
+
+    if (['ArrowDown', 'ArrowUp'].includes(event.key)) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+    }
+  }
+
   public RefreshThreats() {
     setTimeout(() => {
       this.AttackScenarios = [];
-      this._unfilteredAttackScenarios = [];
       if (this._selectedNode?.data) {
         if (this._selectedNode?.data instanceof Diagram) {
-          this.AttackScenarios = this._unfilteredAttackScenarios = this.threatEngine.GenerateDiagramThreats(this._selectedNode.data);
+          this.AttackScenarios = this.threatEngine.GenerateDiagramThreats(this._selectedNode.data);
         }
         else if (this._selectedNode?.data instanceof MyComponentStack) {
-          this.AttackScenarios = this._unfilteredAttackScenarios = this.threatEngine.GenerateStackThreats(this._selectedNode.data);
+          this.AttackScenarios = this.threatEngine.GenerateStackThreats(this._selectedNode.data);
         }
       }
 
@@ -193,7 +223,7 @@ export class ThreatTableComponent implements OnInit {
   }
 
   public IsThreatSelected(threat) {
-    return this.selectedThreats.includes(threat);
+    return this.selectedThreat == threat;
   }
 
   public IsThreatRemoved(threat: AttackScenario) {
@@ -205,9 +235,13 @@ export class ThreatTableComponent implements OnInit {
   }
 
   public SelectThreat(threat) {
-    this.selectedThreats = [threat];
+    this.selectedThreat = threat;
 
     if (threat.Target) this.selectedObjectChanged.emit(threat.Target);
+  }
+
+  public IsElementSelected(as: AttackScenario) {
+    return as && this.selectedObject && (as.Target == this.selectedObject || as.Targets.includes(this.selectedObject));
   }
 
   public GetFilteredCountermeasures(as: AttackScenario) {

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { INavigationNode } from '../shared/components/nav-tree/nav-tree.component';
 import { ThemeService } from '../util/theme.service';
 import { DataService } from '../util/data.service';
@@ -11,7 +11,7 @@ import { NavTreeBase } from '../shared/components/nav-tree/nav-tree-base';
 import { DatabaseBase } from '../model/database';
 import { AttackScenario, ThreatSeverities, ThreatSeverityUtil, ThreatStateUtil, ThreatStates } from '../model/threat-model';
 import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatRow, MatTableDataSource } from '@angular/material/table';
 import { LowMediumHighNumber, LowMediumHighNumberUtil } from '../model/assets';
 import { CvssEntryComponent } from '../shared/components/cvss-entry/cvss-entry.component';
 import { OwaspRREntryComponent } from '../shared/components/owasp-rr-entry/owasp-rr-entry.component';
@@ -26,7 +26,7 @@ export class RiskOverviewComponent extends SideNavBase implements AfterViewInit 
   private nodes: INavigationNode[];
   private _selectedNode: INavigationNode;
   private _attackScenarios: AttackScenario[] = [];
-  private _selectedScenarios: AttackScenario[] = [];
+  private _selectedScenario: AttackScenario;
   private _sortScenarios: MatSort;
 
   public get selectedNode(): INavigationNode { return this._selectedNode; }
@@ -51,6 +51,7 @@ export class RiskOverviewComponent extends SideNavBase implements AfterViewInit 
   }
   @ViewChild(MatMenuTrigger) public matMenuTrigger: MatMenuTrigger; 
   public menuTopLeftPosition =  {x: '0', y: '0'};
+  @ViewChildren(MatRow, {read: ElementRef}) rows!: QueryList<ElementRef<HTMLTableRowElement>>;
 
   public displayedScenarioColumns = [];
   public dataSourceScenarios: MatTableDataSource<AttackScenario>;
@@ -97,13 +98,8 @@ export class RiskOverviewComponent extends SideNavBase implements AfterViewInit 
 
     if (this.sortScenarios) this.sortScenarios.sortChange.emit(this.sortScenarios);
   }
-  public get selectedScenarios(): AttackScenario[] { return this._selectedScenarios; }
-  public set selectedScenarios(val: AttackScenario[]) {
-    if (val.length == this._selectedScenarios.length) {
-      if (val.every(x => this._selectedScenarios.some(y => y.ID == x.ID))) return;
-    }
-    this._selectedScenarios = val;
-  }
+  public get selectedScenario(): AttackScenario { return this._selectedScenario; }
+  public set selectedScenario(val: AttackScenario) { this._selectedScenario = val; }
 
   constructor(public theme: ThemeService, public dataService: DataService, private translate: TranslateService,
     private locStorage: LocalStorageService, private dialog: DialogService, private router: Router) { 
@@ -122,6 +118,39 @@ export class RiskOverviewComponent extends SideNavBase implements AfterViewInit 
     });
   }
 
+  @HostListener('document:keydown', ['$event'])
+  public onKeyDown(event: KeyboardEvent) {
+    if (this.IsAttackScenario()) return;
+
+    if (this.selectedScenario) {
+      const selectScenario = (scenarios, index: number) => {
+        this.SelectScenario(scenarios[index]);
+        const r = this.rows.find(row => row.nativeElement.id === scenarios[index].ID);
+        r?.nativeElement.scrollIntoView({block: 'center', behavior: 'smooth'});
+      };
+
+      if (event.key == 'ArrowDown') {
+        const scenarios = this.dataSourceScenarios.sortData(this.dataSourceScenarios.filteredData, this.sortScenarios);
+        const currIdx = scenarios.indexOf(this.selectedScenario);
+        if (currIdx < scenarios.length-1) {
+          selectScenario(scenarios, currIdx+1);
+        }
+      }
+      else if (event.key == 'ArrowUp') {
+        const scenarios = this.dataSourceScenarios.sortData(this.dataSourceScenarios.filteredData, this.sortScenarios);
+        const currIdx = scenarios.indexOf(this.selectedScenario);
+        if (currIdx > 0) {
+          selectScenario(scenarios, currIdx-1);
+        }
+      }
+    }
+
+    if (['ArrowDown', 'ArrowUp'].includes(event.key)) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+    }
+  }
+
   public ApplyScenarioFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSourceScenarios.filter = filterValue.trim().toLowerCase();
@@ -136,11 +165,15 @@ export class RiskOverviewComponent extends SideNavBase implements AfterViewInit 
   }
 
   public IsScenarioSelected(as: AttackScenario) {
-    return this.selectedScenarios.includes(as);
+    return this.selectedScenario == as;
   }
 
   public SelectScenario(as: AttackScenario) {
-    this.selectedScenarios = [as];
+    this.selectedScenario = as;
+  }
+
+  public IsElementSelected(as: AttackScenario) {
+    return as && this.selectedScenario && as.Targets.some(x => this.selectedScenario.Targets.includes(x));
   }
 
   public GetTargets(as: AttackScenario) {

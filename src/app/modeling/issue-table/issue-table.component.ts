@@ -1,6 +1,6 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatRow, MatTableDataSource } from '@angular/material/table';
 import { MyComponentStack } from '../../model/component';
 import { ViewElementBase } from '../../model/database';
 import { HWDFDiagram } from '../../model/diagram';
@@ -21,29 +21,25 @@ export class IssueTableComponent implements OnInit {
   private _selectedObject: ViewElementBase;
   private _filteredObject: ViewElementBase;
   private _issues: IDFDIssue[] = [];
-  private _unfilteredIssues: IDFDIssue[] = [];
-  private _selectedIssues: IDFDIssue[] = [];
+  private _selectedIssue: IDFDIssue;
 
   public displayedColumns = [];
   public dataSource: MatTableDataSource<IDFDIssue>;
 
-  public get selectedIssues(): IDFDIssue[] { return this._selectedIssues; }
-  public set selectedIssues(val: IDFDIssue[]) {
-    if (val.length == this._selectedIssues.length) {
-      if (val.every(x => this._selectedIssues.some(y => y.Element?.ID == x.Element?.ID && y.DiagramID == x.DiagramID && y.RuleType == x.RuleType && y.Type == x.Type))) return;
-    }
-    this._selectedIssues = val;
-  } 
+  public get selectedIssue(): IDFDIssue { return this._selectedIssue; }
+  public set selectedIssue(val: IDFDIssue) { this._selectedIssue = val; } 
+
+  @Input() public isActive: boolean;
 
   @Input() public set selectedNode(val: INavigationNode) {
     this._selectedNode = val;
     this.displayedColumns = ['type', 'rule', 'element'];
     this.RefreshIssues();
   }
+  public get selectedObject(): ViewElementBase { return this._selectedObject; }
   @Input() public set selectedObject(val: ViewElementBase) {
     if (val && this._selectedObject?.ID == val.ID) return;
     this._selectedObject = val;
-    this.selectedIssues = this._unfilteredIssues.filter(x => x.Element?.ID == val?.ID);
   }
   @Input() public set filteredObject(val: ViewElementBase) {
     this._filteredObject = val;
@@ -71,6 +67,8 @@ export class IssueTableComponent implements OnInit {
 
   @ViewChild(MatSort) sort: MatSort;
 
+  @ViewChildren(MatRow, {read: ElementRef}) rows!: QueryList<ElementRef<HTMLTableRowElement>>;
+
   constructor(public theme: ThemeService, public dataService: DataService, private dfdCop: DFDCopService) {
     let onDataChanged = () => {
       if (this.changesCounter == 0) {
@@ -97,10 +95,43 @@ export class IssueTableComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  @HostListener('document:keydown', ['$event'])
+  public onKeyDown(event: KeyboardEvent) {
+    if (!this.isActive) return;
+
+    if (this.selectedIssue) {
+      const selectIssue = (cases, index: number) => {
+        this.SelectIssue(cases[index]);
+        const r = this.rows.find(row => row.nativeElement.id === cases[index].ID);
+        r?.nativeElement.scrollIntoView({block: 'center', behavior: 'smooth'});
+      };
+
+      if (event.key == 'ArrowDown') {
+        const issues = this.dataSource.sortData(this.dataSource.filteredData, this.sort);
+        const currIdx = issues.indexOf(this.selectedIssue);
+        if (currIdx < issues.length-1) {
+          selectIssue(issues, currIdx+1);
+        }
+      }
+      else if (event.key == 'ArrowUp') {
+        const issues = this.dataSource.sortData(this.dataSource.filteredData, this.sort);
+        const currIdx = issues.indexOf(this.selectedIssue);
+        if (currIdx > 0) {
+          selectIssue(issues, currIdx-1);
+        }
+      }
+    }
+
+    if (['ArrowDown', 'ArrowUp'].includes(event.key)) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+    }
+  }
+
   public RefreshIssues() {
     if (this._selectedNode?.data) {
       if (this._selectedNode?.data instanceof HWDFDiagram) {
-        this.Issues = this._unfilteredIssues = this.dfdCop.CheckDFDRules(this._selectedNode.data);
+        this.Issues = this.dfdCop.CheckDFDRules(this._selectedNode.data);
       }
       else if (this._selectedNode?.data instanceof MyComponentStack) {
         //this.Issues = this.dfdCop.CheckDFDRules(this._selectedNode.data);
@@ -108,7 +139,6 @@ export class IssueTableComponent implements OnInit {
     }
     else {
       this.Issues = [];
-      this._unfilteredIssues = [];
     }
 
     setTimeout(() => {
@@ -119,14 +149,18 @@ export class IssueTableComponent implements OnInit {
   }
 
   public SelectIssue(issue: IDFDIssue) {
-    this.selectedIssues = [issue];
+    this.selectedIssue = issue;
 
     if (issue.Element) this.selectedObjectChanged.emit(issue.Element);
     //else if (threat.Target instanceof MyComponent) this.selectedComponentChanged.emit(threat.Target);
   }
 
   public IsIssueSelected(issue) {
-    return this.selectedIssues.includes(issue);
+    return this.selectedIssue == issue;
+  }
+
+  public IsElementSelected(issue: IDFDIssue) {
+    return issue && this.selectedObject && issue.Element == this.selectedObject;
   }
 
   public GetRule(entry: IDFDIssue) {

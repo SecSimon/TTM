@@ -7,6 +7,7 @@ import { DataService } from '../../util/data.service';
 import { DialogService } from '../../util/dialog.service';
 import { ThemeService } from '../../util/theme.service';
 import { TestCase } from '../../model/test-case';
+import { ThreatActor } from '../../model/threat-source';
 
 @Component({
   selector: 'app-attack-scenario',
@@ -15,6 +16,13 @@ import { TestCase } from '../../model/test-case';
 })
 export class AttackScenarioComponent implements OnInit {
   private _attackScenario: AttackScenario;
+  private searchCounter = 0;
+  private attackScenarioGroups: any[];
+  private countermeasureGroups: any[];
+  private attackVectorGroups: any[];
+  private threatCategoryGroups: any[];
+  private threatSources: ThreatActor[];
+  public sysThreatGroups: any[];
 
   public get attackScenario(): AttackScenario { return this._attackScenario; }
   @Input() public set attackScenario(val: AttackScenario) { 
@@ -22,8 +30,8 @@ export class AttackScenarioComponent implements OnInit {
     if (val) {
       this.countermeasures = val.GetCountermeasures();
     }
-    this.sysThreatGroups = this.selectedCountermeasure = this.selectedLinkedScenario = this.selectedTestCase = null;
-    this.attackScenarioGroups = this.countermeasureGroups = null;
+    this.selectedCountermeasure = this.selectedLinkedScenario = this.selectedTestCase = null;
+    this.sysThreatGroups = this.threatSources = this.threatCategoryGroups = this.attackVectorGroups = this.attackScenarioGroups = this.countermeasureGroups = null;
   }
 
   public countermeasures: Countermeasure[];
@@ -64,25 +72,93 @@ export class AttackScenarioComponent implements OnInit {
     }
   }
 
-  public GetAttackVectorGroups(): AttackVectorGroup[] {
-    return this.dataService.Config.GetAttackVectorGroups().filter(x => x.AttackVectors.length > 0);
-  }
-  public GetThreatCategoryGroups(): ThreatCategoryGroup[] {
-    return this.dataService.Config.GetThreatCategoryGroups().filter(x => x.ThreatCategories.length > 0);
+  public GetAttackVectorGroups(): any[] {
+    if (this.attackVectorGroups == null) {
+      this.attackVectorGroups = [];
+      this.dataService.Config.GetAttackVectorGroups().forEach(group => {
+        if (group.AttackVectors.length > 0) {
+          this.attackVectorGroups.push({ name: group.Name, AttackVectors: group.AttackVectors });
+        }
+      });
+    }
+
+    return this.attackVectorGroups; 
   }
 
-  public sysThreatGroups: any[];
+  public OnSearchAttackVectors(event: KeyboardEvent) {
+    this.searchCounter++;
+    setTimeout(() => {
+      this.searchCounter--;
+      if (this.searchCounter == 0) {
+        this.attackVectorGroups = null; // recreate groups
+        this.GetAttackVectorGroups();
+        const search = (event.target as HTMLInputElement).value.toLowerCase();
+        const curr = this.attackScenario.AttackVector;
+        this.attackVectorGroups.forEach(group => {
+          group.AttackVectors = group.AttackVectors.filter(x => x == curr || x.Name.toLowerCase().includes(search));
+        });
+        this.attackVectorGroups = this.attackVectorGroups.filter(x => x.AttackVectors.length > 0);
+      }
+    }, 250);
+  }
+
+  public GetThreatCategoryGroups(): any[] {
+    if (this.threatCategoryGroups == null) {
+      this.threatCategoryGroups = [];
+      this.dataService.Config.GetThreatCategoryGroups().forEach(group => {
+        if (group.ThreatCategories.length > 0) {
+          this.threatCategoryGroups.push({ name: group.Name, ThreatCategories: group.ThreatCategories });
+        }
+      });
+    }
+
+    return this.threatCategoryGroups;
+  }
+
+  public OnSearchThreatCategories(event: KeyboardEvent) {
+    this.searchCounter++;
+    setTimeout(() => {
+      this.searchCounter--;
+      if (this.searchCounter == 0) {
+        this.threatCategoryGroups = null; // recreate groups
+        this.GetThreatCategoryGroups();
+        const search = (event.target as HTMLInputElement).value.toLowerCase();
+        const curr = this.attackScenario.ThreatCategories;
+        this.threatCategoryGroups.forEach(group => {
+          group.ThreatCategories = group.ThreatCategories.filter(x => curr.includes(x) || x.Name.toLowerCase().includes(search));
+        });
+        this.threatCategoryGroups = this.threatCategoryGroups.filter(x => x.ThreatCategories.length > 0);
+      }
+    }, 250);
+  }
+
   public GetSystemThreatGroups() {
     if (this.sysThreatGroups == null) {
       this.sysThreatGroups = [];
-      let feat = { name: 'general.Highlighted', SystemThreats: [] };
-      let all = { name: 'general.SystemThreats', SystemThreats: this.dataService.Project.GetSystemThreats() };
-      feat.SystemThreats = all.SystemThreats.filter(x => this.attackScenario.ThreatCategories.includes(x.ThreatCategory));
+      const feat = { name: 'general.Highlighted', SystemThreats: this.dataService.Project.GetSystemThreats().filter(x => this.attackScenario.ThreatCategories.includes(x.ThreatCategory)) };
+      const all = { name: 'general.SystemThreats', SystemThreats: this.dataService.Project.GetSystemThreats().filter(x => !feat.SystemThreats.includes(x)) };
       if (feat.SystemThreats.length > 0) this.sysThreatGroups.push(feat);
       this.sysThreatGroups.push(all);
     }
 
     return this.sysThreatGroups;
+  }
+
+  public OnSearchSystemThreat(event: KeyboardEvent) {
+    this.searchCounter++;
+    setTimeout(() => {
+      this.searchCounter--;
+      if (this.searchCounter == 0) {
+        this.sysThreatGroups = null; // recreate groups
+        this.GetSystemThreatGroups();
+        const search = (event.target as HTMLInputElement).value.toLowerCase();
+        const curr = this.attackScenario.SystemThreats;
+        this.sysThreatGroups.forEach(group => {
+          group.SystemThreats = group.SystemThreats.filter(x => curr.includes(x) || x.Name.toLowerCase().includes(search));
+        });
+        this.sysThreatGroups = this.sysThreatGroups.filter(x => x.SystemThreats.length > 0);
+      }
+    }, 250);
   }
 
   public GetTargetsNames(): string {
@@ -162,6 +238,11 @@ export class AttackScenarioComponent implements OnInit {
     return LowMediumHighNumberUtil.ToString(type);
   }
 
+  public GetThreatSources() {
+    if (this.threatSources == null) this.threatSources = this.dataService.Project.GetThreatSources().Sources;
+    return this.threatSources;
+  }
+
   public ThreatSourcesAll(): boolean {
     return this.attackScenario.ThreatSources.length == this.dataService.Project.GetThreatSources().Sources.length;
   }
@@ -180,6 +261,20 @@ export class AttackScenarioComponent implements OnInit {
     else this.attackScenario.ThreatSources = [];
   }
 
+  public OnSearchThreatSources(event: KeyboardEvent) {
+    this.searchCounter++;
+    setTimeout(() => {
+      this.searchCounter--;
+      if (this.searchCounter == 0) {
+        this.threatSources = null;
+        this.GetThreatSources();
+        const search = (event.target as HTMLInputElement).value.toLowerCase();
+        const curr = this.attackScenario.ThreatSources;
+        this.threatSources = this.threatSources.filter(x => curr.includes(x) || x.Name.toLowerCase().includes(search));
+      }
+    }, 250);
+  }
+
   public GetFilteredAttackScenarios() {
     return this.dataService.Project.GetAttackScenariosApplicable().filter(x => x.Name.toLowerCase().includes(this.searchASString.toLowerCase()) &&  x != this.attackScenario);
   }
@@ -188,7 +283,6 @@ export class AttackScenarioComponent implements OnInit {
     return this.dataService.Project.GetAttackScenariosApplicable().filter(x => x.Name.toLowerCase().includes(this.searchLinkedASString.toLowerCase()) &&  x != this.attackScenario && !this.attackScenario.LinkedScenarios.includes(x));
   }
 
-  private attackScenarioGroups: any[];
   public GetAttackScenarioGroups() {
     if (this.attackScenarioGroups == null) {
       this.attackScenarioGroups = [];
@@ -233,7 +327,6 @@ export class AttackScenarioComponent implements OnInit {
     return this.dataService.Project.GetCountermeasuresApplicable().filter(x => x.Name.toLowerCase().includes(this.searchCMString.toLowerCase()) && !x.AttackScenarios.includes(this.attackScenario));
   }
 
-  private countermeasureGroups: any[];
   public GetCountermeasureGroups() {
     if (this.countermeasureGroups == null) {
       this.countermeasureGroups = [];

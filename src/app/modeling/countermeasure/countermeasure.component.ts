@@ -1,6 +1,6 @@
 import { Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Optional, Output, ViewChild } from '@angular/core';
 import { ViewElementBase } from '../../model/database';
-import { ControlGroup, Countermeasure, MitigationStates, MitigationStateUtil } from '../../model/mitigations';
+import { ControlGroup, Countermeasure, MitigationProcess, MitigationStates, MitigationStateUtil } from '../../model/mitigations';
 import { DataService } from '../../util/data.service';
 import { DialogService, MyBoolean } from '../../util/dialog.service';
 import { ThemeService } from '../../util/theme.service';
@@ -13,10 +13,14 @@ import { TestCase } from '../../model/test-case';
 })
 export class CountermeasureComponent implements OnInit {
   private _countermeasure: Countermeasure;
+  private searchCounter = 0;
+  private controlGroups: any[];
+  private mitigationProcesses: MitigationProcess[];
 
   public get countermeasure(): Countermeasure { return this._countermeasure; }
-  @Input() public set countermeasure(val: Countermeasure) { 
+  @Input() public set countermeasure(val: Countermeasure) {
     this._countermeasure = val;
+    this.controlGroups = this.mitigationProcesses = null;
   }
 
   @Input() canEdit: boolean = true;
@@ -30,8 +34,8 @@ export class CountermeasureComponent implements OnInit {
   public searchTCString: string = '';
   public selectedTestCase: TestCase;
 
-  constructor(@Optional() mapping: Countermeasure, @Optional() isNew: MyBoolean, @Optional() elements: Array<ViewElementBase>, @Optional() onChange: EventEmitter<Countermeasure>, 
-  public theme: ThemeService, public dataService: DataService, private dialog: DialogService) {
+  constructor(@Optional() mapping: Countermeasure, @Optional() isNew: MyBoolean, @Optional() elements: Array<ViewElementBase>, @Optional() onChange: EventEmitter<Countermeasure>,
+    public theme: ThemeService, public dataService: DataService, private dialog: DialogService) {
     this.countermeasure = mapping;
     if (isNew) this.isManualEntry = isNew.Value;
     if (elements) this.elements = elements;
@@ -53,8 +57,34 @@ export class CountermeasureComponent implements OnInit {
     }
   }
 
-  public GetControlGroups(): ControlGroup[] {
-    return this.dataService.Config.GetControlGroups().filter(x => x.Controls.length > 0);
+  public GetControlGroups(): any[] {
+    if (this.controlGroups == null) {
+      this.controlGroups = [];
+      this.dataService.Config.GetControlGroups().forEach(group => {
+        if (group.Controls.length > 0) {
+          this.controlGroups.push({ name: group.Name, Controls: group.Controls });
+        }
+      });
+    }
+
+    return this.controlGroups;
+  }
+
+  public OnSearchControls(event: KeyboardEvent) {
+    this.searchCounter++;
+    setTimeout(() => {
+      this.searchCounter--;
+      if (this.searchCounter == 0) {
+        this.controlGroups = null; // recreate groups
+        this.GetControlGroups();
+        const search = (event.target as HTMLInputElement).value.toLowerCase();
+        const curr = this.countermeasure.Control;
+        this.controlGroups.forEach(group => {
+          group.Controls = group.Controls.filter(x => x == curr || x.Name.toLowerCase().includes(search));
+        });
+        this.controlGroups = this.controlGroups.filter(x => x.Controls.length > 0);
+      }
+    }, 250);
   }
 
   public GetTargetsNames(): string {
@@ -82,7 +112,7 @@ export class CountermeasureComponent implements OnInit {
       }
     });
     setTimeout(() => {
-      document.dispatchEvent(new KeyboardEvent('keydown', {'key': 'F2'}));
+      document.dispatchEvent(new KeyboardEvent('keydown', { 'key': 'F2' }));
     }, 500);
   }
 
@@ -114,7 +144,25 @@ export class CountermeasureComponent implements OnInit {
   }
 
   public GetMitigationProcesses() {
-    return this.dataService.Project.GetMitigationProcesses();
+    if (this.mitigationProcesses == null) {
+      this.mitigationProcesses = this.dataService.Project.GetMitigationProcesses();
+    }
+
+    return this.mitigationProcesses;
+  }
+
+  public OnSearchMitigationProcess(event: KeyboardEvent) {
+    this.searchCounter++;
+    setTimeout(() => {
+      this.searchCounter--;
+      if (this.searchCounter == 0) {
+        this.mitigationProcesses = null; // recreate groups
+        this.GetMitigationProcesses();
+        const search = (event.target as HTMLInputElement).value.toLowerCase();
+        const curr = this.countermeasure.MitigationProcess;
+        this.mitigationProcesses = this.mitigationProcesses.filter(x => curr == x || x.Name.toLowerCase().includes(search));
+      }
+    }, 250);
   }
 
   public GetMitigationStates() {

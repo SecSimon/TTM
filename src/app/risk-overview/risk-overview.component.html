@@ -11,7 +11,7 @@
         </as-split-area>
         <as-split-area [size]="GetSplitSize(1, 1, $any('*'))" [order]=2 [class.bg-color-light3]="!theme.IsDarkMode" [class.bg-color-dark3]="theme.IsDarkMode">
           <div style="margin-left: 10px; height: calc(100% - 22px);">
-            <app-attack-scenario style="height: 100%;" [attackScenario]="selectedNode.data" *ngIf="IsAttackScenario()"></app-attack-scenario>
+            <app-attack-scenario style="height: 100%; display: block; margin: 10px 10px 0 0;" [attackScenario]="selectedNode.data" *ngIf="IsAttackScenario()"></app-attack-scenario>
             <ng-container *ngIf="selectedNode && selectedNode.data == null">
               <h2 *ngIf="selectedNode">{{selectedNode.name()}}</h2>
               <span style="margin-left: 5px; margin-top: 2px;">{{'pages.dashboard.ThreatOverview' | translate}}: {{AttackScenarios.length}} {{'general.AttackScenarios' | translate}}</span>
@@ -28,7 +28,7 @@
                   </ng-container>
                   <ng-container matColumnDef="elements">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'general.Elements' | translate}} </th>
-                    <td mat-cell *matCellDef="let entry"> {{GetTargets(entry)}} </td>
+                    <td mat-cell *matCellDef="let entry" [class.selected-cell]="IsElementSelected(entry)"> {{GetTargets(entry)}} </td>
                   </ng-container>
                   <ng-container matColumnDef="view">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'general.View' | translate}} </th>
@@ -90,7 +90,7 @@
                   </ng-container>
               
                   <tr mat-header-row style="height: 30px;" *matHeaderRowDef="displayedScenarioColumns; sticky: true"></tr>
-                  <tr mat-row *matRowDef="let row; columns: displayedScenarioColumns;" [class.selected-entry]="IsScenarioSelected(row)"
+                  <tr mat-row *matRowDef="let row; columns: displayedScenarioColumns;" [id]="row.ID" [class.selected-entry]="IsScenarioSelected(row)"
                     (click)="SelectScenario(row)" (dblclick)="OnScenarioDblClick(row)" (contextmenu)="OpenContextMenu($event, row)">
                   </tr>
                   <tr class="mat-row" *matNoDataRow>

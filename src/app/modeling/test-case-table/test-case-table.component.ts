@@ -1,7 +1,7 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatRow, MatTableDataSource } from '@angular/material/table';
 import { ViewElementBase } from '../../model/database';
 import { TestCase, TestCaseStates, TestCaseStateUtil } from '../../model/test-case';
 import { INavigationNode } from '../../shared/components/nav-tree/nav-tree.component';
@@ -21,8 +21,7 @@ export class TestCaseTableComponent implements OnInit {
   private _selectedObject: ViewElementBase;
   private _filteredObject: ViewElementBase;
   private _testCases: TestCase[] = [];
-  private _unfilteredTestCases: TestCase[] = [];
-  private _selectedTestCases: TestCase[] = [];
+  private _selectedTestCase: TestCase;
 
   public autoRefreshTestCases = true;
   public get refreshingTestCases(): boolean {
@@ -32,23 +31,20 @@ export class TestCaseTableComponent implements OnInit {
   public displayedColumns = ['number', 'name', 'status', 'elements', 'description', 'more'];
   public dataSource: MatTableDataSource<TestCase>;
 
-  public get selectedTestCases(): TestCase[] { return this._selectedTestCases; }
-  public set selectedTestCases(val: TestCase[]) {
-    if (val.length == this._selectedTestCases.length) {
-      if (val.every(x => this._selectedTestCases.includes(x))) return;
-    }
-    this._selectedTestCases = val;
-  } 
+  public get selectedTestCase(): TestCase { return this._selectedTestCase; }
+  public set selectedTestCase(val: TestCase) { this._selectedTestCase = val; } 
+
+  @Input() public isActive: boolean;
 
   public get selectedNode(): INavigationNode { return this._selectedNode; }
   @Input() public set selectedNode(val: INavigationNode) {
     this._selectedNode = val;
     this.RefreshTestCases();
   }
+  public get selectedObject(): ViewElementBase { return this._selectedObject; }
   @Input() public set selectedObject(val: ViewElementBase) {
     if (val && this._selectedObject?.ID == val.ID) return;
     this._selectedObject = val;
-    this.selectedTestCases = this._unfilteredTestCases.filter(x => this.GetElements(x).includes(val));
   }
   @Input() public set filteredObject(val: ViewElementBase) {
     this._filteredObject = val;
@@ -80,6 +76,8 @@ export class TestCaseTableComponent implements OnInit {
   public menuTopLeftPosition =  {x: '0', y: '0'};
   @ViewChild(MatMenuTrigger) public matMenuTrigger: MatMenuTrigger; 
 
+  @ViewChildren(MatRow, {read: ElementRef}) rows!: QueryList<ElementRef<HTMLTableRowElement>>;
+
   constructor(public theme: ThemeService, public dataService: DataService, private dialog: DialogService) {
     const onDataChanged = () => {
       if (this.changesCounter == 0) {
@@ -106,12 +104,44 @@ export class TestCaseTableComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  @HostListener('document:keydown', ['$event'])
+  public onKeyDown(event: KeyboardEvent) {
+    if (!this.isActive) return;
+
+    if (this.selectedTestCase) {
+      const selectCase = (cases, index: number) => {
+        this.SelectTestCase(cases[index]);
+        const r = this.rows.find(row => row.nativeElement.id === cases[index].ID);
+        r?.nativeElement.scrollIntoView({block: 'center', behavior: 'smooth'});
+      };
+
+      if (event.key == 'ArrowDown') {
+        const cases = this.dataSource.sortData(this.dataSource.filteredData, this.sort);
+        const currIdx = cases.indexOf(this.selectedTestCase);
+        if (currIdx < cases.length-1) {
+          selectCase(cases, currIdx+1);
+        }
+      }
+      else if (event.key == 'ArrowUp') {
+        const cases = this.dataSource.sortData(this.dataSource.filteredData, this.sort);
+        const currIdx = cases.indexOf(this.selectedTestCase);
+        if (currIdx > 0) {
+          selectCase(cases, currIdx-1);
+        }
+      }
+    }
+
+    if (['ArrowDown', 'ArrowUp'].includes(event.key)) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+    }
+  }
+
   public RefreshTestCases() {
     setTimeout(() => {
       this.TestCases = [];
-      this._unfilteredTestCases = [];
       if (this._selectedNode?.data) {
-        this.TestCases = this._unfilteredTestCases = this.dataService.Project.GetTestCases().filter(x => this.GetElements(x).length > 0);
+        this.TestCases = this.dataService.Project.GetTestCases().filter(x => this.GetElements(x).length > 0);
       }
 
       this.testCaseCountChanged.emit(this.TestCases.length);
@@ -120,7 +150,7 @@ export class TestCaseTableComponent implements OnInit {
   }
 
   public SelectTestCase(tc: TestCase) {
-    this.selectedTestCases = [tc];
+    this.selectedTestCase = tc;
 
     const elements = this.GetElements(tc);
     if (elements?.length > 0) this.selectedObjectChanged.emit(elements[0]);
@@ -157,8 +187,12 @@ export class TestCaseTableComponent implements OnInit {
     return this.GetElements(tc).map(x => x.Name).join(', ');
   }
 
-  public IsTestCaseSelected(issue) {
-    return this.selectedTestCases.includes(issue);
+  public IsTestCaseSelected(tc) {
+    return this.selectedTestCase == tc;
+  }
+
+  public IsElementSelected(tc: TestCase) {
+    return tc && this.selectedObject && this.GetElements(tc).includes(this.selectedObject);
   }
 
   public GetTestCaseStates() {

@@ -1,7 +1,7 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatRow, MatTableDataSource } from '@angular/material/table';
 import { MyComponentStack } from '../../model/component';
 import { ViewElementBase } from '../../model/database';
 import { Diagram } from '../../model/diagram';
@@ -27,8 +27,7 @@ export class CountermeasureTableComponent implements OnInit {
   private _selectedObject: ViewElementBase;
   private _filteredObject: ViewElementBase;
   private _countermeasures: Countermeasure[] = [];
-  private _unfilteredCountermeasuers: Countermeasure[] = [];
-  private _selectedCountermeasures: Countermeasure[] = [];
+  private _selectedCountermeasure: Countermeasure;
 
   public displayedColumns = [];
   public dataSourceActive: MatTableDataSource<Countermeasure>;
@@ -40,6 +39,8 @@ export class CountermeasureTableComponent implements OnInit {
 
   public menuTopLeftPosition =  {x: '0', y: '0'};
   @ViewChild(MatMenuTrigger) public matMenuTrigger: MatMenuTrigger; 
+
+  @ViewChildren(MatRow, {read: ElementRef}) rows!: QueryList<ElementRef<HTMLTableRowElement>>;
   
   public get Countermeasures(): Countermeasure[] { return this._countermeasures; }
   public set Countermeasures(val: Countermeasure[]) {
@@ -81,13 +82,10 @@ export class CountermeasureTableComponent implements OnInit {
 
     if (this.sort) this.sort.sortChange.emit(this.sort);
   }
-  public get selectedCountermeasures(): Countermeasure[] { return this._selectedCountermeasures; }
-  public set selectedCountermeasures(val: Countermeasure[]) {
-    if (val.length == this._selectedCountermeasures.length) {
-      if (val.every(x => this._selectedCountermeasures.some(y => y.ID == x.ID))) return;
-    }
-    this._selectedCountermeasures = val;
-  } 
+  public get selectedCountermeasure(): Countermeasure { return this._selectedCountermeasure; }
+  public set selectedCountermeasure(val: Countermeasure) { this._selectedCountermeasure = val; } 
+
+  @Input() public isActive: boolean;
 
   public get selectedNode(): INavigationNode { return this._selectedNode; }
   @Input() public set selectedNode(val: INavigationNode) {
@@ -95,10 +93,10 @@ export class CountermeasureTableComponent implements OnInit {
     this.displayedColumns = ['state', 'number', 'type', 'name', 'control', 'vectors', 'targets', 'progress', 'status', 'more'];
     this.RefreshCountermeasures();
   }
+  public get selectedObject(): ViewElementBase { return this._selectedObject; }
   @Input() public set selectedObject(val: ViewElementBase) {
     if (val && this._selectedObject?.ID == val.ID) return;
     this._selectedObject = val;
-    this.selectedCountermeasures = this._unfilteredCountermeasuers.filter(x => x.Targets.includes(val));
   }
   @Input() public set filteredObject(val: ViewElementBase) {
     this._filteredObject = val;
@@ -139,16 +137,48 @@ export class CountermeasureTableComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  @HostListener('document:keydown', ['$event'])
+  public onKeyDown(event: KeyboardEvent) {
+    if (!this.isActive) return;
+
+    if (this.selectedCountermeasure) {
+      const selectMeasure = (measures, index: number) => {
+        this.SelectCountermeasure(measures[index]);
+        const r = this.rows.find(row => row.nativeElement.id === measures[index].ID);
+        r?.nativeElement.scrollIntoView({block: 'center', behavior: 'smooth'});
+      };
+
+      if (event.key == 'ArrowDown') {
+        const measurres = this.dataSourceActive.sortData(this.dataSourceActive.filteredData, this.sort);
+        const currIdx = measurres.indexOf(this.selectedCountermeasure);
+        if (currIdx < measurres.length-1) {
+          selectMeasure(measurres, currIdx+1);
+        }
+      }
+      else if (event.key == 'ArrowUp') {
+        const measures = this.dataSourceActive.sortData(this.dataSourceActive.filteredData, this.sort);
+        const currIdx = measures.indexOf(this.selectedCountermeasure);
+        if (currIdx > 0) {
+          selectMeasure(measures, currIdx-1);
+        }
+      }
+    }
+
+    if (['ArrowDown', 'ArrowUp'].includes(event.key)) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+    }
+  }
+
   public RefreshCountermeasures() {
     setTimeout(() => {
       this.Countermeasures = [];
-      this._unfilteredCountermeasuers = [];
       if (this._selectedNode?.data) {
         if (this._selectedNode?.data instanceof Diagram) {
-          this.Countermeasures = this._unfilteredCountermeasuers = this.mitigationEngine.GenerateDiagramMitigations(this._selectedNode.data);
+          this.Countermeasures = this.mitigationEngine.GenerateDiagramMitigations(this._selectedNode.data);
         }
         else if (this._selectedNode?.data instanceof MyComponentStack) {
-          this.Countermeasures = this._unfilteredCountermeasuers = this.mitigationEngine.GenerateStackMitigations(this._selectedNode.data);
+          this.Countermeasures = this.mitigationEngine.GenerateStackMitigations(this._selectedNode.data);
         }
       }
 
@@ -177,7 +207,7 @@ export class CountermeasureTableComponent implements OnInit {
   }
 
   public IsCountermeasureSelected(mit) {
-    return this.selectedCountermeasures.includes(mit);
+    return this.selectedCountermeasure == mit;
   }
 
   public IsCountermeasureRemoved(mit: Countermeasure) {
@@ -197,9 +227,13 @@ export class CountermeasureTableComponent implements OnInit {
   }
 
   public SelectCountermeasure(mit: Countermeasure) {
-    this.selectedCountermeasures = [mit];
+    this.selectedCountermeasure = mit;
 
     if (mit.Targets?.length > 0) this.selectedObjectChanged.emit(mit.Targets[0]);
+  }
+
+  public IsElementSelected(cm: Countermeasure) {
+    return cm && this.selectedObject && cm.Targets.includes(this.selectedObject);
   }
 
   public OnDeleteMapping(entry: Countermeasure) {

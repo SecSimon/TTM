@@ -31,6 +31,20 @@ button {
   }
 }
 
+.searchBox {
+  background-color: white !important;
+  height: 17px;
+  color: black;
+  border: 0;
+  outline: 0;
+  padding: 0 8px;
+  width: calc(100% - 16px);
+}
+
+.searchBox::placeholder {
+  color: gray;
+}
+
 .matOption {
   background-color: white !important;
   color: black !important;
