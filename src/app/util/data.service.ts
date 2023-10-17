@@ -238,6 +238,7 @@ export class DataService {
       }
       this.project = val;
       if (val) {
+        this.project.FileChanged = false;
         val.TTModelerVersion = versionFile.version;
         this.Config = val.Config;
         this.Config.ProjectFile = val;

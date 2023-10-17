@@ -42,7 +42,7 @@ export class TwoOptionsDialogComponent implements OnInit {
 
   @HostListener('document:keydown', ['$event'])
   public onKeyDown(event: KeyboardEvent) {
-    if (this.data.canIterate && document.activeElement?.tagName != 'INPUT') {
+    if (this.data.canIterate && !['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName)) {
       if (event.key == 'ArrowRight' && this.data.canNext()) {
         event.preventDefault();
         event.stopPropagation();

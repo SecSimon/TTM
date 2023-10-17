@@ -139,7 +139,7 @@ export class CountermeasureTableComponent implements OnInit {
 
   @HostListener('document:keydown', ['$event'])
   public onKeyDown(event: KeyboardEvent) {
-    if (!this.isActive) return;
+    if (!this.isActive || document.activeElement?.tagName == 'TEXTAREA') return;
 
     if (this.selectedCountermeasure) {
       const selectMeasure = (measures, index: number) => {

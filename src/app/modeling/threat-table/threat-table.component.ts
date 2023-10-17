@@ -158,7 +158,7 @@ export class ThreatTableComponent implements OnInit {
 
   @HostListener('document:keydown', ['$event'])
   public onKeyDown(event: KeyboardEvent) {
-    if (!this.isActive) return;
+    if (!this.isActive || document.activeElement?.tagName == 'TEXTAREA') return;
 
     if (this.selectedThreat) {
       const selectThreat = (scenarios, index: number) => {

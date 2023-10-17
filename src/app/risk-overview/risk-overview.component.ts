@@ -120,7 +120,7 @@ export class RiskOverviewComponent extends SideNavBase implements AfterViewInit 
 
   @HostListener('document:keydown', ['$event'])
   public onKeyDown(event: KeyboardEvent) {
-    if (this.IsAttackScenario()) return;
+    if (this.IsAttackScenario() || document.activeElement?.tagName == 'TEXTAREA') return;
 
     if (this.selectedScenario) {
       const selectScenario = (scenarios, index: number) => {

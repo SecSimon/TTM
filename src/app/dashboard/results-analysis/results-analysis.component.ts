@@ -151,6 +151,8 @@ export class ResultsAnalysisComponent implements AfterViewInit {
 
   @HostListener('document:keydown', ['$event'])
   public onKeyDown(event: KeyboardEvent) {
+    if (document.activeElement?.tagName == 'TEXTAREA') return;
+
     if (this.selectedObject) {
       const selectObj = (objects, index: number) => {
         this.selectedObject = objects[index];
