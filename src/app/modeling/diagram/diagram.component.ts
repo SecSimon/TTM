@@ -2641,7 +2641,7 @@ export class HWDFCanvas extends CanvasBase {
 
     const parts = [e, etype, etxt, ephy, ...this.createFlowAnchors(wid, hei, true, true, false, true)];
     if (this.AnchorCount == 4) {
-      [AnchorDirections.NorthWest, AnchorDirections.NorthEast, AnchorDirections.SouthEast, AnchorDirections.SouthWest].forEach(fa => parts.find(x => x[CProps.fa] == fa).set(CProps.visible, false));
+      [AnchorDirections.NorthWest, AnchorDirections.NorthEast, AnchorDirections.SouthEast, AnchorDirections.SouthWest].forEach(fa => parts.find(x => x[CProps.fa] == fa)?.set(CProps.visible, false));
     }
 
     const g = new fabric.Group(parts, {
@@ -2742,7 +2742,7 @@ export class HWDFCanvas extends CanvasBase {
     if (spl) parts.push(...[spl, spr]);
     parts.push(...[etype, etxt, ephy, ...this.createFlowAnchors(wid, hei, true, true, false, true)]);
     if (this.AnchorCount == 4) {
-      [AnchorDirections.NorthWest, AnchorDirections.NorthEast, AnchorDirections.SouthEast, AnchorDirections.SouthWest].forEach(fa => parts.find(x => x[CProps.fa] == fa).set(CProps.visible, false));
+      [AnchorDirections.NorthWest, AnchorDirections.NorthEast, AnchorDirections.SouthEast, AnchorDirections.SouthWest].forEach(fa => parts.find(x => x[CProps.fa] == fa)?.set(CProps.visible, false));
     }
 
     const g = new fabric.Group(parts, {
@@ -2798,7 +2798,7 @@ export class HWDFCanvas extends CanvasBase {
 
     const parts = [e, etype, etxt, ephy, ...this.createFlowAnchors(wid, hei, true, true, false, true)];
     if (this.AnchorCount == 4) {
-      [AnchorDirections.NorthWest, AnchorDirections.NorthEast, AnchorDirections.SouthEast, AnchorDirections.SouthWest].forEach(fa => parts.find(x => x[CProps.fa] == fa).set(CProps.visible, false));
+      [AnchorDirections.NorthWest, AnchorDirections.NorthEast, AnchorDirections.SouthEast, AnchorDirections.SouthWest].forEach(fa => parts.find(x => x[CProps.fa] == fa)?.set(CProps.visible, false));
     }
 
     const g = new fabric.Group(parts, {
@@ -2858,7 +2858,7 @@ export class HWDFCanvas extends CanvasBase {
 
     const parts = [e, etype, etxt, ...this.createFlowAnchors(wid, hei, true, true, false, true)];
     if (this.AnchorCount == 4) {
-      [AnchorDirections.NorthWest, AnchorDirections.NorthEast, AnchorDirections.SouthEast, AnchorDirections.SouthWest].forEach(fa => parts.find(x => x[CProps.fa] == fa).set(CProps.visible, false));
+      [AnchorDirections.NorthWest, AnchorDirections.NorthEast, AnchorDirections.SouthEast, AnchorDirections.SouthWest].forEach(fa => parts.find(x => x[CProps.fa] == fa)?.set(CProps.visible, false));
     }
 
     const g = new fabric.Group(parts, {
@@ -2927,7 +2927,7 @@ export class HWDFCanvas extends CanvasBase {
 
     const parts = [e, etype, etxt, ...this.createFlowAnchors(wid, hei, true, true, false, true)];
     if (this.AnchorCount == 4) {
-      [AnchorDirections.NorthWest, AnchorDirections.NorthEast, AnchorDirections.SouthEast, AnchorDirections.SouthWest].forEach(fa => parts.find(x => x[CProps.fa] == fa).set(CProps.visible, false));
+      [AnchorDirections.NorthWest, AnchorDirections.NorthEast, AnchorDirections.SouthEast, AnchorDirections.SouthWest].forEach(fa => parts.find(x => x[CProps.fa] == fa)?.set(CProps.visible, false));
     }
 
     const g = new fabric.Group(parts, {
@@ -3748,7 +3748,7 @@ export class CtxCanvas extends CanvasBase {
 
     const parts = [e, etxt, ...this.createFlowAnchors(wid, hei, true, true, false, true)];
     if (this.AnchorCount == 4) {
-      [AnchorDirections.NorthWest, AnchorDirections.NorthEast, AnchorDirections.SouthEast, AnchorDirections.SouthWest].forEach(fa => parts.find(x => x[CProps.fa] == fa).set(CProps.visible, false));
+      [AnchorDirections.NorthWest, AnchorDirections.NorthEast, AnchorDirections.SouthEast, AnchorDirections.SouthWest].forEach(fa => parts.find(x => x[CProps.fa] == fa)?.set(CProps.visible, false));
     }
 
     const g = new fabric.Group(parts, {
@@ -3872,7 +3872,7 @@ export class CtxCanvas extends CanvasBase {
 
     const parts = [e, etype, etxt, ...this.createFlowAnchors(wid, hei, true, true, false, true)];
     if (this.AnchorCount == 4) {
-      [AnchorDirections.NorthWest, AnchorDirections.NorthEast, AnchorDirections.SouthEast, AnchorDirections.SouthWest].forEach(fa => parts.find(x => x[CProps.fa] == fa).set(CProps.visible, false));
+      [AnchorDirections.NorthWest, AnchorDirections.NorthEast, AnchorDirections.SouthEast, AnchorDirections.SouthWest].forEach(fa => parts.find(x => x[CProps.fa] == fa)?.set(CProps.visible, false));
     }
 
     const g = new fabric.Group(parts, {
