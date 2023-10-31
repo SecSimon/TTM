@@ -1,3 +1,8 @@
+## 0.4.21
+
+* Fix: undefined flow anchors in hardware diagram
+* Fix: arrow key usage
+
 ## 0.4.20
 
 * Diagram: change direction and anchor of data flow
