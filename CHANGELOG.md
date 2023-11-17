@@ -1,3 +1,7 @@
+## 0.4.22
+
+* Fix: deleting MyTag
+
 ## 0.4.21
 
 * Fix: undefined flow anchors in hardware diagram

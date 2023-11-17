@@ -3,6 +3,7 @@ import { ConfigFile } from './config-file';
 import { DatabaseBase, IDataReferences, DataReferenceTypes } from './database';
 import { ProjectFile } from './project-file';
 import { AttackScenario } from './threat-model';
+import { Countermeasure } from './mitigations';
 
 export interface ITagable {
   MyTags: MyTag[];
@@ -68,6 +69,9 @@ export class MyTag extends DatabaseBase {
     let refs: IDataReferences[] = [];
 
     pf?.GetAttackScenarios().filter(x => x.MyTags.includes(this)).forEach(x => refs.push({ Type: DataReferenceTypes.RemoveMyTagFromAttackScenario, Param: x }));
+    pf?.GetCountermeasures().filter(x => x.MyTags.includes(this)).forEach(x => refs.push({ Type: DataReferenceTypes.RemoveMyTagFromCountermeasure, Param: x }));
+    pf?.GetMyTagCharts().filter(x => x.MyTags.includes(this)).forEach(x => refs.push({ Type: DataReferenceTypes.RemoveMyTagFromMyTagChart, Param: x }));
+
     return refs;
   }
 
@@ -75,6 +79,8 @@ export class MyTag extends DatabaseBase {
     let refs = this.FindReferences(pf, cf);
     refs.forEach(x => {
       if (x.Type == DataReferenceTypes.RemoveMyTagFromAttackScenario) (x.Param as AttackScenario).RemoveMyTag(this.ID);
+      else if (x.Type == DataReferenceTypes.RemoveMyTagFromCountermeasure) (x.Param as Countermeasure).RemoveMyTag(this.ID);
+      else if (x.Type == DataReferenceTypes.RemoveMyTagFromMyTagChart) (x.Param as MyTagChart).RemoveMyTag(this.ID);
     });
   }
 

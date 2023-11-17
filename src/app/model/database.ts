@@ -150,7 +150,9 @@ export enum DataReferenceTypes {
 
   DeleteTestCase,
 
-  RemoveMyTagFromAttackScenario
+  RemoveMyTagFromAttackScenario,
+  RemoveMyTagFromCountermeasure,
+  RemoveMyTagFromMyTagChart
 }
 
 export interface IDataReferences {
