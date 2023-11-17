@@ -6,6 +6,7 @@ import { LocalStorageService, LocStorageKeys } from './local-storage.service';
 import { IsLoadingService } from '@service-work/is-loading';
 import { MyCrypto } from './mycrypto';
 import { Clipboard } from '@angular/cdk/clipboard';
+import * as path from 'path';
 
 import { PasswordDialogComponent } from '../shared/components/password-dialog/password-dialog.component'; 
 import { FileUpdateService } from './file-update.service';
@@ -1007,12 +1008,12 @@ export class DataService {
     return this.Repos.find(x => x.id == file.repoId);
   }
 
-  public GetFileName(path: string) {
-    return path.substring(path.lastIndexOf('/')+1);
+  public GetFileName(p: string) {
+    return p.substring(p.lastIndexOf(path.sep)+1);
   }
 
-  public GetFilePath(path: string) {
-    return path.substring(0, path.lastIndexOf('/'));
+  public GetFilePath(p: string) {
+    return p.substring(0, p.lastIndexOf(path.sep));
   }
 
   public Debug() {
@@ -1151,8 +1152,8 @@ export class DataService {
       const history = this.getLastFileHistory();
       this.availableFiles = this.availableFiles.sort((a, b) => {
         // put not writable repos to end
-        if (a.source == FileSources.GitHub && !this.GetRepoOfFile(a).isWritable) return 1;
-        if (b.source == FileSources.GitHub && !this.GetRepoOfFile(b).isWritable) return -1;
+        if (a.source == FileSources.GitHub && !this.GetRepoOfFile(a)?.isWritable) return 1;
+        if (b.source == FileSources.GitHub && !this.GetRepoOfFile(b)?.isWritable) return -1;
         
         // sort according to history
         let aIdx = history.findIndex(x => this.compareFiles(x, a));

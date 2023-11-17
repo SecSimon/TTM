@@ -56,7 +56,8 @@
               "once",
               "rxjs",
               "rxjs/operators",
-              "jszip"
+              "jszip",
+              "path"
             ]
           },
           "configurations": {

@@ -1,6 +1,7 @@
 ## 0.4.22
 
 * Fix: deleting MyTag
+* Fix: Windows - get correct file path
 
 ## 0.4.21
 
