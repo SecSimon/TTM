@@ -1,5 +1,5 @@
 # <img src="https://github.com/SecSimon/TTM/blob/main/src/assets/icons/favicon.192x192.png?raw=true" alt="logo" style="width:50px;"/> TTModeler - Thing Threat Modeler
-![maintained - yes](https://img.shields.io/badge/maintained-yes-4ac41c)
+![maintained - yes](https://img.shields.io/badge/maintained-fixes_only-ffff00)
 [![GitHub release](https://img.shields.io/github/release/SecSimon/TTM?include_prereleases=&sort=semver&color=blue)](https://github.com/SecSimon/TTM/releases/)
 [![license](https://img.shields.io/badge/license-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![build](https://github.com/SecSimon/TTM/actions/workflows/ubuntu.yml/badge.svg)](https://github.com/SecSimon/TTM/actions/workflows/ubuntu.yml)
@@ -7,6 +7,9 @@
 [![Web - https://www.simon-liebl.de/TTM](https://img.shields.io/badge/Web-simon--liebl.de/TTM-blue?logo=github-pages&logoColor=white)](https://www.simon-liebl.de/TTM)
 [![OS - Linux](https://img.shields.io/badge/OS-Linux-blue?logo=linux&logoColor=white)](https://github.com/SecSimon/TTM/releases)
 [![OS - Windows](https://img.shields.io/badge/OS-Windows-blue?logo=windows&logoColor=white)](https://github.com/SecSimon/TTM/releases)
+
+📢 TTModeler will only receive bug fixes for now. An improved version is available here: [TTModeler Pro](https://emgarde.de)
+
 ## Threat Modeling for Internet of Things Devices
 
 TTModeler is a free and open-source threat modeling tool specialized on IoT devices and is available as web and desktop application.

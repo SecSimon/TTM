@@ -1,3 +1,8 @@
+## 0.4.23
+
+* Fix: Windows - get correct file path
+* 📢 Announcement: TTModeler will only receive bug fixes for now. An improved version is available here: [TTModeler Pro](https://emgarde.de)
+
 ## 0.4.22
 
 * Fix: deleting MyTag
