@@ -1,3 +1,8 @@
+## 0.4.24
+
+* Fix: Missing countermeasure state in export template
+* Fix: Dashboard key usage
+
 ## 0.4.23
 
 * Fix: Windows - get correct file path
