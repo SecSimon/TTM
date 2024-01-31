@@ -72,13 +72,14 @@ export class ExportFilterUtil {
 }
 
 export enum ExportCommonProperties {
+  Number = 'Number',
   Name = 'Name',
   Description = 'Description'
 }
 
 export class ExportCommonPropertyUtil {
   public static GetKeys() {
-    return [ExportCommonProperties.Name, ExportCommonProperties.Description];
+    return [ExportCommonProperties.Number, ExportCommonProperties.Name, ExportCommonProperties.Description];
   }
 
   public static GetValue(key: string, entry) {
@@ -90,6 +91,7 @@ export class ExportCommonPropertyUtil {
 
   public static ToString(ecp: ExportCommonProperties): string {
     switch (ecp) {
+      case ExportCommonProperties.Number: return "general.Number";
       case ExportCommonProperties.Name: return "general.Name";
       case ExportCommonProperties.Description: return "properties.Description";
       default:
@@ -100,7 +102,6 @@ export class ExportCommonPropertyUtil {
 }
 
 export enum ExportAttackScenarioProperties {
-  Number = 'Number',
   ThreatState = 'ThreatState',
   AttackVector = 'AttackVector',
   Targets = 'Targets',
@@ -126,7 +127,7 @@ export enum ExportAttackScenarioProperties {
 
 export class ExportAttackScenarioPropertyUtil {
   public static GetKeys() {
-    return [ExportAttackScenarioProperties.Number, ExportAttackScenarioProperties.ThreatState, ExportAttackScenarioProperties.AttackVector, ExportAttackScenarioProperties.Targets, 
+    return [ExportAttackScenarioProperties.ThreatState, ExportAttackScenarioProperties.AttackVector, ExportAttackScenarioProperties.Targets, 
       ExportAttackScenarioProperties.Diagram, ExportAttackScenarioProperties.ThreatCategories,
       ExportAttackScenarioProperties.SystemThreats, ExportAttackScenarioProperties.ThreatSources, ExportAttackScenarioProperties.VectorCVSS, ExportAttackScenarioProperties.ScoreCVSS, 
       ExportAttackScenarioProperties.VectorOwaspRR, ExportAttackScenarioProperties.ScoreOwaspRR, ExportAttackScenarioProperties.Severity,
@@ -179,7 +180,6 @@ export class ExportAttackScenarioPropertyUtil {
 
   public static ToString(easp: ExportAttackScenarioProperties): string {
     switch (easp) {
-      case ExportAttackScenarioProperties.Number: return "general.Number";
       case ExportAttackScenarioProperties.ThreatState: return "properties.Status";
       case ExportAttackScenarioProperties.AttackVector: return "general.AttackVector";
       case ExportAttackScenarioProperties.Targets: return "general.Targets";
@@ -209,8 +209,7 @@ export class ExportAttackScenarioPropertyUtil {
 }
 
 export enum ExportCountermeasureProperties {
-  Number = 'Number',
-  MappingState = 'MappingState',
+  MitigationState = 'MitigationState',
   Control = 'Control',
   Targets = 'Targets',
   Diagram = 'Diagram',
@@ -224,7 +223,7 @@ export enum ExportCountermeasureProperties {
 
 export class ExportCountermeasurePropertyUtil {
   public static GetKeys() {
-    return [ExportCountermeasureProperties.Number, ExportCountermeasureProperties.MitigationProcess, ExportCountermeasureProperties.Control, ExportCountermeasureProperties.Targets, 
+    return [ExportCountermeasureProperties.MitigationState, ExportCountermeasureProperties.MitigationProcess, ExportCountermeasureProperties.Control, ExportCountermeasureProperties.Targets, 
       ExportCountermeasureProperties.Diagram, ExportCountermeasureProperties.AttackScenarios, ExportCountermeasureProperties.MaxSeverity, ExportCountermeasureProperties.MaxRisk,
       ExportCountermeasureProperties.AttackVectors, ExportCountermeasureProperties.MitigationProcess, ExportCountermeasureProperties.MyTags];
   }
@@ -248,6 +247,7 @@ export class ExportCountermeasurePropertyUtil {
       else if ([ExportCountermeasureProperties.MitigationProcess].includes(key as ExportCountermeasureProperties)) {
         return ExportUtil.wrap(translate, entry[key]?.GetLongName());
       }
+      else if (key == ExportCountermeasureProperties.MitigationState) return myToString(MitigationStateUtil.ToString);
       else if (key == ExportCountermeasureProperties.MitigationProcess) return myToString(MitigationStateUtil.ToString);
       else if (key == ExportCountermeasureProperties.Diagram) return ExportUtil.wrap(translate, entry.GetDiagram()['Name']);
       else if ([ExportCountermeasureProperties.MaxSeverity].includes(key as ExportCountermeasureProperties)) {
@@ -262,8 +262,7 @@ export class ExportCountermeasurePropertyUtil {
 
   public static ToString(easp: ExportCountermeasureProperties): string {
     switch (easp) {
-      case ExportCountermeasureProperties.Number: return "general.Number";
-      case ExportCountermeasureProperties.MappingState: return "properties.Status";
+      case ExportCountermeasureProperties.MitigationState: return "properties.Status";
       case ExportCountermeasureProperties.Control: return "general.Control";
       case ExportCountermeasureProperties.Targets: return "general.Targets";
       case ExportCountermeasureProperties.Diagram: return "general.Diagram";
@@ -281,7 +280,6 @@ export class ExportCountermeasurePropertyUtil {
 }
 
 export enum ExportMitigationProcessProperties {
-  Number = 'Number',
   ProcessState = 'MitigationProcessState',
   Progress = 'Progress',
   Countermeasures = 'Countermeasures',
@@ -294,7 +292,7 @@ export enum ExportMitigationProcessProperties {
 
 export class ExportMitigationProcessPropertyUtil {
   public static GetKeys() {
-    return [ExportMitigationProcessProperties.Number, ExportMitigationProcessProperties.ProcessState, ExportMitigationProcessProperties.Progress,ExportMitigationProcessProperties.Countermeasures, 
+    return [ExportMitigationProcessProperties.ProcessState, ExportMitigationProcessProperties.Progress,ExportMitigationProcessProperties.Countermeasures, 
       ExportMitigationProcessProperties.AttackScenarios, ExportMitigationProcessProperties.MaxSeverity, ExportMitigationProcessProperties.MaxRisk, ExportMitigationProcessProperties.Tasks, ExportMitigationProcessProperties.Notes];
   }
 
@@ -328,7 +326,6 @@ export class ExportMitigationProcessPropertyUtil {
 
   public static ToString(empp: ExportMitigationProcessProperties): string {
     switch (empp) {
-      case ExportMitigationProcessProperties.Number: return "general.Number";
       case ExportMitigationProcessProperties.ProcessState: return "properties.Status";
       case ExportMitigationProcessProperties.Progress: return "general.Progress";
       case ExportMitigationProcessProperties.Countermeasures: return "general.Countermeasures";
@@ -345,7 +342,6 @@ export class ExportMitigationProcessPropertyUtil {
 }
 
 export enum ExportSystemThreatProperties {
-  Number = 'Number',
   Impact = 'Impact',
   ImpactCats = 'ImpactCats',
   ThreatCategory = 'ThreatCategory',
@@ -354,7 +350,7 @@ export enum ExportSystemThreatProperties {
 
 export class ExportSystemThreatPropertyUtil {
   public static GetKeys() {
-    return [ExportSystemThreatProperties.Number, ExportSystemThreatProperties.Impact, ExportSystemThreatProperties.ImpactCats, ExportSystemThreatProperties.ThreatCategory, ExportSystemThreatProperties.AffectedAssetObjects];
+    return [ExportSystemThreatProperties.Impact, ExportSystemThreatProperties.ImpactCats, ExportSystemThreatProperties.ThreatCategory, ExportSystemThreatProperties.AffectedAssetObjects];
   }
 
   public static GetValues(key: string, entry, translate: TranslateService): string[] {
@@ -392,7 +388,6 @@ export class ExportSystemThreatPropertyUtil {
 }
 
 export enum ExportThreatSourceProperties {
-  Number = 'Number',
   Motive = 'Motive',
   Capabilities = 'Capabilities',
   Likelihood = 'Likelihood',
@@ -400,7 +395,7 @@ export enum ExportThreatSourceProperties {
 
 export class ExportThreatSourcePropertyUtil {
   public static GetKeys() {
-    return [ExportThreatSourceProperties.Number, ExportThreatSourceProperties.Motive, ExportThreatSourceProperties.Capabilities, ExportThreatSourceProperties.Likelihood];
+    return [ExportThreatSourceProperties.Motive, ExportThreatSourceProperties.Capabilities, ExportThreatSourceProperties.Likelihood];
   }
 
   public static GetValues(key: string, entry, translate: TranslateService): string[] {
@@ -431,7 +426,6 @@ export class ExportThreatSourcePropertyUtil {
 }
 
 export enum ExportTestCaseProperties {
-  Number = 'Number',
   Status = 'Status',
   Version = 'Version',
   PreConditions = 'PreConditions',
@@ -442,7 +436,7 @@ export enum ExportTestCaseProperties {
 
 export class ExportTestCasePropertyUtil {
   public static GetKeys() {
-    return [ExportTestCaseProperties.Number, ExportTestCaseProperties.Status, ExportTestCaseProperties.Version, ExportTestCaseProperties.PreConditions, 
+    return [ExportTestCaseProperties.Status, ExportTestCaseProperties.Version, ExportTestCaseProperties.PreConditions, 
       ExportTestCaseProperties.Steps, ExportTestCaseProperties.TestData, ExportTestCaseProperties.Summary];
   }
 
@@ -466,7 +460,6 @@ export class ExportTestCasePropertyUtil {
 
   public static ToString(easp: ExportTestCaseProperties): string {
     switch (easp) {
-      case ExportTestCaseProperties.Number: return "general.Number";
       case ExportTestCaseProperties.Status: return "properties.Status";
       case ExportTestCaseProperties.Version: return "properties.Version";
       case ExportTestCaseProperties.PreConditions: return "properties.PreConditions";
