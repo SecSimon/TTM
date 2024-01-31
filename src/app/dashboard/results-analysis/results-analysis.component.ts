@@ -163,7 +163,7 @@ export class ResultsAnalysisComponent implements AfterViewInit {
       if (event.key == 'ArrowDown') {
         let objects = [];
         if (this.selectedObject instanceof AttackScenario) { objects = this.dataSourceThreats.sortData(this.dataSourceThreats.filteredData, this.sortThreats); }
-        else { objects = this.dataSourceCountermeasures.sortData(this.dataSourceCountermeasures.filteredData, this.sortThreats); }
+        else { objects = this.dataSourceCountermeasures.sortData(this.dataSourceCountermeasures.filteredData, this.sortCountermeasures); }
         const currIdx = objects.indexOf(this.selectedObject);
         if (currIdx < objects.length-1) {
           selectObj(objects, currIdx+1);
@@ -172,7 +172,7 @@ export class ResultsAnalysisComponent implements AfterViewInit {
       else if (event.key == 'ArrowUp') {
         let objects = [];
         if (this.selectedObject instanceof AttackScenario) { objects = this.dataSourceThreats.sortData(this.dataSourceThreats.filteredData, this.sortThreats); }
-        else { objects = this.dataSourceCountermeasures.sortData(this.dataSourceCountermeasures.filteredData, this.sortThreats); }
+        else { objects = this.dataSourceCountermeasures.sortData(this.dataSourceCountermeasures.filteredData, this.sortCountermeasures); }
         const currIdx = objects.indexOf(this.selectedObject);
         if (currIdx > 0) {
           selectObj(objects, currIdx-1);
