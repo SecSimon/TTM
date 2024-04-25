@@ -1090,7 +1090,7 @@ export class ThreatRuleGroup extends DatabaseBase {
   }
 
   public get RuleType(): RuleTypes { return this.Data['RuleType']; }
-  public set RuleType(val: RuleTypes) { this.Data['RuleType']; }
+  public set RuleType(val: RuleTypes) { this.Data['RuleType'] = val; }
 
   constructor(data, cf: ConfigFile) {
     super(data);

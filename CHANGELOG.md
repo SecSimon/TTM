@@ -1,3 +1,8 @@
+## 0.4.25
+
+* Fix: LocalStorage exception content too long
+* Fix: Setting threat rule type in configuration
+
 ## 0.4.24
 
 * Fix: Missing countermeasure state in export template

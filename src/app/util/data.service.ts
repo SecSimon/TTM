@@ -1180,10 +1180,11 @@ export class DataService {
       const history = this.getLastFileHistory();
       const index = history.findIndex(x => this.compareFiles(x, file));
       if (index >= 0) history.splice(index, 1);
-      history.splice(0, 0, file);
+      const fileCopy = JSON.parse(JSON.stringify(file));
+      delete fileCopy.importData;
+      history.splice(0, 0, fileCopy);
       this.locStorage.Set(LocStorageKeys.FILE_HISTORY, JSON.stringify(history));
-
-      this.locStorage.Set(LocStorageKeys.LAST_FILE, JSON.stringify(file));
+      this.locStorage.Set(LocStorageKeys.LAST_FILE, JSON.stringify(fileCopy));
 
       this.addFileToAvailableFiles(file);
     }
