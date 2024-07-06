@@ -753,6 +753,7 @@ export class MobileApp extends ContextElement {
   public CreateSoftwareStack() {
     if (!this.SoftwareStack) {
       this.SoftwareStack = this.project.CreateStack(MyComponentTypeIDs.Software);
+      this.SoftwareStack.Name = this.Name + "'s Software";
     }
 
     return this.SoftwareStack;
@@ -766,6 +767,7 @@ export class MobileApp extends ContextElement {
     if (!this.ProcessStack) {
       this.ProcessStack = this.project.CreateStack(MyComponentTypeIDs.Process);
       this.project.Config.GetMyComponentPTypeGroups().forEach(x => x.Types.forEach(y => this.ProcessStack.AddChild(this.project.CreateComponent(y))));
+      this.ProcessStack.Name = this.Name + "'s Processes";
     }
 
     return this.ProcessStack;
