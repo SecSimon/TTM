@@ -26,11 +26,13 @@ export class MyDataComponent implements OnInit {
     this.assetGroups = [];
     if (this.myData.IsProjectData) {
       const glob = this.dataService.Project.GetProjectAssetGroup();
-      let g: IKeyValue = {
-        Key: glob.Name,
-        Value: [glob, ...glob.GetGroupsFlat()]
+      if (glob) {
+        const g: IKeyValue = {
+          Key: glob.Name,
+          Value: [glob, ...glob.GetGroupsFlat()]
+        }
+        this.assetGroups.push(g);
       }
-      this.assetGroups.push(g);
       this.dataService.Project.GetDevices().filter(x => x.AssetGroup).forEach(dev => {
         let g: IKeyValue = {
           Key: dev.Name,
