@@ -822,11 +822,11 @@ export abstract class CanvasBase {
       };
     }
 
-    document.onkeydown = (e) => {
+    document.addEventListener('keydown', (e) => {
       if (e.key == 'Escape') {
         this.CancelCreateFlow();
       }
-    };
+    });
 
     this.Canvas.on('mouse:wheel', (opt) => this.onCanvasMouseWheel(opt));
     this.Canvas.on('mouse:move', (opt) => this.onCanvasMouseMove(opt));
