@@ -1288,6 +1288,7 @@ export abstract class CanvasBase {
     if (movingObj[CProps.dfs]) {
       movingObj[CProps.dfs].forEach(dfID => {
         const dfObj = this.getCanvasElementByCanvasID(dfID);
+        if (!dfObj) return;
         let isEnd = dfObj[CProps.fe2] == movingObj[CProps.canvasID];
         let start = this.getFlowAnchorPoint(isEnd ? dfObj[CProps.fa2] : dfObj[CProps.fa1], movingObj);
         let p = isEnd ? CProps.p2ID : CProps.p0ID;
