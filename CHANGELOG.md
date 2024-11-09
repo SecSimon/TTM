@@ -1,3 +1,10 @@
+## 0.4.26
+
+* Fix: Diagram undefined data flow endpoint
+* Fix: Keyboard shortcuts not working
+* Fix: Data - undefined global assets
+* Fix: App - undefined stack name
+
 ## 0.4.25
 
 * Fix: LocalStorage exception content too long
