@@ -128,9 +128,14 @@ export class DeviceAssetsComponent implements OnInit {
   }
 
   public DeleteMyData(data: MyData) {
-    this.dataService.Project.DeleteMyData(data);
-    if (this.selectedMyData == data) this.selectedMyData = null;
-    if (this.selectedObject == data) this.SelectObject(null, null);
+    this.dialog.OpenDeleteObjectDialog(data).subscribe(res => {
+      if (res) {
+        if (this.selectedMyData == data) this.selectedMyData = null;
+        if (this.selectedObject == data) this.SelectObject(null, null);
+        if (data.IsProjectData) this.dataService.Project.DeleteMyData(data);
+        else this.dataService.Config.DeleteMyData(data);
+      }
+    });
   }
 
   public AddMyData(group: AssetGroup, event) {

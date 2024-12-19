@@ -377,7 +377,7 @@ export class ProjectFile extends DatabaseBase {
   public InitializeNewAssetGroup(cf: ConfigFile): AssetGroup {
     let copyMyData = (copySource: MyData, parent: AssetGroup): MyData => {
       let d = this.CreateMyData(parent);
-      d.CopyFrom(copySource.Data);
+      d.CopyFrom(copySource);
       d.IsNewAsset = false;
       d.Number = null;
       return d;
@@ -385,7 +385,7 @@ export class ProjectFile extends DatabaseBase {
 
     let copyGroup = (copySource: AssetGroup, parent: AssetGroup): AssetGroup => {
       let g = this.CreateAssetGroup(parent);
-      g.CopyFrom(copySource.Data);
+      g.CopyFrom(copySource);
       g.IsNewAsset = false;
       g.Number = null;
       g.Data['assetGroupIDs'] = [];

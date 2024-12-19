@@ -324,6 +324,8 @@ export class MyComponentStack extends DatabaseBase implements IContainer {
         pf.DeleteComponent(ref.Param as MyComponent);
       }
     });
+
+    if (this.Root) this.Root.RemoveChild(this);
   }
 
   public static FromJSON(data, pf: ProjectFile, cf: ConfigFile): MyComponentStack {

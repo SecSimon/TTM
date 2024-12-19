@@ -346,7 +346,7 @@ export class StencilsComponent extends NavTreeBase implements OnInit {
       };
       if (t.canDuplicate) t.onDuplicate = () => {
         let cp = this.dataService.Config.CreateStencilType(type.ElementTypeID);
-        cp.CopyFrom(type.Data);
+        cp.CopyFrom(type);
         cp.Name = cp.Name + '-Copy';
         this.createNodes();
         this.selectedNode = this.FindNodeOfObject(cp);
@@ -428,7 +428,7 @@ export class StencilsComponent extends NavTreeBase implements OnInit {
         canDuplicate: !p.IsDefault,
         onDuplicate: () => {
           let cp = this.dataService.Config.CreateProtocol();
-          cp.CopyFrom(p.Data);
+          cp.CopyFrom(p);
           cp.Name = cp.Name + '-Copy';
           this.createNodes();
           this.selectedNode = this.FindNodeOfObject(cp);
@@ -493,7 +493,7 @@ export class StencilsComponent extends NavTreeBase implements OnInit {
         canDuplicate: true,
         onDuplicate: () => {
           let cp = this.dataService.Config.CreateStencilTypeTemplate();
-          cp.CopyFrom(template.Data);
+          cp.CopyFrom(template);
           cp.Name = cp.Name + '-Copy';
           this.createNodes();
           this.selectedNode = this.FindNodeOfObject(cp);
@@ -558,7 +558,7 @@ export class StencilsComponent extends NavTreeBase implements OnInit {
         canDuplicate: true,
         onDuplicate: () => {
           let cp = this.dataService.Config.CreateStencilThreatMnemonic();
-          cp.CopyFrom(mnemonic.Data);
+          cp.CopyFrom(mnemonic);
           cp.Name = cp.Name + '-Copy';
           this.createNodes();
           this.selectedNode = this.FindNodeOfObject(cp);

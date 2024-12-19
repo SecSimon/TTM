@@ -52,7 +52,7 @@ export class ControlsComponent extends NavTreeBase implements OnInit {
         canDuplicate: true,
         onDuplicate: () => {
           let cp = this.dataService.Config.CreateControl(group);
-          cp.CopyFrom(mit.Data);
+          cp.CopyFrom(mit);
           cp.Name = cp.Name + '-Copy';
           this.dataService.Config.GetControlGroups().find(x => x.Controls.includes(mit)).AddControl(cp);
           this.createNodes();

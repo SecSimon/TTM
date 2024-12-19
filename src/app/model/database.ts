@@ -96,6 +96,7 @@ export enum DataReferenceTypes {
   RemoveElementFromTestCase,
 
   // Context References
+  DeleteContextElement,
   DeleteContextFlow,
 
   // Stencil References, Threat Model
@@ -109,6 +110,7 @@ export enum DataReferenceTypes {
   DeleteThreatCategory,
   DeleteAttackVector,
   DeleteAttackVectorGroup,
+  RemoveStencilTypeFromStencilTypeTemplate,
   RemoveStencilTypeTemplateFromStencilType,
 
   // Protocol References
@@ -122,6 +124,11 @@ export enum DataReferenceTypes {
   RemoveThreatCategoryFromThreatMnemonic,
   RemoveThreatQuestionFromComponent,
   RemoveAttackVectorFromControl,
+
+  RemoveMyDataFromDataFlow,
+  RemoveMyDataFromDataFlowEntity,
+  RemoveMyDataFromSystemThreat,
+  RemoveAssetGroupFromSystemThreat,
 
   RemoveSystemThreatFromAttackScenario,
 
@@ -187,10 +194,9 @@ export class DataReferencesUtil {
         toDel.push(i);
       }
     }
-    toDel.forEach(x => {
-      res.splice(x, 1);
-    });
-
+    for (let i = 0; i < toDel.length; i++) {
+      res.splice(toDel[i]-i, 1);
+    }
     return res;
   }
 }
@@ -286,11 +292,11 @@ export abstract class DatabaseBase implements IDatabaseBase {
     else this.Data[prop.ID] = value;
   }
 
-  public CopyFrom(data: {}) {
+  public CopyFrom(obj: DatabaseBase) {
     const id = this.ID;
-    this.Data = JSON.parse(JSON.stringify(data));
+    this.Data = JSON.parse(JSON.stringify(obj.ToJSON()));
     this.Data['ID'] = id;
-  } 
+  }
 
   public ToJSON(): {} {
       return this.Data;

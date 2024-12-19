@@ -152,6 +152,7 @@ export class StencilType extends DatabaseBase {
     // rules, elements
     pf?.GetDFDElements().filter(x => x.GetProperty('Type').ID == this.ID).forEach(x => res.push({ Type: DataReferenceTypes.ResetStencilType , Param: x }));
     cf.GetThreatRules().filter(x => x.RuleType == RuleTypes.Stencil && x.StencilRestriction?.stencilTypeID == this.ID).forEach(x => res.push({ Type: DataReferenceTypes.DeleteThreatRule , Param: x }));
+    cf.GetStencilTypeTemplates().filter(x => x.StencilTypes.includes(this)).forEach(x => res.push({ Type: DataReferenceTypes.RemoveStencilTypeFromStencilTypeTemplate, Param: x }));
 
     return res;
   }
@@ -165,6 +166,9 @@ export class StencilType extends DatabaseBase {
       }
       else if (ref.Type == DataReferenceTypes.DeleteThreatRule) {
         cf.DeleteThreatRule(ref.Param as ThreatRule);
+      }
+      else if (ref.Type == DataReferenceTypes.RemoveStencilTypeFromStencilTypeTemplate) {
+        (ref.Param as StencilTypeTemplate).StencilTypes = (ref.Param as StencilTypeTemplate).StencilTypes.filter(x => x.ID != this.ID);
       }
     });
   }
@@ -359,6 +363,11 @@ export abstract class DFDElement extends ViewElementBase implements IElementType
     if (!this.IsPhysical && type.ElementTypeID != ElementTypeIDs.DataFlow) this.AddProperty('properties.PhysicalElement', 'PhysicalElement', 'properties.PhysicalElement.tt', true, PropertyEditTypes.PhysicalElementSelect, true);
   }
 
+  public CopyFrom(obj: DFDElement) {
+    if (this.Parent && this.Parent != obj.Parent) this.Parent.RemoveChild(this);
+    super.CopyFrom(obj);
+  }
+  
   public FindReferences(pf: ProjectFile, cf: ConfigFile): IDataReferences[] {
     let refs: IDataReferences[] = super.FindReferences(pf, cf);
     pf?.GetDFDElementRefs().filter(x => x.Ref.ID == this.ID).forEach(x => refs.push({ Type: DataReferenceTypes.DeleteElementReferences, Param: x })); // DFDElementRefs

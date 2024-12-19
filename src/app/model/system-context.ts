@@ -137,6 +137,11 @@ export class ContextElement extends ViewElementBase implements IElementType {
     }
   }
 
+  public CopyFrom(obj: ContextElement) {
+    if (this.Parent && this.Parent != obj.Parent) this.Parent.RemoveChild(this);
+    super.CopyFrom(obj);
+  }
+
   public FindReferences(pf: ProjectFile, cf: ConfigFile): IDataReferences[] {
     let refs = super.FindReferences(pf, cf);
     pf?.GetContextElementRefs().filter(x => x.Ref.ID == this.ID).forEach(x => refs.push({ Type: DataReferenceTypes.DeleteElementReferences, Param: x })); // ContextElementRefs

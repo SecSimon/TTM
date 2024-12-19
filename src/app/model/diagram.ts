@@ -2,7 +2,7 @@ import { ConfigFile } from "./config-file";
 import { DatabaseBase, DataReferenceTypes, IContainer, IDataReferences, IKeyValue } from "./database";
 import { DFDContainer, DFDElement } from "./dfd-model";
 import { ProjectFile } from "./project-file";
-import { SystemContextContainer } from "./system-context";
+import { ContextElement, SystemContextContainer } from "./system-context";
 
 export enum DiagramTypes {
   Hardware = 'HW',
@@ -122,12 +122,24 @@ export class CtxDiagram extends Diagram {
   }
 
   public FindReferences(pf: ProjectFile, cf: ConfigFile): IDataReferences[] {
-    let res: IDataReferences[] = [];
-    
+    const res: IDataReferences[] = [];
+
+    this.Elements.GetChildrenFlat().forEach(x => {
+      res.push({ Type: DataReferenceTypes.DeleteContextElement, Param: x });
+    });
+
     return res;
   }
 
   public OnDelete(pf: ProjectFile, cf: ConfigFile) {
+    const refs = this.FindReferences(pf, cf);
+
+    refs.forEach(ref => {
+      if (ref.Type == DataReferenceTypes.DeleteContextElement) {
+        pf.DeleteContextElement(ref.Param as ContextElement);
+      }
+    });
+
+    pf.DeleteContextElement(this.Elements);
   }
-  
 }

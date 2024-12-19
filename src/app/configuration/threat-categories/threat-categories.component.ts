@@ -67,7 +67,7 @@ export class ThreatCategoriesComponent extends NavTreeBase implements OnInit {
         canDuplicate: true,
         onDuplicate: () => {
           let cp = this.dataService.Config.CreateThreatCategory();
-          cp.CopyFrom(cat.Data);
+          cp.CopyFrom(cat);
           cp.Name = cp.Name + '-Copy';
           this.dataService.Config.GetThreatCategoryGroups().find(x => x.ThreatCategories.includes(cat)).AddThreatCategory(cp);
           this.createNodes();

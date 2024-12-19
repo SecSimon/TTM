@@ -1,7 +1,9 @@
 import { StringExtension } from "../util/string-extension";
 import { ConfigFile } from "./config-file";
 import { DatabaseBase, DataReferenceTypes, ICustomNumber, IDataReferences, PropertyEditTypes } from "./database";
+import { DataFlow, DataFlowEntity } from "./dfd-model";
 import { ProjectFile } from "./project-file";
+import { SystemThreat } from "./system-threat";
 import { ImpactCategories, ImpactCategoryUtil } from "./threat-model";
 
 export enum LowMediumHighNumber {
@@ -70,7 +72,11 @@ export class MyData extends DatabaseBase implements ICustomNumber {
   }
 
   public FindReferences(pf: ProjectFile, cf: ConfigFile): IDataReferences[] {
-    let res: IDataReferences[] = [];
+    const res: IDataReferences[] = [];
+
+    pf?.GetDFDElements().filter(x => (x instanceof DataFlow && x.ProcessedData.includes(this))).forEach(x => res.push({ Type: DataReferenceTypes.RemoveMyDataFromDataFlow, Param: x }));
+    pf?.GetDFDElements().filter(x => (x instanceof DataFlowEntity && x.ProcessedData.includes(this))).forEach(x => res.push({ Type: DataReferenceTypes.RemoveMyDataFromDataFlowEntity, Param: x }));
+    pf?.GetSystemThreats().filter(x => x.AffectedAssetObjects.includes(this)).forEach(x => res.push({ Type: DataReferenceTypes.RemoveMyDataFromSystemThreat, Param: x }));
 
     return res;
   }
@@ -79,6 +85,20 @@ export class MyData extends DatabaseBase implements ICustomNumber {
     let file = this.IsProjectData ? pf : cf;
     let asset = file.GetAssetGroups().find(x => x.AssociatedData.includes(this));
     if (asset) asset.RemoveMyData(this);
+
+    const refs = this.FindReferences(pf, cf);
+
+    refs.forEach(ref => {
+      if (ref.Type == DataReferenceTypes.RemoveMyDataFromDataFlow) {
+        (ref.Param as DataFlow).ProcessedData = (ref.Param as DataFlow).ProcessedData.filter(x => x != this);
+      }
+      else if (ref.Type == DataReferenceTypes.RemoveMyDataFromDataFlowEntity) {
+        (ref.Param as DataFlowEntity).ProcessedData = (ref.Param as DataFlowEntity).ProcessedData.filter(x => x != this);
+      }
+      else if (ref.Type == DataReferenceTypes.RemoveMyDataFromSystemThreat) {
+        (ref.Param as SystemThreat).AffectedAssetObjects = (ref.Param as SystemThreat).AffectedAssetObjects.filter(x => x != this);
+      }
+    });
   }
 
   protected initProperties() {
@@ -210,6 +230,7 @@ export class AssetGroup extends DatabaseBase implements ICustomNumber {
 
     this.AssociatedData.forEach(x => res.push({ Type: DataReferenceTypes.DeleteMyData, Param: x }));
     this.SubGroups.forEach(x => res.push({ Type: DataReferenceTypes.DeleteAssetGroup, Param: x }));
+    pf?.GetSystemThreats().filter(x => x.AffectedAssetObjects.includes(this)).forEach(x => res.push({ Type: DataReferenceTypes.RemoveAssetGroupFromSystemThreat, Param: x }));
 
     return res;
   }

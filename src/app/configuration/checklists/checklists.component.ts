@@ -233,7 +233,7 @@ export class ChecklistsComponent extends NavTreeBase implements OnInit {
         canDuplicate: true,
         onDuplicate: () => {
           let cp = this.dataService.Config.CreateRequirementType();
-          cp.CopyFrom(type.Data);
+          cp.CopyFrom(type);
           cp.Name = cp.Name + '-Copy';
           if (groupNode.data instanceof ChecklistType) {
             groupNode.data.AddRequirementType(cp);

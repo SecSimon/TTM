@@ -52,7 +52,7 @@ export class ThreatLibraryComponent extends NavTreeBase implements OnInit {
         canDuplicate: true,
         onDuplicate: () => {
           let cp = this.dataService.Config.CreateAttackVector(group);
-          cp.CopyFrom(vector.Data);
+          cp.CopyFrom(vector);
           cp.Name = cp.Name + '-Copy';
           this.createNodes();
           this.selectedNode = this.FindNodeOfObject(cp);

@@ -2446,6 +2446,7 @@ export class HWDFCanvas extends CanvasBase {
   public Diagram: HWDFDiagram;
 
   public CopyElement() {
+    this.copyID = null;
     if (this.SelectedElement instanceof DFDElementRef || this.SelectedElement instanceof DFDContainerRef) return;
     if (this.SelectedElement instanceof DataFlow) return;
     this.copyID = this.SelectedElement.ID;
@@ -2457,7 +2458,7 @@ export class HWDFCanvas extends CanvasBase {
     const srcObj = this.getCanvasElementByID(this.copyID);
     if (src) {
       const copy = this.createElement({ stencilRef: { name: '', stencilID: src.GetProperty('Type').ID } }, srcObj.left +  srcObj.width + 10, srcObj.top);
-      copy.CopyFrom(src.Data);
+      copy.CopyFrom(src);
       //copy.Name = StringExtension.FindUniqueName(src.GetProperty('Type').Name, this.getViewBaseElements().map(x => x.Name));
       copy.Name += '-Copy';
       const copyObj = this.getCanvasElementByID(copy.ID);
@@ -3066,7 +3067,7 @@ export class CtxCanvas extends CanvasBase {
     const srcObj = this.getCanvasElementByID(this.copyID);
     if (src) {
       const copy = this.createElement({ contextRef: { name: ContextElementTypeUtil.ToString(src.Type) } }, srcObj.left +  srcObj.width + 10, srcObj.top);
-      copy.CopyFrom(src.Data);
+      copy.CopyFrom(src);
       //copy.Name = StringExtension.FindUniqueName(ContextElementTypeUtil.ToString(src.Type), this.getViewBaseElements().map(x => x.Name));
       copy.Name += '-Copy';
       const copyObj = this.getCanvasElementByID(copy.ID);

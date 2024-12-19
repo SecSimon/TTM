@@ -74,7 +74,7 @@ export class RulesComponent extends NavTreeBase implements OnInit {
         canDuplicate: true,
         onDuplicate: () => {
           let cp = this.dataService.Config.CreateThreatRule(group, RuleTypes.DFD);
-          cp.CopyFrom(rule.Data);
+          cp.CopyFrom(rule);
           cp.Name = cp.Name + '-Copy';
           this.dataService.Config.GetThreatRuleGroups().find(x => x.ThreatRules.includes(rule)).AddThreatRule(cp);
           this.createNodes();

@@ -40,7 +40,7 @@ export class ThreatSourcesComponent implements OnInit {
   public AddExistingSource(src: ThreatActor) {
     const actor = this.AddSource();
     const num = actor.Number;
-    actor.CopyFrom(src.Data);
+    actor.CopyFrom(src);
     actor.Number = num;
     actor.Data['origID'] = src.ID;
   }

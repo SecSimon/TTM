@@ -217,7 +217,7 @@ export class ComponentsComponent extends NavTreeBase implements OnInit {
 
   public DuplicateQuestion(quest: ThreatQuestion) {
     let copy = this.AddQuestion();
-    copy.CopyFrom(quest.Data);
+    copy.CopyFrom(quest);
     copy.Name += '-Copy';
   }
 

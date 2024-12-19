@@ -1,3 +1,8 @@
+## 0.4.27
+
+* Fix: Diagram copy element
+* Fix: Incomplete delete operations
+
 ## 0.4.26
 
 * Fix: Diagram undefined data flow endpoint

@@ -101,12 +101,12 @@ export class TransferProjectDialogComponent implements OnInit {
         if (srcA && destA) {
           const createMyData = (src: MyData, dest: AssetGroup) => {
             const myData = currProj.CreateMyData(dest);
-            myData.CopyFrom(src.Data);
+            myData.CopyFrom(src);
             this.TransferLog += this.translate.instant('dialog.transferproject.l.createMyData') + ': ' + myData.Name + '\n';
           };
           const createAssetRec = (src: AssetGroup, dest: AssetGroup) => {
             const asset = currProj.CreateAssetGroup(dest);
-            asset.CopyFrom(src.Data);
+            asset.CopyFrom(src);
             asset.Data['assetGroupIDs'] = [];
             asset.Data['associatedDataIDs'] = [];
             this.TransferLog += this.translate.instant('dialog.transferproject.l.createAsset') + ': ' + asset.Name + '\n';
@@ -140,7 +140,7 @@ export class TransferProjectDialogComponent implements OnInit {
         srcTS.Sources.forEach(ts => {
           if (!destTS.Sources.some(x => x.Name == ts.Name)) {
             const actor = currProj.CreateThreatActor();
-            actor.CopyFrom(ts.Data);
+            actor.CopyFrom(ts);
             destTS.AddThreatActor(actor);
             this.TransferLog += this.translate.instant('dialog.transferproject.l.createThreatActor') + ': ' + actor.Name + '\n';
           }
@@ -155,7 +155,7 @@ export class TransferProjectDialogComponent implements OnInit {
             if (!cat) cat = this.dataService.Config.GetThreatCategories()[0];
 
             const threat = currProj.CreateSystemThreat(cat);
-            threat.CopyFrom(st.Data);
+            threat.CopyFrom(st);
             threat.ThreatCategory = cat;
             threat.Data['affectedAssetObjectIDs'] = [];
             const currAssets = currProj.GetAssetGroups();
@@ -173,7 +173,7 @@ export class TransferProjectDialogComponent implements OnInit {
         srcProj.GetMyTags().forEach(tag => {
           if (!currProj.GetMyTags().some(x => x.Name == tag.Name)) {
             const t = currProj.CreateMyTag();
-            t.CopyFrom(tag.Data);
+            t.CopyFrom(tag);
             this.TransferLog += this.translate.instant('dialog.transferproject.l.createTag') + ': ' + t.Name + '\n';
           }
         });
@@ -182,7 +182,7 @@ export class TransferProjectDialogComponent implements OnInit {
         srcProj.GetExportTemplates().forEach(temp => {
           if (!currProj.GetExportTemplates().some(x => x.Name == temp.Name)) {
             const t = currProj.CreateExportTemplate();
-            t.CopyFrom(temp.Data);
+            t.CopyFrom(temp);
             this.TransferLog += this.translate.instant('dialog.transferproject.l.createExportTemplate') + ': ' + t.Name + '\n';
           }
         });
